@@ -33,10 +33,11 @@ jobs:
           mkdir -p assets/domain-walls /tmp/paper-crops
 
           # Chen et al., PRX 16, 011066 (2026), CC BY 4.0.
-          # The crop coordinates below were fixed only after rendering the
-          # source PDF at 600 DPI and visually checking the whole page first.
+          # Use the authors' public copy because APS blocks automated runners.
+          # Crop coordinates were fixed only after rendering the exact paper
+          # at 600 DPI and visually checking the whole page first.
           curl -fL --retry 3 -A 'Mozilla/5.0' \
-            'https://journals.aps.org/prx/pdf/10.1103/q624-x397' \
+            'https://liutheory.westlake.edu.cn/pdf/Chen26p011066.pdf' \
             -o /tmp/paper-crops/chen2026.pdf
           pdftoppm -f 2 -l 2 -singlefile -r 600 -png \
             /tmp/paper-crops/chen2026.pdf /tmp/paper-crops/chen-p2
