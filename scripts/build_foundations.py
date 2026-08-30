@@ -81,16 +81,13 @@ wu = fitz.open('/tmp/foundations/wu2021.pdf')
 p = page_with(wu, 'According to the model of sliding ferroelectricity')
 left = block_with(p, 'According to the model of sliding ferroelectricity')
 start = p.search_for('According to the model of sliding ferroelectricity')[0]
-# The paragraph can be one block or continue in a second column depending on copy.
 end_hits = p.search_for('down layer, as shown in Fig. 1A') or p.search_for('down layer, as shown in Fig. 1A.')
 if not end_hits:
     raise RuntimeError('Wu paragraph end not found')
 end = end_hits[-1]
 if end.x0 >= start.x0 and end.y0 >= start.y0:
-    # same-column layout
     save(trim(render(p, fitz.Rect(left[0], start.y0-2, left[2], end.y1+3), 1800)), 'wu2021-paragraph-model.webp')
 else:
-    # two-column / wrapped layout
     blocks = p.get_text('blocks', sort=True)
     right_candidates = [b for b in blocks if b[0] > p.rect.width/2 and ('symmetry' in b[4].lower() or 'polarization' in b[4].lower())]
     if not right_candidates:
@@ -102,27 +99,19 @@ else:
 figp = page_with(wu, 'Fig. 1. Mechanism of sliding ferroelectricity')
 save(render(figp, largest_image_rect(figp), 1800), 'wu2021-fig1-mechanism.webp')
 
-# Yasuda 2021 — public arXiv author manuscript; target paragraph crosses a page boundary.
+# Yasuda 2021 — public arXiv author manuscript. Keep the whole abstract paragraph.
 yas = fitz.open('/tmp/foundations/yasuda2021.pdf')
-p0 = page_with(yas, 'The development of vdW assembly enabled the engineering of heterostructures')
-p1 = page_with(yas, 'procedure can be applied to other bipartite honeycomb 2D materials')
-b0 = block_with(p0, 'The development of vdW assembly enabled the engineering of heterostructures')
-s0 = p0.search_for('The development of vdW assembly enabled the engineering of heterostructures')[0]
-b1 = block_with(p1, 'procedure can be applied to other bipartite honeycomb 2D materials')
-e1 = p1.search_for('unit cell (25)')[-1]
-a = render(p0, fitz.Rect(b0[0], s0.y0-2, b0[2], b0[3]), 1800)
-b = render(p1, fitz.Rect(b1[0], b1[1], b1[2], e1.y1+3), 1800)
-stitch([a, b], 'yasuda2021-paragraph-stacking.webp')
+p = page_with(yas, '2D ferroelectrics with robust polarization')
+b = block_with(p, '2D ferroelectrics with robust polarization')
+save(trim(render(p, fitz.Rect(b[0], b[1], b[2], b[3]), 1800)), 'yasuda2021-paragraph-abstract.webp')
 figp = page_with(yas, 'Fig. 1. Ferroelectricity of AB-stacked bilayer boron nitride')
 save(render(figp, largest_image_rect(figp), 1800), 'yasuda2021-fig1-stacking.webp')
 
-# Vizner Stern 2021 — public arXiv manuscript; full KPFM results paragraph.
+# Vizner Stern 2021 — public arXiv manuscript. Keep the whole abstract paragraph.
 viz = fitz.open('/tmp/foundations/vizner2021.pdf')
-p = page_with(viz, 'To measure variations in the electrical potential')
-b = block_with(p, 'To measure variations in the electrical potential')
-s = p.search_for('To measure variations in the electrical potential')[0]
-e = p.search_for('few interfacial layers')[-1]
-save(trim(render(p, fitz.Rect(b[0], s.y0-2, b[2], e.y1+3), 1800)), 'vizner2021-paragraph-domains.webp')
+p = page_with(viz, 'Despite their ionic nature')
+b = block_with(p, 'Despite their ionic nature')
+save(trim(render(p, fitz.Rect(b[0], b[1], b[2], b[3]), 1800)), 'vizner2021-paragraph-abstract.webp')
 figp = page_with(viz, 'Fig. 2. Direct measurement of interfacial polarization')
 save(render(figp, largest_image_rect(figp), 1800), 'vizner2021-fig2-domains.webp')
 
@@ -132,13 +121,17 @@ p = page_with(meng, 'When the atomic layers in a non-centrosymmetric van der Waa
 b = block_with(p, 'When the atomic layers in a non-centrosymmetric van der Waals structure')
 save(trim(render(p, fitz.Rect(b[0], b[1], b[2], b[3]), 1800)), 'meng2022-paragraph-multistate.webp')
 figp = page_with(meng, 'Static transport properties of dual-gate FET devices')
-save(render(figp, largest_image_rect(figp), 1800), 'meng2022-fig3-multistate.webp')
+full_fig3 = render(figp, largest_image_rect(figp), 1800)
+# Panel e is the lower switching-pathway schematic; crop only that teaching unit.
+y0 = int(full_fig3.height * 0.61)
+panel_e = trim(full_fig3.crop((0, y0, full_fig3.width, full_fig3.height)), margin=18)
+save(panel_e, 'meng2022-fig3e-multistate.webp')
 
 expected = {
     'wu2021-paragraph-model.webp', 'wu2021-fig1-mechanism.webp',
-    'yasuda2021-paragraph-stacking.webp', 'yasuda2021-fig1-stacking.webp',
-    'vizner2021-paragraph-domains.webp', 'vizner2021-fig2-domains.webp',
-    'meng2022-paragraph-multistate.webp', 'meng2022-fig3-multistate.webp',
+    'yasuda2021-paragraph-abstract.webp', 'yasuda2021-fig1-stacking.webp',
+    'vizner2021-paragraph-abstract.webp', 'vizner2021-fig2-domains.webp',
+    'meng2022-paragraph-multistate.webp', 'meng2022-fig3e-multistate.webp',
 }
 found = {p.name for p in OUT.glob('*.webp')}
 if found != expected:
