@@ -5,105 +5,64 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>What is Sliding Ferroelectricity? · Learning Sliding Ferroelectricity</title>
 <style>
-:root{--bg:#f3f0e8;--paper:#fffdf8;--ink:#171817;--muted:#6e6d68;--line:#d8d1c3;--rust:#a44c38;--shadow:0 18px 48px rgba(42,35,25,.07)}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.62}.wrap{width:min(1180px,calc(100% - 36px));margin:auto}.top{position:sticky;top:0;z-index:20;background:rgba(243,240,232,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}.top-inner{height:68px;display:flex;align-items:center;justify-content:space-between;gap:20px}.brand{font-family:Georgia,"Times New Roman",serif;font-size:18px}.brand small{display:block;font-family:inherit;font-size:11px;color:var(--muted);letter-spacing:.07em;margin-top:2px}.nav{display:flex;gap:18px;font-size:12px}.nav a{color:#4d4c48;text-decoration:none}
-.article{width:min(980px,calc(100% - 30px));margin:0 auto;padding:58px 0 96px}.crumb{font-size:11px;color:#77736c;margin-bottom:34px}.crumb a{color:inherit}.article h1{font:500 clamp(42px,6vw,76px)/.98 Georgia,serif;letter-spacing:-.045em;margin:0 0 18px}.deck{font:400 20px/1.62 Georgia,serif;color:#4f4c46;margin:0 0 44px;max-width:870px}.article h2{font:500 32px/1.18 Georgia,serif;margin:68px 0 18px}.article h3{font:500 21px/1.3 Georgia,serif;margin:34px 0 11px}.article p{font-size:15px;line-height:1.88;color:#393733}.question{padding:23px 25px;background:#1d1e1c;color:#f4f0e7;border-radius:14px;font:500 19px/1.58 Georgia,serif;margin:30px 0 42px}.rule{font-size:12px!important;color:#6c675f!important;padding-left:14px;border-left:2px solid #c7bfb2;margin:26px 0}.source-shot{margin:28px 0 34px;border:1px solid #d7d0c4;border-radius:14px;background:#fffdf7;overflow:hidden}.source-head{display:flex;justify-content:space-between;gap:12px;padding:11px 16px;border-bottom:1px solid #ded8cc;background:#f2eee5;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#746f67}.source-shot img{display:block;width:min(100%,780px);height:auto;margin:18px auto;background:white}.source-note{border-top:1px solid #e4ded4;padding:18px 21px;background:#faf7f0}.source-note b{font:500 15px Georgia,serif}.source-note p{font-size:13px;line-height:1.76;margin:7px 0 0;color:#4d4943}.figure{margin:34px 0 12px;background:#fff;border:1px solid var(--line);border-radius:15px;overflow:hidden}.figure img{width:100%;height:auto;display:block;background:#fff}.figure figcaption{padding:13px 17px;font-size:11px;line-height:1.65;color:#666159;border-top:1px solid var(--line)}.figure-focus{width:min(820px,100%);margin-left:auto;margin-right:auto}.figure-note{font-size:12px!important;color:#716d65!important;margin:8px 4px 34px!important}.reading{display:grid;grid-template-columns:165px 1fr;gap:24px;padding:19px 0;border-top:1px solid var(--line)}.reading b{font:500 16px/1.35 Georgia,serif}.reading p{margin:0;font-size:13px;line-height:1.76}.chain{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:28px 0}.chain div{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:17px 15px;text-align:center;font:500 15px/1.35 Georgia,serif;position:relative}.chain div:not(:last-child):after{content:'→';position:absolute;right:-13px;top:50%;transform:translateY(-50%);color:#8e887f;z-index:2}.pair{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:32px 0}.boundary{border-radius:15px;padding:24px 25px;background:#1d1e1c;color:#f4f0e7}.boundary.light{background:#e7e0d3;color:#262522}.boundary h3{margin:0 0 10px;color:inherit}.boundary p{color:inherit;margin:0;font-size:13px;line-height:1.75}.aside{margin:30px 0;padding:20px 22px;background:#e8e0d2;border-radius:13px}.aside b{font:500 17px Georgia,serif}.aside p{margin:7px 0 0;font-size:13px}.paper{padding:16px 0;border-top:1px solid var(--line);display:grid;grid-template-columns:95px 1fr;gap:18px}.paper .meta{font:11px ui-monospace,monospace;color:#858078}.paper b{font:500 17px/1.35 Georgia,serif}.paper p{font-size:12px;margin:6px 0 0;line-height:1.65}.paper a{color:#4f4b45}.next{margin-top:58px;padding-top:26px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:20px}.next a{color:#272522;text-decoration:none}.next b{font:500 18px Georgia,serif}.micro{font-size:11px!important;color:#77736c!important}
-@media(max-width:700px){.reading{grid-template-columns:1fr}.pair{grid-template-columns:1fr}.chain{grid-template-columns:1fr}.chain div:not(:last-child):after{content:'↓';right:auto;left:50%;top:auto;bottom:-20px}.source-head{display:block}.source-head span{display:block;margin-top:4px}.article h2{font-size:28px}.nav{display:none}}
+:root{--bg:#f3f0e8;--paper:#fffdf8;--ink:#171817;--muted:#6e6d68;--line:#d8d1c3;--rust:#9b4836}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.62}.wrap{width:min(1180px,calc(100% - 36px));margin:auto}.top{position:sticky;top:0;z-index:20;background:rgba(243,240,232,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}.top-inner{height:68px;display:flex;align-items:center;justify-content:space-between;gap:20px}.brand{font-family:Georgia,"Times New Roman",serif;font-size:18px}.brand small{display:block;font-size:11px;color:var(--muted);letter-spacing:.07em;margin-top:2px}.nav{display:flex;gap:18px;font-size:12px}.nav a{color:#4d4c48;text-decoration:none}
+.article{width:min(980px,calc(100% - 30px));margin:0 auto;padding:58px 0 96px}.crumb{font-size:11px;color:#77736c;margin-bottom:34px}.crumb a{color:inherit}.article h1{font:500 clamp(42px,6vw,76px)/.98 Georgia,serif;letter-spacing:-.045em;margin:0 0 18px}.deck{font:400 20px/1.62 Georgia,serif;color:#4f4c46;margin:0 0 44px;max-width:880px}.article h2{font:500 32px/1.18 Georgia,serif;margin:70px 0 18px}.article h3{font:500 21px/1.3 Georgia,serif}.article p{font-size:15px;line-height:1.88;color:#393733}.question{padding:23px 25px;background:#1d1e1c;color:#f4f0e7;border-radius:14px;font:500 19px/1.58 Georgia,serif;margin:30px 0 42px}.rule{font-size:12px!important;color:#6c675f!important;padding-left:14px;border-left:2px solid #c7bfb2;margin:26px 0}.chain{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:28px 0}.chain div{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:17px 15px;text-align:center;font:500 15px/1.35 Georgia,serif;position:relative}.chain div:not(:last-child):after{content:'→';position:absolute;right:-13px;top:50%;transform:translateY(-50%);color:#8e887f;z-index:2}
+.source-shot{margin:28px 0 34px;border:1px solid #d7d0c4;border-radius:14px;background:#fffdf7;overflow:hidden}.source-head{display:flex;justify-content:space-between;gap:12px;padding:11px 16px;border-bottom:1px solid #ded8cc;background:#f2eee5;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#746f67}.source-shot img{display:block;width:min(100%,800px);height:auto;margin:18px auto;background:#fff}.source-note{border-top:1px solid #e4ded4;padding:18px 21px;background:#faf7f0}.source-note b{font:500 15px Georgia,serif}.source-note p{font-size:13px;line-height:1.76;margin:7px 0 0;color:#4d4943}.figure{margin:34px 0 12px;background:#fff;border:1px solid var(--line);border-radius:15px;overflow:hidden}.figure img{width:100%;height:auto;display:block;background:#fff}.figure figcaption{padding:13px 17px;font-size:11px;line-height:1.65;color:#666159;border-top:1px solid var(--line)}.figure-focus{width:min(850px,100%);margin-left:auto;margin-right:auto}.reading{display:grid;grid-template-columns:170px 1fr;gap:24px;padding:19px 0;border-top:1px solid var(--line)}.reading b{font:500 16px/1.35 Georgia,serif}.reading p{margin:0;font-size:13px;line-height:1.76}.aside{margin:30px 0;padding:20px 22px;background:#e8e0d2;border-radius:13px}.aside b{font:500 17px Georgia,serif}.aside p{margin:7px 0 0;font-size:13px}.pair{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:32px 0}.boundary{border-radius:15px;padding:24px 25px;background:#1d1e1c;color:#f4f0e7}.boundary.light{background:#e7e0d3;color:#262522}.boundary h3{margin:0 0 10px;color:inherit}.boundary p{color:inherit;margin:0;font-size:13px;line-height:1.75}.paper{padding:16px 0;border-top:1px solid var(--line);display:grid;grid-template-columns:100px 1fr;gap:18px}.paper .meta{font:11px ui-monospace,monospace;color:#858078}.paper b{font:500 17px/1.35 Georgia,serif}.paper p{font-size:12px;margin:6px 0 0;line-height:1.65}.paper a{color:#4f4b45}.next{margin-top:58px;padding-top:26px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:20px}.next a{color:#272522;text-decoration:none}.next b{font:500 18px Georgia,serif}.micro{font-size:11px!important;color:#77736c!important}
+@media(max-width:700px){.reading{grid-template-columns:1fr}.pair,.chain{grid-template-columns:1fr}.chain div:not(:last-child):after{content:'↓';right:auto;left:50%;top:auto;bottom:-20px}.source-head{display:block}.source-head span{display:block;margin-top:4px}.article h2{font-size:28px}.nav{display:none}}
 </style>
 </head>
 <body>
-<header class="top"><div class="wrap top-inner"><div class="brand">Learning Sliding Ferroelectricity<small>01 · Foundations</small></div><nav class="nav"><a href="../index.html#map">Map</a><a href="../index.html#foundations">Module</a><a href="#multilayer">Multilayer</a></nav></div></header>
+<header class="top"><div class="wrap top-inner"><div class="brand">Learning Sliding Ferroelectricity<small>01 · Foundations</small></div><nav class="nav"><a href="../index.html#map">Map</a><a href="#evidence">AB / BA</a><a href="#multilayer">Multilayer</a></nav></div></header>
 <article class="article">
-  <div class="crumb"><a href="../index.html">首页</a> / What is Sliding Ferroelectricity?</div>
-  <h1>一层没变，为什么叠起来以后会有极化？</h1>
-  <p class="deck">Sliding ferroelectricity 最容易被一句“层间滑动翻转极化”说得太快。第一遍真正需要搞清的是四步：<strong>堆垛改变局域对称性 → 层间电荷重新分布 → 产生面外偶极 → 相对平移把一种 polar stacking 变成另一种。</strong></p>
+<div class="crumb"><a href="../index.html">首页</a> / What is Sliding Ferroelectricity?</div>
+<h1>一层没变，为什么叠起来以后会有极化？</h1>
+<p class="deck">“层间滑动翻转极化”这句话太快了。第一遍真正需要抓住的是：<strong>极化不是凭空附着在某一层上，而是由两层的相对 stacking registry 产生；registry 变，界面电荷重分布和偶极方向也跟着变。</strong></p>
+<div class="question">这一页只解决四件事：stacking 为什么能造出面外极化？AB 与 BA 为什么对应相反方向？实验怎样把这种结构差别变成可测信号？为什么到了 multilayer，状态空间不再只是 +P / −P？</div>
+<p class="rule"><b>素材规则：</b>原文以完整论述段落为单位；所有论文图先从 PDF 600 DPI 整页渲染，再裁到完整 figure / panel，并经过单图和网页两级复核。这里展示的是各公开稿的实际版式，不把正式出版版和 arXiv 版的 panel 编号混在一起。</p>
+<div class="chain"><div>stacking registry</div><div>symmetry + charge transfer</div><div>out-of-plane dipole</div><div>translation → reversed P</div></div>
 
-  <div class="question">这一页只回答三个基础问题：AB 与 BA 为什么不是同一个状态？为什么它们的面外极化方向相反？“sliding”究竟是在改变极化本身，还是在改变产生极化的 stacking registry？</div>
-  <p class="rule"><b>读图规则：</b>原文保留完整论述段落；论文图均从 PDF 600 DPI 整页渲染后裁到完整 figure / panel，再做视觉复核。中文讲解只解释作者论证的结构，不把后续 domain-wall 图景提前塞进这些早期工作。</p>
+<h2 id="mechanism">1. “Sliding”首先是在改 registry，不是在直接搬运一个现成的 P</h2>
+<p>Wu 与 Li 2021 最适合用来建立词汇。看 BN bilayer 时，不要先盯着“能不能滑”，先问上下层哪些原子对齐、哪些原子落在六元环中心。这个相对配位打破了中心对称，并允许净层间电荷转移；于是界面本身带上面外偶极。</p>
+<div class="source-shot"><div class="source-head"><b>原文段落 · Wu & Li 2021</b><span>PNAS · Theoretical Model</span></div><img src="../assets/foundations/wu2021-paragraph-model.webp" alt="Wu and Li 2021 paragraph on the sliding ferroelectric model"/><div class="source-note"><b>这一整段在做什么</b><p>作者不是先给“sliding FE”的定义，而是按结构推导：两层不等价 → interlayer charge transfer → AB 配位有面外极化 → 相反极化态之间可由 lateral translation 连接。真正被切换的是 stacking-defined polar state。</p></div></div>
+<figure class="figure figure-focus"><img src="../assets/foundations/wu2021-fig1-mechanism.webp" alt="Wu and Li 2021 Figure 1 mechanism"/><figcaption>Wu & Li 2021，Fig. 1。A 是本页最重要的部分：BN bilayer 两个相反 polar registry 与滑移路径；其余 panels 展示同一 stacking 语言如何扩展到 moiré 和其它 vdW 材料。</figcaption></figure>
+<div class="reading"><b>只看 A 就够先入门</b><p>化学组成没有变，只是相对横移，红色 P 箭头却反向。这说明 P 的符号和 registry 绑定，而不是“上层天生带 +P、下层天生带 −P”。</p></div>
+<div class="reading"><b>势垒别过度解读</b><p>unit-cell 路径势垒很低，只说明存在低能结构通道；它并不能证明真实微米器件会整片 coherent sliding。后面为什么会转向 domain-wall motion，正是本站主线之一。</p></div>
 
-  <div class="chain"><div>stacking registry</div><div>symmetry / charge transfer</div><div>out-of-plane dipole</div><div>relative translation → reversed P</div></div>
+<h2 id="evidence">2. Yasuda 2021：先把 AB 与 BA 的结构差别和 ±P 对上</h2>
+<p>Yasuda 等人的核心贡献之一，是把一个原本 bulk 中不表现这种极化的 hBN，通过人工平行堆垛做成 polar bilayer。这里先不要急着看器件 hysteresis，先把 AA′、AB、BA 三种 registry 的对称性关系看明白。</p>
+<div class="source-shot"><div class="source-head"><b>原文段落 · Yasuda et al. 2021</b><span>Science author manuscript · Abstract</span></div><img src="../assets/foundations/yasuda2021-paragraph-abstract.webp" alt="Yasuda 2021 complete abstract paragraph"/><div class="source-note"><b>原文把两件事连在一起</b><p>parallel-stacked bilayer BN 的 out-of-plane polarization 会随 stacking order 反转；而这种 polarization switching 又能通过邻接 graphene 的电阻读出。前者是结构物理，后者是测量通道，不要把二者混成一句“graphene 产生了铁电”。</p></div></div>
+<figure class="figure figure-focus"><img src="../assets/foundations/yasuda2021-fig1-stacking.webp" alt="Yasuda author manuscript Figure 1 panels A-C showing AA prime, AB and BA"/><figcaption>Yasuda et al. 2021 的 arXiv author manuscript，Fig. 1 的 A–C 结构部分。A：AA′；B：AB；C：BA。正式 Science 版经过重排，panel 编号与 author manuscript 不完全相同，所以这里按实际截图版本标注。</figcaption></figure>
+<div class="reading"><b>AA′ 为什么不选 z 方向</b><p>自然 bulk-like AA′ stacking 通过 180° 旋转关系恢复整体反演对称性，因此没有一个唯一的面外极化方向。</p></div>
+<div class="reading"><b>AB / BA 为什么互为 ±P</b><p>AB 和 BA 交换了上下层的局域注册关系，界面轨道畸变与电荷重分布也随之反向。图中的电荷云和 P 箭头就是这个最小结构图像。</p></div>
+<div class="aside"><b>为什么这里不硬塞 PFM 图？</b><p>这份公开 author manuscript 的 Fig. 1 结构图与正式 Science 排版不同。为了避免“截图是 A–C、讲解却按 A–F”的错配，这一节只让 Yasuda 承担结构证据；下一节用 Vizner Stern 的 KPFM 原图承担真正的空间 domain 证据。</p></div>
 
-  <h2 id="mechanism">1. 先把“sliding”翻译成人话：改变的是两层原子的相对注册关系</h2>
-  <p>Wu 与 Li 的 2021 Perspective 很适合作为第一入口，因为它没有把 sliding FE 当成一个材料名，而是先给出机制语言。重点不是“层能不能滑”，而是两层在 AB、BA 等 registry 中，哪些原子上下对齐、哪些落在六元环中心，这种相对位置如何改变界面电荷分布。</p>
+<h2>3. Vizner Stern 2021：AB / BA 不只是两个结构模型，而是样品里真实存在的两种 domain</h2>
+<p>如果只看 AB/BA 原子图，仍然可能把它当成理论构型。Vizner Stern 同年从真实空间补了一块关键证据：KPFM 能看到大片稳定的 surface-potential contrast，这些区域与 AB / BA interfacial stacking 对应，并由很窄的 domain wall 分隔。</p>
+<div class="source-shot"><div class="source-head"><b>原文段落 · Vizner Stern et al. 2021</b><span>Science author manuscript · Abstract</span></div><img src="../assets/foundations/vizner2021-paragraph-abstract.webp" alt="Vizner Stern 2021 complete abstract paragraph"/><div class="source-note"><b>这一段为什么值得整段保留</b><p>它把“非中心对称平行堆垛 → alternating normal-polarization domains → 相邻 domain 相差一个 lateral lattice-site shift → biased tip 可实现可逆 switching”放在一条连续因果链里。单拿其中一句会看不出作者究竟靠什么把 sliding 和 polarization 联系起来。</p></div></div>
+<figure class="figure figure-focus"><img src="../assets/foundations/vizner2021-fig2-domains.webp" alt="Vizner Stern 2021 Figure 2 KPFM domains"/><figcaption>Vizner Stern et al. 2021，Fig. 2。B 是核心：同一 hBN interface 中出现黑白交替的 KPFM domains；C 给出跨域的 potential profile；A/D 分别交代测量与计算/定量对照。</figcaption></figure>
+<div class="reading"><b>黑白不是两种材料</b><p>它们是同一 bilayer interface 的不同 stacking registry。surface-potential contrast 是实验直接测量量，AB/BA polar interpretation 还要结合结构和计算。</p></div>
+<div class="reading"><b>KPFM 看见的不是 P 箭头本身</b><p>KPFM 直接给的是局域接触势差。作者再把 ΔV、domain geometry 与计算的 interfacial polarization 合起来，才把黑白区域解释成相反极化。因此“测量量”和“物理解释”要分开。</p></div>
 
-  <div class="source-shot">
-    <div class="source-head"><b>原文段落 · Wu & Li 2021</b><span>PNAS · Theoretical Model · PDF p.2</span></div>
-    <img src="../assets/foundations/wu2021-paragraph-model.webp" alt="Wu and Li 2021 complete paragraph explaining the sliding-ferroelectric model and reversal by lateral translation" />
-    <div class="source-note"><b>这一段的逻辑是连续的</b><p>作者先从“两个层并不等价”讲起：不等价带来净层间电荷转移，非中心对称的 AB 配位因此支持面外极化；随后才指出，AB 与反向极化状态之间相差一个面内平移，所以极化翻转可以表述成相对层间 translation。这里的主语一直是 <em>stacking registry</em>，不是一整块晶体凭空被面外电场横向推走。</p></div>
-  </div>
+<h2 id="multilayer">4. Meng 2022：多一层就多一个 interface，于是自然出现 intermediate state</h2>
+<p>bilayer 最简单：只有一个 vdW interface，最自然就是两个相反 interfacial dipole。trilayer 有两个 interface；它们可以同时朝上、同时朝下，也可以一上一下。于是总极化不必一步从最大正值跳到最大负值。</p>
+<div class="source-shot"><div class="source-head"><b>原文段落 · Meng et al. 2022</b><span>arXiv author manuscript · Abstract</span></div><img src="../assets/foundations/meng2022-paragraph-multistate.webp" alt="Meng 2022 complete abstract paragraph"/><div class="source-note"><b>“multiple polarization states”不是多拟合了几个台阶</b><p>作者把 multilayer 3R-MoS₂ 的 anomalous intermediate states 与 layer number、interlayer dipole coupling 和 generalized switching model 连在一起。重点是多个 interface dipole 的组合，而不是把每个中间平台当成一种全新的材料相。</p></div></div>
+<figure class="figure"><img src="../assets/foundations/meng2022-fig3e-multistate.webp" alt="Meng 2022 Figure 3e switching pathway schematic"/><figcaption>Meng et al. 2022，Fig. 3e 教学裁图。粉/蓝箭头代表不同界面的 dipole orientation；只翻转其中一个 interface，就可以先进入 intermediate state，再到 final state。</figcaption></figure>
+<div class="reading"><b>2L</b><p>1 个 interface dipole，最简状态空间就是 ↑ / ↓。</p></div>
+<div class="reading"><b>3L</b><p>2 个 interface dipole，↑↑、↑↓、↓↑、↓↓ 代表不同组合；净 P 因而可以有中间值。</p></div>
+<div class="reading"><b>下一章的问题已经出现</b><p>如果有多个 interface，电场来了以后先翻哪一个？两个 interface 会不会同步？中间态为什么能停留？这就从“什么是 sliding FE”进入了真正的 switching pathway 问题。</p></div>
 
-  <figure class="figure figure-focus">
-    <img src="../assets/foundations/wu2021-fig1-mechanism.webp" alt="Wu and Li 2021 Figure 1, mechanism of sliding ferroelectricity" />
-    <figcaption>Wu & Li, PNAS 118, e2115703118 (2021), Fig. 1（裁去 caption）。A：BN bilayer 的两种相反极化 registry 与平移路径；B：小角 twist 后的 moiré ferroelectric domains；C/D：其它材料中的同类 stacking 机制。</figcaption>
-  </figure>
-  <div class="reading"><b>先只看 A</b><p>上下两层的化学组成没变，改变的只是横向 registry。红色极化箭头却反向，说明 order parameter 的符号与相对堆垛绑定。</p></div>
-  <div class="reading"><b>再看势垒曲线</b><p>它告诉你两种 registry 之间存在一条低能量路径；但“有低势垒路径”与“真实器件里一定以整体 coherent sliding 切换”不是同一个结论。后者要等到 switching/pathway 与 DW 章节再判断。</p></div>
+<div class="aside"><b>Ji et al. 2023 放在这里读</b><p>先用前四篇建立直觉，再读 <i>General Theory for Bilayer Stacking Ferroelectricity</i>，用 layer symmetry / stacking operation 把“什么样的 bilayer 能出现 stacking ferroelectricity”形式化。这样群论是在解释已经看懂的物理，而不是先背判据。</p></div>
 
-  <h2 id="evidence">2. Yasuda 2021：AB / BA 的相反极化不只是计算图里的箭头</h2>
-  <p>Yasuda 等人把一个原本非铁电的 hBN 单层，通过平行堆垛组合成 polar bilayer。这个实验最重要的不是“又发现一种二维铁电”，而是把 <strong>stacking order ↔ polarization sign</strong> 变成可测的关系。</p>
+<h2>5. 学完这一页，边界要很清楚</h2>
+<div class="pair"><div class="boundary"><h3>现在可以比较稳地说</h3><p>特定 stacking registry 可以破坏整体反演对称性并伴随层间电荷重分布；AB / BA 可以对应相反面外极化；lateral translation 能连接相反 polar registry；多层体系因为存在多个 vdW interface，可以出现组合式 intermediate polarization states。</p></div><div class="boundary light"><h3>这一页还不能推出</h3><p>真实器件中面外电场怎样启动面内 motion；switching 是整层 coherent sliding、局域 nucleation，还是已有 domain wall propagation；实验 coercive field 对应哪一个 microscopic barrier。这些要靠后面的 switching/DW/pinning 证据。</p></div></div>
 
-  <div class="source-shot">
-    <div class="source-head"><b>原文段落 · Yasuda et al. 2021</b><span>Science 372, 1458 · Abstract</span></div>
-    <img src="../assets/foundations/yasuda2021-paragraph-abstract.webp" alt="Yasuda et al. 2021 complete abstract paragraph on stacking-engineered ferroelectricity in bilayer BN" />
-    <div class="source-note"><b>这里有两个层次不要混</b><p>第一层是结构：parallel-stacked bilayer BN 因 stacking 形成面外极化，而且极化方向随 stacking order 反转。第二层才是器件读出：他们借助邻接 graphene 的电阻响应追踪 polarization switching。结构机制与读出手段是两件事。</p></div>
-  </div>
-
-  <figure class="figure">
-    <img src="../assets/foundations/yasuda2021-fig1-stacking.webp" alt="Yasuda et al. 2021 Figure 1 with AA prime, AB and BA stacking and PFM maps" />
-    <figcaption>Yasuda et al., Science 372, 1458–1462 (2021), Fig. 1（裁去 caption）。A：bulk-like AA′；B/C：AB 与 BA；D：小角 twist 重构后的 AB/BA 网络；E/F：PFM phase / amplitude map。</figcaption>
-  </figure>
-  <div class="reading"><b>A 为什么不 polar</b><p>AA′ 是 180° 旋转后的自然 bulk stacking，会恢复整体反演对称性。没有一个唯一的 z 方向被选出来。</p></div>
-  <div class="reading"><b>B/C 为什么互为 ±P</b><p>AB 与 BA 交换了哪一种原子位于另一层原子正上方，局域轨道与电荷重分布随之反转。图中蓝色 charge-lobe 示意和红色 ±P 箭头就是作者给出的物理图像。</p></div>
-  <div class="reading"><b>E/F 真正告诉什么</b><p>重构后的相邻三角区域呈现不同 PFM contrast，并由 DW 分隔。这支持“不同 stacking domain 对应不同 polar state”，但 PFM contrast 本身不是一张直接的原子尺度电荷密度图。</p></div>
-
-  <h2>3. Vizner Stern 2021：把 AB / BA 从结构示意变成真实空间中的两种 domain</h2>
-  <p>同年另一篇 Science 从不同角度补上证据链：不是只看一条器件 hysteresis，而是在真实空间里看到交替的表面势 domain，再把这些区域与 AB / BA interfacial stacking 对上。</p>
-
-  <div class="source-shot">
-    <div class="source-head"><b>原文段落 · Vizner Stern et al. 2021</b><span>Science 372, 1462 · Abstract</span></div>
-    <img src="../assets/foundations/vizner2021-paragraph-abstract.webp" alt="Vizner Stern et al. 2021 complete abstract paragraph on interfacial polarization domains and sliding switching" />
-    <div class="source-note"><b>这篇和 Yasuda 不是重复</b><p>它强调的是空间图像：相邻 domain 的 normal polarization 相反，而两个 domain 之间只差一个 lattice-site lateral shift；biased tip 又可以把 polarization switching 与 lateral sliding 绑在同一个实验叙事里。</p></div>
-  </div>
-
-  <figure class="figure figure-focus">
-    <img src="../assets/foundations/vizner2021-fig2-domains.webp" alt="Vizner Stern et al. 2021 Figure 2 showing direct KPFM measurement of interfacial polarization domains" />
-    <figcaption>Vizner Stern et al., Science 372, 1462–1466 (2021), Fig. 2（裁去 caption）。B 是最重要的 panel：黑白交替的大块区域对应 AB / BA stacking，尖锐边界是 domain walls；C 给出跨过 domain 的 surface-potential profile。</figcaption>
-  </figure>
-  <div class="reading"><b>黑白不是“两个材料”</b><p>它们是同一 bilayer interface 的两种 registry。局域电势反差来自相反的界面极化。</p></div>
-  <div class="reading"><b>为什么还要 DFT / model</b><p>KPFM直接测的是表面电势，而不是把 polarization vector 本身拍出来。作者把测得的 ΔV、尺寸依赖和计算的 interfacial polarization 合起来，才把黑/白 domain 解释为 AB / BA 的相反极化。</p></div>
-
-  <h2 id="multilayer">4. 到了 3R-MoS₂，多一层就多一个界面：于是“极化”不再只有 +P / −P</h2>
-  <p>bilayer 只有一个 vdW interface，所以最自然的是两种反向 interfacial dipole。trilayer 有两个 interface，它们可以同向，也可以反向；总极化于是可以出现中间值。Meng 2022 把 layer number 本身变成了一个控制维度。</p>
-
-  <div class="source-shot">
-    <div class="source-head"><b>原文段落 · Meng et al. 2022</b><span>Nature Communications 13, 7696 · Abstract</span></div>
-    <img src="../assets/foundations/meng2022-paragraph-multistate.webp" alt="Meng et al. 2022 complete abstract paragraph explaining layer dependence and intermediate polarization states" />
-    <div class="source-note"><b>“multiple states”不是凭空多出几个 P 值</b><p>作者明确把异常 intermediate polarization states 与 multilayer 3R-MoS₂、layer number 和 interlayer dipole coupling 联系起来。换句话说，总 P 是多个界面偶极组合后的结果；每个 interface 的 stacking 是否翻转，会改变这个组合。</p></div>
-  </div>
-
-  <figure class="figure">
-    <img src="../assets/foundations/meng2022-fig3e-multistate.webp" alt="Meng et al. 2022 Figure 3e showing initial, intermediate, and final interfacial dipole configurations" />
-    <figcaption>Meng et al., Nat. Commun. 13, 7696 (2022), Fig. 3e，单独裁出的教学 panel。粉色/蓝色箭头表示两个界面的偶极方向；翻转其中一个界面，就能经过 intermediate state，而不是一次从全上跳到全下。</figcaption>
-  </figure>
-  <div class="reading"><b>2L</b><p>只有 1 个 interface dipole：最简化的状态空间就是 ↑ 或 ↓。</p></div>
-  <div class="reading"><b>3L</b><p>有 2 个 interface dipole：↑↑、↑↓、↓↑、↓↓ 都可能成为结构上可区分的组合，因此出现中间净极化并不奇怪。</p></div>
-  <div class="reading"><b>真正重要的后果</b><p>从这一刻开始，“switching”就必须问路径：先翻哪个 interface？两个 interface 会不会同时动？中间态能停多久？这正是下一章 Switching Pathways 的问题。</p></div>
-
-  <div class="aside"><b>Ji et al. 2023 放在这里读最合适</b><p>前面四篇先建立直觉；再读 <i>General Theory for Bilayer Stacking Ferroelectricity</i>，用 layer symmetry / stacking operation 把“哪些 bilayer 能 polar”形式化。第一次学习不需要先把群论放在最前面，否则容易知道判据却没建立物理图像。</p></div>
-
-  <h2>5. 学完这一页，应该把下面四句话说清楚</h2>
-  <div class="pair">
-    <div class="boundary"><h3>现在可以比较稳地说</h3><p>特定相对堆垛会破坏整体反演对称性并伴随层间电荷重分布；AB / BA 可以对应相反面外极化；相对 lateral translation 改变 registry，从而把一种 polar stacking 变成另一种；多层体系因为拥有多个 vdW interface，可以出现组合式 intermediate polarization states。</p></div>
-    <div class="boundary light"><h3>这一页还没有回答</h3><p>外加电场在真实器件中究竟怎样启动 lateral motion；switching 是整层 coherent sliding、局域 nucleation，还是已有 domain wall propagation；实验里的 coercive field 到底对应哪一个 microscopic barrier。这些不能从“AB ↔ BA 有低势垒”直接推出。</p></div>
-  </div>
-
-  <h2>这一页的阅读顺序</h2>
-  <div class="paper"><div class="meta">ENTRY · 2021</div><div><b>Wu & Li — Sliding ferroelectricity in 2D van der Waals materials</b><p>先用综述建立 registry → charge transfer → P → translation 的词汇。 <a href="https://doi.org/10.1073/pnas.2115703118">DOI</a></p></div></div>
-  <div class="paper"><div class="meta">SCIENCE · 2021</div><div><b>Yasuda et al. — Stacking-engineered ferroelectricity in bilayer boron nitride</b><p>看 AB/BA 与 ±P 的实验建立。 <a href="https://doi.org/10.1126/science.abd3230">DOI</a></p></div></div>
-  <div class="paper"><div class="meta">SCIENCE · 2021</div><div><b>Vizner Stern et al. — Interfacial ferroelectricity by van der Waals sliding</b><p>看真实空间的相反极化 domain 与 lateral-shift 图景。 <a href="https://doi.org/10.1126/science.abe8177">DOI</a></p></div></div>
-  <div class="paper"><div class="meta">NAT COMM · 2022</div><div><b>Meng et al. — Sliding induced multiple polarization states</b><p>从 bilayer 的二态进入 multilayer 的多界面组合。 <a href="https://doi.org/10.1038/s41467-022-35339-6">DOI</a></p></div></div>
-
-  <div class="next"><a href="../index.html#foundations"><span class="micro">← 回到知识图谱</span><br><b>Foundations</b></a><a href="../index.html#pathways" style="text-align:right"><span class="micro">下一章 →</span><br><b>Switching Pathways</b></a></div>
+<h2>建议阅读顺序</h2>
+<div class="paper"><div class="meta">ENTRY · 2021</div><div><b>Wu & Li — Sliding ferroelectricity in 2D van der Waals materials</b><p>建立 registry → charge transfer → P → translation 的机制语言。 <a href="https://doi.org/10.1073/pnas.2115703118">DOI</a></p></div></div>
+<div class="paper"><div class="meta">SCIENCE · 2021</div><div><b>Yasuda et al. — Stacking-engineered ferroelectricity in bilayer boron nitride</b><p>把 AB/BA stacking 与相反 polarization 变成实验可读出的关系。 <a href="https://doi.org/10.1126/science.abd3230">DOI</a></p></div></div>
+<div class="paper"><div class="meta">SCIENCE · 2021</div><div><b>Vizner Stern et al. — Interfacial ferroelectricity by van der Waals sliding</b><p>看真实空间的 AB/BA polar domains 与 lateral-shift 图像。 <a href="https://doi.org/10.1126/science.abe8177">DOI</a></p></div></div>
+<div class="paper"><div class="meta">NAT COMM · 2022</div><div><b>Meng et al. — Sliding induced multiple polarization states</b><p>从 bilayer 二态进入 multilayer 多界面组合与 intermediate states。 <a href="https://doi.org/10.1038/s41467-022-35339-6">DOI</a></p></div></div>
+<div class="next"><a href="../index.html#foundations"><span class="micro">← 回到知识图谱</span><br><b>Foundations</b></a><a href="../index.html#pathways" style="text-align:right"><span class="micro">下一章 →</span><br><b>Switching Pathways</b></a></div>
 </article>
 </body>
 </html>
