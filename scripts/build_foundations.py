@@ -115,15 +115,25 @@ save(trim(render(p, fitz.Rect(b[0], b[1], b[2], b[3]), 1800)), 'vizner2021-parag
 figp = page_with(viz, 'Fig. 2. Direct measurement of interfacial polarization')
 save(render(figp, largest_image_rect(figp), 1800), 'vizner2021-fig2-domains.webp')
 
-# Meng 2022 — OA Nature Communications version.
+# Meng 2022 — public arXiv manuscript. Its abstract is split into many PDF text
+# blocks/lines, so use the first and final sentence as geometric anchors instead
+# of trusting one text block.
 meng = fitz.open('/tmp/foundations/meng2022.pdf')
 p = page_with(meng, 'When the atomic layers in a non-centrosymmetric van der Waals structure')
-b = block_with(p, 'When the atomic layers in a non-centrosymmetric van der Waals structure')
-save(trim(render(p, fitz.Rect(b[0], b[1], b[2], b[3]), 1800)), 'meng2022-paragraph-multistate.webp')
+start_hits = p.search_for('When the atomic layers in a non-centrosymmetric van der Waals structure')
+end_hits = p.search_for('novel sliding ferroelectric devices')
+if not start_hits or not end_hits:
+    raise RuntimeError('Meng abstract anchors not found')
+s = start_hits[0]
+e = end_hits[-1]
+abstract_rect = fitz.Rect(20, max(0, s.y0-12), p.rect.width-20, min(p.rect.height, e.y1+12))
+save(trim(render(p, abstract_rect, 1800)), 'meng2022-paragraph-multistate.webp')
+
 figp = page_with(meng, 'Static transport properties of dual-gate FET devices')
 full_fig3 = render(figp, largest_image_rect(figp), 1800)
-# Panel e is the lower switching-pathway schematic; crop only that teaching unit.
-y0 = int(full_fig3.height * 0.61)
+# Panel e is the lower switching-pathway schematic. 0.66 preserves the "e"
+# label while removing the residual x-axis from panel d seen in artifact QA.
+y0 = int(full_fig3.height * 0.66)
 panel_e = trim(full_fig3.crop((0, y0, full_fig3.width, full_fig3.height)), margin=18)
 save(panel_e, 'meng2022-fig3e-multistate.webp')
 
