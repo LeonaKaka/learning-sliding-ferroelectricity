@@ -31,7 +31,6 @@ jobs:
           python3 -m pip install --quiet pymupdf pillow
           mkdir -p assets/foundations /tmp/foundations
 
-          # PNAS blocks GitHub-hosted runners; NSF PAR hosts the author/public copy.
           curl -fL --retry 3 -A 'Mozilla/5.0' \
             'https://par.nsf.gov/servlets/purl/10326015' \
             -o /tmp/foundations/wu2021.pdf
@@ -48,6 +47,8 @@ jobs:
           for f in /tmp/foundations/*.pdf; do
             head -c 4 "$f" | grep -q '%PDF' || { echo "Not a PDF: $f"; exit 1; }
           done
+          # NSF PAR uses "Figure 1" rather than PNAS's "Fig. 1" in the author copy.
+          sed -i 's/Fig\. 1\. Mechanism of sliding ferroelectricity/Mechanism of sliding ferroelectricity/' scripts/build_foundations.py
           python3 scripts/build_foundations.py
 
       - name: Build verified Domain Walls screenshots
