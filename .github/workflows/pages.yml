@@ -24,41 +24,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build Foundations from project Drive PDFs
-        shell: bash
-        run: |
-          set -euxo pipefail
-          python3 -m pip install --quiet pymupdf pillow gdown
-          mkdir -p assets/foundations /tmp/foundations
-
-          # Authoritative source = exact PDFs already stored in the project Drive folder.
-          gdown 'https://drive.google.com/uc?id=1dMUHlVVversECV6nQWuE7n7G-SJMdttM' -O /tmp/foundations/wu2021.pdf
-          gdown 'https://drive.google.com/uc?id=1OlJcU5xDKo8xvx5VTtpDjboVXxXn3X91' -O /tmp/foundations/yasuda2021.pdf
-          gdown 'https://drive.google.com/uc?id=1grWgJW1SO-yx5oBei_YWRvsFxKehmupP' -O /tmp/foundations/vizner2021.pdf
-          gdown 'https://drive.google.com/uc?id=1dvylaLxP6xklBg1OfWPiQXB60HAJ0OeD' -O /tmp/foundations/meng2022.pdf
-
-          for f in /tmp/foundations/*.pdf; do
-            head -c 4 "$f" | grep -q '%PDF' || { echo "Not a PDF: $f"; exit 1; }
-          done
-          python3 scripts/build_foundations_drive.py
-
-      - name: Build verified Domain Walls screenshots
-        shell: bash
-        run: bash scripts/build_domain_walls.sh
-
-      - name: Verify lesson image references
-        shell: bash
+      - name: Verify static lesson assets
         run: |
           python3 - <<'PY'
           from pathlib import Path
           import re
-          pages = [Path('modules/foundations.html'), Path('modules/domain-walls.html')]
-          for page in pages:
-              refs = re.findall(r'<img[^>]+src="([^"]+)"', page.read_text(encoding='utf-8'))
-              missing = [ref for ref in refs if not (page.parent/ref).resolve().exists()]
-              if missing:
-                  raise SystemExit(f'{page}: missing image refs: {missing}')
-              print(page, f'{len(refs)}/{len(refs)} images resolved')
+          for page in Path('modules').glob('*.html'):
+              text = page.read_text(encoding='utf-8')
+              for ref in re.findall(r'<img[^>]+src="([^"]+)"', text):
+                  if ref.startswith(('http://','https://','data:')):
+                      raise SystemExit(f'{page}: remote image not allowed: {ref}')
+                  target = (page.parent / ref).resolve()
+                  if not target.exists():
+                      raise SystemExit(f'{page}: missing static asset: {ref}')
+              print(f'OK {page}')
+          print('Static validation complete; no PDF download or crop generation during deploy.')
           PY
 
       - name: Configure Pages
