@@ -6,77 +6,99 @@
   <title>Domain Walls · Learning Sliding Ferroelectricity</title>
   <link rel="stylesheet" href="../styles.css" />
   <style>
-    .article{width:min(860px,calc(100% - 30px));margin:0 auto;padding:58px 0 90px}.crumb{font-size:11px;color:#77736c;margin-bottom:35px}.crumb a{color:inherit}.article h1{font:500 clamp(40px,6vw,70px)/.98 Georgia,serif;letter-spacing:-.045em;margin:0 0 18px}.deck{font:400 19px/1.55 Georgia,serif;color:#4f4c46;margin-bottom:44px}.article h2{font:500 31px/1.15 Georgia,serif;margin:54px 0 16px}.article h3{font:500 21px/1.25 Georgia,serif;margin:34px 0 10px}.article p{font-size:15px;line-height:1.82;color:#393733}.lead{font-size:17px!important}.quote{margin:28px 0;padding:18px 22px;border-left:3px solid var(--rust);background:var(--paper);font:400 19px/1.55 Georgia,serif}.quote cite{display:block;font:11px/1.5 Inter,sans-serif;color:#7d7870;margin-top:10px}.figure{margin:34px 0;background:var(--paper);border:1px solid var(--line);border-radius:15px;overflow:hidden}.figure img{width:100%;display:block;background:white}.figure figcaption{padding:14px 17px;font-size:11px;line-height:1.55;color:#666159;border-top:1px solid var(--line)}.figure figcaption a{color:inherit}.explain{display:grid;grid-template-columns:130px 1fr;gap:20px;padding:18px 0;border-top:1px solid var(--line)}.explain b{font:500 16px Georgia,serif}.explain p{margin:0;font-size:13px}.equation{font:500 28px/1.2 Georgia,serif;text-align:center;padding:24px;background:var(--paper);border:1px solid var(--line);border-radius:12px;margin:28px 0}.paperline{display:grid;grid-template-columns:80px 1fr;gap:16px;padding:17px 0;border-top:1px solid var(--line)}.paperline .year{font:11px ui-monospace,monospace;color:#8a857c}.paperline b{font:500 17px/1.25 Georgia,serif}.paperline p{font-size:12px;margin:6px 0 0}.boundary{background:#1d1e1c;color:#f4f0e7;border-radius:16px;padding:25px 27px;margin:36px 0}.boundary h3{margin:0 0 10px;color:white}.boundary p{color:#d6d2ca;margin:0}.next{margin-top:54px;padding-top:24px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:20px}.next a{color:#272522;text-decoration:none}.next b{font:500 18px Georgia,serif}
-    @media(max-width:600px){.explain{grid-template-columns:1fr}.paperline{grid-template-columns:55px 1fr}}
+    .article{width:min(940px,calc(100% - 30px));margin:0 auto;padding:58px 0 96px}.crumb{font-size:11px;color:#77736c;margin-bottom:34px}.crumb a{color:inherit}.article h1{font:500 clamp(40px,6vw,72px)/.98 Georgia,serif;letter-spacing:-.045em;margin:0 0 18px}.deck{font:400 20px/1.6 Georgia,serif;color:#4f4c46;margin:0 0 44px;max-width:830px}.article h2{font:500 32px/1.18 Georgia,serif;margin:62px 0 18px}.article h3{font:500 21px/1.3 Georgia,serif;margin:34px 0 11px}.article p{font-size:15px;line-height:1.86;color:#393733}.lead{font-size:17px!important}.question{padding:22px 24px;background:#1d1e1c;color:#f4f0e7;border-radius:14px;font:500 19px/1.55 Georgia,serif;margin:30px 0}.figure{margin:34px 0 16px;background:white;border:1px solid var(--line);border-radius:15px;overflow:hidden}.figure img{width:100%;height:auto;display:block;background:white}.figure figcaption{padding:14px 17px;font-size:11px;line-height:1.6;color:#666159;border-top:1px solid var(--line)}.figure-note{font-size:12px!important;color:#716d65!important;margin:8px 4px 34px!important}.source{margin:28px 0 34px;border:1px solid #d7d0c4;border-radius:14px;background:#fffdf7;overflow:hidden}.source-head{display:flex;justify-content:space-between;gap:12px;padding:11px 16px;border-bottom:1px solid #ded8cc;background:#f2eee5;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#746f67}.source blockquote{margin:0;padding:22px 24px 20px;font:400 16.5px/1.72 Georgia,"Times New Roman",serif;color:#292824}.source .note{border-top:1px solid #e4ded4;padding:17px 21px;background:#faf7f0}.source .note b{font:500 15px Georgia,serif}.source .note p{font-size:13px;line-height:1.72;margin:7px 0 0;color:#4d4943}.reading{display:grid;grid-template-columns:145px 1fr;gap:22px;padding:18px 0;border-top:1px solid var(--line)}.reading b{font:500 16px/1.35 Georgia,serif}.reading p{margin:0;font-size:13px;line-height:1.72}.equation{font:500 28px/1.2 Georgia,serif;text-align:center;padding:24px;background:var(--paper);border:1px solid var(--line);border-radius:12px;margin:28px 0}.boundary-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:38px 0}.boundary{border-radius:15px;padding:23px 24px;background:#1d1e1c;color:#f4f0e7}.boundary.light{background:#e7e0d3;color:#262522}.boundary h3{margin:0 0 10px;color:inherit}.boundary p{color:inherit;margin:0;font-size:13px;line-height:1.72}.paperline{display:grid;grid-template-columns:82px 1fr;gap:17px;padding:18px 0;border-top:1px solid var(--line)}.paperline .year{font:11px ui-monospace,monospace;color:#8a857c}.paperline b{font:500 17px/1.3 Georgia,serif}.paperline p{font-size:12px;margin:6px 0 0;line-height:1.65}.next{margin-top:56px;padding-top:25px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:20px}.next a{color:#272522;text-decoration:none}.next b{font:500 18px Georgia,serif}.micro{font-size:11px!important;color:#77736c!important}.em{font-family:Georgia,serif;font-style:italic}.markline{box-shadow:inset 0 -.42em 0 #ead9b8}
+    @media(max-width:700px){.reading{grid-template-columns:1fr}.boundary-grid{grid-template-columns:1fr}.paperline{grid-template-columns:56px 1fr}.source-head{display:block}.source-head span{display:block;margin-top:4px}}
   </style>
 </head>
 <body>
 <header class="top"><div class="wrap top-inner"><div class="brand">Learning Sliding Ferroelectricity<small>03 · Domain Walls</small></div><nav class="nav"><a href="../index.html#map">Map</a><a href="../index.html#walls">Module</a></nav></div></header>
 <article class="article">
   <div class="crumb"><a href="../index.html">首页</a> / Domain Walls: What Actually Moves?</div>
-  <h1>真正动的，也许从来不是“整层”。</h1>
-  <p class="deck">很多 sliding-ferroelectric 论文会画一张 AB → BA 的层间滑移示意图。这个图很容易让人形成一个直觉：面外电场一加，两层就沿面内方向整体错开，极化于是翻转。2025–2026 的几项工作把这个直觉改得很彻底。</p>
+  <h1>真正动的，到底是谁？</h1>
+  <p class="deck">AB → BA 的示意图很容易让人脑补成“两整层一起横着滑”。但真正的问题不是能量面上有没有一条低势垒路径，而是：<strong>一个沿 z 方向的电场，凭什么在 x–y 平面启动这次运动？</strong></p>
 
-  <p class="lead">这一章只解决一个问题：<strong>外场到底在推动谁？</strong> 如果答案是 domain wall，而不是完整单畴，那么后面的 pinning、creep、depinning 才不是“从统计物理硬套过来的词”，而是必须面对的动力学问题。</p>
+  <div class="question">这一页只做一件事：把“domain wall 很重要”这句空话拆开，追到三个可以检查的事实——完整单畴为什么难以被面外场横向推动；DW 为什么恰好能提供局域驱动力；实验又怎样看到墙被钉住、释放和继续移动。</div>
 
-  <h2>1. 先看最反直觉的一点：完整 AB / BA 单畴为什么可能不动？</h2>
-  <p>在 AB 或 BA ground state 里，面内三重旋转对称性会让由面外电场诱导的净面内驱动力相互抵消。Born effective charge 不是一个标量，而是张量；真正把面外电场和面内原子运动连接起来的是它的非对角分量。可问题是，在保持 C₃ 对称的完整单畴中，这些面内力最后仍然相消。</p>
+  <h2>1. 先把最容易混淆的两件事分开：低 barrier ≠ 电场能启动整体 sliding</h2>
+  <p>早期 sliding-FE 图景里，常见做法是在势能面上人为沿某个面内方向移动一层，算出 AB → saddle point → BA 的 barrier。这个计算告诉你<strong>如果系统已经沿那条坐标走了，代价有多大</strong>；但它没有自动回答外加的面外电场怎样提供面内力。</p>
 
-  <div class="quote">“only atoms at the DWs ... possess nonzero off-diagonal BEC elements”<cite>Ke, Liu & Liu, Phys. Rev. Lett. 135, 046201 (2025). 这里保留的是作者机制判断的短原句。</cite></div>
-
-  <p>所以关键不是“材料有没有 off-diagonal BEC”这么简单，而是<strong>哪里破坏了对称性</strong>。Domain wall 恰好就是这样的地方：AB 到 BA 的局域 stacking 必须连续过渡，墙附近的局域环境不再有完整 C₃ 对称性，于是面外场可以产生净的面内力。</p>
+  <div class="source">
+    <div class="source-head"><b>原文 · Ke, Liu & Liu 2025</b><span>PRL 135, 046201 · 正文第 2 页</span></div>
+    <blockquote>We first establish that both the tensorial nature of BECs and the breaking of C3 symmetry underpin polarization reversal in sliding ferroelectrics. In the AB-stacked h-BN bilayer, the boron (B) atom in the upper layer is positioned directly above the nitrogen (N) atom in the lower layer, resulting in charge transfer that generates a polarization along the −z direction (P−), as illustrated in Fig. 1(a). In a simple point-charge model, where each atom is assigned a fixed charge, applying E3 generates forces solely in the out-of-plane direction, rendering in-plane atomic motion impossible. In contrast, the BEC directly reflects the force on atom κ in direction j induced by a macroscopic electric field in direction i. The off-diagonal elements of the BEC tensor are critical for generating in-plane atomic forces. However, the presence of C3 symmetry cancels these in-plane forces in both AB and BA configurations. For each unit cell, the net in-plane force can be approximated from the out-of-plane field and the off-diagonal BEC elements.</blockquote>
+    <div class="note"><b>我会怎么读这一段</b><p>作者不是先说“DW 会动”，而是先找一个矛盾：外场是 z 向的，目标运动却在 x–y 面。BEC 是张量，因此原则上可以出现 <span class="em">E<sub>z</sub> → F<sub>x/y</sub></span> 的交叉响应；但在理想 AB、BA 单畴里，C₃ 对称性又把这些面内分量抵消了。这里真正卡住的是<strong>驱动力的对称性</strong>，不是势垒大小。</p></div>
+  </div>
 
   <div class="equation">F<sub>IP</sub> ∼ E<sub>z</sub> · Z<sup>*</sup><sub>off-diagonal</sub></div>
+  <div class="reading"><b>这条式子要记什么？</b><p>不必背具体张量指标。记住一件事：面外场能不能驱动面内位移，取决于局域环境允许不允许相应的非对角响应留下净值。</p></div>
+  <div class="reading"><b>所以 DW 为什么出现？</b><p>AB 到 BA 之间的墙本身就是 stacking 连续变化的区域。墙附近不再保持完整单畴的 C₃ 对称性，于是原本相消的面内力可以留下净值。墙因此不是“画在两个颜色之间的一条线”，而是外场真正能抓住的结构自由度。</p></div>
 
-  <div class="explain"><b>这条式子别背</b><p>它只是在提醒你：面内力不是凭空出现的。外场是 z 方向，但响应张量可以把 z 方向的驱动投影到 x/y 方向；是否留下非零净力，则取决于局域对称性。</p></div>
-  <div class="explain"><b>DW 的角色</b><p>墙不是“两个 domain 之间的一条画出来的线”。它是一段有限宽度的结构过渡区，正因为这里的局域 stacking 与对称性不同，它才成为电场真正能抓住的自由度。</p></div>
-
-  <h2>2. Chen 2026 把这个图像推到了一个很强的版本</h2>
-  <p>Chen 等人在 3R-MoS₂ 上把理论、分子动力学、KPFM 和器件尺度测量放在一起。他们的主张不是“DW 很重要”，而是更强：polarization reversal 本身可以是 nucleation-free 的，已有 DW 沿一个明确的一维路径移动就足以完成状态切换。</p>
-
+  <h2>2. Chen 2026 把这个机制画得很清楚：完整 domain 和 DW 的角色完全不同</h2>
   <figure class="figure">
-    <img src="https://journals.aps.org/prx/article/10.1103/q624-x397/deliverable/4127ad2c-d8cf-4cc4-927e-2d673d7ce75b" alt="Figure 1 from Chen et al. 2026 comparing conventional and sliding-ferroelectric switching" />
-    <figcaption>Chen et al., <i>Phys. Rev. X</i> 16, 011066 (2026), Fig. 1. 论文为 <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> 开放获取；图用于教学并保留作者、题名、期刊与 DOI 归属。原文 DOI: 10.1103/q624-x397。</figcaption>
+    <img src="../assets/domain-walls/chen2026-fig1.webp" alt="Chen et al. 2026 Fig. 1: conventional ferroelectricity versus sliding ferroelectricity" />
+    <figcaption>Chen et al., <i>Phys. Rev. X</i> 16, 011066 (2026), Fig. 1. 由原始 PDF 第 2 页先以 600 DPI 渲染，再精确裁到完整 Fig. 1；未包含页眉、caption 或正文。论文为 CC BY 4.0。</figcaption>
   </figure>
+  <p class="figure-note">看图顺序建议：先只看右上 (d)(e)，再看右中 (f)，最后才回头比较左侧传统铁电。这样不会被整张大图的信息量淹没。</p>
 
-  <p>这张图最值得看的不是“传统铁电 vs sliding FE”两个漂亮示意图，而是中间的逻辑差别。传统铁电里，新的反向 domain 可以在原本均匀的区域中成核，随后再长大；在他们提出的 sliding-FE 图像里，完整 domain 内没有启动整体 lateral translation 的面内驱动力，切换集中在已经存在的墙上。</p>
+  <div class="reading"><b>(d) 先看力场</b><p>AB/BA 对应的稳定极化态处，面内净力是零；偏离这些高对称 stacking 后才出现明显的面内力矢量。也就是说，完整单畴不是“有个很小的力但没滑动”，而是理想对称状态本身没有启动整体横向运动的净驱动力。</p></div>
+  <div class="reading"><b>(e) 再看 DW</b><p>把 AB 与 BA 接起来以后，红色的 <span class="em">F<sub>y</sub></span> 只集中在墙附近。这个 panel 是整页最重要的证据：同一个面外场，对 domain interior 和 DW region 的作用并不等价。</p></div>
+  <div class="reading"><b>(f) 才是“1D path”</b><p>这里的 1D 不是说材料是一维，而是说已有墙的推进把原本可在二维平面探索的切换过程压到一条受结构约束的传播方向上。</p></div>
 
-  <div class="quote">“no domain wall, no polarization reversal”<cite>Chen et al., Phys. Rev. X 16, 011066 (2026).</cite></div>
-
-  <p>这句话很适合记，但不要把它当成已经对所有 sliding ferroelectric 材料证明的定理。它在 3R-MoS₂ 和相应的机制模型中有很强的支持；而像 InSe:Y 这样的体系已经直接看到原子层滑移与不同的局域 reversal pathway。网站后面会专门把这些“看似冲突、其实模型层次不同”的结果放在一起比较。</p>
-
-  <h2>3. 真正接到我们后面理论主线上的，是 Fig. 2</h2>
-  <figure class="figure">
-    <img src="https://journals.aps.org/prx/article/10.1103/q624-x397/deliverable/b3901e83-d59a-41b0-882b-0dd4a8322331" alt="Figure 2 from Chen et al. 2026 showing domain-wall pinning and motion around bubbles and rough edges" />
-    <figcaption>Chen et al. 2026, Fig. 2. KPFM 中的 bubble 与 rough edge 充当局域 pinning sites；改变偏压以后，DW 可以被钉扎、弯曲、释放并继续运动。CC BY 4.0。</figcaption>
-  </figure>
-
-  <p>如果只看“DW 会移动”，我们还不需要统计物理。真正重要的是：墙遇到 bubble 或 rough edge 时会停住、弯曲；更强驱动又能让它越过去。换句话说，实际动力学已经自然出现了：</p>
-
-  <div class="equation">driving ↔ local pinning barrier ↔ wall deformation</div>
-
-  <p>这就是为什么下一章必须去学传统铁电里的 pinning、creep 和 roughness。它们不是和 sliding FE 长得像就拿来类比，而是在回答同一种结构性问题：一个 extended interface 在 quenched landscape 里怎样被驱动。</p>
-
-  <h2>4. Liu 2026 又补上了一个很重要的实验事实：不同地方并不一起切换</h2>
-  <p>Shear-mode Raman imaging 能直接区分 multilayer 3R-MoS₂ 的 stacking configuration。实验看到同一块 flake 中机械上分割开的区域可以独立响应，而且中间态停留时间差别很大；不同循环里 apparent critical field 也会变化。</p>
-
-  <div class="quote">“pinning sites strongly influence the dynamics”<cite>Liu et al., Phys. Rev. Lett. 136, 206202 (2026).</cite></div>
-
-  <p>这句话的分量在于：它把“pinning”从理论上合理的解释，推成了最新实验里必须面对的控制变量。此时再把整个样品写成一个单一 coercive field，就已经太粗了。</p>
-
-  <div class="boundary">
-    <h3>这一章真正证明了什么？</h3>
-    <p>强证据支持：在 3R-MoS₂ 这类 sliding ferroelectric 中，pre-existing domain wall 可以主导 polarization switching；DW 附近的局域 symmetry breaking 允许面外场产生面内驱动力；真实样品里的缺陷与边界会钉扎 DW，并让 switching field 与路径产生空间和循环差异。</p>
-  </div>
-  <div class="boundary">
-    <h3>这一章还没有证明什么？</h3>
-    <p>它还没有自动证明 sliding-FE DW 属于某个已知 depinning universality class。看到 pinning、threshold 或偶尔的 power law 都不够；要谈 universality，还需要系统的 v(E)、roughness、correlation length、finite-size scaling 和 exponent relations。</p>
+  <div class="source">
+    <div class="source-head"><b>原文 · Chen et al. 2026</b><span>PRX 16, 011066 · 正文第 3 页</span></div>
+    <blockquote>This domain-nucleation-free property in sliding ferroelectrics allows the control of polarization switching to shift entirely to DW motion, thereby defining a new paradigm, “no domain wall, no polarization reversal,” that is fundamentally distinct from conventional ferroelectric switching. Interestingly, as shown in Fig. 1(f), DW motion is inherently restricted to a one-dimensional (1D) path within a two-dimensional (2D) atomic plane. This confinement significantly reduces the stochasticity observed in conventional ferroelectrics, where DW motion often follows complex pathways [Fig. 1(b)]. Moreover, the inevitable imperfect factors during device fabrication, such as bubbles, or edges of the sample, introduce additional energy barriers, further constraining DW motion. These factors ensure that the polarization reversal is dominated by predictable switching dynamics, enabling well-defined programmable states [Fig. 1(g)].</blockquote>
+    <div class="note"><b>这里别只记那句 “no domain wall, no polarization reversal”</b><p>单独摘这句话会把作者论证截断。完整段落实际上同时说了三层东西：切换自由度从 nucleation 转移到已有 DW；墙的运动受到几何路径约束；真实器件里的 bubble / edge 又会给这条路径加上额外 barrier。第三层正是后面 pinning 章节的入口。</p></div>
   </div>
 
-  <h2>5. 三篇论文怎么连着读</h2>
-  <div class="paperline"><div class="year">2025</div><div><b>Ke et al. · Superlubric Motion of Wavelike Domain Walls</b><p>先解决“为什么电场抓住的是墙而不是完整 domain”。重点看 BEC tensor、C₃ symmetry 与局域 F_IP。</p></div></div>
-  <div class="paperline"><div class="year">2026</div><div><b>Chen et al. · Deterministic 1D Domain Wall Motion</b><p>再看理论图像怎样被 KPFM 和器件数据落地：nucleation-free、1D path、bubble/edge pinning。</p></div></div>
-  <div class="paperline"><div class="year">2026</div><div><b>Liu et al. · Shear-Mode Raman Imaging</b><p>最后看真实 multilayer device 里的 region dependence、intermediate-state dwell time 和 cycle-to-cycle variability。</p></div></div>
+  <h2>3. 机制不是只停在计算里：KPFM 直接看到了“在 domain 里加偏压”和“在墙上加偏压”的差别</h2>
+  <div class="source">
+    <div class="source-head"><b>原文 · Chen et al. 2026</b><span>RESULTS · KPFM paragraph</span></div>
+    <blockquote>To directly observe the DW motion at the microscopic scale, we conducted Kelvin probe force microscopy (KPFM) characterization. As shown in Fig. 2, clear domains with distinct surface potentials corresponding to AB- and BA-stacked configurations are observed, separated by narrow DWs. We applied a local electric field via the tip voltage to spatially control the polarization switching for tracking DW dynamics. By applying a positive tip voltage, the size of the BA domains increased, accompanied by a reduction in the size of the AB domains and the movement of the DW separating them. Notably, we exclude tip-induced artifacts in domain imaging and demonstrate that repeated dc bias within a single domain induces no DW motion, whereas a single dc bias at the wall readily drives domain expansion or contraction. These observations confirm that polarization switching is dominated by DW motion, thus motivating our focus on DW dynamics.</blockquote>
+    <div class="note"><b>这个对照比“看到墙移动”更有信息量</b><p><span class="markline">同样是局域 dc bias，打在完整单畴里不触发 DW motion；打在已有墙的位置，却能直接让 domain expansion / contraction。</span> 它把前面的 symmetry argument 和可观察的空间选择性接上了。</p></div>
+  </div>
+
+  <figure class="figure">
+    <img src="../assets/domain-walls/chen2026-fig2-pinning.webp" alt="Chen et al. 2026 Fig. 2 KPFM images of domain-wall pinning around a bubble and rough edges" />
+    <figcaption>Chen et al. 2026, Fig. 2. 原始 PDF 第 3 页以 600 DPI 渲染后裁出的完整 (a)–(f) 组图；保留 panel label、scale bar、箭头和 potential color bar，去掉 caption 与邻近正文。</figcaption>
+  </figure>
+
+  <div class="reading"><b>(a) → (b) → (c)</b><p>圆圈是 bubble。较低偏压时墙在 bubble 附近弯曲；提高偏压后墙跨过 bubble；再把偏压降回去，它仍继续移动并趋向更直的形貌。不要只看“颜色变了”，要盯着白色 DW 线和它相对 bubble 的位置。</p></div>
+  <div class="reading"><b>(d) → (e) → (f)</b><p>粗糙边缘提供多个离散 pinning sites。墙的局部段依次脱钉，运动不是整条墙同时平移。这已经很接近“extended interface in a heterogeneous landscape”的语言。</p></div>
+
+  <div class="source">
+    <div class="source-head"><b>原文 · Chen et al. 2026</b><span>紧接 Fig. 2 的下一段，跨页</span></div>
+    <blockquote>As shown in Fig. 2(a), after applying a 3.5-V probe voltage to the 3R-MoS2 sample, the movement of the DW was constrained upon encountering a bubble as a pinning site, resulting in localized deformation with inward curvature. However, when a higher voltage (5 V) was applied, the DW traversed the bubble, undergoing only slight deformation without splitting [Fig. 2(b)]. Upon reducing the voltage back to 3.5 V, the DW continued to move, and its morphology reverted to the expected straight configuration (the lowest-energy state), as shown in Fig. 2(c). We attribute this curvature to local pinning at the mesoscopic defect site, while the remaining segments of the domain wall retain nearly superlubric motion in the sliding ferroelectric. Notably, although lacking temporal resolution, KPFM unambiguously reveals nucleation through the spatial emergence of new domains. Indeed, no nucleation of oppositely polarized domains was observed throughout our measurements, even after multiple dc bias cycles applied within single-domain regions containing atomic-scale defects.</blockquote>
+    <div class="note"><b>这一段把“pinning”说得比 caption 更完整</b><p>bubble 并没有把整条墙冻结：局部段被钉住，其他部分还能移动，所以墙先发生弯曲；驱动再增大时才越过障碍。这种“弹性代价 + 局域 pinning + 外驱动”的竞争，就是下一章 creep / depinning 理论会抽象出来的东西。</p></div>
+  </div>
+
+  <h2>4. Liu 2026 提供了另一种、独立的结构读出：Raman 看到真实 multilayer device 不是一起切换</h2>
+  <p>Chen 的 KPFM 很适合看局部墙怎么动；Liu 的 shear-mode Raman imaging 则更适合回答器件尺度上“不同区域是不是走同一条路径”。这里最值得保留的不是一句“pinning strongly influences the dynamics”，而是它前后完整的实验逻辑。</p>
+
+  <div class="source">
+    <div class="source-head"><b>原文 · Liu et al. 2026</b><span>PRL 136, 206202 · Fig. 2 discussion</span></div>
+    <blockquote>We tracked the domain-switching process using Raman mapping of the shear-mode frequency. Figure 2(c) shows the optical micrograph of a trilayer flake exfoliated on a SiO2/Si substrate, and Fig. 2(d) presents the corresponding Raman map acquired immediately after the flake was integrated into Device D35. Guided by the stacking-dependent shear-mode frequencies discussed above, we identified predominantly ABC or CBA stacking across the flake, with small ABA or BAB domains located near the lower-right corner. The presence of multiple domains in as-fabricated devices is essential for ferroelectric switching; devices with a single domain showed no switching within our field window. This is consistent with the theoretical expectation that in the absence of DWs, an out-of-plane field generates no in-plane driving force for interlayer sliding.</blockquote>
+    <div class="note"><b>为什么这段值得和 Chen / Ke 放在一起</b><p>它不是同一组作者用另一种措辞重复理论，而是用 stacking-sensitive Raman 给出独立的器件尺度观察：实验场窗内，已有 multiple domains 的器件能切换，而 single-domain device 没有看到切换。</p></div>
+  </div>
+
+  <div class="source">
+    <div class="source-head"><b>原文 · Liu et al. 2026</b><span>同一页，Region 2 discussion</span></div>
+    <blockquote>At first glance, the switching behavior in Region 2 appears different from that in Region 1, as suggested by the Raman maps [Fig. 2(e)] and field-dependent Raman spectra at a given location [Fig. 2(g)]. However, because the switching in Region 2 was also reproducible, the same CBA ↔ ABA (or BAB) ↔ ABC pathway can be inferred, and the difference from Region 1 lies in the dwell time of intermediate states. In Region 2, the field at which the intermediate state emerged in the backward scan in Figs. 2(e) and 2(g) differs by ∼0.10 V/nm. Such variations in the apparent critical field were frequently observed, indicating that microscopic details of the switching can vary between cycles due to pinning by defects.</blockquote>
+    <div class="note"><b>这里终于能谨慎地谈“critical field 会漂”</b><p>作者说的是 <span class="em">apparent critical field</span>，并把循环间约 0.10 V/nm 的变化联系到 defect pinning。它提醒我们：器件 hysteresis 里读出来的一个 switching field，未必就是某个纯净体系唯一的“本征材料常数”。</p></div>
+  </div>
+
+  <h2>5. 到这里，哪些结论已经够硬，哪些还不能往前多说一步？</h2>
+  <div class="boundary-grid">
+    <div class="boundary"><h3>现在可以比较有把握地说</h3><p>在 3R-MoS₂ 等代表性 sliding ferroelectric 中，pre-existing DW 可以成为 polarization reversal 的主导自由度；DW region 的局域 symmetry breaking 允许面外场产生面内驱动力；bubble、rough edge 和 microscopic defects 会局域钉扎墙，并改变实际 switching pathway 与 apparent threshold。</p></div>
+    <div class="boundary light"><h3>现在还不能直接说</h3><p>这些结果本身没有证明 sliding-FE DW 属于某个已知 depinning universality class，也没有给出一组 universal exponents。看到 pinning、threshold、hysteresis，甚至某段 power law，都不等于完成了 universality identification。</p></div>
+  </div>
+
+  <p>所以从这一章走到下一章，问题会自然变成：<strong>既然墙是一条有内部弹性的 extended object，而缺陷给它一个空间不均匀的 landscape，那么低驱动下它怎么 creep？接近 threshold 时怎么 depin？形貌粗糙度和速度又该怎么标度？</strong></p>
+
+  <h2>6. 三篇论文的阅读顺序</h2>
+  <div class="paperline"><div class="year">2025</div><div><b>Ke, Liu & Liu · Superlubric Motion of Wavelike Domain Walls</b><p>先读机制：BEC tensor、C₃ symmetry、为什么完整 AB/BA 单畴的面内净力消失，以及为什么墙附近不一样。</p></div></div>
+  <div class="paperline"><div class="year">2026</div><div><b>Chen et al. · Deterministic 1D Domain Wall Motion</b><p>再看机制怎样落地到 3R-MoS₂：nucleation-free picture、局域 KPFM、bubble / edge pinning 和 constrained path。</p></div></div>
+  <div class="paperline"><div class="year">2026</div><div><b>Liu et al. · Shear-Mode Raman Imaging</b><p>最后换一种实验探针看真实 multilayer device：region dependence、intermediate-state dwell time、single-domain control 和 cycle-to-cycle threshold variation。</p></div></div>
+
+  <p class="micro">图像处理记录：本页 Fig. 1 / Fig. 2 均从 Chen 2026 原始 PDF 先按 600 DPI 渲染整页，再裁到单个完整 figure；裁剪后检查过 panel labels、坐标轴、scale bars、color bar、相邻图和页眉污染。部署时从公开 PDF 重新生成，避免出版社热链失效。</p>
 
   <div class="next"><a href="../index.html#walls">← 返回知识地图</a><a href="../index.html#pinning"><b>下一章：Pinning, Creep & Roughness →</b></a></div>
 </article>
