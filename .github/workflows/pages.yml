@@ -32,6 +32,9 @@ jobs:
           sudo apt-get install -y -qq poppler-utils python3-pil
           mkdir -p assets/domain-walls /tmp/papers
 
+          # Published/author-hosted copies for Ke and Chen; author arXiv manuscript
+          # for Liu because APS blocks GitHub Actions. All coordinates below were
+          # frozen only after 600-DPI whole-page inspection and visual review.
           curl -fL --retry 3 -A 'Mozilla/5.0' 'https://liutheory.westlake.edu.cn/pdf/Ke25p046201.pdf' -o /tmp/papers/ke2025.pdf
           curl -fL --retry 3 -A 'Mozilla/5.0' 'https://liutheory.westlake.edu.cn/pdf/Chen26p011066.pdf' -o /tmp/papers/chen2026.pdf
           curl -fL --retry 3 -A 'Mozilla/5.0' 'https://arxiv.org/pdf/2605.21210' -o /tmp/papers/liu2026.pdf
@@ -43,9 +46,44 @@ jobs:
           pdftoppm -f 3 -l 3 -singlefile -r 600 -png /tmp/papers/liu2026.pdf /tmp/papers/liu-p3
 
           python3 - <<'PY'
-          from PIL import Image
+          from PIL import Image, ImageOps, ImageDraw
           from pathlib import Path
+
           out = Path('assets/domain-walls')
+
+          def crop_resize(src, box, maxw):
+              page = Image.open(src).convert('RGB')
+              crop = page.crop(box)
+              if crop.width > maxw:
+                  crop = crop.resize((maxw, round(crop.height * maxw / crop.width)), Image.Resampling.LANCZOS)
+              return crop
+
+          def trim_text(im, margin=30):
+              gray = ImageOps.grayscale(im)
+              mask = gray.point(lambda x: 255 if x < 245 else 0)
+              bbox = mask.getbbox()
+              if not bbox:
+                  return im
+              l,t,r,b = bbox
+              return im.crop((max(0,l-margin), max(0,t-margin), min(im.width,r+margin), min(im.height,b+margin)))
+
+          def stitch(parts, outfile, maxw=1400):
+              gap = 72
+              width = max(p.width for p in parts)
+              height = sum(p.height for p in parts) + gap * (len(parts)-1)
+              canvas = Image.new('RGB', (width, height), 'white')
+              y = 0
+              for i, part in enumerate(parts):
+                  canvas.paste(part, ((width-part.width)//2, y))
+                  y += part.height
+                  if i < len(parts)-1:
+                      draw = ImageDraw.Draw(canvas)
+                      draw.line((40, y+gap//2, width-40, y+gap//2), fill=(210,210,210), width=2)
+                      y += gap
+              if canvas.width > maxw:
+                  canvas = canvas.resize((maxw, round(canvas.height*maxw/canvas.width)), Image.Resampling.LANCZOS)
+              canvas.save(out/outfile, 'WEBP', quality=90, method=6)
+
           specs = [
               ('/tmp/papers/ke-p2.png',   (400, 385, 2500, 1740), 'ke2025-fig1-bec-force.webp', 1800),
               ('/tmp/papers/ke-p2.png',   (2550, 2240, 4780, 4758), 'ke2025-paragraph-bec.webp', 1400),
@@ -55,32 +93,52 @@ jobs:
               ('/tmp/papers/chen-p3.png', (2600, 3148, 4670, 4918), 'chen2026-fig2-pinning.webp', 1800),
               ('/tmp/papers/liu-p3.png',  (780, 338, 4600, 2245), 'liu2026-fig2-raman-switching.webp', 1800),
           ]
+
           for src, box, name, maxw in specs:
-              page = Image.open(src).convert('RGB')
-              crop = page.crop(box)
-              if crop.width > maxw:
-                  crop = crop.resize((maxw, round(crop.height * maxw / crop.width)), Image.Resampling.LANCZOS)
-              crop.save(out / name, 'WEBP', quality=90, method=6)
+              crop_resize(src, box, maxw).save(out/name, 'WEBP', quality=90, method=6)
 
-          for src,name in [('/tmp/papers/liu-p2.png','_verify-liu-page2.webp'),('/tmp/papers/liu-p3.png','_verify-liu-page3.webp')]:
-              dbg=Image.open(src).convert('RGB').resize((1700,2200),Image.Resampling.LANCZOS)
-              dbg.save(out/name,'WEBP',quality=86,method=6)
+          # Liu full paragraph 1: begins at the bottom of arXiv p.2 and continues
+          # at the top of p.3. We stitch the two untouched text fragments in
+          # reading order; only surrounding whitespace is removed.
+          liu_p2 = Image.open('/tmp/papers/liu-p2.png').convert('RGB')
+          liu_p3 = Image.open('/tmp/papers/liu-p3.png').convert('RGB')
+          if liu_p2.size != (5100,6600) or liu_p3.size != (5100,6600):
+              raise SystemExit(f'Unexpected Liu page geometry: {liu_p2.size}, {liu_p3.size}')
 
-          expected=[name for _,_,name,_ in specs]+['_verify-liu-page2.webp','_verify-liu-page3.webp']
+          single_a = trim_text(liu_p2.crop((2610,4884,4815,6570)))
+          single_b = trim_text(liu_p3.crop((240,2985,2550,3405)))
+          stitch([single_a, single_b], 'liu2026-paragraph-single-domain.webp')
+
+          # Liu full paragraph 2: starts at the bottom of the left column on p.3
+          # and continues at the top of the right column. Again, no text is
+          # altered; the two column fragments are simply joined in reading order.
+          pin_a = trim_text(liu_p3.crop((240,5814,2550,6570)))
+          pin_b = trim_text(liu_p3.crop((2580,2985,4830,4095)))
+          stitch([pin_a, pin_b], 'liu2026-paragraph-pinning.webp')
+
+          expected = [name for _,_,name,_ in specs] + [
+              'liu2026-paragraph-single-domain.webp',
+              'liu2026-paragraph-pinning.webp',
+          ]
           for name in expected:
-              p=out/name
-              if not p.exists() or p.stat().st_size < 20_000: raise SystemExit(f'bad asset: {name}')
-              with Image.open(p) as im: im.verify()
+              p = out/name
+              if not p.exists() or p.stat().st_size < 20_000:
+                  raise SystemExit(f'bad asset: {name}')
+              with Image.open(p) as im:
+                  im.verify()
+              print(name, p.stat().st_size)
           PY
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
           enablement: true
+
       - name: Upload static site
         uses: actions/upload-pages-artifact@v3
         with:
           path: .
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
