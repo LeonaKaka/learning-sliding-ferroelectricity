@@ -1,0 +1,57 @@
+name: One-time freeze Domain Walls assets
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/hydrate-domain-assets.yml
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  hydrate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Restore verified assets from last successful Pages artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euxo pipefail
+          rm -rf /tmp/pages-artifact /tmp/pages-site
+          mkdir -p /tmp/pages-artifact /tmp/pages-site assets/domain-walls
+          gh api repos/${GITHUB_REPOSITORY}/actions/artifacts/9731551156/zip > /tmp/pages-artifact/pages.zip
+          unzip -q /tmp/pages-artifact/pages.zip -d /tmp/pages-artifact
+          tar -xf /tmp/pages-artifact/artifact.tar -C /tmp/pages-site
+          cp /tmp/pages-site/assets/domain-walls/*.webp assets/domain-walls/
+          python3 - <<'PY'
+          from pathlib import Path
+          from PIL import Image
+          paths = sorted(Path('assets/domain-walls').glob('*.webp'))
+          if len(paths) != 9:
+              raise SystemExit(f'Expected 9 Domain Walls assets, got {len(paths)}')
+          for p in paths:
+              if p.stat().st_size < 20_000:
+                  raise SystemExit(f'Suspicious asset: {p} ({p.stat().st_size})')
+              with Image.open(p) as im:
+                  im.verify()
+              print(p, p.stat().st_size)
+          PY
+
+      - name: Commit static assets
+        shell: bash
+        run: |
+          set -euxo pipefail
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add assets/domain-walls
+          git diff --cached --quiet && exit 0
+          git commit -m 'Freeze verified Domain Walls assets'
+          git push origin HEAD:main
