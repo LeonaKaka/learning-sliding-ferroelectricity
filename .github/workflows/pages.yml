@@ -32,13 +32,18 @@ jobs:
           sudo apt-get install -y -qq poppler-utils python3-pil
           mkdir -p assets/domain-walls /tmp/paper-crops
 
-          # Chen et al., PRX 16, 011066 (2026), CC BY 4.0.
-          # Use the authors' public copy because APS blocks automated runners.
-          # Crop coordinates were fixed only after rendering the exact paper
-          # at 600 DPI and visually checking the whole page first.
+          # Author-hosted copies of the exact published papers.
+          # Crop coordinates are frozen only after a 600-DPI whole-page render
+          # and visual inspection of the resulting figure boundaries.
+          curl -fL --retry 3 -A 'Mozilla/5.0' \
+            'https://liutheory.westlake.edu.cn/pdf/Ke25p046201.pdf' \
+            -o /tmp/paper-crops/ke2025.pdf
           curl -fL --retry 3 -A 'Mozilla/5.0' \
             'https://liutheory.westlake.edu.cn/pdf/Chen26p011066.pdf' \
             -o /tmp/paper-crops/chen2026.pdf
+
+          pdftoppm -f 2 -l 2 -singlefile -r 600 -png \
+            /tmp/paper-crops/ke2025.pdf /tmp/paper-crops/ke-p2
           pdftoppm -f 2 -l 2 -singlefile -r 600 -png \
             /tmp/paper-crops/chen2026.pdf /tmp/paper-crops/chen-p2
           pdftoppm -f 3 -l 3 -singlefile -r 600 -png \
@@ -50,9 +55,11 @@ jobs:
 
           out = Path('assets/domain-walls')
           specs = [
-              # exact full Fig. 1: no page header, caption or neighboring text
+              # Ke 2025 Fig. 1: AB/BA structures + displacement-space force map
+              ('/tmp/paper-crops/ke-p2.png', (400, 385, 2500, 1725), 'ke2025-fig1-bec-force.webp'),
+              # Chen 2026 full Fig. 1
               ('/tmp/paper-crops/chen-p2.png', (440, 360, 4680, 3710), 'chen2026-fig1.webp'),
-              # exact full Fig. 2: KPFM bubble/rough-edge pinning panels (a-f)
+              # Chen 2026 full Fig. 2: bubble/rough-edge pinning panels (a-f)
               ('/tmp/paper-crops/chen-p3.png', (2600, 3150, 4670, 4885), 'chen2026-fig2-pinning.webp'),
           ]
           for src, box, name in specs:
