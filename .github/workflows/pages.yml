@@ -34,7 +34,7 @@ jobs:
           curl -fL --retry 3 -A 'Mozilla/5.0' 'https://par.nsf.gov/servlets/purl/10326015' -o /tmp/foundations/wu2021.pdf
           curl -fL --retry 3 -A 'Mozilla/5.0' 'https://arxiv.org/pdf/2010.06600' -o /tmp/foundations/yasuda2021.pdf
           curl -fL --retry 3 -A 'Mozilla/5.0' 'https://arxiv.org/pdf/2010.05182' -o /tmp/foundations/vizner2021.pdf
-          curl -fL --retry 3 -A 'Mozilla/5.0' 'https://pmc.ncbi.nlm.nih.gov/articles/PMC9744910/pdf/41467_2022_Article_35339.pdf' -o /tmp/foundations/meng2022.pdf
+          curl -fL --retry 3 -A 'Mozilla/5.0' 'https://arxiv.org/pdf/2211.05277' -o /tmp/foundations/meng2022.pdf
 
           for f in /tmp/foundations/*.pdf; do
             head -c 4 "$f" | grep -q '%PDF' || { echo "Not a PDF: $f"; exit 1; }
