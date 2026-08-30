@@ -31,19 +31,12 @@ jobs:
           unzip -q /tmp/pages-artifact/pages.zip -d /tmp/pages-artifact
           tar -xf /tmp/pages-artifact/artifact.tar -C /tmp/pages-site
           cp /tmp/pages-site/assets/domain-walls/*.webp assets/domain-walls/
-          python3 - <<'PY'
-          from pathlib import Path
-          from PIL import Image
-          paths = sorted(Path('assets/domain-walls').glob('*.webp'))
-          if len(paths) != 9:
-              raise SystemExit(f'Expected 9 Domain Walls assets, got {len(paths)}')
-          for p in paths:
-              if p.stat().st_size < 20_000:
-                  raise SystemExit(f'Suspicious asset: {p} ({p.stat().st_size})')
-              with Image.open(p) as im:
-                  im.verify()
-              print(p, p.stat().st_size)
-          PY
+          test "$(find assets/domain-walls -maxdepth 1 -type f -name '*.webp' | wc -l)" -eq 9
+          for f in assets/domain-walls/*.webp; do
+            test "$(stat -c%s "$f")" -ge 20000
+            file "$f" | grep -q 'Web/P image'
+            echo "$f $(stat -c%s "$f")"
+          done
 
       - name: Commit static assets
         shell: bash
