@@ -24,6 +24,45 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Build paper figure crops from source PDFs
+        shell: bash
+        run: |
+          set -euxo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq poppler-utils python3-pil
+          mkdir -p assets/domain-walls /tmp/paper-crops
+
+          # Chen et al., PRX 16, 011066 (2026), CC BY 4.0.
+          # The crop coordinates below were fixed only after rendering the
+          # source PDF at 600 DPI and visually checking the whole page first.
+          curl -fL --retry 3 -A 'Mozilla/5.0' \
+            'https://journals.aps.org/prx/pdf/10.1103/q624-x397' \
+            -o /tmp/paper-crops/chen2026.pdf
+          pdftoppm -f 2 -l 2 -singlefile -r 600 -png \
+            /tmp/paper-crops/chen2026.pdf /tmp/paper-crops/chen-p2
+          pdftoppm -f 3 -l 3 -singlefile -r 600 -png \
+            /tmp/paper-crops/chen2026.pdf /tmp/paper-crops/chen-p3
+
+          python3 - <<'PY'
+          from PIL import Image
+          from pathlib import Path
+
+          out = Path('assets/domain-walls')
+          specs = [
+              # exact full Fig. 1: no page header, caption or neighboring text
+              ('/tmp/paper-crops/chen-p2.png', (440, 360, 4680, 3710), 'chen2026-fig1.webp'),
+              # exact full Fig. 2: KPFM bubble/rough-edge pinning panels (a-f)
+              ('/tmp/paper-crops/chen-p3.png', (2600, 3150, 4670, 4885), 'chen2026-fig2-pinning.webp'),
+          ]
+          for src, box, name in specs:
+              im = Image.open(src).convert('RGB').crop(box)
+              maxw = 1900
+              if im.width > maxw:
+                  im = im.resize((maxw, round(im.height * maxw / im.width)), Image.Resampling.LANCZOS)
+              im.save(out / name, 'WEBP', quality=88, method=6)
+              print(name, im.size)
+          PY
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
