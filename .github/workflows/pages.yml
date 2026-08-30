@@ -24,30 +24,31 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build paper figure crops from source PDFs
+      - name: Build verified paper screenshots
         shell: bash
         run: |
           set -euxo pipefail
           sudo apt-get update -qq
           sudo apt-get install -y -qq poppler-utils python3-pil
-          mkdir -p assets/domain-walls /tmp/paper-crops
+          mkdir -p assets/domain-walls /tmp/papers
 
-          # Author-hosted copies of the exact published papers.
-          # Crop coordinates are frozen only after a 600-DPI whole-page render
-          # and visual inspection of the resulting figure boundaries.
+          # These crop coordinates were frozen only after inspecting the user's
+          # Drive PDFs as 600-DPI whole-page renders, then checking every crop
+          # for complete panel labels, axes, color bars, scale bars and paragraph boundaries.
           curl -fL --retry 3 -A 'Mozilla/5.0' \
             'https://liutheory.westlake.edu.cn/pdf/Ke25p046201.pdf' \
-            -o /tmp/paper-crops/ke2025.pdf
+            -o /tmp/papers/ke2025.pdf
           curl -fL --retry 3 -A 'Mozilla/5.0' \
             'https://liutheory.westlake.edu.cn/pdf/Chen26p011066.pdf' \
-            -o /tmp/paper-crops/chen2026.pdf
+            -o /tmp/papers/chen2026.pdf
+          curl -fL --retry 3 -A 'Mozilla/5.0' \
+            'https://journals.aps.org/prl/pdf/10.1103/2xv1-t31x' \
+            -o /tmp/papers/liu2026.pdf
 
-          pdftoppm -f 2 -l 2 -singlefile -r 600 -png \
-            /tmp/paper-crops/ke2025.pdf /tmp/paper-crops/ke-p2
-          pdftoppm -f 2 -l 2 -singlefile -r 600 -png \
-            /tmp/paper-crops/chen2026.pdf /tmp/paper-crops/chen-p2
-          pdftoppm -f 3 -l 3 -singlefile -r 600 -png \
-            /tmp/paper-crops/chen2026.pdf /tmp/paper-crops/chen-p3
+          pdftoppm -f 2 -l 2 -singlefile -r 600 -png /tmp/papers/ke2025.pdf /tmp/papers/ke-p2
+          pdftoppm -f 2 -l 2 -singlefile -r 600 -png /tmp/papers/chen2026.pdf /tmp/papers/chen-p2
+          pdftoppm -f 3 -l 3 -singlefile -r 600 -png /tmp/papers/chen2026.pdf /tmp/papers/chen-p3
+          pdftoppm -f 3 -l 3 -singlefile -r 600 -png /tmp/papers/liu2026.pdf /tmp/papers/liu-p3
 
           python3 - <<'PY'
           from PIL import Image
@@ -55,31 +56,35 @@ jobs:
 
           out = Path('assets/domain-walls')
           specs = [
-              # Ke 2025 Fig. 1: AB/BA structures + displacement-space force map
-              ('/tmp/paper-crops/ke-p2.png', (400, 385, 2500, 1725), 'ke2025-fig1-bec-force.webp'),
-              # Chen 2026 full Fig. 1
-              ('/tmp/paper-crops/chen-p2.png', (440, 360, 4680, 3710), 'chen2026-fig1.webp'),
-              # Chen 2026 full Fig. 2: bubble/rough-edge pinning panels (a-f)
-              ('/tmp/paper-crops/chen-p3.png', (2600, 3150, 4670, 4885), 'chen2026-fig2-pinning.webp'),
-          ]
-          for src, box, name in specs:
-              im = Image.open(src).convert('RGB').crop(box)
-              maxw = 1900
-              if im.width > maxw:
-                  im = im.resize((maxw, round(im.height * maxw / im.width)), Image.Resampling.LANCZOS)
-              im.save(out / name, 'WEBP', quality=88, method=6)
-              print(name, im.size)
+              # source, crop box, output name, target max width
+              ('/tmp/papers/ke-p2.png',   (400, 385, 2500, 1740), 'ke2025-fig1-bec-force.webp', 1800),
+              ('/tmp/papers/ke-p2.png',   (2550, 2240, 4780, 4725), 'ke2025-paragraph-bec.webp', 1400),
 
-          # Insert the verified Ke figure directly beside the paragraph that
-          # explains the BEC/C3 argument. This modifies only the deploy artifact.
-          page = Path('modules/domain-walls.html')
-          html = page.read_text(encoding='utf-8')
-          needle = '  <div class="equation">F<sub>IP</sub>'
-          figure = '''  <figure class="figure">\n    <img src="../assets/domain-walls/ke2025-fig1-bec-force.webp" alt="Ke et al. 2025 Fig. 1 showing AB and BA stacking and the in-plane force map" />\n    <figcaption>Ke, Liu &amp; Liu, <i>Phys. Rev. Lett.</i> 135, 046201 (2025), Fig. 1. 原始 PDF 第 2 页先以 600 DPI 渲染，再裁到完整 (a)–(d) 组图；保留结构示意、位移坐标、力矢量和 color bar，去掉页眉、caption 与邻近正文。</figcaption>\n  </figure>\n  <p class="figure-note">这张图和上面的原文是同一件事：先看 (a)(b) 的 AB/BA，再看 (d) 三个极化稳定点附近的力场。稳定点处净面内驱动力消失，偏离高对称 stacking 后才出现非零矢量。</p>\n\n'''
-          if needle not in html:
-              raise SystemExit('Ke figure insertion point not found')
-          html = html.replace(needle, figure + needle, 1)
-          page.write_text(html, encoding='utf-8')
+              ('/tmp/papers/chen-p2.png', (650, 380, 4510, 3550), 'chen2026-fig1.webp', 1800),
+              ('/tmp/papers/chen-p3.png', (400, 2440, 2550, 4140), 'chen2026-paragraph-no-dw.webp', 1400),
+              ('/tmp/papers/chen-p3.png', (2580, 540, 4750, 2560), 'chen2026-paragraph-kpfm.webp', 1400),
+              ('/tmp/papers/chen-p3.png', (2600, 3148, 4670, 4918), 'chen2026-fig2-pinning.webp', 1800),
+
+              ('/tmp/papers/liu-p3.png',  (780, 338, 4600, 2245), 'liu2026-fig2-raman-switching.webp', 1800),
+              ('/tmp/papers/liu-p3.png',  (400, 3480, 2550, 5000), 'liu2026-paragraph-single-domain.webp', 1400),
+              ('/tmp/papers/liu-p3.png',  (2580, 4300, 4750, 5580), 'liu2026-paragraph-pinning.webp', 1400),
+          ]
+
+          for src, box, name, maxw in specs:
+              page = Image.open(src).convert('RGB')
+              crop = page.crop(box)
+              if crop.width > maxw:
+                  crop = crop.resize((maxw, round(crop.height * maxw / crop.width)), Image.Resampling.LANCZOS)
+              crop.save(out / name, 'WEBP', quality=90, method=6)
+              print(name, crop.size)
+
+          expected = [name for _,_,name,_ in specs]
+          for name in expected:
+              p = out / name
+              if not p.exists() or p.stat().st_size < 20_000:
+                  raise SystemExit(f'missing or suspiciously small asset: {name}')
+              with Image.open(p) as im:
+                  im.verify()
           PY
 
       - name: Configure Pages
