@@ -112,7 +112,7 @@ jobs:
           # Liu full paragraph 2: starts at the bottom of the left column on p.3
           # and continues at the top of the right column. Again, no text is
           # altered; the two column fragments are simply joined in reading order.
-          pin_a = trim_text(liu_p3.crop((240,5814,2550,6570)))
+          pin_a = trim_text(liu_p3.crop((240,5862,2550,6570)))
           pin_b = trim_text(liu_p3.crop((2580,2985,4830,4095)))
           stitch([pin_a, pin_b], 'liu2026-paragraph-pinning.webp')
 
