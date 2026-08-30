@@ -11,126 +11,37 @@
 <header class="top">
   <div class="wrap top-inner">
     <div class="brand">Learning Sliding Ferroelectricity<small>literature-first field guide · v0.2</small></div>
-    <nav class="nav">
-      <a href="#map">Knowledge map</a>
-      <a href="#modules">Learning route</a>
-      <a href="#core">Core papers</a>
-    </nav>
+    <nav class="nav"><a href="#map">Knowledge map</a><a href="#modules">Learning route</a><a href="#core">Core papers</a></nav>
   </div>
 </header>
 
 <main>
   <section class="wrap hero">
-    <div>
-      <div class="kicker">A paper-based learning route</div>
-      <h1>How does a sliding ferroelectric actually switch?</h1>
-      <p>这不是论文收藏夹。整站围绕一个问题展开：从堆垛极化出发，为什么研究会自然走向 domain wall、pinning、creep、depinning、disorder 与 finite-size scaling。每篇 Core paper 都承担一个明确的教学任务。</p>
-    </div>
-    <aside class="hero-note">
-      <b>阅读原则</b>
-      先看原论文的关键图和作者自己的短表述，再读中文解释。网站不会把“作者声称什么”和“数据真正支持什么”混在一起，也不会为了完整而把所有相关论文都塞进主线。
-    </aside>
+    <div><div class="kicker">A paper-based learning route</div><h1>How does a sliding ferroelectric actually switch?</h1><p>这不是论文收藏夹。整站围绕一个问题展开：从堆垛极化出发，为什么研究会自然走向 domain wall、pinning、creep、depinning、disorder 与 finite-size scaling。每篇 Core paper 都承担一个明确的教学任务。</p></div>
+    <aside class="hero-note"><b>阅读原则</b>先看原论文的关键图和作者自己的完整论述段落，再读中文解释。网站不会把“作者声称什么”和“数据真正支持什么”混在一起，也不会为了完整而把所有相关论文都塞进主线。</aside>
   </section>
 
-  <section class="wrap" id="map">
-    <div class="section-head">
-      <h2>Knowledge map</h2>
-      <p>首页只保留 8 个母节点。论文是这些知识节点的证据与入口，而不是把几十篇 paper 直接画成蜘蛛网。</p>
-    </div>
-    <div class="map">
-      <div class="map-grid" id="mapGrid"></div>
-      <div class="thesis">
-        <b>主线不是年份</b>
-        <p>What is sliding FE → switching pathway → domain wall → pinning/creep → depinning → disorder/RFIM → numerical modeling → current frontiers。前面的概念只在后面的论文真正需要时引入。</p>
-      </div>
-    </div>
-  </section>
+  <section class="wrap" id="map"><div class="section-head"><h2>Knowledge map</h2><p>首页只保留 8 个母节点。论文是这些知识节点的证据与入口，而不是把几十篇 paper 直接画成蜘蛛网。</p></div><div class="map"><div class="map-grid" id="mapGrid"></div><div class="thesis"><b>主线不是年份</b><p>What is sliding FE → switching pathway → domain wall → pinning/creep → depinning → disorder/RFIM → numerical modeling → current frontiers。前面的概念只在后面的论文真正需要时引入。</p></div></div></section>
 
-  <section class="wrap modules" id="modules">
-    <div class="section-head">
-      <h2>Learning route</h2>
-      <p>Core 论文做深，Supporting 论文留作分支。每个模块先给一个必须回答的问题，再决定读哪些原文、看哪些图。</p>
-    </div>
-    <div id="moduleList"></div>
-  </section>
+  <section class="wrap modules" id="modules"><div class="section-head"><h2>Learning route</h2><p>Core 论文做深，Supporting 论文留作分支。每个模块先给一个必须回答的问题，再决定读哪些完整原文段落、看哪些原图。</p></div><div id="moduleList"></div></section>
 
-  <section class="wrap" id="core">
-    <div class="section-head">
-      <h2>24 Core papers</h2>
-      <p>这 24 篇是第一版真正需要做“原图 + 原句 + 中文讲解”的文献。Frontier 模块会复用其中最近的几篇，而不是额外堆一组重复论文。</p>
-    </div>
-    <div class="core-table" id="coreTable"></div>
-  </section>
+  <section class="wrap" id="core"><div class="section-head"><h2>24 Core papers</h2><p>这 24 篇是第一版真正需要做“原图 + 原文段落 + 中文讲解”的文献。Frontier 模块会复用其中最近的几篇，而不是额外堆一组重复论文。</p></div><div class="core-table" id="coreTable"></div></section>
 </main>
 
-<footer class="footer">
-  <div class="wrap"><b>Editorial rule:</b> 原图优先使用 OA / CC 许可版本；非开放论文只做必要的短引文和来源指向。每个长页面都要回答“证明了什么 / 没证明什么”。</div>
-</footer>
+<footer class="footer"><div class="wrap"><b>Editorial rule:</b> 每个长页面都要保留作者论述的上下文，并明确区分“论文直接证据”“作者解释”和“我们的教学性连接”；每张论文截图都经过高 DPI 整页渲染、精裁和视觉复核。</div></footer>
 
 <script src="curriculum.js"></script>
 <script>
-const data = window.LSF_DATA;
-const byId = Object.fromEntries(data.papers.map(p => [p.id,p]));
-
-function renderMap(){
-  const host=document.getElementById('mapGrid');
-  data.modules.forEach((m,i)=>{
-    const n=document.createElement('article');
-    n.className='map-node';
-    n.innerHTML=`<div class="map-index">${m.number}</div><h3>${m.title}</h3><p>${m.short}<br>${m.core.length} 个主线 paper 节点</p>`;
-    n.onclick=()=>document.getElementById(m.id).scrollIntoView({behavior:'smooth'});
-    host.appendChild(n);
-    if(i<data.modules.length-1){
-      const c=document.createElement('div');
-      c.className='map-node center';
-      c.innerHTML='<div class="connector">↓</div>';
-      host.appendChild(c);
-    }
-  });
-}
-
-function paperCard(p){
-  return `<article class="paper">
-    <div class="paper-top"><span class="paper-year">${p.year}</span><span class="paper-kind">${p.kind}</span></div>
-    <h3>${p.title}</h3><div class="authors">${p.authors}</div>
-    <p class="role">${p.role}</p>
-    <div class="mini"><b>带着这个问题读</b><p>${p.question}</p></div>
-    <div class="mini"><b>优先看的原图</b><p>${p.figure}</p></div>
-    <div class="mini"><b>原文摘录目标</b><p>${p.quote}</p></div>
-  </article>`;
-}
-
-function renderModules(){
-  const host=document.getElementById('moduleList');
-  data.modules.forEach(m=>{
-    const papers=m.core.map(id=>byId[id]).filter(Boolean);
-    const deep = m.id==='walls' ? `<div style="margin-top:18px"><a href="modules/domain-walls.html" style="display:inline-block;text-decoration:none;color:#fff;background:#1d1e1c;padding:10px 14px;border-radius:9px;font-size:12px">阅读全文：Domain Walls 深度页 →</a></div>` : '';
-    const el=document.createElement('section');
-    el.className='module'; el.id=m.id;
-    el.innerHTML=`
-      <aside class="module-side"><div class="module-no">MODULE ${m.number}</div><h2>${m.title}</h2><div class="short">${m.short}</div></aside>
-      <div class="module-main">
-        <h3 class="question">${m.question}</h3>
-        <p class="thesis-text">${m.thesis}</p>
-        <div class="concepts">${m.concepts.map(x=>`<span class="concept">${x}</span>`).join('')}</div>
-        <div class="papers">${papers.map(paperCard).join('')}</div>
-        <div class="supporting"><b>Supporting / branch papers</b><ul>${m.supporting.map(x=>`<li>${x}</li>`).join('')}</ul></div>
-        <div class="takeaway"><strong>学完这一章应该能做到：</strong> ${m.takeaway}</div>
-        ${deep}
-      </div>`;
-    host.appendChild(el);
-  });
-}
-
-function renderCore(){
-  const host=document.getElementById('coreTable');
-  data.papers.forEach((p,i)=>{
-    const m=data.modules.find(x=>x.id===p.module);
-    const row=document.createElement('div'); row.className='core-row';
-    row.innerHTML=`<div class="num">${String(i+1).padStart(2,'0')}</div><div><b>${p.title}</b><br><span>${p.authors} · ${p.year}</span></div><div class="route">${m?m.number+' · '+m.short:''}</div>`;
-    host.appendChild(row);
-  });
-}
+const data=window.LSF_DATA;
+const byId=Object.fromEntries(data.papers.map(p=>[p.id,p]));
+const deepLessons={
+  foundations:['modules/foundations.html','阅读全文：Sliding FE Foundations →'],
+  walls:['modules/domain-walls.html','阅读全文：Domain Walls 深度页 →']
+};
+function renderMap(){const host=document.getElementById('mapGrid');data.modules.forEach((m,i)=>{const n=document.createElement('article');n.className='map-node';n.innerHTML=`<div class="map-index">${m.number}</div><h3>${m.title}</h3><p>${m.short}<br>${m.core.length} 个主线 paper 节点</p>`;n.onclick=()=>document.getElementById(m.id).scrollIntoView({behavior:'smooth'});host.appendChild(n);if(i<data.modules.length-1){const c=document.createElement('div');c.className='map-node center';c.innerHTML='<div class="connector">↓</div>';host.appendChild(c)}})}
+function paperCard(p){return `<article class="paper"><div class="paper-top"><span class="paper-year">${p.year}</span><span class="paper-kind">${p.kind}</span></div><h3>${p.title}</h3><div class="authors">${p.authors}</div><p class="role">${p.role}</p><div class="mini"><b>带着这个问题读</b><p>${p.question}</p></div><div class="mini"><b>优先看的原图</b><p>${p.figure}</p></div><div class="mini"><b>原文段落目标</b><p>${p.quote}</p></div></article>`}
+function renderModules(){const host=document.getElementById('moduleList');data.modules.forEach(m=>{const papers=m.core.map(id=>byId[id]).filter(Boolean);const lesson=deepLessons[m.id];const deep=lesson?`<div style="margin-top:18px"><a href="${lesson[0]}" style="display:inline-block;text-decoration:none;color:#fff;background:#1d1e1c;padding:10px 14px;border-radius:9px;font-size:12px">${lesson[1]}</a></div>`:'';const el=document.createElement('section');el.className='module';el.id=m.id;el.innerHTML=`<aside class="module-side"><div class="module-no">MODULE ${m.number}</div><h2>${m.title}</h2><div class="short">${m.short}</div></aside><div class="module-main"><h3 class="question">${m.question}</h3><p class="thesis-text">${m.thesis}</p><div class="concepts">${m.concepts.map(x=>`<span class="concept">${x}</span>`).join('')}</div><div class="papers">${papers.map(paperCard).join('')}</div><div class="supporting"><b>Supporting / branch papers</b><ul>${m.supporting.map(x=>`<li>${x}</li>`).join('')}</ul></div><div class="takeaway"><strong>学完这一章应该能做到：</strong> ${m.takeaway}</div>${deep}</div>`;host.appendChild(el)})}
+function renderCore(){const host=document.getElementById('coreTable');data.papers.forEach((p,i)=>{const m=data.modules.find(x=>x.id===p.module);const row=document.createElement('div');row.className='core-row';row.innerHTML=`<div class="num">${String(i+1).padStart(2,'0')}</div><div><b>${p.title}</b><br><span>${p.authors} · ${p.year}</span></div><div class="route">${m?m.number+' · '+m.short:''}</div>`;host.appendChild(row)})}
 renderMap();renderModules();renderCore();
 </script>
 </body>
