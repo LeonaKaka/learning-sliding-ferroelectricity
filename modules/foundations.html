@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sliding FE Foundations · Learning Sliding Ferroelectricity</title>
+  <link rel="stylesheet" href="../styles.css" />
+  <style>
+    .article{width:min(980px,calc(100% - 30px));margin:0 auto;padding:58px 0 96px}.crumb{font-size:11px;color:#77736c;margin-bottom:34px}.crumb a{color:inherit}.article h1{font:500 clamp(42px,6vw,76px)/.98 Georgia,serif;letter-spacing:-.045em;margin:0 0 18px}.deck{font:400 20px/1.62 Georgia,serif;color:#4f4c46;margin:0 0 44px;max-width:860px}.article h2{font:500 32px/1.18 Georgia,serif;margin:68px 0 18px}.article p{font-size:15px;line-height:1.88;color:#393733}.question{padding:23px 25px;background:#1d1e1c;color:#f4f0e7;border-radius:14px;font:500 19px/1.58 Georgia,serif;margin:30px 0 42px}.source-shot{margin:28px 0 34px;border:1px solid #d7d0c4;border-radius:14px;background:#fffdf7;overflow:hidden}.source-head{display:flex;justify-content:space-between;gap:12px;padding:11px 16px;border-bottom:1px solid #ded8cc;background:#f2eee5;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#746f67}.source-shot img{display:block;width:min(100%,780px);height:auto;margin:18px auto;background:white}.source-note{border-top:1px solid #e4ded4;padding:18px 21px;background:#faf7f0}.source-note b{font:500 15px Georgia,serif}.source-note p{font-size:13px;line-height:1.76;margin:7px 0 0;color:#4d4943}.figure{margin:34px 0 12px;background:#fff;border:1px solid var(--line);border-radius:15px;overflow:hidden}.figure img{width:100%;height:auto;display:block;background:#fff}.figure figcaption{padding:13px 17px;font-size:11px;line-height:1.65;color:#666159;border-top:1px solid var(--line)}.figure-note{font-size:12px!important;color:#716d65!important;margin:8px 4px 34px!important}.reading{display:grid;grid-template-columns:155px 1fr;gap:24px;padding:19px 0;border-top:1px solid var(--line)}.reading b{font:500 16px/1.35 Georgia,serif}.reading p{margin:0;font-size:13px;line-height:1.76}.quote{margin:28px 0 34px;padding:24px 27px;border:1px solid #d8d1c5;background:#fffdf7;border-radius:14px;font:400 16px/1.72 Georgia,serif;color:#34312d}.quote small{display:block;margin-top:13px;font:11px/1.5 ui-monospace,monospace;color:#7a756d}.equation{font:500 27px/1.25 Georgia,serif;text-align:center;padding:25px;background:var(--paper);border:1px solid var(--line);border-radius:12px;margin:28px 0}.pair{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:30px 0}.boundary{border-radius:15px;padding:24px 25px;background:#1d1e1c;color:#f4f0e7}.boundary.light{background:#e7e0d3;color:#262522}.boundary h3{margin:0 0 10px;color:inherit;font:500 20px Georgia,serif}.boundary p{color:inherit;margin:0;font-size:13px;line-height:1.75}.paper{padding:16px 0;border-top:1px solid var(--line);display:grid;grid-template-columns:95px 1fr;gap:18px}.paper .meta{font:11px ui-monospace,monospace;color:#858078}.paper b{font:500 17px/1.35 Georgia,serif}.paper p{font-size:12px;margin:6px 0 0;line-height:1.65}.paper a{color:#4f4b45}.next{margin-top:58px;padding-top:26px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:20px}.next a{color:#272522;text-decoration:none}.next b{font:500 18px Georgia,serif}.micro{font-size:11px!important;color:#77736c!important}.rule{font-size:12px!important;color:#6c675f!important;padding-left:14px;border-left:2px solid #c7bfb2;margin:26px 0}.figure-focus{width:min(800px,100%);margin-left:auto;margin-right:auto}@media(max-width:700px){.reading{grid-template-columns:1fr}.pair{grid-template-columns:1fr}.paper{grid-template-columns:66px 1fr}.source-head{display:block}.source-head span{display:block;margin-top:4px}.article h2{font-size:28px}}
+  </style>
+</head>
+<body>
+<header class="top"><div class="wrap top-inner"><div class="brand">Learning Sliding Ferroelectricity<small>01 · Foundations</small></div><nav class="nav"><a href="../index.html#map">Map</a><a href="../index.html#foundations">Module</a></nav></div></header>
+<article class="article">
+  <div class="crumb"><a href="../index.html">首页</a> / What is Sliding Ferroelectricity?</div>
+  <h1>极化为什么会从“堆垛”里长出来？</h1>
+  <p class="deck">最容易产生误解的一句话是“层滑一下，极化就反了”。真正需要先搞清的是：为什么原本并不铁电的层，换一种相对堆垛后会出现面外偶极；为什么 AB 与 BA 恰好给出相反的方向；以及实验怎么知道看到的确实是 stacking-dependent polarization。</p>
+
+  <div class="question">这一页只解决四件事：stacking → symmetry → polarization；AB ↔ BA 为什么对应 ±P；这些极化畴如何被直接读出来；以及为什么 multilayer 以后状态空间会比简单的 ±P 更丰富。</div>
+  <p class="rule"><b>阅读方式：</b>先看作者完整段落，再看对应原图。图只保留承担论证任务的 figure/panel；所有论文图都由原 PDF 高 DPI 整页渲染后精裁，并在部署产物里再次检查。</p>
+
+  <h2>1. Sliding FE 的关键并不是“材料本身是铁电”，而是两层放在一起以后失去了原来的对称性</h2>
+  <p>Wu 与 Li 的 2021 Perspective 很适合当入口，因为它把 2017 年最初模型压缩成了一个非常干净的判断：先问堆垛是否让上下两层变得不等价，再问它的镜像极化态能否通过面内平移抵达。这样一来，polarization 不再只是某个单层离子偏心的结果，而可以是一个<strong>interfacial stacking property</strong>。</p>
+
+  <div class="quote">According to the model of sliding ferroelectricity, for the van der Waals bilayer of many 2D materials the two layers are actually not identical, and such inequality leads to a net interlayer charge transfer. Taking the AB stacking boron nitride bilayer as an example, the two layers are related by mirror reflection symmetry and an in-plane translation. Such noncentrosymmetric coordination supports 2D ferroelectricity with an out-of-plane electric polarization. An important consequence of this symmetry is a possibility to control the lateral alignment between the two monolayers by an applied electric field: two opposite polarization orientations in the AB- and BA-stacked BN are distinguished by an interlayer translation along the weakly coupled interface.<small>Wu & Li, PNAS 118, e2115703118 (2021) · Theoretical Model, PDF p.2. 这里按完整论述段落保留上下文，省略的只有段内具体数值与三条等价滑移方向的后续说明。</small></div>
+
+  <div class="equation">stacking order → broken inversion / layer inequivalence → interlayer charge redistribution → P<sub>z</sub></div>
+
+  <h2>2. AB 与 BA 不是两个随便命名的结构：它们是彼此翻转的堆垛，也因此给出相反的 P<sub>z</sub></h2>
+  <p>Yasuda 等人的 hBN 工作把这件事讲得非常直白。自然生长的 AA′ 堆垛会恢复反演对称；把两层改成 parallel stacking 后，AB 与 BA 成为两个亚稳堆垛。上下层哪个原子正对另一个原子、哪个原子落在六元环空位上，决定了局域轨道和电荷分布的垂直不对称。</p>
+
+  <div class="source-shot">
+    <div class="source-head"><b>原文段落 · Yasuda et al. 2021</b><span>Science / arXiv manuscript · stacking argument</span></div>
+    <img src="../assets/foundations/yasuda2021-paragraph-stacking.webp" alt="Full paragraph from Yasuda et al. explaining AA prime, AB and BA stacking and opposite out-of-plane dipoles" />
+    <div class="source-note"><b>这一段真正建立的是结构—极化的一一对应</b><p>AA′ 为什么不极化、AB/BA 为什么可以极化、AB 与 BA 为什么方向相反，以及为什么一个面内 shear 可以把 +P 变成 −P，都在同一段里。读到这里才可以把“sliding switches polarization”当成有结构基础的物理陈述。</p></div>
+  </div>
+
+  <figure class="figure figure-focus"><img src="../assets/foundations/yasuda2021-fig1.webp" alt="Yasuda et al. figure showing AA prime, AB and BA stacking and graphene transport readout" /><figcaption>Yasuda et al., <i>Science</i> 372, 1458–1462 (2021), Fig. 1，使用作者 arXiv 公开稿。图中 A–C 直接对照 AA′ / AB / BA 原子堆垛，D–E 则把结构差异接到器件读出。</figcaption></figure>
+  <div class="reading"><b>先只看 A–C</b><p>AA′ 保持中心对称；AB 和 BA 则互为翻转结构。红色箭头不是“人为规定”的标签，而是由 stacking-induced dipole 得出的相反面外极化。</p></div>
+  <div class="reading"><b>再看 D–E</b><p>真正实验里并不是直接拿一支“极化仪”读 P，而是让相邻 graphene 充当电荷传感层。栅压扫描的滞回和电阻突变提供了 switching 的电学读出。</p></div>
+
+  <h2>3. 还需要一个更直观的证据：把 AB 与 BA 畴直接画到空间里</h2>
+  <p>Vizner Stern 等人的路线和 Yasuda 不同：他们用 KPFM 看局域表面势。这个实验非常适合学习，因为你可以直接在 real-space map 里看到黑白相间的区域，然后问：这些区域是不是恰好对应 AB/BA？非极性的 stacking 又在哪里？</p>
+
+  <div class="source-shot">
+    <div class="source-head"><b>原文段落 · Vizner Stern et al. 2021</b><span>Science / arXiv manuscript · KPFM result</span></div>
+    <img src="../assets/foundations/vizner2021-paragraph-domains.webp" alt="Full paragraph from Vizner Stern et al. explaining the KPFM map and assignment of AB and BA polarized domains" />
+    <div class="source-note"><b>为什么这段比一句“we observe domains”更有价值</b><p>作者不仅说看到了黑白畴，还逐项排除了只有单层、跨过 topographic step、以及 AA/反平行 stacking 的区域。最后才把稳定电势差归到 AB/BA interfacial polarization。这个排除链正是我们需要保留的上下文。</p></div>
+  </div>
+
+  <figure class="figure figure-focus"><img src="../assets/foundations/vizner2021-fig2.webp" alt="Vizner Stern et al. figure showing KPFM map of oppositely polarized AB and BA domains" /><figcaption>Vizner Stern et al., <i>Science</i> 372, 1462–1466 (2021), Fig. 2。Figure 文件使用作者在 Zenodo 公开的 CC BY 4.0 版本。</figcaption></figure>
+  <p class="figure-note">这张图最值得盯的是 B：黑/白不是“不同材料”，而是同一 hBN interface 的不同 local stacking；窄边界就是 domain wall。C 把穿过两种 domain 的电势剖面拉出来，D/E 再把实验量级与计算 polarization 接上。</p>
+
+  <h2>4. 到 bilayer 为止可以把故事压成 ±P；multilayer 一来，这个直觉立刻不够用了</h2>
+  <p>Meng 等人在 3R-MoS₂ 里观察到的关键不是“又一个 sliding FE”，而是 multilayer 出现了 bilayer 没有的 intermediate polarization states。原因也很自然：多层体系有多个 vdW interface，不同 interface 的 dipole 可以以不同顺序翻转，因此总极化不再只有两个端点。</p>
+
+  <div class="source-shot">
+    <div class="source-head"><b>原文段落 · Meng et al. 2022</b><span>Nature Communications 13, 7696 · PDF p.1</span></div>
+    <img src="../assets/foundations/meng2022-paragraph-layer.webp" alt="Full paragraph from Meng et al. explaining charge-transfer reversal and multilayer intermediate polarization states" />
+    <div class="source-note"><b>这里发生的是“自由度增加”</b><p>作者先重复 sliding FE 的基本定义，然后马上指出 layer dependence 是一个新的控制维度。对后面的 Switching Pathways 很关键：一旦有多个 interface，就必须问“哪个界面先动、哪个后动”，而不只是问最终 P 向上还是向下。</p></div>
+  </div>
+
+  <figure class="figure"><img src="../assets/foundations/meng2022-fig3.webp" alt="Meng et al. figure comparing bilayer, trilayer and four-layer transport and intermediate polarization states" /><figcaption>Meng et al., <i>Nature Communications</i> 13, 7696 (2022), Fig. 3。2L、3L、4L 的 switching response 和 retention 放在同一张图里；(e) 用 dipole arrangement 明确画出 trilayer 的 intermediate state。</figcaption></figure>
+  <div class="reading"><b>先比较 a–c</b><p>2L 主要是两个端态；3L 和 4L 在扫场时出现额外平台/异常态。它们不是测量噪声，因为随后 retention 测试还能把这些状态保持下来。</p></div>
+  <div class="reading"><b>再看 e</b><p>trilayer 有两个 interlayer dipole。只翻转其中一个，就会得到总极化介于两个完全反向端态之间的 intermediate state。下一章所有“switching pathway”的复杂性都从这里开始。</p></div>
+
+  <h2>5. 学完这一页，先别急着把 sliding FE 等同于“整层滑动”</h2>
+  <div class="pair"><div class="boundary"><h3>现在可以确定的</h3><p>相对堆垛可以重构层间对称性和电荷分布；AB/BA 可以对应相反面外极化；这种 polarization 能在 PFM/KPFM/transport 中被实验读出；multilayer 会产生多个可分辨极化态。</p></div><div class="boundary light"><h3>还没有回答的</h3><p>电场真正驱动的是整层 coherent translation，还是已有 domain wall 的传播？多层里不同 interface 为什么按某种次序切换？局域缺陷为什么会改变 apparent switching field？这些留给后面的 Switching Pathways 与 Domain Walls。</p></div></div>
+
+  <h2>这一页的四篇主文献</h2>
+  <div class="paper"><div class="meta">2021 · PNAS</div><div><b>Wu & Li — Sliding ferroelectricity in 2D van der Waals materials</b><p>机制总览与一般判据。<a href="https://doi.org/10.1073/pnas.2115703118">DOI</a></p></div></div>
+  <div class="paper"><div class="meta">2021 · Science</div><div><b>Yasuda et al. — Stacking-engineered ferroelectricity in bilayer boron nitride</b><p>AB/BA 相反极化 + graphene transport readout。<a href="https://doi.org/10.1126/science.abd3230">DOI</a></p></div></div>
+  <div class="paper"><div class="meta">2021 · Science</div><div><b>Vizner Stern et al. — Interfacial ferroelectricity by van der Waals sliding</b><p>real-space polarized domains 与 KPFM。<a href="https://doi.org/10.1126/science.abe8177">DOI</a></p></div></div>
+  <div class="paper"><div class="meta">2022 · Nat. Commun.</div><div><b>Meng et al. — Sliding induced multiple polarization states in two-dimensional ferroelectrics</b><p>从 bilayer 二态进入 multilayer 多状态。<a href="https://doi.org/10.1038/s41467-022-35339-6">DOI</a></p></div></div>
+
+  <div class="next"><a href="../index.html#foundations"><span class="micro">← 回到知识图谱</span><br><b>What is Sliding FE?</b></a><a href="../index.html#pathways" style="text-align:right"><span class="micro">下一步 →</span><br><b>Switching Pathways</b></a></div>
+</article>
+</body>
+</html>
