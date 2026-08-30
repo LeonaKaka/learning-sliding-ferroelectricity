@@ -32,10 +32,6 @@ jobs:
           sudo apt-get install -y -qq poppler-utils python3-pil
           mkdir -p assets/domain-walls /tmp/papers
 
-          # Crop coordinates are frozen after 600-DPI whole-page inspection.
-          # Ke/Chen use author-hosted published copies. Liu uses the authors'
-          # arXiv manuscript because APS blocks GitHub Actions with HTTP 403;
-          # its page-3 layout was checked against the published PDF before use.
           curl -fL --retry 3 -A 'Mozilla/5.0' \
             'https://liutheory.westlake.edu.cn/pdf/Ke25p046201.pdf' \
             -o /tmp/papers/ke2025.pdf
@@ -59,26 +55,27 @@ jobs:
           specs = [
               ('/tmp/papers/ke-p2.png',   (400, 385, 2500, 1740), 'ke2025-fig1-bec-force.webp', 1800),
               ('/tmp/papers/ke-p2.png',   (2550, 2240, 4780, 4725), 'ke2025-paragraph-bec.webp', 1400),
-
               ('/tmp/papers/chen-p2.png', (650, 380, 4510, 3550), 'chen2026-fig1.webp', 1800),
               ('/tmp/papers/chen-p3.png', (400, 2440, 2550, 4140), 'chen2026-paragraph-no-dw.webp', 1400),
               ('/tmp/papers/chen-p3.png', (2580, 540, 4750, 2560), 'chen2026-paragraph-kpfm.webp', 1400),
               ('/tmp/papers/chen-p3.png', (2600, 3148, 4670, 4918), 'chen2026-fig2-pinning.webp', 1800),
-
               ('/tmp/papers/liu-p3.png',  (780, 338, 4600, 2245), 'liu2026-fig2-raman-switching.webp', 1800),
               ('/tmp/papers/liu-p3.png',  (400, 3480, 2550, 5000), 'liu2026-paragraph-single-domain.webp', 1400),
               ('/tmp/papers/liu-p3.png',  (2580, 4300, 4750, 5580), 'liu2026-paragraph-pinning.webp', 1400),
           ]
-
           for src, box, name, maxw in specs:
               page = Image.open(src).convert('RGB')
               crop = page.crop(box)
               if crop.width > maxw:
                   crop = crop.resize((maxw, round(crop.height * maxw / crop.width)), Image.Resampling.LANCZOS)
               crop.save(out / name, 'WEBP', quality=90, method=6)
-              print(name, crop.size, p.stat().st_size if False else '')
 
-          expected = [name for _,_,name,_ in specs]
+          # Temporary verification asset: whole Liu page 3, downsampled only for inspection.
+          dbg = Image.open('/tmp/papers/liu-p3.png').convert('RGB')
+          dbg = dbg.resize((1700, 2200), Image.Resampling.LANCZOS)
+          dbg.save(out / '_verify-liu-page3.webp', 'WEBP', quality=86, method=6)
+
+          expected = [name for _,_,name,_ in specs] + ['_verify-liu-page3.webp']
           for name in expected:
               p = out / name
               if not p.exists() or p.stat().st_size < 20_000:
