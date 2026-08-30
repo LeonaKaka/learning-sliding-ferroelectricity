@@ -32,9 +32,10 @@ jobs:
           sudo apt-get install -y -qq poppler-utils python3-pil
           mkdir -p assets/domain-walls /tmp/papers
 
-          # These crop coordinates were frozen only after inspecting the user's
-          # Drive PDFs as 600-DPI whole-page renders, then checking every crop
-          # for complete panel labels, axes, color bars, scale bars and paragraph boundaries.
+          # Crop coordinates are frozen after 600-DPI whole-page inspection.
+          # Ke/Chen use author-hosted published copies. Liu uses the authors'
+          # arXiv manuscript because APS blocks GitHub Actions with HTTP 403;
+          # its page-3 layout was checked against the published PDF before use.
           curl -fL --retry 3 -A 'Mozilla/5.0' \
             'https://liutheory.westlake.edu.cn/pdf/Ke25p046201.pdf' \
             -o /tmp/papers/ke2025.pdf
@@ -42,7 +43,7 @@ jobs:
             'https://liutheory.westlake.edu.cn/pdf/Chen26p011066.pdf' \
             -o /tmp/papers/chen2026.pdf
           curl -fL --retry 3 -A 'Mozilla/5.0' \
-            'https://journals.aps.org/prl/pdf/10.1103/2xv1-t31x' \
+            'https://arxiv.org/pdf/2605.21210' \
             -o /tmp/papers/liu2026.pdf
 
           pdftoppm -f 2 -l 2 -singlefile -r 600 -png /tmp/papers/ke2025.pdf /tmp/papers/ke-p2
@@ -56,7 +57,6 @@ jobs:
 
           out = Path('assets/domain-walls')
           specs = [
-              # source, crop box, output name, target max width
               ('/tmp/papers/ke-p2.png',   (400, 385, 2500, 1740), 'ke2025-fig1-bec-force.webp', 1800),
               ('/tmp/papers/ke-p2.png',   (2550, 2240, 4780, 4725), 'ke2025-paragraph-bec.webp', 1400),
 
@@ -76,7 +76,7 @@ jobs:
               if crop.width > maxw:
                   crop = crop.resize((maxw, round(crop.height * maxw / crop.width)), Image.Resampling.LANCZOS)
               crop.save(out / name, 'WEBP', quality=90, method=6)
-              print(name, crop.size)
+              print(name, crop.size, p.stat().st_size if False else '')
 
           expected = [name for _,_,name,_ in specs]
           for name in expected:
