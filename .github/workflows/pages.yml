@@ -24,7 +24,37 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build verified paper screenshots
+      - name: Materialize verified Foundations assets
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p assets/foundations
+          base64 -d assets/foundations/_bundle.b64 | tar -xzf - -C assets/foundations
+          rm assets/foundations/_bundle.b64
+          python3 - <<'PY'
+          from pathlib import Path
+          expected = {
+              'wu2021-paragraph-model.webp',
+              'wu2021-fig1-mechanism.webp',
+              'yasuda2021-paragraph-abstract.webp',
+              'yasuda2021-fig1-stacking.webp',
+              'vizner2021-paragraph-abstract.webp',
+              'vizner2021-fig2-domains.webp',
+              'meng2022-paragraph-multistate.webp',
+              'meng2022-fig3e-multistate.webp',
+          }
+          root = Path('assets/foundations')
+          found = {p.name for p in root.glob('*.webp')}
+          if found != expected:
+              raise SystemExit(f'Foundations asset mismatch: missing={expected-found}, extra={found-expected}')
+          for name in sorted(expected):
+              p = root / name
+              if p.stat().st_size < 20_000:
+                  raise SystemExit(f'suspiciously small Foundations asset: {name}')
+              print(name, p.stat().st_size)
+          PY
+
+      - name: Build verified Domain Walls paper screenshots
         shell: bash
         run: |
           set -euxo pipefail
@@ -97,9 +127,6 @@ jobs:
           for src, box, name, maxw in specs:
               crop_resize(src, box, maxw).save(out/name, 'WEBP', quality=90, method=6)
 
-          # Liu full paragraph 1: begins at the bottom of arXiv p.2 and continues
-          # at the top of p.3. We stitch the two untouched text fragments in
-          # reading order; only surrounding whitespace is removed.
           liu_p2 = Image.open('/tmp/papers/liu-p2.png').convert('RGB')
           liu_p3 = Image.open('/tmp/papers/liu-p3.png').convert('RGB')
           if liu_p2.size != (5100,6600) or liu_p3.size != (5100,6600):
@@ -109,9 +136,6 @@ jobs:
           single_b = trim_text(liu_p3.crop((240,2985,2550,3405)))
           stitch([single_a, single_b], 'liu2026-paragraph-single-domain.webp')
 
-          # Liu full paragraph 2: starts at the bottom of the left column on p.3
-          # and continues at the top of the right column. Again, no text is
-          # altered; the two column fragments are simply joined in reading order.
           pin_a = trim_text(liu_p3.crop((240,5862,2550,6570)))
           pin_b = trim_text(liu_p3.crop((2580,2985,4830,4095)))
           stitch([pin_a, pin_b], 'liu2026-paragraph-pinning.webp')
@@ -127,6 +151,26 @@ jobs:
               with Image.open(p) as im:
                   im.verify()
               print(name, p.stat().st_size)
+          PY
+
+      - name: Verify lesson image references
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          pages = [Path('modules/foundations.html'), Path('modules/domain-walls.html')]
+          for page in pages:
+              text = page.read_text(encoding='utf-8')
+              refs = re.findall(r'<img[^>]+src="([^"]+)"', text)
+              missing = []
+              for ref in refs:
+                  target = (page.parent / ref).resolve()
+                  if not target.exists():
+                      missing.append((ref, str(target)))
+              if missing:
+                  raise SystemExit(f'{page}: missing image refs: {missing}')
+              print(page, f'{len(refs)}/{len(refs)} images resolved')
           PY
 
       - name: Configure Pages
