@@ -31,8 +31,9 @@ jobs:
           python3 -m pip install --quiet pymupdf pillow
           mkdir -p assets/foundations /tmp/foundations
 
+          # PNAS blocks GitHub-hosted runners; NSF PAR hosts the author/public copy.
           curl -fL --retry 3 -A 'Mozilla/5.0' \
-            'https://www.pnas.org/content/pnas/118/50/e2115703118.full.pdf' \
+            'https://par.nsf.gov/servlets/purl/10326015' \
             -o /tmp/foundations/wu2021.pdf
           curl -fL --retry 3 -A 'Mozilla/5.0' \
             'https://arxiv.org/pdf/2010.06600' \
@@ -44,186 +45,14 @@ jobs:
             'https://www.nature.com/articles/s41467-022-35339-6.pdf' \
             -o /tmp/foundations/meng2022.pdf
 
-          python3 - <<'PY'
-          import fitz
-          from PIL import Image, ImageDraw, ImageOps
-          from pathlib import Path
-          from io import BytesIO
+          for f in /tmp/foundations/*.pdf; do
+            head -c 4 "$f" | grep -q '%PDF' || { echo "Not a PDF: $f"; exit 1; }
+          done
+          python3 scripts/build_foundations.py
 
-          OUT = Path('assets/foundations')
-          DPI = 600
-          SCALE = DPI / 72
-
-          def trim(im, margin=30, threshold=246):
-              gray = ImageOps.grayscale(im)
-              mask = gray.point(lambda x: 255 if x < threshold else 0)
-              box = mask.getbbox()
-              if not box:
-                  return im
-              l,t,r,b = box
-              return im.crop((max(0,l-margin), max(0,t-margin), min(im.width,r+margin), min(im.height,b+margin)))
-
-          def render(page, rect, maxw=1800):
-              pix = page.get_pixmap(matrix=fitz.Matrix(SCALE,SCALE), clip=rect, alpha=False)
-              im = Image.frombytes('RGB', [pix.width,pix.height], pix.samples)
-              if im.width > maxw:
-                  im = im.resize((maxw, round(im.height*maxw/im.width)), Image.Resampling.LANCZOS)
-              return im
-
-          def save(im, name, quality=92):
-              p = OUT / name
-              im.save(p, 'WEBP', quality=quality, method=6)
-              if p.stat().st_size < 18_000:
-                  raise RuntimeError(f'suspicious asset {name}: {p.stat().st_size}')
-              print(name, im.size, p.stat().st_size)
-
-          def stitch(parts, name, maxw=1500):
-              parts = [trim(x) for x in parts]
-              gap=56; w=max(x.width for x in parts); h=sum(x.height for x in parts)+gap*(len(parts)-1)
-              canvas=Image.new('RGB',(w,h),'white'); y=0
-              for i,x in enumerate(parts):
-                  canvas.paste(x,((w-x.width)//2,y)); y+=x.height
-                  if i<len(parts)-1:
-                      ImageDraw.Draw(canvas).line((30,y+gap//2,w-30,y+gap//2),fill=(214,214,214),width=2)
-                      y+=gap
-              if canvas.width>maxw:
-                  canvas=canvas.resize((maxw,round(canvas.height*maxw/canvas.width)),Image.Resampling.LANCZOS)
-              save(canvas,name)
-
-          def page_with(doc, needle):
-              for p in doc:
-                  if needle.lower() in p.get_text().lower():
-                      return p
-              raise RuntimeError(f'cannot find page containing {needle!r}')
-
-          def block_with(page, needle):
-              for b in page.get_text('blocks', sort=True):
-                  if needle.lower() in b[4].lower():
-                      return b
-              raise RuntimeError(f'cannot find block {needle!r}')
-
-          def largest_image_rect(page):
-              infos=page.get_image_info(xrefs=True)
-              if not infos:
-                  raise RuntimeError(f'no image on page {page.number}')
-              info=max(infos,key=lambda x:(x['bbox'][2]-x['bbox'][0])*(x['bbox'][3]-x['bbox'][1]))
-              return fitz.Rect(info['bbox'])
-
-          # Wu & Li 2021 — published PNAS layout. The target paragraph crosses columns.
-          wu=fitz.open('/tmp/foundations/wu2021.pdf')
-          p=page_with(wu,'According to the model of sliding ferroelectricity')
-          left=block_with(p,'According to the model of sliding ferroelectricity')
-          right=block_with(p,'symmetry is a possibility to control the lateral alignment')
-          start=p.search_for('According to the model of sliding ferroelectricity')[0]
-          end_hits=p.search_for('down layer, as shown in Fig. 1A')
-          if not end_hits: end_hits=p.search_for('down layer, as shown in Fig. 1A.')
-          end=end_hits[-1]
-          a=render(p,fitz.Rect(left[0],start.y0-2,left[2],left[3]),1800)
-          b=render(p,fitz.Rect(right[0],right[1],right[2],end.y1+3),1800)
-          stitch([a,b],'wu2021-paragraph-model.webp')
-          save(render(p,largest_image_rect(p),1800),'wu2021-fig1-mechanism.webp')
-
-          # Yasuda 2021 — public arXiv author manuscript. The paragraph crosses p.1→p.2.
-          yas=fitz.open('/tmp/foundations/yasuda2021.pdf')
-          p0=page_with(yas,'The development of vdW assembly enabled the engineering of heterostructures')
-          p1=page_with(yas,'procedure can be applied to other bipartite honeycomb 2D materials')
-          b0=block_with(p0,'The development of vdW assembly enabled the engineering of heterostructures')
-          s0=p0.search_for('The development of vdW assembly enabled the engineering of heterostructures')[0]
-          b1=block_with(p1,'procedure can be applied to other bipartite honeycomb 2D materials')
-          e1=p1.search_for('unit cell (25)')[-1]
-          a=render(p0,fitz.Rect(b0[0],s0.y0-2,b0[2],b0[3]),1800)
-          b=render(p1,fitz.Rect(b1[0],b1[1],b1[2],e1.y1+3),1800)
-          stitch([a,b],'yasuda2021-paragraph-stacking.webp')
-          figp=page_with(yas,'Fig. 1. Ferroelectricity of AB-stacked bilayer boron nitride')
-          save(render(figp,largest_image_rect(figp),1800),'yasuda2021-fig1-stacking.webp')
-
-          # Vizner Stern 2021 — public arXiv manuscript; one complete KPFM results paragraph.
-          viz=fitz.open('/tmp/foundations/vizner2021.pdf')
-          p=page_with(viz,'To measure variations in the electrical potential')
-          b=block_with(p,'To measure variations in the electrical potential')
-          s=p.search_for('To measure variations in the electrical potential')[0]
-          e=p.search_for('few interfacial layers')[-1]
-          save(render(p,fitz.Rect(b[0],s.y0-2,b[2],e.y1+3),1800),'vizner2021-paragraph-domains.webp')
-          figp=page_with(viz,'Fig. 2. Direct measurement of interfacial polarization')
-          save(render(figp,largest_image_rect(figp),1800),'vizner2021-fig2-domains.webp')
-
-          # Meng 2022 — OA Nature Communications version.
-          meng=fitz.open('/tmp/foundations/meng2022.pdf')
-          p=page_with(meng,'When the atomic layers in a non-centrosymmetric van der Waals structure')
-          b=block_with(p,'When the atomic layers in a non-centrosymmetric van der Waals structure')
-          save(render(p,fitz.Rect(b[0],b[1],b[2],b[3]),1800),'meng2022-paragraph-multistate.webp')
-          figp=page_with(meng,'Static transport properties of dual-gate FET devices')
-          save(render(figp,largest_image_rect(figp),1800),'meng2022-fig3-multistate.webp')
-
-          # Temporary compatibility aliases for the current page; removed after page copy is updated.
-          aliases={
-            'yasuda2021-paragraph-stacking.webp':'yasuda2021-paragraph-abstract.webp',
-            'vizner2021-paragraph-domains.webp':'vizner2021-paragraph-abstract.webp',
-            'meng2022-fig3-multistate.webp':'meng2022-fig3e-multistate.webp',
-          }
-          for src,dst in aliases.items():
-              (OUT/dst).write_bytes((OUT/src).read_bytes())
-          PY
-
-      - name: Build verified Domain Walls paper screenshots
+      - name: Build verified Domain Walls screenshots
         shell: bash
-        run: |
-          set -euxo pipefail
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq poppler-utils python3-pil
-          mkdir -p assets/domain-walls /tmp/papers
-
-          curl -fL --retry 3 -A 'Mozilla/5.0' 'https://liutheory.westlake.edu.cn/pdf/Ke25p046201.pdf' -o /tmp/papers/ke2025.pdf
-          curl -fL --retry 3 -A 'Mozilla/5.0' 'https://liutheory.westlake.edu.cn/pdf/Chen26p011066.pdf' -o /tmp/papers/chen2026.pdf
-          curl -fL --retry 3 -A 'Mozilla/5.0' 'https://arxiv.org/pdf/2605.21210' -o /tmp/papers/liu2026.pdf
-
-          pdftoppm -f 2 -l 2 -singlefile -r 600 -png /tmp/papers/ke2025.pdf /tmp/papers/ke-p2
-          pdftoppm -f 2 -l 2 -singlefile -r 600 -png /tmp/papers/chen2026.pdf /tmp/papers/chen-p2
-          pdftoppm -f 3 -l 3 -singlefile -r 600 -png /tmp/papers/chen2026.pdf /tmp/papers/chen-p3
-          pdftoppm -f 2 -l 2 -singlefile -r 600 -png /tmp/papers/liu2026.pdf /tmp/papers/liu-p2
-          pdftoppm -f 3 -l 3 -singlefile -r 600 -png /tmp/papers/liu2026.pdf /tmp/papers/liu-p3
-
-          python3 - <<'PY'
-          from PIL import Image, ImageOps, ImageDraw
-          from pathlib import Path
-          out = Path('assets/domain-walls')
-          def crop_resize(src, box, maxw):
-              page=Image.open(src).convert('RGB'); crop=page.crop(box)
-              if crop.width>maxw: crop=crop.resize((maxw,round(crop.height*maxw/crop.width)),Image.Resampling.LANCZOS)
-              return crop
-          def trim_text(im,margin=30):
-              gray=ImageOps.grayscale(im); mask=gray.point(lambda x:255 if x<245 else 0); bbox=mask.getbbox()
-              if not bbox:return im
-              l,t,r,b=bbox; return im.crop((max(0,l-margin),max(0,t-margin),min(im.width,r+margin),min(im.height,b+margin)))
-          def stitch(parts,outfile,maxw=1400):
-              gap=72; width=max(p.width for p in parts); height=sum(p.height for p in parts)+gap*(len(parts)-1)
-              canvas=Image.new('RGB',(width,height),'white'); y=0
-              for i,part in enumerate(parts):
-                  canvas.paste(part,((width-part.width)//2,y)); y+=part.height
-                  if i<len(parts)-1:
-                      ImageDraw.Draw(canvas).line((40,y+gap//2,width-40,y+gap//2),fill=(210,210,210),width=2); y+=gap
-              if canvas.width>maxw: canvas=canvas.resize((maxw,round(canvas.height*maxw/canvas.width)),Image.Resampling.LANCZOS)
-              canvas.save(out/outfile,'WEBP',quality=90,method=6)
-          specs=[
-            ('/tmp/papers/ke-p2.png',(400,385,2500,1740),'ke2025-fig1-bec-force.webp',1800),
-            ('/tmp/papers/ke-p2.png',(2550,2240,4780,4758),'ke2025-paragraph-bec.webp',1400),
-            ('/tmp/papers/chen-p2.png',(650,380,4510,3550),'chen2026-fig1.webp',1800),
-            ('/tmp/papers/chen-p3.png',(400,2440,2550,4218),'chen2026-paragraph-no-dw.webp',1400),
-            ('/tmp/papers/chen-p3.png',(2580,540,4750,2560),'chen2026-paragraph-kpfm.webp',1400),
-            ('/tmp/papers/chen-p3.png',(2600,3148,4670,4918),'chen2026-fig2-pinning.webp',1800),
-            ('/tmp/papers/liu-p3.png',(780,338,4600,2245),'liu2026-fig2-raman-switching.webp',1800),
-          ]
-          for src,box,name,maxw in specs: crop_resize(src,box,maxw).save(out/name,'WEBP',quality=90,method=6)
-          p2=Image.open('/tmp/papers/liu-p2.png').convert('RGB'); p3=Image.open('/tmp/papers/liu-p3.png').convert('RGB')
-          if p2.size!=(5100,6600) or p3.size!=(5100,6600): raise SystemExit(f'Unexpected Liu page geometry: {p2.size}, {p3.size}')
-          stitch([trim_text(p2.crop((2610,4884,4815,6570))),trim_text(p3.crop((240,2985,2550,3405)))],'liu2026-paragraph-single-domain.webp')
-          stitch([trim_text(p3.crop((240,5862,2550,6570))),trim_text(p3.crop((2580,2985,4830,4095)))],'liu2026-paragraph-pinning.webp')
-          expected=[name for _,_,name,_ in specs]+['liu2026-paragraph-single-domain.webp','liu2026-paragraph-pinning.webp']
-          for name in expected:
-              p=out/name
-              if not p.exists() or p.stat().st_size<20_000: raise SystemExit(f'bad asset: {name}')
-              with Image.open(p) as im: im.verify()
-          PY
+        run: bash scripts/build_domain_walls.sh
 
       - name: Verify lesson image references
         shell: bash
@@ -231,21 +60,25 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           import re
-          for page in [Path('modules/foundations.html'),Path('modules/domain-walls.html')]:
-              refs=re.findall(r'<img[^>]+src="([^"]+)"',page.read_text(encoding='utf-8'))
-              missing=[ref for ref in refs if not (page.parent/ref).resolve().exists()]
-              if missing: raise SystemExit(f'{page}: missing {missing}')
-              print(page,f'{len(refs)}/{len(refs)} images resolved')
+          pages = [Path('modules/foundations.html'), Path('modules/domain-walls.html')]
+          for page in pages:
+              refs = re.findall(r'<img[^>]+src="([^"]+)"', page.read_text(encoding='utf-8'))
+              missing = [ref for ref in refs if not (page.parent/ref).resolve().exists()]
+              if missing:
+                  raise SystemExit(f'{page}: missing image refs: {missing}')
+              print(page, f'{len(refs)}/{len(refs)} images resolved')
           PY
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
           enablement: true
+
       - name: Upload static site
         uses: actions/upload-pages-artifact@v3
         with:
           path: .
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
