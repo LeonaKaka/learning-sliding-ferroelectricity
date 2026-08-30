@@ -1,0 +1,43 @@
+name: Fetch core papers
+
+on:
+  push:
+    paths:
+      - '.github/workflows/fetch-core-papers.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download open-access papers
+        run: |
+          set -euo pipefail
+          mkdir -p papers
+          curl -fL --retry 3 --retry-delay 2 -A 'Mozilla/5.0' 'https://arxiv.org/pdf/2210.16542' -o 'papers/Ji_et_al_2023_General_Theory_for_Bilayer_Stacking_Ferroelectricity.pdf'
+          curl -fL --retry 3 --retry-delay 2 -A 'Mozilla/5.0' 'https://eprintspublications.npl.co.uk/9621/1/eid9621.pdf' -o 'papers/Weston_et_al_2022_Interfacial_ferroelectricity_in_marginally_twisted_2D_semiconductors.pdf'
+          curl -fL --retry 3 --retry-delay 2 -A 'Mozilla/5.0' 'https://arxiv.org/pdf/cond-mat/0207288' -o 'papers/Rosso_Hartmann_Krauth_2003_Depinning_of_elastic_manifolds.pdf'
+          curl -fL --retry 3 --retry-delay 2 -A 'Mozilla/5.0' 'https://sethna.lassp.cornell.edu/pubPDF/HysteresisEpsilonPRB.pdf' -o 'papers/Dahmen_Sethna_1996_Hysteresis_avalanches_and_disorder_induced_critical_scaling.pdf'
+          curl -fL --retry 3 --retry-delay 2 -A 'Mozilla/5.0' 'https://www.phys.ens.psl.eu/~wiese/pdf/rop_85_8_086502.pdf' -o 'papers/Wiese_2022_Theory_and_Experiments_for_Disordered_Elastic_Manifolds.pdf' || \
+          curl -fL --retry 3 --retry-delay 2 -A 'Mozilla/5.0' 'https://arxiv.org/pdf/2102.01215' -o 'papers/Wiese_2022_Theory_and_Experiments_for_Disordered_Elastic_Manifolds.pdf'
+
+          for f in papers/*.pdf; do
+            test "$(head -c 4 "$f")" = '%PDF'
+            test "$(stat -c%s "$f")" -gt 50000
+            echo "$(basename "$f"): $(stat -c%s "$f") bytes"
+          done
+
+      - name: Upload papers artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: core-papers-open-access
+          path: papers/*.pdf
+          if-no-files-found: error
+          retention-days: 1
