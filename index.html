@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="A learning-oriented literature map from statistical physics and disorder to depinning, domain-wall physics, and sliding ferroelectricity." />
+  <title>Learning Sliding Ferroelectricity · Literature Map</title>
+  <style>
+    :root{--bg:#f4f1e8;--paper:#fffdf7;--ink:#191b1d;--muted:#73736d;--line:#d8d2c4;--accent:#9d3b2f;--accent2:#245d63;--shadow:0 18px 50px rgba(40,34,24,.08);--r:18px}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+    button,input{font:inherit}.shell{min-height:100vh}.topbar{height:70px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:rgba(244,241,232,.94);backdrop-filter:blur(14px);position:sticky;top:0;z-index:30}
+    .brand{display:flex;align-items:center;gap:12px}.mark{width:33px;height:33px;border:1px solid #272727;border-radius:50%;display:grid;place-items:center;font-family:Georgia,serif;font-style:italic}.brand b{font-family:Georgia,"Times New Roman",serif;font-size:19px;font-weight:600}.brand small{display:block;color:var(--muted);font-size:11px;margin-top:1px;letter-spacing:.03em}
+    .topmeta{display:flex;gap:8px;align-items:center}.pill{padding:8px 11px;border:1px solid var(--line);border-radius:999px;font-size:12px;background:var(--paper);color:#555}.progresspill{min-width:120px;text-align:center}
+    .layout{display:grid;grid-template-columns:250px minmax(0,1fr) 340px;min-height:calc(100vh - 70px)}.left,.right{padding:24px 20px;background:rgba(255,253,247,.5)}.left{border-right:1px solid var(--line)}.right{border-left:1px solid var(--line)}.main{padding:26px;min-width:0}
+    .eyebrow{text-transform:uppercase;letter-spacing:.14em;font-size:10px;color:var(--muted);margin-bottom:9px}.left h2,.right h2{font-family:Georgia,serif;font-weight:500;margin:0 0 16px}.intro{font-size:13px;line-height:1.7;color:#595953;margin-bottom:22px}
+    .filter{display:flex;flex-direction:column;gap:7px}.filter button{border:1px solid transparent;background:transparent;text-align:left;border-radius:10px;padding:9px 10px;cursor:pointer;color:#4d4d48}.filter button:hover,.filter button.active{background:var(--paper);border-color:var(--line);color:#111}.dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:9px}
+    .route{margin-top:26px;border-top:1px solid var(--line);padding-top:18px}.route-item{font-size:12px;line-height:1.45;padding:9px 0;border-bottom:1px dashed #ddd5c8;color:#5d5d57}.route-item b{color:#252525}.search{width:100%;padding:10px 11px;border:1px solid var(--line);border-radius:10px;background:var(--paper);outline:none;margin:5px 0 12px}.search:focus{border-color:#aaa08e}
+    .hero{display:flex;justify-content:space-between;gap:20px;align-items:flex-end;margin-bottom:18px}.hero h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(30px,4.2vw,58px);line-height:.98;font-weight:500;letter-spacing:-.035em;margin:0;max-width:800px}.hero p{max-width:440px;color:var(--muted);line-height:1.6;font-size:13px;margin:0}
+    .tabs{display:flex;gap:7px;flex-wrap:wrap;margin:22px 0 14px}.tabs button{border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:8px 12px;cursor:pointer;font-size:12px}.tabs button.active{background:#1d2021;color:#fff;border-color:#1d2021}
+    .graph-wrap{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:auto;position:relative;min-height:610px}.graph-head{display:flex;justify-content:space-between;align-items:center;padding:15px 18px;border-bottom:1px solid #e7e1d5;position:sticky;left:0}.legend{font-size:11px;color:var(--muted)}.legend span{margin-right:12px}.kbd{border:1px solid var(--line);padding:2px 6px;border-radius:5px;background:#faf7ef;color:#666}
+    #graph{min-width:1040px;height:590px;position:relative;background-image:linear-gradient(rgba(110,100,80,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(110,100,80,.05) 1px,transparent 1px);background-size:28px 28px}.column-label{position:absolute;top:17px;font-size:10px;text-transform:uppercase;letter-spacing:.11em;color:#9a978f;transform:translateX(-50%);white-space:nowrap}.edge-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}.edge{stroke:#c5beb0;stroke-width:1.2;fill:none}.edge.focus{stroke:var(--accent);stroke-width:2;opacity:.9}.edge.dim{opacity:.11}
+    .node{position:absolute;width:172px;min-height:74px;padding:10px 11px;border:1px solid #cec7b9;border-radius:12px;background:#fffdf9;box-shadow:0 5px 13px rgba(39,34,26,.045);cursor:pointer;transition:.18s ease;transform:translate(-50%,-50%)}.node:hover{transform:translate(-50%,-50%) translateY(-2px);box-shadow:0 9px 23px rgba(39,34,26,.10)}.node.selected{border-color:var(--accent);box-shadow:0 0 0 2px rgba(157,59,47,.1)}.node.dim{opacity:.18;filter:grayscale(.5)}.node .year{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#8b8579;font-size:10px}.node .title{font-family:Georgia,serif;font-size:12.5px;line-height:1.25;margin:4px 0 6px}.node .tag{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:#777}.node.done:after{content:"✓";position:absolute;top:6px;right:8px;color:var(--accent2);font-weight:700}
+    .chapter-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:14px}.chapter{border-top:3px solid var(--c);background:rgba(255,253,247,.64);padding:10px;border-radius:0 0 8px 8px;min-height:66px}.chapter b{font-family:Georgia,serif;font-size:13px;font-weight:500}.chapter small{display:block;color:#777;margin-top:4px;line-height:1.35}
+    .detail-empty{padding:18px 0;color:var(--muted);font-size:13px;line-height:1.7}.detail-card{display:none}.detail-card.open{display:block}.detail-year{font-family:ui-monospace,monospace;font-size:11px;color:var(--muted)}.detail-title{font-family:Georgia,serif;font-size:24px;line-height:1.12;margin:7px 0 8px}.authors{font-size:12px;color:#676762;line-height:1.5}.section{padding:15px 0;border-top:1px solid var(--line);margin-top:15px}.section h3{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:#88847b;margin:0 0 8px}.section p{font-size:13px;line-height:1.65;margin:0;color:#44443f}.concepts{display:flex;gap:6px;flex-wrap:wrap}.concept{padding:5px 7px;border:1px solid var(--line);border-radius:6px;font-size:10px;background:var(--paper)}.actions{display:flex;gap:8px;margin-top:17px;flex-wrap:wrap}.actions a,.actions button{border:1px solid #bbb2a4;background:#fffdf7;padding:8px 10px;border-radius:8px;color:#242424;text-decoration:none;font-size:12px;cursor:pointer}.actions .primary{background:#1d2021;color:#fff;border-color:#1d2021}.actions .donebtn.on{background:#e8f1ed;border-color:#a9c4b7;color:#245d63}
+    .footer-note{font-size:11px;color:#8a877f;margin-top:16px;line-height:1.55}.mobile-detail{display:none}
+    @media(max-width:1100px){.layout{grid-template-columns:210px minmax(0,1fr)}.right{display:none}.mobile-detail{display:block;margin-top:16px}.hero{align-items:flex-start;flex-direction:column}.graph-wrap{min-height:580px}}
+    @media(max-width:720px){.topbar{padding:0 14px}.topmeta .pill:not(.progresspill){display:none}.layout{display:block}.left{border-right:0;border-bottom:1px solid var(--line);padding:16px}.filter{flex-direction:row;overflow:auto}.filter button{white-space:nowrap}.route{display:none}.main{padding:18px 12px}.hero h1{font-size:37px}.chapter-strip{grid-template-columns:1fr 1fr}.graph-wrap{border-radius:12px}.graph-head{font-size:11px}.brand small{display:none}}
+  </style>
+</head>
+<body>
+<div class="shell">
+  <header class="topbar">
+    <div class="brand"><div class="mark">φ</div><div><b>Learning Sliding Ferroelectricity</b><small>literature map · v0.1</small></div></div>
+    <div class="topmeta"><span class="pill">physics-first</span><span class="pill progresspill" id="progressText">0 / 23 read</span></div>
+  </header>
+  <div class="layout">
+    <aside class="left">
+      <div class="eyebrow">Navigate</div><h2>文献树</h2>
+      <p class="intro">不是按年份堆论文，而是按“需要先理解什么”组织。从统计物理骨架一路走到滑移铁电畴壁。</p>
+      <input id="search" class="search" placeholder="搜索 paper / concept…" />
+      <div class="filter" id="filters"></div>
+      <div class="route">
+        <div class="eyebrow">Suggested route</div>
+        <div class="route-item"><b>01 · Scaling</b><br>Wilson → Sethna</div>
+        <div class="route-item"><b>02 · Disorder</b><br>Imry–Ma → RFIM</div>
+        <div class="route-item"><b>03 · Motion</b><br>Depinning → creep → roughness</div>
+        <div class="route-item"><b>04 · Bridge</b><br>Magnetic/FE domain walls</div>
+        <div class="route-item"><b>05 · Target</b><br>hBN / 3R-MoS₂ sliding FE</div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="hero">
+        <h1>From disorder<br>to sliding domains.</h1>
+        <p>一个为了“学会为什么”而做的交互式阅读地图。点击节点，看它解决什么问题、需要什么前置、以及为什么下一篇应该接着读。</p>
+      </section>
+      <div class="tabs" id="routeTabs">
+        <button class="active" data-route="all">完整地图</button>
+        <button data-route="core">10 篇核心路线</button>
+        <button data-route="disorder">无序 / RFIM</button>
+        <button data-route="depinning">Depinning</button>
+        <button data-route="sliding">Sliding FE</button>
+      </div>
+      <section class="graph-wrap">
+        <div class="graph-head"><span><b>Learning graph</b> · 点击节点查看学习卡片</span><span class="legend"><span>连线 = 建议前置</span><span class="kbd">✓</span> = 已读</span></div>
+        <div id="graph"></div>
+      </section>
+      <div class="chapter-strip" id="chapterStrip"></div>
+      <div class="mobile-detail" id="mobileDetail"></div>
+    </main>
+
+    <aside class="right">
+      <div class="eyebrow">Paper card</div><h2>学习卡片</h2>
+      <div id="detailEmpty" class="detail-empty">点一篇论文。这里不会只给摘要，而是告诉你：<br><br>① 为什么它在这棵树上<br>② 应该带着什么问题读<br>③ 读完后下一篇去哪</div>
+      <div id="detail" class="detail-card"></div>
+    </aside>
+  </div>
+</div>
+<script>
+const CATS={
+ foundation:{name:'理论骨架',color:'#6c6256',desc:'scaling · RG · universality'},
+ disorder:{name:'无序与 RFIM',color:'#9d3b2f',desc:'quenched disorder · avalanches'},
+ depinning:{name:'Depinning',color:'#a66b25',desc:'elastic interfaces · critical motion'},
+ domain:{name:'畴壁物理',color:'#245d63',desc:'creep · roughness · experiments'},
+ sliding:{name:'滑移铁电',color:'#554a86',desc:'hBN · 3R-MoS₂ · switching'}
+};
+const papers=[
+{id:'anderson72',cat:'foundation',year:1972,title:'More Is Different',authors:'P. W. Anderson',venue:'Science 177, 393',url:'https://doi.org/10.1126/science.177.4047.393',why:'先接受“涌现与层级”这个研究视角：微观方程并不会自动替你回答宏观相变、畴和集体动力学。',take:'把你的问题从“材料里原子怎么动”提升到“什么自由度和尺度控制宏观行为”。',concepts:['emergence','effective theory','scales'],level:'入口',core:true},
+{id:'wilson74',cat:'foundation',year:1974,title:'The Renormalization Group and the ε Expansion',authors:'K. G. Wilson · J. Kogut',venue:'Physics Reports 12, 75',url:'https://doi.org/10.1016/0370-1573(74)90023-4',why:'理解为什么完全不同的微观系统会共享 critical exponent，以及“尺度变换”为什么是研究临界现象的自然语言。',take:'universality 不是巧合，而是 RG 流把大量微观细节冲掉后的结果。',concepts:['RG','universality','critical exponents','scaling'],level:'基础',core:true},
+{id:'imryma75',cat:'disorder',year:1975,title:'Random-Field Instability of the Ordered State of Continuous Symmetry',authors:'Y. Imry · S.-k. Ma',venue:'Phys. Rev. Lett. 35, 1399',url:'https://doi.org/10.1103/PhysRevLett.35.1399',why:'建立“无序能量收益 vs 畴壁/弹性能代价”的尺度竞争直觉，是进入 random-field physics 的第一把钥匙。',take:'随机场不是小修正；低维里它可以从根本上重塑有序态和畴结构。',concepts:['random field','Imry–Ma','domain size','disorder'],level:'基础',core:true},
+{id:'sethna93',cat:'disorder',year:1993,title:'Hysteresis and Hierarchies',authors:'J. P. Sethna et al.',venue:'Phys. Rev. Lett. 70, 3347',url:'https://doi.org/10.1103/PhysRevLett.70.3347',why:'把 RFIM、hysteresis、avalanches 和 disorder-tuned critical point 放进同一个最小模型里。',take:'扫外场时的“突跳”可以是一个真正的临界现象，而不只是数值噪声或材料缺陷。',concepts:['RFIM','hysteresis','avalanches','return-point memory'],level:'核心',core:true},
+{id:'dahmen96',cat:'disorder',year:1996,title:'Hysteresis, Avalanches, and Disorder-Induced Critical Scaling',authors:'K. Dahmen · J. P. Sethna',venue:'Phys. Rev. B 53, 14872',url:'https://doi.org/10.1103/PhysRevB.53.14872',why:'把 1993 的现象推进到 RG 与 scaling 理论层面，告诉你哪些指数、分布和 collapse 才能真正检验 universality。',take:'临界点附近应该找的是一组互相约束的 scaling relations，而不是单独拟一个幂律。',concepts:['RG','scaling functions','avalanches','criticality'],level:'进阶',core:false},
+{id:'perkovic99',cat:'disorder',year:1999,title:'Disorder-Induced Critical Phenomena in Hysteresis',authors:'O. Perković · K. Dahmen · J. P. Sethna',venue:'Phys. Rev. B 59, 6106',url:'https://doi.org/10.1103/PhysRevB.59.6106',why:'这是“怎么把理论变成数值证据”的好模板：多维度、大系统、scaling collapse 和指数提取。',take:'数值工作要围绕有限尺寸与 scaling window 组织，而不是只展示漂亮的 hysteresis loop。',concepts:['finite-size scaling','numerics','collapse','RFIM'],level:'方法',core:true},
+{id:'roters99',cat:'depinning',year:1999,title:'Depinning Transition and Thermal Fluctuations in the Random-Field Ising Model',authors:'L. Roters et al.',venue:'Phys. Rev. E 60, 5202',url:'https://doi.org/10.1103/PhysRevE.60.5202',why:'这是 RFIM 文献树向“被驱动界面 depinning”分叉的直接桥梁。',take:'固定畴壁 + 恒定驱动力，比完整 hysteresis loop 更干净地暴露 depinning criticality。',concepts:['RFIM','depinning','interface velocity','temperature'],level:'桥梁',core:true},
+{id:'fisher85',cat:'depinning',year:1985,title:'Sliding Charge-Density Waves as a Dynamic Critical Phenomenon',authors:'D. S. Fisher',venue:'Phys. Rev. B 31, 1396',url:'https://doi.org/10.1103/PhysRevB.31.1396',why:'经典地把 depinning 视为动态临界现象：阈值以上速度作为 order-parameter-like observable。',take:'v ∼ (F−Fc)^β 的意义不只是拟合，而是动态相变的核心序参量标度。',concepts:['depinning','dynamic criticality','velocity exponent'],level:'经典',core:true},
+{id:'ferrero13',cat:'depinning',year:2013,title:'Numerical Approaches on Driven Elastic Interfaces in Random Media',authors:'E. E. Ferrero et al.',venue:'C. R. Physique 14, 641',url:'https://doi.org/10.1016/j.crhy.2013.08.002',why:'非常适合作为数值实验手册：equilibrium、creep、depinning，以及怎样从模拟里提取 roughness 和速度标度。',take:'同一条界面在不同驱动区间对应完全不同的物理与数值策略。',concepts:['elastic interface','numerics','roughness','creep','depinning'],level:'方法',core:true},
+{id:'wiese21',cat:'depinning',year:2021,title:'Theory and Experiments for Disordered Elastic Manifolds, Depinning, Avalanches, and Sandpiles',authors:'K. J. Wiese',venue:'review · arXiv:2102.01215',url:'https://arxiv.org/abs/2102.01215',why:'把 elastic manifold、FRG、depinning、avalanche、random-field magnets 一次串起来，是这棵树的“大地图”。',take:'如果不知道某个 exponent、模型或 universality class 在整张图里的位置，优先回来看这篇。',concepts:['FRG','elastic manifolds','avalanches','qEW','qKPZ'],level:'地图',core:true},
+{id:'ferrero21',cat:'domain',year:2021,title:'Creep Motion of Elastic Interfaces Driven in a Disordered Landscape',authors:'E. E. Ferrero et al.',venue:'Annu. Rev. Condens. Matter Phys. 12, 111',url:'https://doi.org/10.1146/annurev-conmatphys-031119-050725',why:'把低驱动 thermally activated creep 与 depinning/avalanche 连接起来，并直接讨论 domain-wall experiments。',take:'“没到 Fc”并不等于没物理；热激活事件也会形成集体尺度和 avalanche-like 结构。',concepts:['creep','thermal activation','avalanches','domain walls'],level:'综述',core:true},
+{id:'qkpz23',cat:'depinning',year:2023,title:'Depinning in the Quenched Kardar–Parisi–Zhang Class II: Field Theory',authors:'G. Mukerjee · K. J. Wiese',venue:'Phys. Rev. E 107, 054137',url:'https://doi.org/10.1103/PhysRevE.107.054137',why:'当界面存在非线性弹性或法向生长时，qEW 不一定够；这篇帮助判断是不是该进入 qKPZ universality class。',take:'在报 exponent 之前，先判断模型的对称性和非线性到底允许哪个 universality class。',concepts:['qKPZ','qEW','nonlinear elasticity','field theory'],level:'进阶',core:false},
+{id:'lemerle98',cat:'domain',year:1998,title:'Domain Wall Creep in an Ising Ultrathin Magnetic Film',authors:'S. Lemerle et al.',venue:'Phys. Rev. Lett. 80, 849',url:'https://doi.org/10.1103/PhysRevLett.80.849',why:'把 elastic-interface creep 从理论语言落到真实 domain-wall experiment，是跨材料迁移直觉的经典范例。',take:'磁畴壁是理解“无序中的铁电畴壁”很好的实验类比系统。',concepts:['magnetic domain wall','creep','disorder'],level:'实验桥梁',core:false},
+{id:'metaxas07',cat:'domain',year:2007,title:'Creep and Flow Regimes of Magnetic Domain-Wall Motion',authors:'P. J. Metaxas et al.',venue:'Phys. Rev. Lett. 99, 217208',url:'https://doi.org/10.1103/PhysRevLett.99.217208',why:'非常清楚地展示从 creep 到 depinning 再到 flow 的驱动区间图景。',take:'做外场扫描时，首先问“现在属于哪个动力学 regime”，再决定拟什么公式。',concepts:['creep','depinning','flow','velocity-field curve'],level:'实验桥梁',core:false},
+{id:'paruch05',cat:'domain',year:2005,title:'Domain Wall Roughness in Epitaxial Ferroelectric Thin Films',authors:'P. Paruch et al.',venue:'Phys. Rev. Lett. 94, 197601',url:'https://doi.org/10.1103/PhysRevLett.94.197601',why:'把 roughness exponent、pinning 和真实 ferroelectric domain wall 直接连接起来。',take:'畴壁形貌本身就是 universality 的观测量，不只有 coercive field。',concepts:['ferroelectric domain wall','roughness','pinning'],level:'材料桥梁',core:true},
+{id:'yasuda21',cat:'sliding',year:2021,title:'Stacking-Engineered Ferroelectricity in Bilayer Boron Nitride',authors:'K. Yasuda et al.',venue:'Science 372',url:'https://www.science.org/doi/10.1126/science.abd3230',why:'滑移铁电的标志性实验入口之一：stacking 与 out-of-plane polarization 的直接关联。',take:'二维层间堆垛本身可以成为极化自由度，畴壁自然对应 stacking texture。',concepts:['hBN','stacking','sliding ferroelectricity'],level:'目标入口',core:true},
+{id:'stern21',cat:'sliding',year:2021,title:'Interfacial Ferroelectricity by van der Waals Sliding',authors:'M. Vizner Stern et al.',venue:'Science 372',url:'https://www.science.org/doi/10.1126/science.abe8177',why:'从“层间相对滑动”建立二维界面铁电的核心物理图像。',take:'switching coordinate 与传统离子位移型铁电不同，理论建模时应把 interlayer registry 放在中心。',concepts:['vdW sliding','interfacial ferroelectricity','stacking'],level:'目标入口',core:false},
+{id:'yang23',cat:'sliding',year:2023,title:'Non-Volatile Electrical Polarization Switching via Domain Wall Release in 3R-MoS₂ Bilayer',authors:'D. Yang et al.',venue:'arXiv:2311.12126',url:'https://arxiv.org/abs/2311.12126',why:'直接把 3R-MoS₂ 的大尺度极化翻转与 domain-wall release 联系起来，是“畴壁主导 switching”故事的重要材料证据。',take:'宏观 switching 可以由已有畴壁释放和传播完成，而不是整块晶格刚性滑动。',concepts:['3R-MoS2','domain-wall release','switching'],level:'目标核心',core:true},
+{id:'shi25',cat:'sliding',year:2025,title:'Undamped Soliton-like Domain Wall Motion in Sliding Ferroelectrics',authors:'Y. Shi et al.',venue:'arXiv:2502.02137',url:'https://arxiv.org/abs/2502.02137',why:'把 sliding-FE domain wall 的动力学推到 soliton-like、低耗散运动图景，为“畴壁为什么特殊”提供理论侧入口。',take:'滑移铁电畴壁可能并不遵循传统铁电畴壁的耗散运动直觉。',concepts:['soliton','3R-MoS2','domain-wall dynamics'],level:'近期',core:false},
+{id:'wang25',cat:'sliding',year:2025,title:'Polarization Switching in Sliding Ferroelectrics: Roles of Fluctuation and Domain Wall',authors:'Z. Wang · S. Dong',venue:'arXiv:2505.09084',url:'https://arxiv.org/abs/2505.09084',why:'专门讨论 switching 中 fluctuation 与 domain wall 的作用，并以 bilayer hBN 为模型系统。',take:'对称性破缺扰动与畴壁路径可能决定实际 coercive behavior，而不是只有理想均匀能垒。',concepts:['hBN','switching','fluctuation','domain wall'],level:'近期',core:false},
+{id:'li26',cat:'sliding',year:2026,title:'Domain-Wall-Mediated Ultralow-Barrier Sliding and Pinning in Ferroelectric Moiré Superlattices',authors:'J.-W. Li et al.',venue:'arXiv:2604.20277',url:'https://arxiv.org/abs/2604.20277',why:'最新一层把“domain-wall-mediated collective reconstruction”与缺陷 pinning 直接放在同一问题里。',take:'少量缺陷就可能把长程滑移变成局域 pinning；这正是连接 disorder/depinning 与 sliding FE 的天然接口。',concepts:['moiré','pinning','defects','domain-wall-mediated sliding'],level:'前沿',core:true}
+];
+const edges=[
+['anderson72','wilson74'],['wilson74','sethna93'],['imryma75','sethna93'],['sethna93','dahmen96'],['dahmen96','perkovic99'],['sethna93','roters99'],['fisher85','roters99'],['fisher85','ferrero13'],['roters99','wiese21'],['perkovic99','wiese21'],['ferrero13','wiese21'],['wiese21','qkpz23'],['wiese21','ferrero21'],['ferrero21','lemerle98'],['ferrero21','metaxas07'],['wiese21','paruch05'],['paruch05','yasuda21'],['paruch05','stern21'],['yasuda21','yang23'],['stern21','yang23'],['yang23','shi25'],['yang23','wang25'],['yang23','li26'],['wiese21','li26']
+];
+const routes={
+ all:papers.map(p=>p.id),
+ core:papers.filter(p=>p.core).map(p=>p.id),
+ disorder:['wilson74','imryma75','sethna93','dahmen96','perkovic99','roters99','wiese21'],
+ depinning:['fisher85','roters99','ferrero13','wiese21','ferrero21','qkpz23','lemerle98','metaxas07','paruch05'],
+ sliding:['paruch05','yasuda21','stern21','yang23','shi25','wang25','li26']
+};
+const prereq={};edges.forEach(([a,b])=>{(prereq[b]??=[]).push(a)});
+const nexts={};edges.forEach(([a,b])=>{(nexts[a]??=[]).push(b)});
+let selected=null,catFilter='all',route='all',query='';
+let done=new Set(JSON.parse(localStorage.getItem('lsf-read')||'[]'));
+const graph=document.getElementById('graph');
+const xByCat={foundation:110,disorder:315,depinning:525,domain:735,sliding:945};
+function pos(){const grouped={};Object.keys(CATS).forEach(c=>grouped[c]=papers.filter(p=>p.cat===c));const out={};Object.entries(grouped).forEach(([c,arr])=>{const gap=Math.min(105,480/Math.max(1,arr.length-1));const start=arr.length===1?300:85;arr.forEach((p,i)=>out[p.id]={x:xByCat[c],y:start+i*gap})});return out}
+const positions=pos();
+function visibleSet(){let s=new Set(routes[route]);if(catFilter!=='all')s=new Set([...s].filter(id=>papers.find(p=>p.id===id)?.cat===catFilter));if(query){const q=query.toLowerCase();s=new Set([...s].filter(id=>{const p=papers.find(x=>x.id===id);return [p.title,p.authors,p.venue,p.why,p.take,...p.concepts].join(' ').toLowerCase().includes(q)}))}return s}
+function renderGraph(){graph.innerHTML='';const vis=visibleSet();
+ Object.entries(CATS).forEach(([c,v])=>{const el=document.createElement('div');el.className='column-label';el.style.left=xByCat[c]+'px';el.textContent=v.name;graph.appendChild(el)});
+ const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('class','edge-svg');
+ edges.forEach(([a,b])=>{const A=positions[a],B=positions[b];const path=document.createElementNS('http://www.w3.org/2000/svg','path');const mx=(A.x+B.x)/2;path.setAttribute('d',`M ${A.x+86} ${A.y} C ${mx} ${A.y}, ${mx} ${B.y}, ${B.x-86} ${B.y}`);let cls='edge';if(selected&&(a===selected||b===selected))cls+=' focus';if(!vis.has(a)||!vis.has(b))cls+=' dim';path.setAttribute('class',cls);svg.appendChild(path)});graph.appendChild(svg);
+ papers.forEach(p=>{const el=document.createElement('div');el.className='node'+(selected===p.id?' selected':'')+(done.has(p.id)?' done':'')+(vis.has(p.id)?'':' dim');el.style.left=positions[p.id].x+'px';el.style.top=positions[p.id].y+'px';el.innerHTML=`<div class="year">${p.year} · ${p.level}</div><div class="title">${p.title}</div><div class="tag" style="color:${CATS[p.cat].color}">${CATS[p.cat].name}</div>`;el.onclick=()=>selectPaper(p.id);graph.appendChild(el)})}
+function paperName(id){const p=papers.find(x=>x.id===id);return p?`${p.year} · ${p.title}`:''}
+function detailHTML(p){const pre=(prereq[p.id]||[]).map(id=>paperName(id)).join('<br>')||'无硬性前置；可直接进入';const nxt=(nexts[p.id]||[]).map(id=>paperName(id)).join('<br>')||'当前树的前沿节点';return `<div class="detail-year">${p.year} · ${p.venue}</div><div class="detail-title">${p.title}</div><div class="authors">${p.authors}</div><div class="section"><h3>为什么读</h3><p>${p.why}</p></div><div class="section"><h3>读完应该带走什么</h3><p>${p.take}</p></div><div class="section"><h3>Concepts</h3><div class="concepts">${p.concepts.map(c=>`<span class="concept">${c}</span>`).join('')}</div></div><div class="section"><h3>建议前置</h3><p>${pre}</p></div><div class="section"><h3>下一步</h3><p>${nxt}</p></div><div class="actions"><a class="primary" href="${p.url}" target="_blank" rel="noreferrer">打开论文 ↗</a><button class="donebtn ${done.has(p.id)?'on':''}" onclick="toggleDone('${p.id}')">${done.has(p.id)?'✓ 已读':'标记已读'}</button></div><div class="footer-note">V0.1 先建立学习骨架；后续会补 DOI/BibTeX、引用关系、笔记、公式卡片与更多最新材料论文。</div>`}
+function selectPaper(id){selected=id;const p=papers.find(x=>x.id===id);document.getElementById('detailEmpty').style.display='none';const d=document.getElementById('detail');d.classList.add('open');d.innerHTML=detailHTML(p);document.getElementById('mobileDetail').innerHTML=`<section style="background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px">${detailHTML(p)}</section>`;renderGraph()}
+function toggleDone(id){done.has(id)?done.delete(id):done.add(id);localStorage.setItem('lsf-read',JSON.stringify([...done]));updateProgress();selectPaper(id)}
+function updateProgress(){document.getElementById('progressText').textContent=`${done.size} / ${papers.length} read`}
+function renderFilters(){const root=document.getElementById('filters');root.innerHTML='';[{id:'all',name:'全部',color:'#333'},...Object.entries(CATS).map(([id,v])=>({id,name:v.name,color:v.color}))].forEach(f=>{const b=document.createElement('button');b.className=catFilter===f.id?'active':'';b.innerHTML=`<span class="dot" style="background:${f.color}"></span>${f.name}`;b.onclick=()=>{catFilter=f.id;renderFilters();renderGraph()};root.appendChild(b)})}
+function renderChapters(){document.getElementById('chapterStrip').innerHTML=Object.entries(CATS).map(([id,v])=>`<div class="chapter" style="--c:${v.color}"><b>${v.name}</b><small>${v.desc}</small></div>`).join('')}
+document.querySelectorAll('#routeTabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#routeTabs button').forEach(x=>x.classList.remove('active'));b.classList.add('active');route=b.dataset.route;renderGraph()});
+document.getElementById('search').addEventListener('input',e=>{query=e.target.value.trim();renderGraph()});
+renderFilters();renderChapters();renderGraph();updateProgress();
+</script>
+</body>
+</html>
