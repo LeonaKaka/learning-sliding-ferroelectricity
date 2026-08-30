@@ -104,6 +104,7 @@ function renderModules(){
   const host=document.getElementById('moduleList');
   data.modules.forEach(m=>{
     const papers=m.core.map(id=>byId[id]).filter(Boolean);
+    const deep = m.id==='walls' ? `<div style="margin-top:18px"><a href="modules/domain-walls.html" style="display:inline-block;text-decoration:none;color:#fff;background:#1d1e1c;padding:10px 14px;border-radius:9px;font-size:12px">阅读全文：Domain Walls 深度页 →</a></div>` : '';
     const el=document.createElement('section');
     el.className='module'; el.id=m.id;
     el.innerHTML=`
@@ -115,6 +116,7 @@ function renderModules(){
         <div class="papers">${papers.map(paperCard).join('')}</div>
         <div class="supporting"><b>Supporting / branch papers</b><ul>${m.supporting.map(x=>`<li>${x}</li>`).join('')}</ul></div>
         <div class="takeaway"><strong>学完这一章应该能做到：</strong> ${m.takeaway}</div>
+        ${deep}
       </div>`;
     host.appendChild(el);
   });
