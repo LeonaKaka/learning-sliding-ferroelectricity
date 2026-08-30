@@ -69,6 +69,17 @@ jobs:
                   im = im.resize((maxw, round(im.height * maxw / im.width)), Image.Resampling.LANCZOS)
               im.save(out / name, 'WEBP', quality=88, method=6)
               print(name, im.size)
+
+          # Insert the verified Ke figure directly beside the paragraph that
+          # explains the BEC/C3 argument. This modifies only the deploy artifact.
+          page = Path('modules/domain-walls.html')
+          html = page.read_text(encoding='utf-8')
+          needle = '  <div class="equation">F<sub>IP</sub>'
+          figure = '''  <figure class="figure">\n    <img src="../assets/domain-walls/ke2025-fig1-bec-force.webp" alt="Ke et al. 2025 Fig. 1 showing AB and BA stacking and the in-plane force map" />\n    <figcaption>Ke, Liu &amp; Liu, <i>Phys. Rev. Lett.</i> 135, 046201 (2025), Fig. 1. 原始 PDF 第 2 页先以 600 DPI 渲染，再裁到完整 (a)–(d) 组图；保留结构示意、位移坐标、力矢量和 color bar，去掉页眉、caption 与邻近正文。</figcaption>\n  </figure>\n  <p class="figure-note">这张图和上面的原文是同一件事：先看 (a)(b) 的 AB/BA，再看 (d) 三个极化稳定点附近的力场。稳定点处净面内驱动力消失，偏离高对称 stacking 后才出现非零矢量。</p>\n\n'''
+          if needle not in html:
+              raise SystemExit('Ke figure insertion point not found')
+          html = html.replace(needle, figure + needle, 1)
+          page.write_text(html, encoding='utf-8')
           PY
 
       - name: Configure Pages
