@@ -1,22 +1,17 @@
 # Disorder & RFIM lesson assets
 
-Authoritative sources are PDFs inside the project Google Drive folder `sliding ferroelectric/`, under the depinning / elastic-interface / RFIM literature branch.
+Authoritative source PDFs belong to the project `sliding ferroelectric/` literature library.
+
+## Active evidence figures
+
+- `drossel1998-fig3a-percolative-wall.png` — Drossel & Dahmen (1998), Fig. 3(a). The PDF embeds this panel as a 400×400 1-bit raster; the site preserves that source-limited object without fake upscaling.
+- `../repaired-0607/zhou2012-fig2-anomalous-roughness.png` — Zhou, Zheng & He driven-RFIM roughness/correlation panel used by Module 06. This is the display-quality replacement frozen after the 06/07 figure audit.
+
+Dahmen & Sethna (1996) remains part of the selectable-text evidence chain, but its old scanned Fig. 2 is intentionally not displayed: the source image quality is too weak to improve the lesson, and artificial sharpening/upscaling would not add scientific information.
 
 ## Evidence policy
 
-- Source passages in `modules/disorder-rfim.html` are selectable HTML text; paragraph screenshots are forbidden.
-- Figure crops preserve axes, labels, legends and teaching-relevant panels. No scientific annotation is added.
-- `drossel1998-fig3a-percolative-wall.png` is a direct lossless extraction of the PDF's embedded 400×400 1-bit figure object; it is intentionally not upscaled.
-- GitHub Pages deploys frozen local assets only and does not download papers or regenerate figures.
-
-## Frozen assets
-
-- `dahmen1996-fig2-disorder-hysteresis.png` — Dahmen & Sethna (1996), Fig. 2: disorder-driven change from a macroscopic hysteresis jump through the critical endpoint to smooth response. Final deployed size: 15013 bytes. SHA256 `51c25a8d5932587447e29cd7d7928eb45520ced7cd6fa9ed03cf82d56a7017b7`.
-- `drossel1998-fig3a-percolative-wall.png` — Drossel & Dahmen (1998), Fig. 3(a): percolative invaded region with internal unflipped bubbles. Final deployed size: 4690 bytes. SHA256 `65131f0b51238f1780ce4a2c24b4901bb0807fabf875b3232c2864f7749360c2`.
-- `zhou2012-fig2-anomalous-roughness.png` — Zhou, Zheng & He, Drive arXiv version, Fig. 2: global roughness and local height-correlation scaling. Final deployed size: 4833 bytes. SHA256 `6e2aff6781b4f3b47248a533e1a270bea0e39683fc1e977d2cebb078f2826b31`.
-
-## QA
-
-The completed lesson was rendered locally at 1365 px desktop width and 412 px mobile width. The page has no horizontal overflow; all three figures remain legible and all source passages remain selectable text.
-
-The byte sizes and SHA256 values above were rechecked against the actual GitHub Pages artifact produced from `main`, so the provenance record describes the deployed files rather than an earlier local conversion.
+- Original-paper passages are selectable HTML text, never paragraph screenshots.
+- Figure processing must preserve axes, legends, panel labels, and scientific geometry.
+- Source-limited raster figures are labeled as such rather than presented as fake high resolution.
+- GitHub Pages only validates and publishes frozen local assets; it does not download papers or regenerate crops.
