@@ -28,6 +28,7 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import hashlib
           import re
 
           for page in Path('modules').glob('*.html'):
@@ -87,16 +88,19 @@ jobs:
               if marker not in pinning:
                   raise SystemExit(f'Pinning/Creep: missing evidence-chain marker: {marker}')
           expected_pinning = {
-              'tybell2002-fig3-creep.png': 215494,
-              'paruch2005-fig3-roughness.png': 85681,
-              'kim2014-fig1-pinning.png': 3268576,
+              'tybell2002-fig3-creep.png': (124549, 'f5e59e84ae1bb471a9b0ea4e11ab735e78f4734f21e2fbfc73ce81b3e3d90ea5'),
+              'paruch2005-fig3-roughness.png': (85681, '7fb9e9f76f7d85be141bc77de2b4a972fa3f0d8039c20402e6c31940eeeffc1b'),
+              'kim2014-fig1-pinning.png': (2061247, '6e67b462b3524ebc520d343fe4819cc712922ff89b31d8a2e21a4dee2ccbe338'),
           }
           pcdir = Path('assets/pinning-creep')
-          for name, size in expected_pinning.items():
+          for name, (size, digest) in expected_pinning.items():
               p = pcdir / name
               if not p.exists(): raise SystemExit(f'Pinning/Creep: missing {name}')
               if p.stat().st_size != size:
                   raise SystemExit(f'Pinning/Creep: byte-size mismatch for {name}: {p.stat().st_size} != {size}')
+              actual_digest = hashlib.sha256(p.read_bytes()).hexdigest()
+              if actual_digest != digest:
+                  raise SystemExit(f'Pinning/Creep: SHA256 mismatch for {name}: {actual_digest} != {digest}')
           pc_images = {p.name for p in pcdir.iterdir() if p.suffix.lower() in {'.png','.jpg','.jpeg','.webp'}}
           if pc_images != set(expected_pinning):
               raise SystemExit(f'Pinning/Creep: unexpected image set: {sorted(pc_images)}')
