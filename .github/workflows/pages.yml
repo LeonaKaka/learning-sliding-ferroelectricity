@@ -143,6 +143,47 @@ jobs:
           if list(ddir.glob('*paragraph*')) or list(ddir.glob('*.webp')):
               raise SystemExit('Depinning: paragraph screenshots/WebP assets are forbidden')
 
+          disorder = Path('modules/disorder-rfim.html').read_text(encoding='utf-8')
+          if 'paragraph-' in disorder or 'paragraph_' in disorder:
+              raise SystemExit('Disorder/RFIM: paragraph screenshots are forbidden')
+          if disorder.count('class="source-text"') < 3:
+              raise SystemExit('Disorder/RFIM: expected three selectable source-text blocks')
+          required_disorder_markers = (
+              'elastic-manifold',
+              'RFIM',
+              'overhang',
+              'bubble',
+              '作者真正证明了什么',
+              '作者没有证明什么',
+              'numerical-modeling.html',
+          )
+          for marker in required_disorder_markers:
+              if marker not in disorder:
+                  raise SystemExit(f'Disorder/RFIM: missing evidence-chain marker: {marker}')
+          expected_disorder = {
+              'dahmen1996-fig2-disorder-hysteresis.png': (15013, 'e6ffc7df8c5b18b2bcfa7e5e93a7d46824c359579fd508e0fe7fff8ee2e30c3c'),
+              'drossel1998-fig3a-percolative-wall.png': (4690, '14b893d49561ff5c0b2329bfbf4e2986ecc4a33aadb42a7f9c91bd4309871338'),
+              'zhou2012-fig2-anomalous-roughness.png': (4833, '2cd44c84647f1f3021808e7997b0bdb8d11c420703fecb87fe150d9028ab5390'),
+          }
+          rdir = Path('assets/disorder-rfim')
+          for name, (size, digest) in expected_disorder.items():
+              p = rdir / name
+              if not p.exists(): raise SystemExit(f'Disorder/RFIM: missing {name}')
+              if p.stat().st_size != size:
+                  raise SystemExit(f'Disorder/RFIM: byte-size mismatch for {name}: {p.stat().st_size} != {size}')
+              actual_digest = hashlib.sha256(p.read_bytes()).hexdigest()
+              if actual_digest != digest:
+                  raise SystemExit(f'Disorder/RFIM: SHA256 mismatch for {name}: {actual_digest} != {digest}')
+          r_images = {p.name for p in rdir.iterdir() if p.suffix.lower() in {'.png','.jpg','.jpeg','.webp'}}
+          if r_images != set(expected_disorder):
+              raise SystemExit(f'Disorder/RFIM: unexpected image set: {sorted(r_images)}')
+          if list(rdir.glob('*paragraph*')) or list(rdir.glob('*.webp')):
+              raise SystemExit('Disorder/RFIM: paragraph screenshots/WebP assets are forbidden')
+
+          index = Path('index.html').read_text(encoding='utf-8')
+          if "disorder:['modules/disorder-rfim.html'" not in index:
+              raise SystemExit('Homepage: missing Module 06 deep-lesson entry')
+
           print('Static validation complete: source passages are HTML text; frozen lesson assets are local; deployment performs no paper download or crop generation.')
           PY
 
