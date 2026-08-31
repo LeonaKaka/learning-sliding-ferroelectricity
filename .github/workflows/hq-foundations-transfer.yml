@@ -1,0 +1,56 @@
+name: One-time lossless Foundations figure transfer
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/hq-foundations-transfer.yml
+
+permissions:
+  contents: write
+
+jobs:
+  transfer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fetch exact 600-DPI Drive-derived PNG bytes and verify SHA256
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p assets/foundations
+          curl -fL --retry 3 'https://oaisdmntprwestus3.blob.core.windows.net/files/00000000-57e8-81fd-843c-8189ce250109/raw?se=2026-08-31T04%3A58%3A45Z&sp=r&sv=2026-02-06&sr=b&scid=f70dd365-8466-4bfb-9481-de202da2a90e&skoid=5e713cdb-766b-475e-a3ca-8adb6cf99aa0&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-08-30T18%3A43%3A30Z&ske=2026-08-31T18%3A43%3A30Z&sks=b&skv=2026-02-06&sig=Br7hyI2UWt2adTaFzIyuOwlEU0FAot81O%2BQ45e0uWK4%3D' -o assets/foundations/wu2021-fig1-mechanism.png
+          curl -fL --retry 3 'https://oaisdmntprwestus3.blob.core.windows.net/files/00000000-b7b0-81fd-a087-e9276d30b766/raw?se=2026-08-31T04%3A58%3A45Z&sp=r&sv=2026-02-06&sr=b&scid=f70dd365-8466-4bfb-9481-de202da2a90e&skoid=5e713cdb-766b-475e-a3ca-8adb6cf99aa0&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-08-30T18%3A53%3A02Z&ske=2026-08-31T18%3A53%3A02Z&sks=b&skv=2026-02-06&sig=IVkeqSUXsihnrknn8P4Ga97ifW%2BNaNvgmpucp%2Bf%2B1Jw%3D' -o assets/foundations/yasuda2021-fig1-stacking.png
+          curl -fL --retry 3 'https://oaisdmntprwestus3.blob.core.windows.net/files/00000000-95a4-81fd-b375-b1615ef7e108/raw?se=2026-08-31T04%3A58%3A45Z&sp=r&sv=2026-02-06&sr=b&scid=f70dd365-8466-4bfb-9481-de202da2a90e&skoid=5e713cdb-766b-475e-a3ca-8adb6cf99aa0&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-08-30T18%3A47%3A28Z&ske=2026-08-31T18%3A47%3A28Z&sks=b&skv=2026-02-06&sig=CoSM%2B0DezJ4xjTHXE0oQEm4bVvPd7nAC%2BPcHqt8c2TE%3D' -o assets/foundations/vizner2021-fig2-domains.png
+          curl -fL --retry 3 'https://oaisdmntprwestus3.blob.core.windows.net/files/00000000-98d8-81fd-8af0-8e4d83bddec8/raw?se=2026-08-31T04%3A58%3A45Z&sp=r&sv=2026-02-06&sr=b&scid=f70dd365-8466-4bfb-9481-de202da2a90e&skoid=5e713cdb-766b-475e-a3ca-8adb6cf99aa0&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-08-30T13%3A14%3A38Z&ske=2026-08-31T13%3A14%3A38Z&sks=b&skv=2026-02-06&sig=AgmB7Sq9ahaPBYQzcWbhWpNHWwYzPepl0rNmW3Qip7o%3D' -o assets/foundations/meng2022-fig3e-multistate.png
+          curl -fL --retry 3 'https://oaisdmntprwestus3.blob.core.windows.net/files/00000000-b570-81fd-9dac-c4de327449de/raw?se=2026-08-31T04%3A58%3A45Z&sp=r&sv=2026-02-06&sr=b&scid=f70dd365-8466-4bfb-9481-de202da2a90e&skoid=5e713cdb-766b-475e-a3ca-8adb6cf99aa0&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-08-30T18%3A58%3A50Z&ske=2026-08-31T18%3A58%3A50Z&sks=b&skv=2026-02-06&sig=UL9L5MLT42LmV6IKoMZ2vo72dzpAasOQqNrogYt95JQ%3D' -o assets/foundations/ji2023-fig1-principles.png
+          printf '%s  %s\n' \
+            '9b3f98da55ce8a9be729b4bb9a0fdf9f545d26658ee4de137efb749b0d9ed6a1' assets/foundations/wu2021-fig1-mechanism.png \
+            'f2bffb1f261398a50190cbb168c12fe87d91b187125c24e6664e776f786afa05' assets/foundations/yasuda2021-fig1-stacking.png \
+            'c1518973ed3e0637037f77c1008ec54246182a74028a700e77490c8d6d0cb833' assets/foundations/vizner2021-fig2-domains.png \
+            '9efadc66ff265fee95fbe94ecc453d018278101a05a28f142ab1ebc3244e3269' assets/foundations/meng2022-fig3e-multistate.png \
+            'b440d217e0ed15c1656ed5132979bbbaa68c8cdcd6757731f0392bc9f83b3cc0' assets/foundations/ji2023-fig1-principles.png | sha256sum -c -
+          rm -f \
+            assets/foundations/wu2021-paragraph-model.png \
+            assets/foundations/wu2021-fig1-mechanism.webp \
+            assets/foundations/yasuda2021-paragraph-stacking.png \
+            assets/foundations/yasuda2021-fig1-stacking.webp \
+            assets/foundations/vizner2021-paragraph-domains-part1.png \
+            assets/foundations/vizner2021-paragraph-domains-part2.png \
+            assets/foundations/vizner2021-fig2-domains.webp \
+            assets/foundations/meng2022-paragraph-multistate-part*.png \
+            assets/foundations/meng2022-fig3e-multistate.webp \
+            assets/foundations/ji2023-paragraph-general-theory.png \
+            assets/foundations/ji2023-fig1-principles.webp
+      - name: Commit verified lossless assets and remove this one-time workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f .github/workflows/hq-foundations-transfer.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Restore lossless 600 DPI Foundations figures'
+          git push origin HEAD:main
