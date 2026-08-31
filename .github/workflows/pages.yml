@@ -126,9 +126,23 @@ jobs:
               'zhou2012-fig2-anomalous-roughness.png': (4833, '6e2aff6781b4f3b47248a533e1a270bea0e39683fc1e977d2cebb078f2826b31'),
           })
 
+          modeling = forbid_paragraph_assets(
+              'Numerical Modeling', 'modules/numerical-modeling.html', 'assets/numerical-modeling', 3)
+          require_markers('Numerical Modeling', modeling, (
+              'TDGL', 'diffuse wall', 'elastic line', '1/dx', 'finite-size',
+              '作者真正支持什么', '不要偷换成什么', '08 Current Frontiers'))
+          freeze_assets('Numerical Modeling', 'assets/numerical-modeling', {
+              'chen2008-fig6-domain-structures.png': (10704, 'b298d8a3e2c3d2f24cd08cc7b6edc92af0f0c40f2d844105b872f71df583aeea'),
+              'caballero2020-fig1-bulk-to-interface.png': (4218, '86013490f8fdeca0a7d7722f79b03812a09a9f8c8b225dba3f367b6ee95fc1a3'),
+              'caballero2020-fig5-roughness.png': (4783, '81f7d5ebf1dcad52e4e5239d116ba666cbe429a8ca54c98f207abfabcd0d742c'),
+              'caballero2020-fig5-structure-factor.png': (4813, '909a1dbb558016ed74100e346b40144e360cbc4854962dc6e31ac856e1046994'),
+          })
+
           index = page_text('index.html')
           if "disorder:['modules/disorder-rfim.html'" not in index:
               raise SystemExit('Homepage: missing Module 06 deep-lesson entry')
+          if "modeling:['modules/numerical-modeling.html'" not in index:
+              raise SystemExit('Homepage: missing Module 07 deep-lesson entry')
 
           print('Static validation complete: selectable source text, frozen local figures, exact evidence assets, no paper download/crop generation during deployment.')
           PY
