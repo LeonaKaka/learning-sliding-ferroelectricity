@@ -24,11 +24,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Verify static lesson assets
+      - name: Verify static lesson assets and evidence policy
         run: |
           python3 - <<'PY'
           from pathlib import Path
           import re
+
           for page in Path('modules').glob('*.html'):
               text = page.read_text(encoding='utf-8')
               for ref in re.findall(r'<img[^>]+src="([^"]+)"', text):
@@ -37,8 +38,42 @@ jobs:
                   target = (page.parent / ref).resolve()
                   if not target.exists():
                       raise SystemExit(f'{page}: missing static asset: {ref}')
-              print(f'OK {page}')
-          print('Static validation complete; no PDF download or crop generation during deploy.')
+              print(f'OK local refs: {page}')
+
+          # Foundations: quotations must be HTML text; final lesson figures are lossless PNG.
+          foundations = Path('modules/foundations.html').read_text(encoding='utf-8')
+          if 'paragraph-' in foundations or 'paragraph_' in foundations:
+              raise SystemExit('Foundations: paragraph screenshots are forbidden')
+          if foundations.count('class="source-text"') < 5:
+              raise SystemExit('Foundations: expected selectable source-text blocks')
+          fdir = Path('assets/foundations')
+          if list(fdir.glob('*paragraph*')) or list(fdir.glob('*.webp')):
+              raise SystemExit('Foundations: paragraph screenshots/WebP assets are forbidden')
+
+          # Switching Pathways: exactly three Drive-derived 600-DPI lossless PNG figures.
+          pathways = Path('modules/switching-pathways.html').read_text(encoding='utf-8')
+          if 'paragraph-' in pathways or 'paragraph_' in pathways:
+              raise SystemExit('Switching Pathways: paragraph screenshots are forbidden')
+          if pathways.count('class="source-text"') < 3:
+              raise SystemExit('Switching Pathways: expected selectable source-text blocks')
+          expected = {
+              'yang2024-fig3-domain-wall-release.png': 779000,
+              'sui2024-fig4-atomic-sliding-pathways.png': 6634979,
+              'liang2025-fig4-interface-resolved-pathways.png': 592482,
+          }
+          pdir = Path('assets/switching-pathways')
+          for name, size in expected.items():
+              p = pdir / name
+              if not p.exists(): raise SystemExit(f'Switching Pathways: missing {name}')
+              if p.stat().st_size != size:
+                  raise SystemExit(f'Switching Pathways: byte-size mismatch for {name}: {p.stat().st_size} != {size}')
+          images = {p.name for p in pdir.iterdir() if p.suffix.lower() in {'.png','.jpg','.jpeg','.webp'}}
+          if images != set(expected):
+              raise SystemExit(f'Switching Pathways: unexpected image set: {sorted(images)}')
+          if list(pdir.glob('*paragraph*')) or list(pdir.glob('*.webp')):
+              raise SystemExit('Switching Pathways: paragraph screenshots/WebP assets are forbidden')
+
+          print('Static validation complete: source passages are HTML text; frozen lesson assets are local; deployment performs no paper download or crop generation.')
           PY
 
       - name: Configure Pages
