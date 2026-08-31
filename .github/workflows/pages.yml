@@ -40,7 +40,6 @@ jobs:
                       raise SystemExit(f'{page}: missing static asset: {ref}')
               print(f'OK local refs: {page}')
 
-          # Foundations: quotations must be HTML text; final lesson figures are lossless PNG.
           foundations = Path('modules/foundations.html').read_text(encoding='utf-8')
           if 'paragraph-' in foundations or 'paragraph_' in foundations:
               raise SystemExit('Foundations: paragraph screenshots are forbidden')
@@ -50,7 +49,6 @@ jobs:
           if list(fdir.glob('*paragraph*')) or list(fdir.glob('*.webp')):
               raise SystemExit('Foundations: paragraph screenshots/WebP assets are forbidden')
 
-          # Switching Pathways: exactly three Drive-derived 600-DPI lossless PNG figures.
           pathways = Path('modules/switching-pathways.html').read_text(encoding='utf-8')
           if 'paragraph-' in pathways or 'paragraph_' in pathways:
               raise SystemExit('Switching Pathways: paragraph screenshots are forbidden')
@@ -73,7 +71,6 @@ jobs:
           if list(pdir.glob('*paragraph*')) or list(pdir.glob('*.webp')):
               raise SystemExit('Switching Pathways: paragraph screenshots/WebP assets are forbidden')
 
-          # Pinning, Creep & Roughness: selectable source text + exact frozen 600-DPI PNGs.
           pinning = Path('modules/pinning-creep.html').read_text(encoding='utf-8')
           if 'paragraph-' in pinning or 'paragraph_' in pinning:
               raise SystemExit('Pinning/Creep: paragraph screenshots are forbidden')
@@ -95,6 +92,29 @@ jobs:
               raise SystemExit(f'Pinning/Creep: unexpected image set: {sorted(pc_images)}')
           if list(pcdir.glob('*paragraph*')) or list(pcdir.glob('*.webp')):
               raise SystemExit('Pinning/Creep: paragraph screenshots/WebP assets are forbidden')
+
+          depinning = Path('modules/depinning.html').read_text(encoding='utf-8')
+          if 'paragraph-' in depinning or 'paragraph_' in depinning:
+              raise SystemExit('Depinning: paragraph screenshots are forbidden')
+          if depinning.count('class="source-text"') < 4:
+              raise SystemExit('Depinning: expected four selectable source-text blocks')
+          expected_depinning = {
+              'chauve2000-fig1-force-velocity.png': 80043,
+              'rosso2003-fig2-critical-roughness.png': 61989,
+              'ferrero2013-fig3-nonsteady-velocity.png': 512026,
+              'wiese2022-fig22-depinning-phenomenology.png': 266415,
+          }
+          ddir = Path('assets/depinning')
+          for name, size in expected_depinning.items():
+              p = ddir / name
+              if not p.exists(): raise SystemExit(f'Depinning: missing {name}')
+              if p.stat().st_size != size:
+                  raise SystemExit(f'Depinning: byte-size mismatch for {name}: {p.stat().st_size} != {size}')
+          d_images = {p.name for p in ddir.iterdir() if p.suffix.lower() in {'.png','.jpg','.jpeg','.webp'}}
+          if d_images != set(expected_depinning):
+              raise SystemExit(f'Depinning: unexpected image set: {sorted(d_images)}')
+          if list(ddir.glob('*paragraph*')) or list(ddir.glob('*.webp')):
+              raise SystemExit('Depinning: paragraph screenshots/WebP assets are forbidden')
 
           print('Static validation complete: source passages are HTML text; frozen lesson assets are local; deployment performs no paper download or crop generation.')
           PY
