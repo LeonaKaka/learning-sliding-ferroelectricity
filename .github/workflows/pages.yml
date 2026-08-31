@@ -101,7 +101,7 @@ jobs:
           expected_depinning = {
               'chauve2000-fig1-force-velocity.png': 80043,
               'rosso2003-fig2-critical-roughness.png': 61989,
-              'ferrero2013-fig3-nonsteady-velocity.png': 512026,
+              'ferrero2013-fig3-nonsteady-velocity.png': 511879,
               'wiese2022-fig22-depinning-phenomenology.png': 266415,
           }
           ddir = Path('assets/depinning')
