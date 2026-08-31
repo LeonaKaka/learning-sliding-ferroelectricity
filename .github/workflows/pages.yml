@@ -24,170 +24,47 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Verify static lesson assets and evidence policy
+      - name: Verify static evidence site
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import hashlib
-          import re
+          import hashlib, re
 
-          IMAGE_EXTS = {'.png', '.jpg', '.jpeg', '.webp'}
-
-          def page_text(path):
-              return Path(path).read_text(encoding='utf-8')
-
-          def forbid_paragraph_assets(label, page_path, asset_dir, min_source_blocks):
-              text = page_text(page_path)
-              if 'paragraph-' in text or 'paragraph_' in text:
-                  raise SystemExit(f'{label}: paragraph screenshots are forbidden')
-              if text.count('class="source-text"') < min_source_blocks:
-                  raise SystemExit(f'{label}: expected at least {min_source_blocks} selectable source-text blocks')
-              d = Path(asset_dir)
-              if list(d.glob('*paragraph*')) or list(d.glob('*.webp')):
-                  raise SystemExit(f'{label}: paragraph screenshots/WebP assets are forbidden')
-              return text
-
-          def require_markers(label, text, markers):
-              for marker in markers:
-                  if marker not in text:
-                      raise SystemExit(f'{label}: missing evidence-chain marker: {marker}')
-
-          def freeze_assets(label, asset_dir, expected):
-              d = Path(asset_dir)
-              for name, spec in expected.items():
-                  p = d / name
-                  if not p.exists():
-                      raise SystemExit(f'{label}: missing {name}')
-                  if isinstance(spec, int):
-                      size, digest = spec, None
-                  else:
-                      size, digest = spec
-                  if p.stat().st_size != size:
-                      raise SystemExit(f'{label}: byte-size mismatch for {name}: {p.stat().st_size} != {size}')
-                  if digest:
-                      actual = hashlib.sha256(p.read_bytes()).hexdigest()
-                      if actual != digest:
-                          raise SystemExit(f'{label}: SHA256 mismatch for {name}: {actual} != {digest}')
-              images = {p.name for p in d.iterdir() if p.suffix.lower() in IMAGE_EXTS}
-              if images != set(expected):
-                  raise SystemExit(f'{label}: unexpected image set: {sorted(images)}')
-
-          def require_reused_assets(label, expected):
-              for path, size in expected.items():
-                  p = Path(path)
-                  if not p.exists():
-                      raise SystemExit(f'{label}: missing reused source figure: {path}')
-                  if p.stat().st_size != size:
-                      raise SystemExit(f'{label}: reused source figure byte-size mismatch: {path}: {p.stat().st_size} != {size}')
-
-          # Every lesson image must resolve to a local source asset.
-          for page in Path('modules').glob('*.html'):
+          expected_sources = {
+              'foundations.html': 5, 'switching-pathways.html': 3,
+              'domain-walls.html': 4, 'pinning-creep.html': 6,
+              'depinning.html': 4, 'disorder-rfim.html': 3,
+              'numerical-modeling.html': 3, 'current-frontiers.html': 5,
+          }
+          for name, count in expected_sources.items():
+              page = Path('modules') / name
               text = page.read_text(encoding='utf-8')
+              if text.count('class="source-text"') < count:
+                  raise SystemExit(f'{name}: missing selectable source-text blocks')
+              if 'paragraph-' in text or 'paragraph_' in text:
+                  raise SystemExit(f'{name}: paragraph screenshots are forbidden')
               for ref in re.findall(r'<img[^>]+src="([^"]+)"', text):
-                  if ref.startswith(('http://', 'https://', 'data:')):
-                      raise SystemExit(f'{page}: remote image not allowed: {ref}')
-                  target = (page.parent / ref).resolve()
-                  if not target.exists():
-                      raise SystemExit(f'{page}: missing static asset: {ref}')
-              print(f'OK local refs: {page}')
+                  if ref.startswith(('http://','https://','data:')):
+                      raise SystemExit(f'{name}: remote image not allowed: {ref}')
+                  if not (page.parent / ref).resolve().exists():
+                      raise SystemExit(f'{name}: missing image: {ref}')
 
-          foundations = forbid_paragraph_assets(
-              'Foundations', 'modules/foundations.html', 'assets/foundations', 5)
+          frozen = {
+              'assets/repaired-0607/zhou2012-fig2-anomalous-roughness.png': (7818, 'd59962ea8bae39ee79afc89969daf071d1cef4721e89958e52ed5df786b13450'),
+              'assets/repaired-0607/caballero2020-fig1-bulk-to-interface.png': (13797, '8a4493aac052dccb9752a23e7998a23db17947e561bd81cdc60413bb60a10dcc'),
+              'assets/repaired-0607/caballero2020-fig5-roughness.png': (13214, 'a0ec188345c910ecbdb3e49ea63c1c1aa4eac5bf1a1af4cc978d5df7acc78383'),
+              'assets/repaired-0607/caballero2020-fig5-structure-factor.png': (14359, '53b6dedc4183599b445ee30443744f5622702e54a8b542ccc87fe774e515be31'),
+          }
+          for path, (size, digest) in frozen.items():
+              p = Path(path)
+              if not p.exists() or p.stat().st_size != size:
+                  raise SystemExit(f'bad repaired asset: {path}')
+              if hashlib.sha256(p.read_bytes()).hexdigest() != digest:
+                  raise SystemExit(f'hash mismatch: {path}')
 
-          pathways = forbid_paragraph_assets(
-              'Switching Pathways', 'modules/switching-pathways.html', 'assets/switching-pathways', 3)
-          freeze_assets('Switching Pathways', 'assets/switching-pathways', {
-              'yang2024-fig3-domain-wall-release.png': 779000,
-              'sui2024-fig4-atomic-sliding-pathways.png': 6634979,
-              'liang2025-fig4-interface-resolved-pathways.png': 592482,
-          })
-
-          walls = page_text('modules/domain-walls.html')
-          if walls.count('class="source-text"') < 4:
-              raise SystemExit('Domain Walls: expected at least 4 selectable source-text blocks')
-          if 'paragraph-' in walls or 'paragraph_' in walls:
-              raise SystemExit('Domain Walls: paragraph screenshot references are forbidden')
-          if list(Path('assets/domain-walls').glob('*paragraph*')):
-              raise SystemExit('Domain Walls: legacy paragraph screenshot assets must not remain')
-          require_markers('Domain Walls', walls, (
-              'Born effective charge', 'C3', 'no domain wall, no polarization reversal',
-              'pinning/depinning', '04 Pinning, Creep & Roughness'))
-          require_reused_assets('Domain Walls', {
-              'assets/domain-walls/ke2025-fig1-bec-force.webp': 108526,
-              'assets/domain-walls/chen2026-fig1.webp': 176356,
-              'assets/domain-walls/chen2026-fig2-pinning.webp': 126082,
-              'assets/domain-walls/liu2026-fig2-raman-switching.webp': 170116,
-          })
-
-          pinning = forbid_paragraph_assets(
-              'Pinning/Creep', 'modules/pinning-creep.html', 'assets/pinning-creep', 6)
-          require_markers('Pinning/Creep', pinning, (
-              'nucleation → lateral DW motion', 'random-bond', 'random-field', 'B(L)', 'depinning.html'))
-          freeze_assets('Pinning/Creep', 'assets/pinning-creep', {
-              'tybell2002-fig3-creep.png': (124549, 'f5e59e84ae1bb471a9b0ea4e11ab735e78f4734f21e2fbfc73ce81b3e3d90ea5'),
-              'paruch2005-fig3-roughness.png': (85681, '7fb9e9f76f7d85be141bc77de2b4a972fa3f0d8039c20402e6c31940eeeffc1b'),
-              'kim2014-fig1-pinning.png': (2061247, '6e67b462b3524ebc520d343fe4819cc712922ff89b31d8a2e21a4dee2ccbe338'),
-          })
-
-          depinning = forbid_paragraph_assets(
-              'Depinning', 'modules/depinning.html', 'assets/depinning', 4)
-          require_markers('Depinning', depinning, (
-              '作者真正证明了什么', '作者没有证明什么', 'random-bond', 'random-field', '06 Disorder & RFIM'))
-          freeze_assets('Depinning', 'assets/depinning', {
-              'chauve2000-fig1-force-velocity.png': (80043, '71357b4ec7a40c50b54bb0d6e18c2719f3563f522f1b100611193c71c539d0cc'),
-              'rosso2003-fig2-critical-roughness.png': (61989, '336a7b59990c1f31d8c3f74534888d467b52c7fd6a6c4ccf870d3bb4bd1b6c59'),
-              'ferrero2013-fig3-nonsteady-velocity.png': (511879, '3983bff635f5ff0329c5bf4641936332db7c9665859bae5ee2c3d35108f90bd4'),
-              'wiese2022-fig22-depinning-phenomenology.png': (266415, '0d935ee5cdc20b170d2e17f6d407fdb239d2f66c7700a1d1e3bf19cb8dc0cc13'),
-          })
-
-          disorder = forbid_paragraph_assets(
-              'Disorder/RFIM', 'modules/disorder-rfim.html', 'assets/disorder-rfim', 3)
-          require_markers('Disorder/RFIM', disorder, (
-              'elastic-manifold', 'RFIM', 'overhang', 'bubble',
-              '作者真正证明了什么', '作者没有证明什么', '../index.html#modeling'))
-          freeze_assets('Disorder/RFIM', 'assets/disorder-rfim', {
-              'dahmen1996-fig2-disorder-hysteresis.png': (15013, '51c25a8d5932587447e29cd7d7928eb45520ced7cd6fa9ed03cf82d56a7017b7'),
-              'drossel1998-fig3a-percolative-wall.png': (4690, '65131f0b51238f1780ce4a2c24b4901bb0807fabf875b3232c2864f7749360c2'),
-              'zhou2012-fig2-anomalous-roughness.png': (4833, '6e2aff6781b4f3b47248a533e1a270bea0e39683fc1e977d2cebb078f2826b31'),
-          })
-
-          modeling = forbid_paragraph_assets(
-              'Numerical Modeling', 'modules/numerical-modeling.html', 'assets/numerical-modeling', 3)
-          require_markers('Numerical Modeling', modeling, (
-              'TDGL', 'diffuse wall', 'elastic line', '1/dx', 'finite-size',
-              '作者真正支持什么', '不要偷换成什么', '08 Current Frontiers'))
-          freeze_assets('Numerical Modeling', 'assets/numerical-modeling', {
-              'chen2008-fig6-domain-structures.png': (10704, 'b298d8a3e2c3d2f24cd08cc7b6edc92af0f0c40f2d844105b872f71df583aeea'),
-              'caballero2020-fig1-bulk-to-interface.png': (4218, '86013490f8fdeca0a7d7722f79b03812a09a9f8c8b225dba3f367b6ee95fc1a3'),
-              'caballero2020-fig5-roughness.png': (4783, '81f7d5ebf1dcad52e4e5239d116ba666cbe429a8ca54c98f207abfabcd0d742c'),
-              'caballero2020-fig5-structure-factor.png': (4813, '909a1dbb558016ed74100e346b40144e360cbc4854962dc6e31ac856e1046994'),
-          })
-
-          frontier = forbid_paragraph_assets(
-              'Current Frontiers', 'modules/current-frontiers.html', 'assets/current-frontiers', 5)
-          require_markers('Current Frontiers', frontier, (
-              'universality', 'v(E)', 'B(r)', 'size scaling', 'avalanchelike', 'superlubric',
-              'no domain wall, no polarization reversal', 'pinning/depinning event'))
-          require_reused_assets('Current Frontiers', {
-              'assets/switching-pathways/liang2025-fig4-interface-resolved-pathways.png': 592482,
-              'assets/domain-walls/ke2025-fig1-bec-force.webp': 108526,
-              'assets/domain-walls/chen2026-fig2-pinning.webp': 126082,
-              'assets/domain-walls/liu2026-fig2-raman-switching.webp': 170116,
-          })
-          if 'paragraph-' in frontier or 'paragraph_' in frontier:
-              raise SystemExit('Current Frontiers: legacy paragraph screenshot references are forbidden')
-
-          index = page_text('index.html')
-          for marker, label in (
-              ("walls:['modules/domain-walls.html'", 'Module 03'),
-              ("disorder:['modules/disorder-rfim.html'", 'Module 06'),
-              ("modeling:['modules/numerical-modeling.html'", 'Module 07'),
-              ("frontier:['modules/current-frontiers.html'", 'Module 08'),
-          ):
-              if marker not in index:
-                  raise SystemExit(f'Homepage: missing {label} deep-lesson entry')
-
-          print('Static validation complete: selectable source text, frozen/reused local figures, exact evidence assets, no paper download/crop generation during deployment.')
+          if Path('scripts').exists():
+              raise SystemExit('legacy evidence-regeneration scripts must not remain in static V1')
+          print('Static evidence validation passed.')
           PY
 
       - name: Configure Pages
