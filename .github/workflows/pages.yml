@@ -31,160 +31,106 @@ jobs:
           import hashlib
           import re
 
+          IMAGE_EXTS = {'.png', '.jpg', '.jpeg', '.webp'}
+
+          def page_text(path):
+              return Path(path).read_text(encoding='utf-8')
+
+          def forbid_paragraph_assets(label, page_path, asset_dir, min_source_blocks):
+              text = page_text(page_path)
+              if 'paragraph-' in text or 'paragraph_' in text:
+                  raise SystemExit(f'{label}: paragraph screenshots are forbidden')
+              if text.count('class="source-text"') < min_source_blocks:
+                  raise SystemExit(f'{label}: expected at least {min_source_blocks} selectable source-text blocks')
+              d = Path(asset_dir)
+              if list(d.glob('*paragraph*')) or list(d.glob('*.webp')):
+                  raise SystemExit(f'{label}: paragraph screenshots/WebP assets are forbidden')
+              return text
+
+          def require_markers(label, text, markers):
+              for marker in markers:
+                  if marker not in text:
+                      raise SystemExit(f'{label}: missing evidence-chain marker: {marker}')
+
+          def freeze_assets(label, asset_dir, expected):
+              d = Path(asset_dir)
+              for name, spec in expected.items():
+                  p = d / name
+                  if not p.exists():
+                      raise SystemExit(f'{label}: missing {name}')
+                  if isinstance(spec, int):
+                      size, digest = spec, None
+                  else:
+                      size, digest = spec
+                  if p.stat().st_size != size:
+                      raise SystemExit(f'{label}: byte-size mismatch for {name}: {p.stat().st_size} != {size}')
+                  if digest:
+                      actual = hashlib.sha256(p.read_bytes()).hexdigest()
+                      if actual != digest:
+                          raise SystemExit(f'{label}: SHA256 mismatch for {name}: {actual} != {digest}')
+              images = {p.name for p in d.iterdir() if p.suffix.lower() in IMAGE_EXTS}
+              if images != set(expected):
+                  raise SystemExit(f'{label}: unexpected image set: {sorted(images)}')
+
+          # Every lesson image must resolve to a frozen local file.
           for page in Path('modules').glob('*.html'):
               text = page.read_text(encoding='utf-8')
               for ref in re.findall(r'<img[^>]+src="([^"]+)"', text):
-                  if ref.startswith(('http://','https://','data:')):
+                  if ref.startswith(('http://', 'https://', 'data:')):
                       raise SystemExit(f'{page}: remote image not allowed: {ref}')
                   target = (page.parent / ref).resolve()
                   if not target.exists():
                       raise SystemExit(f'{page}: missing static asset: {ref}')
               print(f'OK local refs: {page}')
 
-          foundations = Path('modules/foundations.html').read_text(encoding='utf-8')
-          if 'paragraph-' in foundations or 'paragraph_' in foundations:
-              raise SystemExit('Foundations: paragraph screenshots are forbidden')
-          if foundations.count('class="source-text"') < 5:
-              raise SystemExit('Foundations: expected selectable source-text blocks')
-          fdir = Path('assets/foundations')
-          if list(fdir.glob('*paragraph*')) or list(fdir.glob('*.webp')):
-              raise SystemExit('Foundations: paragraph screenshots/WebP assets are forbidden')
+          foundations = forbid_paragraph_assets(
+              'Foundations', 'modules/foundations.html', 'assets/foundations', 5)
 
-          pathways = Path('modules/switching-pathways.html').read_text(encoding='utf-8')
-          if 'paragraph-' in pathways or 'paragraph_' in pathways:
-              raise SystemExit('Switching Pathways: paragraph screenshots are forbidden')
-          if pathways.count('class="source-text"') < 3:
-              raise SystemExit('Switching Pathways: expected selectable source-text blocks')
-          expected = {
+          pathways = forbid_paragraph_assets(
+              'Switching Pathways', 'modules/switching-pathways.html', 'assets/switching-pathways', 3)
+          freeze_assets('Switching Pathways', 'assets/switching-pathways', {
               'yang2024-fig3-domain-wall-release.png': 779000,
               'sui2024-fig4-atomic-sliding-pathways.png': 6634979,
               'liang2025-fig4-interface-resolved-pathways.png': 592482,
-          }
-          pdir = Path('assets/switching-pathways')
-          for name, size in expected.items():
-              p = pdir / name
-              if not p.exists(): raise SystemExit(f'Switching Pathways: missing {name}')
-              if p.stat().st_size != size:
-                  raise SystemExit(f'Switching Pathways: byte-size mismatch for {name}: {p.stat().st_size} != {size}')
-          images = {p.name for p in pdir.iterdir() if p.suffix.lower() in {'.png','.jpg','.jpeg','.webp'}}
-          if images != set(expected):
-              raise SystemExit(f'Switching Pathways: unexpected image set: {sorted(images)}')
-          if list(pdir.glob('*paragraph*')) or list(pdir.glob('*.webp')):
-              raise SystemExit('Switching Pathways: paragraph screenshots/WebP assets are forbidden')
+          })
 
-          pinning = Path('modules/pinning-creep.html').read_text(encoding='utf-8')
-          if 'paragraph-' in pinning or 'paragraph_' in pinning:
-              raise SystemExit('Pinning/Creep: paragraph screenshots are forbidden')
-          if pinning.count('class="source-text"') < 6:
-              raise SystemExit('Pinning/Creep: expected six selectable source-text blocks')
-          required_pinning_markers = (
-              'nucleation → lateral DW motion',
-              'random-bond',
-              'random-field',
-              'B(L)',
-              'depinning.html',
-          )
-          for marker in required_pinning_markers:
-              if marker not in pinning:
-                  raise SystemExit(f'Pinning/Creep: missing evidence-chain marker: {marker}')
-          expected_pinning = {
+          pinning = forbid_paragraph_assets(
+              'Pinning/Creep', 'modules/pinning-creep.html', 'assets/pinning-creep', 6)
+          require_markers('Pinning/Creep', pinning, (
+              'nucleation → lateral DW motion', 'random-bond', 'random-field', 'B(L)', 'depinning.html'))
+          freeze_assets('Pinning/Creep', 'assets/pinning-creep', {
               'tybell2002-fig3-creep.png': (124549, 'f5e59e84ae1bb471a9b0ea4e11ab735e78f4734f21e2fbfc73ce81b3e3d90ea5'),
               'paruch2005-fig3-roughness.png': (85681, '7fb9e9f76f7d85be141bc77de2b4a972fa3f0d8039c20402e6c31940eeeffc1b'),
               'kim2014-fig1-pinning.png': (2061247, '6e67b462b3524ebc520d343fe4819cc712922ff89b31d8a2e21a4dee2ccbe338'),
-          }
-          pcdir = Path('assets/pinning-creep')
-          for name, (size, digest) in expected_pinning.items():
-              p = pcdir / name
-              if not p.exists(): raise SystemExit(f'Pinning/Creep: missing {name}')
-              if p.stat().st_size != size:
-                  raise SystemExit(f'Pinning/Creep: byte-size mismatch for {name}: {p.stat().st_size} != {size}')
-              actual_digest = hashlib.sha256(p.read_bytes()).hexdigest()
-              if actual_digest != digest:
-                  raise SystemExit(f'Pinning/Creep: SHA256 mismatch for {name}: {actual_digest} != {digest}')
-          pc_images = {p.name for p in pcdir.iterdir() if p.suffix.lower() in {'.png','.jpg','.jpeg','.webp'}}
-          if pc_images != set(expected_pinning):
-              raise SystemExit(f'Pinning/Creep: unexpected image set: {sorted(pc_images)}')
-          if list(pcdir.glob('*paragraph*')) or list(pcdir.glob('*.webp')):
-              raise SystemExit('Pinning/Creep: paragraph screenshots/WebP assets are forbidden')
+          })
 
-          depinning = Path('modules/depinning.html').read_text(encoding='utf-8')
-          if 'paragraph-' in depinning or 'paragraph_' in depinning:
-              raise SystemExit('Depinning: paragraph screenshots are forbidden')
-          if depinning.count('class="source-text"') < 4:
-              raise SystemExit('Depinning: expected four selectable source-text blocks')
-          required_depinning_markers = (
-              '作者真正证明了什么',
-              '作者没有证明什么',
-              'random-bond',
-              'random-field',
-              '06 Disorder & RFIM',
-          )
-          for marker in required_depinning_markers:
-              if marker not in depinning:
-                  raise SystemExit(f'Depinning: missing evidence-chain marker: {marker}')
-          expected_depinning = {
+          depinning = forbid_paragraph_assets(
+              'Depinning', 'modules/depinning.html', 'assets/depinning', 4)
+          require_markers('Depinning', depinning, (
+              '作者真正证明了什么', '作者没有证明什么', 'random-bond', 'random-field', '06 Disorder & RFIM'))
+          freeze_assets('Depinning', 'assets/depinning', {
               'chauve2000-fig1-force-velocity.png': (80043, '71357b4ec7a40c50b54bb0d6e18c2719f3563f522f1b100611193c71c539d0cc'),
               'rosso2003-fig2-critical-roughness.png': (61989, '336a7b59990c1f31d8c3f74534888d467b52c7fd6a6c4ccf870d3bb4bd1b6c59'),
               'ferrero2013-fig3-nonsteady-velocity.png': (511879, '3983bff635f5ff0329c5bf4641936332db7c9665859bae5ee2c3d35108f90bd4'),
               'wiese2022-fig22-depinning-phenomenology.png': (266415, '0d935ee5cdc20b170d2e17f6d407fdb239d2f66c7700a1d1e3bf19cb8dc0cc13'),
-          }
-          ddir = Path('assets/depinning')
-          for name, (size, digest) in expected_depinning.items():
-              p = ddir / name
-              if not p.exists(): raise SystemExit(f'Depinning: missing {name}')
-              if p.stat().st_size != size:
-                  raise SystemExit(f'Depinning: byte-size mismatch for {name}: {p.stat().st_size} != {size}')
-              actual_digest = hashlib.sha256(p.read_bytes()).hexdigest()
-              if actual_digest != digest:
-                  raise SystemExit(f'Depinning: SHA256 mismatch for {name}: {actual_digest} != {digest}')
-          d_images = {p.name for p in ddir.iterdir() if p.suffix.lower() in {'.png','.jpg','.jpeg','.webp'}}
-          if d_images != set(expected_depinning):
-              raise SystemExit(f'Depinning: unexpected image set: {sorted(d_images)}')
-          if list(ddir.glob('*paragraph*')) or list(ddir.glob('*.webp')):
-              raise SystemExit('Depinning: paragraph screenshots/WebP assets are forbidden')
+          })
 
-          disorder = Path('modules/disorder-rfim.html').read_text(encoding='utf-8')
-          if 'paragraph-' in disorder or 'paragraph_' in disorder:
-              raise SystemExit('Disorder/RFIM: paragraph screenshots are forbidden')
-          if disorder.count('class="source-text"') < 3:
-              raise SystemExit('Disorder/RFIM: expected three selectable source-text blocks')
-          required_disorder_markers = (
-              'elastic-manifold',
-              'RFIM',
-              'overhang',
-              'bubble',
-              '作者真正证明了什么',
-              '作者没有证明什么',
-              '../index.html#modeling',
-          )
-          for marker in required_disorder_markers:
-              if marker not in disorder:
-                  raise SystemExit(f'Disorder/RFIM: missing evidence-chain marker: {marker}')
-          expected_disorder = {
-              'dahmen1996-fig2-disorder-hysteresis.png': (15013, 'e6ffc7df8c5b18b2bcfa7e5e93a7d46824c359579fd508e0fe7fff8ee2e30c3c'),
-              'drossel1998-fig3a-percolative-wall.png': (4690, '14b893d49561ff5c0b2329bfbf4e2986ecc4a33aadb42a7f9c91bd4309871338'),
-              'zhou2012-fig2-anomalous-roughness.png': (4833, '2cd44c84647f1f3021808e7997b0bdb8d11c420703fecb87fe150d9028ab5390'),
-          }
-          rdir = Path('assets/disorder-rfim')
-          for name, (size, digest) in expected_disorder.items():
-              p = rdir / name
-              if not p.exists(): raise SystemExit(f'Disorder/RFIM: missing {name}')
-              if p.stat().st_size != size:
-                  raise SystemExit(f'Disorder/RFIM: byte-size mismatch for {name}: {p.stat().st_size} != {size}')
-              actual_digest = hashlib.sha256(p.read_bytes()).hexdigest()
-              if actual_digest != digest:
-                  raise SystemExit(f'Disorder/RFIM: SHA256 mismatch for {name}: {actual_digest} != {digest}')
-          r_images = {p.name for p in rdir.iterdir() if p.suffix.lower() in {'.png','.jpg','.jpeg','.webp'}}
-          if r_images != set(expected_disorder):
-              raise SystemExit(f'Disorder/RFIM: unexpected image set: {sorted(r_images)}')
-          if list(rdir.glob('*paragraph*')) or list(rdir.glob('*.webp')):
-              raise SystemExit('Disorder/RFIM: paragraph screenshots/WebP assets are forbidden')
+          disorder = forbid_paragraph_assets(
+              'Disorder/RFIM', 'modules/disorder-rfim.html', 'assets/disorder-rfim', 3)
+          require_markers('Disorder/RFIM', disorder, (
+              'elastic-manifold', 'RFIM', 'overhang', 'bubble',
+              '作者真正证明了什么', '作者没有证明什么', '../index.html#modeling'))
+          freeze_assets('Disorder/RFIM', 'assets/disorder-rfim', {
+              'dahmen1996-fig2-disorder-hysteresis.png': (15013, '51c25a8d5932587447e29cd7d7928eb45520ced7cd6fa9ed03cf82d56a7017b7'),
+              'drossel1998-fig3a-percolative-wall.png': (4690, '65131f0b51238f1780ce4a2c24b4901bb0807fabf875b3232c2864f7749360c2'),
+              'zhou2012-fig2-anomalous-roughness.png': (4833, '6e2aff6781b4f3b47248a533e1a270bea0e39683fc1e977d2cebb078f2826b31'),
+          })
 
-          index = Path('index.html').read_text(encoding='utf-8')
+          index = page_text('index.html')
           if "disorder:['modules/disorder-rfim.html'" not in index:
               raise SystemExit('Homepage: missing Module 06 deep-lesson entry')
 
-          print('Static validation complete: source passages are HTML text; frozen lesson assets are local; deployment performs no paper download or crop generation.')
+          print('Static validation complete: selectable source text, frozen local figures, exact evidence assets, no paper download/crop generation during deployment.')
           PY
 
       - name: Configure Pages
