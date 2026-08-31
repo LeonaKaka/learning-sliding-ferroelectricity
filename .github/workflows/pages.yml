@@ -34,12 +34,12 @@ jobs:
               text = page.read_text(encoding='utf-8')
               prefix = '' if page.name == 'index.html' else '../'
               tags = [
-                  f'<script src="{prefix}terms.js"></script>',
                   f'<script src="{prefix}terms-extra.js"></script>',
+                  f'<script src="{prefix}terms.js"></script>',
               ]
               if '</body>' not in text:
                   raise SystemExit(f'{page}: missing </body>')
-              for tag in tags:
+              for tag in reversed(tags):
                   if tag not in text:
                       text = text.replace('</body>', tag + '</body>')
               page.write_text(text, encoding='utf-8')
@@ -65,8 +65,10 @@ jobs:
                   raise SystemExit(f'{name}: missing selectable source-text blocks')
               if 'paragraph-' in text or 'paragraph_' in text:
                   raise SystemExit(f'{name}: paragraph screenshots are forbidden')
-              if '<script src="../terms.js"></script>' not in text or '<script src="../terms-extra.js"></script>' not in text:
-                  raise SystemExit(f'{name}: bilingual terminology runtime missing')
+              e = text.find('<script src="../terms-extra.js"></script>')
+              m = text.find('<script src="../terms.js"></script>')
+              if e < 0 or m < 0 or e > m:
+                  raise SystemExit(f'{name}: bilingual runtimes missing or wrong order')
               for ref in re.findall(r'<img[^>]+src="([^"]+)"', text):
                   if ref.startswith(('http://','https://','data:')):
                       raise SystemExit(f'{name}: remote image not allowed: {ref}')
@@ -74,8 +76,10 @@ jobs:
                       raise SystemExit(f'{name}: missing image: {ref}')
 
           index = Path('index.html').read_text(encoding='utf-8')
-          if '<script src="terms.js"></script>' not in index or '<script src="terms-extra.js"></script>' not in index:
-              raise SystemExit('index.html: bilingual terminology runtime missing')
+          e = index.find('<script src="terms-extra.js"></script>')
+          m = index.find('<script src="terms.js"></script>')
+          if e < 0 or m < 0 or e > m:
+              raise SystemExit('index.html: bilingual runtimes missing or wrong order')
 
           terms = Path('terms.js').read_text(encoding='utf-8')
           required_terms = (
@@ -103,6 +107,7 @@ jobs:
               "['Monte Carlo','蒙特卡洛']", "['self-similar','自相似']",
               "['soliton profile','孤子剖面']", "['Stark shift','斯塔克位移']",
               "['pulse width','脉冲宽度']", "['inset','插图']",
+              "['degree of freedom','自由度']", "['Peierls potential','佩尔斯势']",
               "el.closest('script,style,pre,code,.source-text')",
           ):
               if marker not in extra:
