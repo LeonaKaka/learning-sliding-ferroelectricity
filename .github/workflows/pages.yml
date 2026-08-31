@@ -32,14 +32,18 @@ jobs:
           pages = [Path('index.html'), *sorted(Path('modules').glob('*.html'))]
           for page in pages:
               text = page.read_text(encoding='utf-8')
-              src = 'terms.js' if page.name == 'index.html' else '../terms.js'
-              tag = f'<script src="{src}"></script>'
-              if tag not in text:
-                  if '</body>' not in text:
-                      raise SystemExit(f'{page}: missing </body>')
-                  text = text.replace('</body>', tag + '</body>')
-                  page.write_text(text, encoding='utf-8')
-          print(f'Injected bilingual runtime into {len(pages)} pages.')
+              prefix = '' if page.name == 'index.html' else '../'
+              tags = [
+                  f'<script src="{prefix}terms.js"></script>',
+                  f'<script src="{prefix}terms-extra.js"></script>',
+              ]
+              if '</body>' not in text:
+                  raise SystemExit(f'{page}: missing </body>')
+              for tag in tags:
+                  if tag not in text:
+                      text = text.replace('</body>', tag + '</body>')
+              page.write_text(text, encoding='utf-8')
+          print(f'Injected bilingual runtimes into {len(pages)} pages.')
           PY
 
       - name: Verify static evidence site
@@ -61,7 +65,7 @@ jobs:
                   raise SystemExit(f'{name}: missing selectable source-text blocks')
               if 'paragraph-' in text or 'paragraph_' in text:
                   raise SystemExit(f'{name}: paragraph screenshots are forbidden')
-              if '<script src="../terms.js"></script>' not in text:
+              if '<script src="../terms.js"></script>' not in text or '<script src="../terms-extra.js"></script>' not in text:
                   raise SystemExit(f'{name}: bilingual terminology runtime missing')
               for ref in re.findall(r'<img[^>]+src="([^"]+)"', text):
                   if ref.startswith(('http://','https://','data:')):
@@ -70,7 +74,7 @@ jobs:
                       raise SystemExit(f'{name}: missing image: {ref}')
 
           index = Path('index.html').read_text(encoding='utf-8')
-          if '<script src="terms.js"></script>' not in index:
+          if '<script src="terms.js"></script>' not in index or '<script src="terms-extra.js"></script>' not in index:
               raise SystemExit('index.html: bilingual terminology runtime missing')
 
           terms = Path('terms.js').read_text(encoding='utf-8')
@@ -94,6 +98,16 @@ jobs:
               if marker not in terms:
                   raise SystemExit(f'terms.js: missing terminology/behavior marker: {marker}')
 
+          extra = Path('terms-extra.js').read_text(encoding='utf-8')
+          for marker in (
+              "['Monte Carlo','蒙特卡洛']", "['self-similar','自相似']",
+              "['soliton profile','孤子剖面']", "['Stark shift','斯塔克位移']",
+              "['pulse width','脉冲宽度']", "['inset','插图']",
+              "el.closest('script,style,pre,code,.source-text')",
+          ):
+              if marker not in extra:
+                  raise SystemExit(f'terms-extra.js: missing audit marker: {marker}')
+
           frozen = {
               'assets/repaired-0607/zhou2012-fig2-anomalous-roughness.png': (7818, 'd59962ea8bae39ee79afc89969daf071d1cef4721e89958e52ed5df786b13450'),
               'assets/repaired-0607/caballero2020-fig1-bulk-to-interface.png': (13797, '8a4493aac052dccb9752a23e7998a23db17947e561bd81cdc60413bb60a10dcc'),
@@ -111,7 +125,7 @@ jobs:
               raise SystemExit('legacy evidence-regeneration scripts must not remain in static V1')
           if Path('_bilingual_noop.txt').exists():
               raise SystemExit('temporary bilingual staging marker must not remain')
-          print('Static evidence + bilingual terminology runtime validation passed.')
+          print('Static evidence + bilingual terminology validation passed.')
           PY
 
       - name: Configure Pages
