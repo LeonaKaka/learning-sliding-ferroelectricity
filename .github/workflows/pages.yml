@@ -149,7 +149,7 @@ jobs:
           frontier = forbid_paragraph_assets(
               'Current Frontiers', 'modules/current-frontiers.html', 'assets/current-frontiers', 5)
           require_markers('Current Frontiers', frontier, (
-              'universality', 'v(E)', 'B(r)', 'finite-size', 'avalanchelike', 'superlubric',
+              'universality', 'v(E)', 'B(r)', 'size scaling', 'avalanchelike', 'superlubric',
               'no domain wall, no polarization reversal', 'pinning/depinning event'))
           require_reused_assets('Current Frontiers', {
               'assets/switching-pathways/liang2025-fig4-interface-resolved-pathways.png': 592482,
