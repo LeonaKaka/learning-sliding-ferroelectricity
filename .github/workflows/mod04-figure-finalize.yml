@@ -30,9 +30,8 @@ jobs:
 
           pc = Path('assets/pinning-creep')
 
-          # Both source PNGs below were already frozen from the authoritative Drive PDFs
-          # at 600 DPI. This one-shot QA pass only removes an accidental caption / partial panel;
-          # it does not rescale, JPEG-compress, or fetch any paper online.
+          # Existing sources are frozen 600-DPI PNGs derived from the authoritative Drive PDFs.
+          # This pass only removes an accidental printed caption and an incomplete panel fragment.
           tybell = pc / 'tybell2002-fig3-creep.png'
           with Image.open(tybell) as im:
               if im.size != (2370, 2310):
@@ -43,12 +42,8 @@ jobs:
           with Image.open(kim) as im:
               if im.size != (4400, 3460):
                   raise SystemExit(f'Unexpected Kim source dimensions: {im.size}')
-              # Keep complete panels (a,b): switched-area plateau + PFM/local-defect sequence.
-              # The old asset included only a cut-off fragment of panel (c), so remove it rather
-              # than presenting an incomplete scientific panel.
               im.crop((250, 0, 4200, 2665)).save(kim, format='PNG', optimize=False)
 
-          # Make the page caption exactly describe the intentionally retained Kim panels.
           hp = Path('modules/pinning-creep.html')
           text = hp.read_text(encoding='utf-8')
           pattern = re.compile(
@@ -66,18 +61,6 @@ jobs:
               raise SystemExit(f'Kim figure caption replacement count was {n}, expected 1')
           hp.write_text(text2, encoding='utf-8')
 
-          # Freeze exact final byte sizes in the static Pages validator.
-          pages = Path('.github/workflows/pages.yml')
-          w = pages.read_text(encoding='utf-8')
-          for name in ('tybell2002-fig3-creep.png', 'kim2014-fig1-pinning.png'):
-              size = (pc / name).stat().st_size
-              w2, n = re.subn(rf"('{re.escape(name)}':\s*)\d+", rf"\g<1>{size}", w, count=1)
-              if n != 1:
-                  raise SystemExit(f'Could not update frozen size for {name}')
-              w = w2
-          pages.write_text(w, encoding='utf-8')
-
-          # Record dimensions, bytes and SHA256 for all final Module 04 figures.
           notes = {
               'tybell2002-fig3-creep.png': 'Tybell 2002 Fig. 3; graph only; printed journal caption removed while all axes, legend and data remain.',
               'paruch2005-fig3-roughness.png': 'Paruch 2005 Fig. 3(a,b); B(L) scaling and roughness-exponent extraction; previously QA-approved crop retained unchanged.',
@@ -104,17 +87,15 @@ jobs:
               lines.append(f'- `{name}` — {dims}; {len(data)} bytes; SHA256 `{hashlib.sha256(data).hexdigest()}`. {notes[name]}')
           (pc / 'README.md').write_text('\n'.join(lines) + '\n', encoding='utf-8')
 
-          # Final main must not retain transfer/staging debris or this one-shot workflow.
+          # Remove temporary transfer/staging debris. The temporary workflow itself is
+          # removed separately by the connector after this Action has committed the figures.
           shutil.rmtree('staging/module04', ignore_errors=True)
-          self_path = Path('.github/workflows/mod04-figure-finalize.yml')
-          if self_path.exists():
-              self_path.unlink()
           PY
 
       - name: Commit finalized Module 04 QA
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
+          git add assets/pinning-creep modules/pinning-creep.html staging/module04 || true
           git commit -m "Finalize Module 04 Figure QA"
           git push
