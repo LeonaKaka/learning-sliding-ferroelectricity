@@ -299,12 +299,10 @@
     ['Fourier','傅里叶'],
   ];
 
-  // One combined pass prevents a shorter term from re-translating a phrase
-  // that has already been expanded by a longer match.
   termPairs.sort((a,b) => b[0].length - a[0].length);
-  const termMap = new Map(termPairs);
+  const termMap = new Map(termPairs.map(([term,zh]) => [term.toLowerCase(), zh]));
   const escaped = termPairs.map(([term]) => term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-  const termRe = new RegExp(`(^|[^A-Za-z0-9])(${escaped.join('|')})(?![A-Za-z0-9]|（)`, 'g');
+  const termRe = new RegExp(`(^|[^A-Za-z0-9])(${escaped.join('|')})(?![A-Za-z0-9]|（)`, 'gi');
 
   function bilingualize(text) {
     if (!text || !/[A-Za-z]/.test(text)) return text;
@@ -315,7 +313,7 @@
       return left + uiExact.get(trimmed) + right;
     }
     return text.replace(termRe, (match, prefix, term) => {
-      const zh = termMap.get(term);
+      const zh = termMap.get(term.toLowerCase());
       return zh ? `${prefix}${term}（${zh}）` : match;
     });
   }
@@ -324,7 +322,6 @@
     const el = node.parentElement;
     if (!el) return true;
     if (el.closest('script,style,pre,code,.source-text')) return true;
-    // Paper titles and author names are bibliographic metadata and stay original.
     if (el.matches('.paper h3,.authors') || el.closest('.paper h3,.authors')) return true;
     return false;
   }
@@ -360,5 +357,6 @@
   }
 
   processTeachingText();
+  document.title = bilingualize(document.title);
   improveReadingFlow();
 })();
