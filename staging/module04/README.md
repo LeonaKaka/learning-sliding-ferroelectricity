@@ -1,1 +1,0 @@
-Temporary staging for one-time lossless Module 04 Figure QA repair. This directory will be removed automatically by the repair workflow after the repaired figures are committed.
