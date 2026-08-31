@@ -24,6 +24,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Inject bilingual terminology runtime
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          pages = [Path('index.html'), *sorted(Path('modules').glob('*.html'))]
+          for page in pages:
+              text = page.read_text(encoding='utf-8')
+              src = 'terms.js' if page.name == 'index.html' else '../terms.js'
+              tag = f'<script src="{src}"></script>'
+              if tag not in text:
+                  if '</body>' not in text:
+                      raise SystemExit(f'{page}: missing </body>')
+                  text = text.replace('</body>', tag + '</body>')
+                  page.write_text(text, encoding='utf-8')
+          print(f'Injected bilingual runtime into {len(pages)} pages.')
+          PY
+
       - name: Verify static evidence site
         run: |
           python3 - <<'PY'
@@ -43,11 +61,38 @@ jobs:
                   raise SystemExit(f'{name}: missing selectable source-text blocks')
               if 'paragraph-' in text or 'paragraph_' in text:
                   raise SystemExit(f'{name}: paragraph screenshots are forbidden')
+              if '<script src="../terms.js"></script>' not in text:
+                  raise SystemExit(f'{name}: bilingual terminology runtime missing')
               for ref in re.findall(r'<img[^>]+src="([^"]+)"', text):
                   if ref.startswith(('http://','https://','data:')):
                       raise SystemExit(f'{name}: remote image not allowed: {ref}')
                   if not (page.parent / ref).resolve().exists():
                       raise SystemExit(f'{name}: missing image: {ref}')
+
+          index = Path('index.html').read_text(encoding='utf-8')
+          if '<script src="terms.js"></script>' not in index:
+              raise SystemExit('index.html: bilingual terminology runtime missing')
+
+          terms = Path('terms.js').read_text(encoding='utf-8')
+          required_terms = (
+              "['domain wall','畴壁']", "['pinning','钉扎']", "['creep','蠕变']",
+              "['depinning','退钉扎']", "['finite-size scaling','有限尺寸标度']",
+              "['random-field','随机场']", "['random-bond','随机键']",
+              "['RFIM','随机场伊辛模型']", "['QEW','淬火 Edwards–Wilkinson 模型']",
+              "['phase-field','相场']", "['TDGL','含时金兹堡–朗道方程']",
+              "['order parameter','序参量']", "['structure factor','结构因子']",
+              "['universality','普适性']", "['stacking registry','堆垛构型']",
+              "['switching pathway','极化翻转路径']", "['Born effective charge','Born 有效电荷']",
+              "['KPFM','开尔文探针力显微镜']",
+              "el.closest('script,style,pre,code,.source-text')",
+              "'foundations.html':'switching-pathways.html'",
+              "'depinning.html':'disorder-rfim.html'",
+              "'disorder-rfim.html':'numerical-modeling.html'",
+              "'numerical-modeling.html':'current-frontiers.html'",
+          )
+          for marker in required_terms:
+              if marker not in terms:
+                  raise SystemExit(f'terms.js: missing terminology/behavior marker: {marker}')
 
           frozen = {
               'assets/repaired-0607/zhou2012-fig2-anomalous-roughness.png': (7818, 'd59962ea8bae39ee79afc89969daf071d1cef4721e89958e52ed5df786b13450'),
@@ -64,7 +109,9 @@ jobs:
 
           if Path('scripts').exists():
               raise SystemExit('legacy evidence-regeneration scripts must not remain in static V1')
-          print('Static evidence validation passed.')
+          if Path('_bilingual_noop.txt').exists():
+              raise SystemExit('temporary bilingual staging marker must not remain')
+          print('Static evidence + bilingual terminology runtime validation passed.')
           PY
 
       - name: Configure Pages
