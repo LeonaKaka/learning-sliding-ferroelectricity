@@ -39,7 +39,7 @@ jobs:
               ]
               if '</body>' not in text:
                   raise SystemExit(f'{page}: missing </body>')
-              for tag in reversed(tags):
+              for tag in tags:
                   if tag not in text:
                       text = text.replace('</body>', tag + '</body>')
               page.write_text(text, encoding='utf-8')
