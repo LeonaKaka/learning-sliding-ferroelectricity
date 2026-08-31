@@ -72,6 +72,14 @@ jobs:
               if images != set(expected):
                   raise SystemExit(f'{label}: unexpected image set: {sorted(images)}')
 
+          def require_reused_assets(label, expected):
+              for path, size in expected.items():
+                  p = Path(path)
+                  if not p.exists():
+                      raise SystemExit(f'{label}: missing reused source figure: {path}')
+                  if p.stat().st_size != size:
+                      raise SystemExit(f'{label}: reused source figure byte-size mismatch: {path}: {p.stat().st_size} != {size}')
+
           # Every lesson image must resolve to a frozen local file.
           for page in Path('modules').glob('*.html'):
               text = page.read_text(encoding='utf-8')
@@ -138,13 +146,29 @@ jobs:
               'caballero2020-fig5-structure-factor.png': (4813, '909a1dbb558016ed74100e346b40144e360cbc4854962dc6e31ac856e1046994'),
           })
 
+          frontier = forbid_paragraph_assets(
+              'Current Frontiers', 'modules/current-frontiers.html', 'assets/current-frontiers', 5)
+          require_markers('Current Frontiers', frontier, (
+              'universality', 'v(E)', 'B(r)', 'finite-size', 'avalanchelike', 'superlubric',
+              'no domain wall, no polarization reversal', 'pinning/depinning event'))
+          require_reused_assets('Current Frontiers', {
+              'assets/switching-pathways/liang2025-fig4-interface-resolved-pathways.png': 592482,
+              'assets/domain-walls/ke2025-fig1-bec-force.webp': 108526,
+              'assets/domain-walls/chen2026-fig2-pinning.webp': 126082,
+              'assets/domain-walls/liu2026-fig2-raman-switching.webp': 170116,
+          })
+          if 'paragraph-' in frontier or 'paragraph_' in frontier:
+              raise SystemExit('Current Frontiers: legacy paragraph screenshot references are forbidden')
+
           index = page_text('index.html')
           if "disorder:['modules/disorder-rfim.html'" not in index:
               raise SystemExit('Homepage: missing Module 06 deep-lesson entry')
           if "modeling:['modules/numerical-modeling.html'" not in index:
               raise SystemExit('Homepage: missing Module 07 deep-lesson entry')
+          if "frontier:['modules/current-frontiers.html'" not in index:
+              raise SystemExit('Homepage: missing Module 08 deep-lesson entry')
 
-          print('Static validation complete: selectable source text, frozen local figures, exact evidence assets, no paper download/crop generation during deployment.')
+          print('Static validation complete: selectable source text, frozen/reused local figures, exact evidence assets, no paper download/crop generation during deployment.')
           PY
 
       - name: Configure Pages

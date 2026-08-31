@@ -41,7 +41,8 @@ const deepLessons={
   pinning:['modules/pinning-creep.html','阅读全文：Pinning, Creep & Roughness 深度页 →'],
   depinning:['modules/depinning.html','阅读全文：Depinning 深度页 →'],
   disorder:['modules/disorder-rfim.html','阅读全文：Disorder & RFIM 深度页 →'],
-  modeling:['modules/numerical-modeling.html','阅读全文：Numerical Modeling 深度页 →']
+  modeling:['modules/numerical-modeling.html','阅读全文：Numerical Modeling 深度页 →'],
+  frontier:['modules/current-frontiers.html','阅读全文：Current Frontiers 证据审计 →']
 };
 function renderMap(){const host=document.getElementById('mapGrid');data.modules.forEach((m,i)=>{const n=document.createElement('article');n.className='map-node';n.innerHTML=`<div class="map-index">${m.number}</div><h3>${m.title}</h3><p>${m.short}<br>${m.core.length} 个主线 paper 节点</p>`;n.onclick=()=>document.getElementById(m.id).scrollIntoView({behavior:'smooth'});host.appendChild(n);if(i<data.modules.length-1){const c=document.createElement('div');c.className='map-node center';c.innerHTML='<div class="connector">↓</div>';host.appendChild(c)}})}
 function paperCard(p){return `<article class="paper"><div class="paper-top"><span class="paper-year">${p.year}</span><span class="paper-kind">${p.kind}</span></div><h3>${p.title}</h3><div class="authors">${p.authors}</div><p class="role">${p.role}</p><div class="mini"><b>带着这个问题读</b><p>${p.question}</p></div><div class="mini"><b>优先看的原图</b><p>${p.figure}</p></div><div class="mini"><b>原文段落目标</b><p>${p.quote}</p></div></article>`}
