@@ -155,7 +155,7 @@ jobs:
               'bubble',
               '作者真正证明了什么',
               '作者没有证明什么',
-              'numerical-modeling.html',
+              '../index.html#modeling',
           )
           for marker in required_disorder_markers:
               if marker not in disorder:
