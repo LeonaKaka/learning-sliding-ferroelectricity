@@ -73,6 +73,29 @@ jobs:
           if list(pdir.glob('*paragraph*')) or list(pdir.glob('*.webp')):
               raise SystemExit('Switching Pathways: paragraph screenshots/WebP assets are forbidden')
 
+          # Pinning, Creep & Roughness: selectable source text + exact frozen 600-DPI PNGs.
+          pinning = Path('modules/pinning-creep.html').read_text(encoding='utf-8')
+          if 'paragraph-' in pinning or 'paragraph_' in pinning:
+              raise SystemExit('Pinning/Creep: paragraph screenshots are forbidden')
+          if pinning.count('class="source-text"') < 3:
+              raise SystemExit('Pinning/Creep: expected three selectable source-text blocks')
+          expected_pinning = {
+              'tybell2002-fig3-creep.png': 215494,
+              'paruch2005-fig3-roughness.png': 84996,
+              'kim2014-fig1-pinning.png': 3268576,
+          }
+          pcdir = Path('assets/pinning-creep')
+          for name, size in expected_pinning.items():
+              p = pcdir / name
+              if not p.exists(): raise SystemExit(f'Pinning/Creep: missing {name}')
+              if p.stat().st_size != size:
+                  raise SystemExit(f'Pinning/Creep: byte-size mismatch for {name}: {p.stat().st_size} != {size}')
+          pc_images = {p.name for p in pcdir.iterdir() if p.suffix.lower() in {'.png','.jpg','.jpeg','.webp'}}
+          if pc_images != set(expected_pinning):
+              raise SystemExit(f'Pinning/Creep: unexpected image set: {sorted(pc_images)}')
+          if list(pcdir.glob('*paragraph*')) or list(pcdir.glob('*.webp')):
+              raise SystemExit('Pinning/Creep: paragraph screenshots/WebP assets are forbidden')
+
           print('Static validation complete: source passages are HTML text; frozen lesson assets are local; deployment performs no paper download or crop generation.')
           PY
 
