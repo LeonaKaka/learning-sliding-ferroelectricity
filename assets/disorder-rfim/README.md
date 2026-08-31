@@ -11,10 +11,12 @@ Authoritative sources are PDFs inside the project Google Drive folder `sliding f
 
 ## Frozen assets
 
-- `dahmen1996-fig2-disorder-hysteresis.png` — Dahmen & Sethna (1996), Fig. 2: disorder-driven change from a macroscopic hysteresis jump through the critical endpoint to smooth response. SHA256 `e6ffc7df8c5b18b2bcfa7e5e93a7d46824c359579fd508e0fe7fff8ee2e30c3c`.
-- `drossel1998-fig3a-percolative-wall.png` — Drossel & Dahmen (1998), Fig. 3(a): percolative invaded region with internal unflipped bubbles. SHA256 `14b893d49561ff5c0b2329bfbf4e2986ecc4a33aadb42a7f9c91bd4309871338`.
-- `zhou2012-fig2-anomalous-roughness.png` — Zhou, Zheng & He, Drive arXiv version, Fig. 2: global roughness and local height-correlation scaling. SHA256 `2cd44c84647f1f3021808e7997b0bdb8d11c420703fecb87fe150d9028ab5390`.
+- `dahmen1996-fig2-disorder-hysteresis.png` — Dahmen & Sethna (1996), Fig. 2: disorder-driven change from a macroscopic hysteresis jump through the critical endpoint to smooth response. Final deployed size: 15013 bytes. SHA256 `51c25a8d5932587447e29cd7d7928eb45520ced7cd6fa9ed03cf82d56a7017b7`.
+- `drossel1998-fig3a-percolative-wall.png` — Drossel & Dahmen (1998), Fig. 3(a): percolative invaded region with internal unflipped bubbles. Final deployed size: 4690 bytes. SHA256 `65131f0b51238f1780ce4a2c24b4901bb0807fabf875b3232c2864f7749360c2`.
+- `zhou2012-fig2-anomalous-roughness.png` — Zhou, Zheng & He, Drive arXiv version, Fig. 2: global roughness and local height-correlation scaling. Final deployed size: 4833 bytes. SHA256 `6e2aff6781b4f3b47248a533e1a270bea0e39683fc1e977d2cebb078f2826b31`.
 
 ## QA
 
 The completed lesson was rendered locally at 1365 px desktop width and 412 px mobile width. The page has no horizontal overflow; all three figures remain legible and all source passages remain selectable text.
+
+The byte sizes and SHA256 values above were rechecked against the actual GitHub Pages artifact produced from `main`, so the provenance record describes the deployed files rather than an earlier local conversion.
