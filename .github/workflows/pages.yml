@@ -74,8 +74,18 @@ jobs:
           pinning = Path('modules/pinning-creep.html').read_text(encoding='utf-8')
           if 'paragraph-' in pinning or 'paragraph_' in pinning:
               raise SystemExit('Pinning/Creep: paragraph screenshots are forbidden')
-          if pinning.count('class="source-text"') < 3:
-              raise SystemExit('Pinning/Creep: expected three selectable source-text blocks')
+          if pinning.count('class="source-text"') < 6:
+              raise SystemExit('Pinning/Creep: expected six selectable source-text blocks')
+          required_pinning_markers = (
+              'nucleation → lateral DW motion',
+              'random-bond',
+              'random-field',
+              'B(L)',
+              'depinning.html',
+          )
+          for marker in required_pinning_markers:
+              if marker not in pinning:
+                  raise SystemExit(f'Pinning/Creep: missing evidence-chain marker: {marker}')
           expected_pinning = {
               'tybell2002-fig3-creep.png': 215494,
               'paruch2005-fig3-roughness.png': 85681,
