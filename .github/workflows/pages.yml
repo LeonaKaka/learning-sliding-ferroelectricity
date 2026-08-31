@@ -81,7 +81,7 @@ jobs:
               raise SystemExit('Pinning/Creep: expected three selectable source-text blocks')
           expected_pinning = {
               'tybell2002-fig3-creep.png': 215494,
-              'paruch2005-fig3-roughness.png': 84996,
+              'paruch2005-fig3-roughness.png': 85681,
               'kim2014-fig1-pinning.png': 3268576,
           }
           pcdir = Path('assets/pinning-creep')
