@@ -36,6 +36,7 @@ const data=window.LSF_DATA;
 const byId=Object.fromEntries(data.papers.map(p=>[p.id,p]));
 const deepLessons={
   foundations:['modules/foundations.html','阅读全文：Sliding FE Foundations →'],
+  pathways:['modules/switching-pathways.html','阅读全文：Switching Pathways 深度页 →'],
   walls:['modules/domain-walls.html','阅读全文：Domain Walls 深度页 →']
 };
 function renderMap(){const host=document.getElementById('mapGrid');data.modules.forEach((m,i)=>{const n=document.createElement('article');n.className='map-node';n.innerHTML=`<div class="map-index">${m.number}</div><h3>${m.title}</h3><p>${m.short}<br>${m.core.length} 个主线 paper 节点</p>`;n.onclick=()=>document.getElementById(m.id).scrollIntoView({behavior:'smooth'});host.appendChild(n);if(i<data.modules.length-1){const c=document.createElement('div');c.className='map-node center';c.innerHTML='<div class="connector">↓</div>';host.appendChild(c)}})}
