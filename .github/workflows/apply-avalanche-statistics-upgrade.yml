@@ -1,5 +1,4 @@
-# one-shot; remove after content commit
-name: Apply avalanche statistics upgrade
+name: Deduplicate avalanche teaching sections
 
 on:
   push:
@@ -16,28 +15,38 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - name: Preflight
+      - name: Remove accidental duplicate sections
         run: |
-          grep -Fq '宏观 hysteresis 告诉你 disorder 能制造 criticality' modules/disorder-rfim.html
-          grep -Fq '预注册不等于僵化' modules/research-track.html
-      - name: Apply patch
-        run: python .github/patches/avalanche_statistics_20260901.py
-      - name: Verify
+          python - <<'PY'
+          from pathlib import Path
+          specs=[
+            ('modules/disorder-rfim.html','<h2 id="avalanche-statistics">'),
+            ('modules/research-track.html','<h3 id="event-contract">'),
+          ]
+          for path,marker in specs:
+              p=Path(path); s=p.read_text('utf-8'); count=s.count(marker)
+              print(path, 'before=', count)
+              assert count in (1,2), (path,count)
+              if count==2:
+                  a=s.find(marker); b=s.find(marker,a+len(marker))
+                  s=s[:a]+s[b:]
+                  p.write_text(s,'utf-8')
+              s2=p.read_text('utf-8')
+              assert s2.count(marker)==1,(path,s2.count(marker))
+              print(path, 'after=', s2.count(marker))
+          PY
+      - name: Verify source integrity
         run: |
-          grep -q 'Avalanche statistics' modules/disorder-rfim.html
-          grep -q 'Power law 是 candidate' modules/disorder-rfim.html
-          grep -q 'bootstrap draws' modules/disorder-rfim.html
-          grep -q 'Event-statistics contract' modules/research-track.html
-          grep -q 'burst ≠ avalanche' modules/research-track.html
-      - name: Commit
+          test "$(grep -o 'id="avalanche-statistics"' modules/disorder-rfim.html | wc -l | tr -d ' ')" = "1"
+          test "$(grep -o 'id="event-contract"' modules/research-track.html | wc -l | tr -d ' ')" = "1"
+          grep -q 'Clauset–Shalizi–Newman 2009' modules/disorder-rfim.html
+          grep -q 'Papanikolaou et al. 2011' modules/disorder-rfim.html
+      - name: Commit deduplication
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add modules/disorder-rfim.html modules/research-track.html
-          git commit -m 'Teach avalanche event statistics and evidence levels'
-          git push
+          if ! git diff --quiet; then
+            git add modules/disorder-rfim.html modules/research-track.html
+            git commit -m 'Deduplicate avalanche teaching sections'
+            git push
+          fi
