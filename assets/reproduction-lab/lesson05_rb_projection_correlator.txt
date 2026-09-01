@@ -1,0 +1,22 @@
+Caballero Fig.4 bulk-RB projection gold test
+protocol: epsilon=1, alpha=delta=gamma=1, w=sqrt(2), M=10000, du=0.1, realizations=256
+comparison window: 0 <= Delta u <= 5 (frozen before sampling)
+Gamma(0) Eq.26             = 0.071833070
+Eq25-vs-Eq26 RMSE/Gamma0   = 0.0000002%
+Eq25-vs-Eq26 max/Gamma0    = 0.0000012%
+C(0)/Gamma(0)              = 0.995554
+sample RMSE/Gamma0          = 0.222%
+sample max/Gamma0           = 0.445%
+normalized-shape RMSE       = 0.104%
+first zero theory            = 1.039429
+first zero empirical         = 1.039472
+WRONG std=1 amplitude        = 0.099555 x theory
+ALL DISORDER-PROJECTION GATES PASS
+
+Validation chain:
+1. analytic Caballero Eq.(26)
+2. numerical Eq.(25) projection-kernel autocorrelation
+3. continuum-normalized bulk white disorder -> Eq.(23) -> 256 empirical correlations
+
+Statistical unit: disorder realization; displacement bins are not independent n.
+Scope: thumbnail/model-reduction validation, not a full dynamic reproduction.
