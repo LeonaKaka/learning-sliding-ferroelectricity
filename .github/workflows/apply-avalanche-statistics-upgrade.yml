@@ -1,3 +1,4 @@
+# one-shot; remove after content commit
 name: Apply avalanche statistics upgrade
 
 on:
