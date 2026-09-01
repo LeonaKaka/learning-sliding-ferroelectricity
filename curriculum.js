@@ -15,17 +15,17 @@ window.LSF_DATA = {
       thesis: '从“静态堆垛”进入“动态翻转”。重点不是记住多少 stacking 名字，而是看到 switching 是一个路径选择问题，路径会被界面、pinning 与载流子屏蔽改变。',
       concepts: ['switching pathway','intermediate state','metastability','multi-interface','layer-selective switching'],
       core: ['yang2024','sui2024','liang2025'],
-      supporting: ['Yang et al. 2023 · shear-transformation-mediated 3R-MoS₂ transistors','Ouyang et al. 2025 · electrically switching ferroelectric order in 3R-MoS₂','Wang et al. 2025 · cluster sliding ferroelectricity'],
+      supporting: ['Yang et al. 2023 · shear-transformation-mediated 3R-MoS₂ transistors','Ouyang et al. 2025 · electrically switching ferroelectric order in 3R-MoS₂','Wang et al. 2025 · cluster sliding ferroelectricity','Dai et al. 2026 · coupled DW dynamics in trilayer γ-InSe'],
       takeaway: '读完后应该能画出 bilayer 与 trilayer 的典型 switching pathway，并说清楚“中间态”究竟是一个新相、一个 metastable stacking，还是局域 DW 运动留下的结果。'
     },
     {
       id: 'walls', number: '03', title: 'Domain Walls: What Actually Moves?', short: '真正运动的自由度',
-      question: '如果单畴内部并不会被面外场直接推动，真正完成极化翻转的自由度是什么？',
-      thesis: '这是全站最重要的概念转折：从“整层 coherent sliding”切换到“pre-existing domain wall propagation”。随后 pinning、creep、depinning 才有必要出现。',
+      question: '什么结构条件下 switching 主要由 pre-existing DW 完成？fully commensurate single-domain 样品为什么又能出现 DW-free switching？',
+      thesis: '这是全站最重要的机制边界：许多 poly-domain / wall-containing sliding FE 的 switching 落在 pre-existing DW propagation 上，但 fully commensurate single-domain 样品说明 DW 不是无条件必要。随后 pinning、creep、depinning 只针对 wall-mediated 这条受控研究路径展开。',
       concepts: ['pre-existing DW','symmetry breaking','off-diagonal Born effective charge','nucleation-free switching','1D DW pathway'],
       core: ['wangdong2025','ke2025','chen2026','liu2026'],
-      supporting: ['Shi et al. 2025 · soliton-like DW motion with ultralow damping','Deng et al. 2025 · deterministic and efficient switching','Jia-Wen Li et al. 2026 · ultralow-barrier sliding and pinning in moiré superlattices'],
-      takeaway: '读完后应该能回答“no domain wall, no polarization reversal”这句话依赖什么对称性与实验事实，以及它和早期 coherent-sliding 图像有什么冲突。'
+      supporting: ['Shi et al. 2025 · soliton-like DW motion with ultralow damping','Deng et al. 2025 · deterministic and efficient switching','Jia-Wen Li et al. 2026 · ultralow-barrier sliding and pinning in moiré superlattices','Baek et al. 2026 · DW-free switching in fully commensurate 3R-TMD bilayers'],
+      takeaway: '读完后应该能把“no domain wall, no polarization reversal”改写成带条件的机制命题：它在哪类 wall-containing 3R-MoS₂ 实验中有强证据，为什么不能外推成所有 sliding FE 的一般定律。'
     },
     {
       id: 'pinning', number: '04', title: 'Pinning, Creep & Roughness', short: '真实畴壁为什么走不直',
@@ -33,7 +33,7 @@ window.LSF_DATA = {
       thesis: '先从传统铁电畴壁学会 disorder 的实验语言。creep 不是一个拟合公式，roughness 也不是“墙看起来很毛”；它们是界面与无序共同作用的可观测结果。',
       concepts: ['pinning centre','creep','roughness','local barrier','collective motion'],
       core: ['tybell2002','paruch2005','kim2014'],
-      supporting: ['Kleemann 2007 · universal domain-wall dynamics in disordered ferroics','Jo et al. 2009 · nonlinear DW propagation','Liu & Huber 2011 · electrical creep in BaTiO₃','Guyonnet et al. 2012 · multiscaling of FE DW roughness','Tückmantel et al. 2021 · creep vs depinning event statistics','Bulanadi et al. 2024 · point/extended defects and jerky DW motion','Teng et al. 2025 · point-defect control of FE DW dynamics'],
+      supporting: ['Lemerle et al. 1998 · magnetic DW creep + wandering','Kleemann 2007 · universal domain-wall dynamics in disordered ferroics','Metaxas et al. 2007 · creep-to-flow velocity regimes','Guyonnet et al. 2012 · multiscaling of FE DW roughness','Jeudy et al. 2016 · universal pinning-energy barrier','Tückmantel et al. 2021 · creep vs depinning event statistics','Bulanadi et al. 2024 · point/extended defects and jerky DW motion','Teng et al. 2025 · point-defect control of FE DW dynamics'],
       takeaway: '读完后应该能看到一张畴壁图像或 v(E) 曲线，就知道哪些特征可能来自 pinning、哪些能用 creep 描述、哪些现象还不能直接叫 depinning。'
     },
     {
@@ -42,7 +42,7 @@ window.LSF_DATA = {
       thesis: '把 domain wall 抽象成受 quenched disorder 作用的 elastic interface。这里建立 threshold、critical geometry、velocity scaling 与 finite-size scaling 的统一语言。',
       concepts: ['elastic interface','critical force','velocity exponent β','roughness exponent ζ','correlation length','finite-size scaling'],
       core: ['chauve2000','rosso2003','ferrero2013','wiese2022'],
-      supporting: ['Ferrero et al. 2021 · creep motion review','Le Doussal et al. 2004 · functional RG for disordered elastic systems','Drossel & Dahmen 1998 · RFIM DW depinning','Zhou et al. 2009 · short-time RFIM DW dynamics','Qian et al. 2023 · nonsteady dynamic depinning'],
+      supporting: ['Jeudy et al. 2016 · cross-material barrier collapse','Ferrero et al. 2021 · creep motion review','Le Doussal et al. 2004 · functional RG for disordered elastic systems','Drossel & Dahmen 1998 · RFIM DW depinning','Zhou et al. 2009 · short-time RFIM DW dynamics','Qian et al. 2023 · nonsteady dynamic depinning'],
       takeaway: '读完后应该能设计一个像样的 depinning 数值实验：先定义 Fc/Ec，再测 v、roughness、相关长度和尺寸依赖，而不是只在单一尺寸上拟合 β。'
     },
     {
@@ -60,16 +60,16 @@ window.LSF_DATA = {
       thesis: '这一章不做软件教程，而是建立模型层次：Landau free energy → TDGL/phase field → diffuse wall → emergent elastic interface → disorder-driven dynamics。',
       concepts: ['order parameter','Landau free energy','TDGL','phase field','diffuse interface','coarse graining'],
       core: ['chen2008','caballero2020'],
-      supporting: ['Wang et al. 2004 · phase-field polarization switching','Fedeli et al. 2019 · FE domains with defects','Hong & Viswanathan 2020 · open-source phase-field','Zhu et al. 2022 · FE DW memory','Lv & Lynch 2018 · rhombohedral FE domain walls','FerroX 2023 · GPU phase-field framework'],
+      supporting: ['Wang et al. 2004 · phase-field polarization switching','Fedeli et al. 2019 · FE domains with defects','Hong & Viswanathan 2020 · open-source phase-field','Dai et al. 2026 · multilayer coupled-interface boundary','Zhu et al. 2022 · FE DW memory','Lv & Lynch 2018 · rhombohedral FE domain walls','FerroX 2023 · GPU phase-field framework'],
       takeaway: '读完后应该能说明自己的模拟位于哪个粗粒化层次：哪些参数是材料参数，哪些是有效参数；以及怎样验证 lattice spacing、dx、system size 不在偷偷改变 disorder strength。'
     },
     {
       id: 'frontier', number: '08', title: 'Current Frontiers', short: '把整棵树重新压回 3R-MoS₂ / WSe₂',
       question: '2025–2026 的实验和理论已经把 DW / pinning 证据推进到哪里？还差什么才能谈 universality？',
-      thesis: '最后不再引入新基础理论，而是重新读最新 sliding-FE 工作：哪些结果已经很强，哪些只是“看起来像 depinning”，哪些量仍然没人系统测。',
+      thesis: '最后不再引入新基础理论，而是重新读最新 sliding-FE 工作：哪些样品由 DW 主导、哪些结构允许 DW-free switching、multilayer 何时需要 coupled interfaces，以及哪些关键 scaling observable 仍然没人系统测。',
       concepts: ['pinning landscape','cycle-to-cycle variability','partial switching','multidomain kinetics','universality test'],
       core: ['liang2025','wangdong2025','ke2025','chen2026','liu2026'],
-      supporting: ['Paul et al. 2026 · disorder dynamics in CVD 3R-WSe₂','Jia-Wen Li et al. 2026 · DW-mediated ultralow-barrier sliding','Remez & Goldstein 2025 · hierarchical ordering transitions','Lee et al. 2025 · theory of slidetronics'],
+      supporting: ['Paul et al. 2026 · disorder dynamics in CVD 3R-WSe₂','Baek et al. 2026 · fully commensurate DW-free switching','Dai et al. 2026 · coupled DW dynamics in trilayer γ-InSe','Jia-Wen Li et al. 2026 · DW-mediated ultralow-barrier sliding','Remez & Goldstein 2025 · hierarchical ordering transitions','Lee et al. 2025 · theory of slidetronics'],
       takeaway: '最终应该能自己审一篇新 paper：作者观察到 pinning 了吗？有 threshold 吗？有 v(E) 吗？有 ζ/β/ν 吗？有尺寸标度吗？如果没有，就不要把“幂律”直接等同于 universality。'
     }
   ],
