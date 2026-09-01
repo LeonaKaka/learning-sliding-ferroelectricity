@@ -82,27 +82,9 @@ replace_once(
     "el.className='module';if(m.id!=='foundations')el.id=m.id;el.innerHTML=",
 )
 
-# Extend long-lived Pages contracts.
-p = Path('.github/workflows/pages.yml')
-s = p.read_text('utf-8')
-if "Path('index.html'): ('id=\"foundations\"',)," not in s:
-    old = "          unique_contracts = {\n              Path('modules/research-track.html'): ("
-    new = "          unique_contracts = {\n              Path('index.html'): ('id=\"foundations\"',),\n              Path('modules/research-track.html'): ("
-    assert s.count(old) == 1
-    s = s.replace(old, new, 1)
-if "'id=\"velocity-estimator\"'" not in s:
-    old = "                  'id=\"identifiability\"', 'id=\"thermal-noise\"', 'id=\"threshold-authority-bridge\"', 'id=\"run-receipt\"'"
-    if old not in s:
-        old = "                  'id=\"identifiability\"', 'id=\"threshold-authority-bridge\"', 'id=\"run-receipt\"'"
-    assert s.count(old) == 1, s.count(old)
-    new = old[:-1] + ", 'id=\"velocity-estimator\"'" + old[-1]
-    s = s.replace(old, new, 1)
-p.write_text(s, 'utf-8')
-
-# Integrity / semantics checks.
+# Integrity / semantics checks. Workflow validation is updated separately via the connector.
 nm = Path('modules/numerical-modeling.html').read_text('utf-8')
 idx = Path('index.html').read_text('utf-8')
-wf = Path('.github/workflows/pages.yml').read_text('utf-8')
 assert nm.count('id="velocity-estimator"') == 1
 assert 'X(t) = ⟨u(y,t)⟩<sub>y</sub>' in nm
 assert 'ordinary least-squares pointwise error 不是 disorder uncertainty' in nm
@@ -110,8 +92,6 @@ assert 'resolved-pinned under registered exposure' in nm
 assert 'numerical-invalid' in nm and '绝不能当 pinned' in nm
 assert idx.count('id="foundations"') == 1
 assert "if(m.id!=='foundations')el.id=m.id" in idx
-assert "Path('index.html'): ('id=\"foundations\"',)," in wf
-assert "'id=\"velocity-estimator\"'" in wf
-for page in (nm, idx, wf):
+for page in (nm, idx):
     assert not any(ord(ch) < 32 and ch not in '\n\r\t' for ch in page)
 print('Steady-velocity + static Foundations anchor patch validated.')
