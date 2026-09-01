@@ -1,0 +1,73 @@
+name: Apply P1-4 and P2-1 once
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/apply-p1p2-once.yml
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Apply focused content and navigation patch
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          replacements = {
+              Path('modules/foundations.html'): ('../index.html#pathways', 'switching-pathways.html'),
+              Path('modules/depinning.html'): ('../index.html#disorder', 'disorder-rfim.html'),
+              Path('modules/disorder-rfim.html'): ('../index.html#modeling', 'numerical-modeling.html'),
+              Path('modules/numerical-modeling.html'): ('../index.html#frontier', 'current-frontiers.html'),
+          }
+          for path, (old, new) in replacements.items():
+              text = path.read_text(encoding='utf-8')
+              if text.count(old) != 1:
+                  raise SystemExit(f'{path}: expected exactly one {old!r}, found {text.count(old)}')
+              path.write_text(text.replace(old, new, 1), encoding='utf-8')
+
+          page = Path('modules/numerical-modeling.html')
+          text = page.read_text(encoding='utf-8')
+          anchor = '<div class="warn"><b>二维关键结论：</b>如果代码写成 <code>h = σ * normal()</code>，然后把 dx 从 1 改成 0.5 却保持 σ 不变，你并没有只“加密网格”；你同时把 continuum disorder strength 改弱了。反过来，若目标是固定物理白噪声强度，应让输入标准差按 <b>1/dx</b> 缩放。</div>'
+          caveat = '<div class="warn"><b>适用范围：</b>上面的 <b>σ<sub>grid</sub> ∝ dx<sup>−d/2</sup></b> 针对的是把 δ-correlated continuum field 离散成每个网格单元的 cell-average / 等价局域场这一约定。若 disorder 有有限相关长度、是固定位置/固定强度的 defects，或代码中的随机量代表对一个 cell 已积分的能量/力而不是局域 field value，就不能机械套用同一缩放；应从实际使用的 covariance 或离散能量项重新推导 dx dependence。</div>'
+          if text.count(anchor) != 1:
+              raise SystemExit(f'{page}: white-noise scaling anchor missing or duplicated')
+          if '适用范围：</b>上面的 <b>σ<sub>grid</sub>' in text:
+              raise SystemExit(f'{page}: caveat already present')
+          page.write_text(text.replace(anchor, anchor + '\n' + caveat, 1), encoding='utf-8')
+
+          expected = {
+              'modules/foundations.html': 'href="switching-pathways.html">Switching Pathways →',
+              'modules/depinning.html': 'href="disorder-rfim.html">06 Disorder & RFIM →',
+              'modules/disorder-rfim.html': 'href="numerical-modeling.html">07 From Theory to Numerical Modeling →',
+              'modules/numerical-modeling.html': 'href="current-frontiers.html">08 Current Frontiers →',
+          }
+          for name, marker in expected.items():
+              if marker not in Path(name).read_text(encoding='utf-8'):
+                  raise SystemExit(f'{name}: direct next-module link validation failed')
+          print('Focused P1-4/P2-1 patch validated.')
+          PY
+
+      - name: Remove one-shot workflow and commit
+        run: |
+          rm .github/workflows/apply-p1p2-once.yml
+          git config user.name "leona"
+          git config user.email "124779759+LeonaKaka@users.noreply.github.com"
+          git add -A
+          git commit -m "Clarify disorder discretization and direct module links"
+          git push origin HEAD:main
+
+      - name: Dispatch canonical Pages workflow
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run pages.yml --ref main
