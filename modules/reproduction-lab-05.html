@@ -4,11 +4,11 @@
 <div class="rule"><a href="../index.html">Learning Sliding Ferroelectricity</a> / Reproduction Lab / Lesson 05</div>
 <h1>bulk 里是白噪声 RB，interface 为什么看到的是有相关长度的 pinning force？</h1>
 <p class="deck">这一步和你的项目非常接近。Caballero 2020 在 bulk Ginzburg–Landau 势垒高度里加入 delta-correlated random-bond disorder，然后把它投影到 domain wall。关键结果不是“无序还叫 RB”，而是：经过有限宽度 wall profile 的投影以后，interface 实际感受到的 pinning force 在位移 u 方向变成短程相关，其 correlation length 是 wall width 的量级。</p>
-<div class="q"><b>本课要验证两个东西：</b>第一，Eq.23 从 bulk disorder 得到的 F<sub>p</sub>(u,y)，其 sample correlator 必须回到 Eq.25 的 Γ(u)；第二，continuum white noise 的网格幅度必须随 du<sup>−1/2</sup> 缩放。漏掉这一项，相关函数幅度会直接错一个网格因子。</div>
+<div class="q"><b>本课要验证三个东西：</b>第一，Eq.25 的 projection-kernel autocorrelation 必须回到论文闭式解析 Eq.26；第二，Eq.23 从 bulk disorder 得到的 F<sub>p</sub>(u,y) 的 sample correlator 必须回到同一个解析 Γ(u)；第三，continuum white noise 的网格幅度必须随 du<sup>−1/2</sup> 缩放。漏掉这一项，相关函数幅度会直接错一个网格因子。</div>
 
 <h2 id="compare">0 · 原论文 Fig.4 vs 我们的 bulk-projection reproduction</h2>
 <div class="two">
-<figure class="fig"><a href="../assets/reproduction-lab/caballero2020-fig4-pinning-correlator.webp" target="_blank" rel="noopener"><img src="../assets/reproduction-lab/caballero2020-fig4-pinning-correlator.webp" alt="Caballero 2020 Figure 4 pinning force correlations"></a><figcaption class="cap"><b>Caballero et al. 2020 · Fig.4。</b><br>256 个独立 pinning-force realizations 的相关函数；平均值与理论 Γ(u) 对照。Inset 展示 4 条 F<sub>p</sub>(u,y)。这是进入 disordered-interface dynamics 前的 correlator gold test。</figcaption></figure>
+<figure class="fig"><a href="../assets/reproduction-lab/caballero2020-fig4-pinning-correlator.webp" target="_blank" rel="noopener"><img src="../assets/reproduction-lab/caballero2020-fig4-pinning-correlator.webp" alt="Caballero 2020 Figure 4 pinning force correlations"></a><figcaption class="cap"><b>Caballero et al. 2020 · Fig.4。</b><br>256 个独立 pinning-force realizations 的相关函数；平均值与解析 Γ(u), Eq.26 对照。Inset 展示 4 条 F<sub>p</sub>(u,y)。这是进入 disordered-interface dynamics 前的 correlator gold test。</figcaption></figure>
 <figure class="fig"><a href="../assets/reproduction-lab/lesson05_rb_projection_correlator.svg" target="_blank" rel="noopener"><img src="../assets/reproduction-lab/lesson05_rb_projection_correlator.svg" alt="Our bulk random-bond projection and pinning-force correlator"></a><figcaption class="cap"><b>Our reproduction。</b><br>统计仍用 256 realizations、M=10000、du=0.1。不同点是我们不直接从 Eq.27 合成 F<sub>p</sub>，而是先生成 continuum-normalized bulk ζ(x,y)，再按 Eq.23 投影；因此更直接检查 bulk→interface 这一步本身。</figcaption></figure>
 </div>
 <div class="verdict"><b>这次比 Lesson04 还便宜，却非常“硬”。</b> 不需要时间积分，也不需要大二维网格；paper-size 的 256×10000 随机场可以在普通 CPU 上很快完成。所以没有“算力不够只能凭趋势判断”的借口。</div>
@@ -30,10 +30,10 @@ Fp = epsilon * gamma * du * np.fft.ifft(
     np.fft.fft(zeta, axis=1) * np.conj(K)[None, :], axis=1
 ).real</pre></div>
 
-<h2>3 · Eq.25：理论 target 不是拟合出来的</h2>
+<h2>3 · Eq.25 ↔ Eq.26：先让两个 theory route 自己闭合</h2>
 <div class="eq">Γ(Δu)=γ² ∫ dx k(x) k(x−Δu)</div>
-<p>这就是本课 target。我们直接数值积分 Eq.25，不拿 sample data 去拟合 Γ 的宽度或幅度。论文进一步给出 closed-form Eq.26，并指出 effective disorder 沿 u 是 short-range correlated，相关长度是 wall width w 的量级。</p>
-<div class="three"><div class="card"><h3>wall width</h3><p>α=δ=γ=1 时 w=√2≈1.414。</p></div><div class="card"><h3>Γ first zero</h3><p>理论值约 1.0394，确实与 w 同量级。</p></div><div class="card"><h3>不是新自由参数</h3><p>correlation scale 是 bulk disorder 经 wall profile 投影后的结果。</p></div></div>
+<p>Eq.25 给出 projection kernel 的积分定义；论文随后把 soliton profile 代入并得到闭式解析 Eq.26。现在脚本把两条路线完全分开实现：Eq.25 用离散 kernel autocorrelation，Eq.26 用解析双曲函数表达式；在 u≈0 的 0/0 cancellation 区域用 Eq.26 的 Taylor 展开稳定求值。<b>先要求 Eq.25 与 Eq.26 自己通过 hard gate，再看任何随机样本。</b></p>
+<div class="three"><div class="card"><h3>wall width</h3><p>α=δ=γ=1 时 w=√2≈1.414。</p></div><div class="card"><h3>Γ first zero</h3><p>理论值约 1.0394，确实与 w 同量级。</p></div><div class="card"><h3>不是拟合参数</h3><p>correlation scale 与 Γ amplitude 都由 bulk coupling + soliton profile 决定。</p></div></div>
 
 <h2>4 · 一个特别容易错的地方：continuum white noise 不是“每格 std=1”</h2>
 <p>连续定义是：</p>
@@ -52,39 +52,43 @@ zeta_wrong   = base</pre></div>
 <tr><td>grid spacing</td><td>δl=0.1</td><td><b>du=0.1，相同</b></td></tr>
 <tr><td>ε</td><td>1</td><td><b>1，相同</b></td></tr>
 <tr><td>生成 Fp 的方式</td><td>Eq.27 Fourier synthesis；文中 Fig.4 取 D=1</td><td>bulk ζ → Eq.23 projection，α=δ=γ=1</td></tr>
-<tr><td>theory target</td><td>Γ(u), Eq.26</td><td>Γ(u), Eq.25 numerical quadrature</td></tr>
+<tr><td>theory target</td><td>Γ(u), Eq.26</td><td><b>Eq.25 numerical + independent analytic Eq.26</b></td></tr>
 </tbody></table>
 <p>所以我们复现的是 <b>Fig.4 的物理/统计结构</b>，同时刻意选择更能检查 model reduction 的生成路线；不是逐行重写作者的随机数生成器。</p>
 
 <h2>6 · Hard gates：相关函数必须定量对上</h2>
 <table class="matrix"><thead><tr><th>quantity</th><th>result</th><th>gate</th></tr></thead><tbody>
-<tr><td>Γ(0) theory</td><td>0.0718331</td><td>reference</td></tr>
+<tr><td>Γ(0), analytic Eq.26</td><td>0.071833070</td><td>reference</td></tr>
+<tr><td>Eq.25 vs Eq.26 RMSE / Γ(0)</td><td><b>0.0000002%</b></td><td>&lt;0.0001%</td></tr>
+<tr><td>Eq.25 vs Eq.26 max |error| / Γ(0)</td><td><b>0.0000012%</b></td><td>&lt;0.0001%</td></tr>
 <tr><td>C(0)/Γ(0)</td><td><b>0.995554</b></td><td>0.98–1.02</td></tr>
-<tr><td>RMSE / Γ(0), 0≤Δu≤5</td><td><b>0.222%</b></td><td>&lt;1%</td></tr>
-<tr><td>max |error| / Γ(0)</td><td><b>0.445%</b></td><td>&lt;1.5%</td></tr>
+<tr><td>sample RMSE / Γ(0), 0≤Δu≤5</td><td><b>0.222%</b></td><td>&lt;1%</td></tr>
+<tr><td>sample max |error| / Γ(0)</td><td><b>0.445%</b></td><td>&lt;1.5%</td></tr>
 <tr><td>normalized-shape RMSE</td><td><b>0.104%</b></td><td>diagnostic</td></tr>
 <tr><td>first zero: theory</td><td>1.039429</td><td rowspan="2">difference &lt;0.01</td></tr>
 <tr><td>first zero: empirical</td><td><b>1.039472</b></td></tr>
 <tr><td>故意错误 std=1</td><td><b>0.099555 × theory amplitude</b></td><td>应暴露 10× normalization error</td></tr>
 </tbody></table>
-<div class="pass"><b>ALL DISORDER-PROJECTION GATES PASS。</b> 这里的“复现正确”不是因为两条曲线肉眼重合，而是幅度、shape、zero crossing 和故意错误对照都同时过关。</div>
+<div class="pass"><b>ALL DISORDER-PROJECTION GATES PASS。</b> 这里的“复现正确”不是因为两条曲线肉眼重合，而是 analytic Eq.26、Eq.25 projection、sample amplitude/shape/zero crossing 和故意错误对照全部闭合。</div>
 
 <h2 id="code">7 · 完整脚本</h2>
-<p><a href="../examples/reproduction-lab/lesson05_rb_projection.py"><b>打开 Lesson 05 Python 脚本 →</b></a>　依赖只有 NumPy + Matplotlib；没有 time integration，所以 paper-size correlation test 很轻。</p>
-<div class="codebox"><div class="head"><b>预期输出</b></div><pre>phi0, w                 = 1.000000, 1.414214
-M, du, realizations     = 10000, 0.100, 256
-Gamma(0) theory         = 0.071833070
-C(0)/Gamma(0)           = 0.995554
-RMSE/Gamma(0), 0&lt;=u&lt;=5  = 0.222%
-max abs/Gamma(0)        = 0.445%
-normalized-shape RMSE   = 0.104%
-first zero theory       = 1.039429
-first zero empirical    = 1.039472
-WRONG std=1 amplitude   = 0.099555 x theory
+<p><a href="../examples/reproduction-lab/lesson05_rb_projection.py"><b>打开 Lesson 05 Python 脚本 →</b></a>　依赖只有 NumPy + Matplotlib；没有 time integration，所以 paper-size correlation test 很轻。<a href="../assets/reproduction-lab/lesson05_rb_projection_correlator.txt">查看本次 run receipt →</a></p>
+<div class="codebox"><div class="head"><b>预期输出</b></div><pre>phi0, w                    = 1.000000, 1.414214
+M, du, realizations        = 10000, 0.100, 256
+Gamma(0) Eq.26             = 0.071833070
+Eq25-vs-Eq26 RMSE/Gamma0   = 0.0000002%
+Eq25-vs-Eq26 max/Gamma0    = 0.0000012%
+C(0)/Gamma(0)              = 0.995554
+sample RMSE/Gamma0, u=0..5 = 0.222%
+sample max/Gamma0          = 0.445%
+normalized-shape RMSE      = 0.104%
+first zero theory          = 1.039429
+first zero empirical       = 1.039472
+WRONG std=1 amplitude      = 0.099555 x theory
 ALL DISORDER-PROJECTION GATES PASS</pre></div>
 
 <h2>8 · 这一步证明了什么？没证明什么？</h2>
-<div class="two"><div class="card"><h3>已经证明</h3><p>RB bulk coupling 经过有限宽度 soliton 投影后产生短程相关 pinning force；我们的离散实现和 Eq.25 一致；continuum white-noise normalization 正确。</p></div><div class="card"><h3>还没证明</h3><p>没有证明 depinning exponent、没有证明 RF 与 RB 同 universality、也没有证明 sliding-FE 的真实 defect 必然等价于这个 φ⁴ RB model。</p></div></div>
+<div class="two"><div class="card"><h3>已经证明</h3><p>RB bulk coupling 经过有限宽度 soliton 投影后产生短程相关 pinning force；Eq.25 numerical projection 与 analytic Eq.26 独立闭合；continuum white-noise normalization 正确。</p></div><div class="card"><h3>还没证明</h3><p>没有证明 depinning exponent、没有证明 RF 与 RB 同 universality、也没有证明 sliding-FE 的真实 defect 必然等价于这个 φ⁴ RB model。</p></div></div>
 <div class="bridge"><b>对你自己的模型最重要的迁移问题：</b>你的 RF term 与 barrier-amplitude term 具有不同的 φ-dependence，因此各自投影到 wall 后得到的 effective force correlator 未必只差一个 amplitude。以后真正做 RF↔RB isolated-wall universality comparison 时，可以沿这节方法先算 <b>effective wall-level disorder statistics</b>，再谈 β/ζ 是否相同。</div>
 
 <h2>9 · Lesson 06：从 correlator gold test 进入真正的 disordered wall geometry</h2>
