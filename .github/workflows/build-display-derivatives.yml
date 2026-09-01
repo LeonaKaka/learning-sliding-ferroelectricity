@@ -15,18 +15,36 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pinned image encoder
+        run: python -m pip install --disable-pip-version-check pillow==12.3.0
       - name: Build display WebP derivatives
         run: |
-          command -v convert
-          convert assets/switching-pathways/sui2024-fig4-atomic-sliding-pathways.png -resize '2200x2200>' -quality 92 assets/switching-pathways/sui2024-fig4-atomic-sliding-pathways-display.webp
-          convert assets/foundations/yasuda2021-fig1-stacking.png -resize '2200x2200>' -quality 92 assets/foundations/yasuda2021-fig1-stacking-display.webp
-          convert assets/foundations/wu2021-fig1-mechanism.png -resize '2200x2200>' -quality 92 assets/foundations/wu2021-fig1-mechanism-display.webp
-          convert assets/foundations/vizner2021-fig2-domains.png -resize '2200x2200>' -quality 92 assets/foundations/vizner2021-fig2-domains-display.webp
-          convert assets/pinning-creep/kim2014-fig1-pinning.png -resize '2200x2200>' -quality 92 assets/pinning-creep/kim2014-fig1-pinning-display.webp
-          convert assets/foundations/meng2022-fig3e-multistate.png -resize '2200x2200>' -quality 92 assets/foundations/meng2022-fig3e-multistate-display.webp
+          python - <<'PY'
+          from pathlib import Path
+          from PIL import Image
+          items=[
+            ('assets/switching-pathways/sui2024-fig4-atomic-sliding-pathways.png','assets/switching-pathways/sui2024-fig4-atomic-sliding-pathways-display.webp'),
+            ('assets/foundations/yasuda2021-fig1-stacking.png','assets/foundations/yasuda2021-fig1-stacking-display.webp'),
+            ('assets/foundations/wu2021-fig1-mechanism.png','assets/foundations/wu2021-fig1-mechanism-display.webp'),
+            ('assets/foundations/vizner2021-fig2-domains.png','assets/foundations/vizner2021-fig2-domains-display.webp'),
+            ('assets/pinning-creep/kim2014-fig1-pinning.png','assets/pinning-creep/kim2014-fig1-pinning-display.webp'),
+            ('assets/foundations/meng2022-fig3e-multistate.png','assets/foundations/meng2022-fig3e-multistate-display.webp'),
+          ]
+          for src,dst in items:
+              with Image.open(src) as raw:
+                  im=raw.convert('RGB')
+                  if im.width>2200:
+                      nh=round(im.height*2200/im.width)
+                      im=im.resize((2200,nh),Image.Resampling.LANCZOS)
+                  im.save(dst,'WEBP',quality=92,method=6)
+                  print(src,'->',dst,im.size)
+          PY
       - name: Point display images to derivatives
         run: |
-          python3 - <<'PY'
+          python - <<'PY'
           from pathlib import Path
           mapping={
             'modules/switching-pathways.html':[
@@ -43,21 +61,23 @@ jobs:
               p=Path(name); s=p.read_text('utf-8')
               for old,new in repls:
                   assert s.count(old)==1,(name,old,s.count(old))
-                  # href stays original; only the image source changes.
                   s=s.replace(old,new,1)
               p.write_text(s,'utf-8')
           PY
       - name: Verify derivatives and original links
         run: |
-          python3 - <<'PY'
+          python - <<'PY'
           from pathlib import Path
           from PIL import Image
           derivs=list(Path('assets').rglob('*-display.webp'))
           assert len(derivs)==6, len(derivs)
+          total=0
           for p in derivs:
               with Image.open(p) as im:
                   assert im.width <= 2200 and im.height <= 2200, (p,im.size)
               assert p.stat().st_size < 1024*1024, (p,p.stat().st_size)
+              total += p.stat().st_size
+          assert total < 2*1024*1024, total
           checks=[
             ('modules/switching-pathways.html','sui2024-fig4-atomic-sliding-pathways.png','sui2024-fig4-atomic-sliding-pathways-display.webp'),
             ('modules/foundations.html','yasuda2021-fig1-stacking.png','yasuda2021-fig1-stacking-display.webp'),
@@ -68,9 +88,9 @@ jobs:
           ]
           for page,orig,disp in checks:
               s=Path(page).read_text('utf-8')
-              assert f'href="../assets/' in s and orig in s
-              assert f'src="../assets/' in s and disp in s
-          print('Six display derivatives validated; original click-through links preserved.')
+              assert orig in s and disp in s
+              assert f'href="../assets/' in s and f'src="../assets/' in s
+          print(f'Six display derivatives validated; total={total/1048576:.2f} MiB; original click-through links preserved.')
           PY
       - name: Commit optimized displays
         run: |
