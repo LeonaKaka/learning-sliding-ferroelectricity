@@ -111,8 +111,22 @@ jobs:
 
           if Path('scripts').exists():
               raise SystemExit('legacy evidence-regeneration scripts must not remain in static V1')
+          for legacy_runtime in ('terms-extra.js', 'terms-cleanup.js'):
+              if Path(legacy_runtime).exists():
+                  raise SystemExit(f'unused legacy terminology runtime must be removed: {legacy_runtime}')
           if Path('_bilingual_noop.txt').exists():
               raise SystemExit('temporary bilingual staging marker must not remain')
+
+          contracts = {
+              Path('modules/research-track.html'): ('id="fair"', 'id="data-claim-contract"', 'id="event-contract"'),
+              Path('modules/numerical-modeling.html'): ('id="run-receipt"', 'research-track.html#fair'),
+              Path('modules/depinning.html'): ('id="data-claim-bridge"',),
+          }
+          for page, markers in contracts.items():
+              text = page.read_text(encoding='utf-8')
+              for marker in markers:
+                  if text.count(marker) != 1:
+                      raise SystemExit(f'{page}: expected exactly one contract marker: {marker}')
           print('Static evidence + conservative terminology validation passed.')
           PY
 
