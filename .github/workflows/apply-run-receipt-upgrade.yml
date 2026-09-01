@@ -24,7 +24,7 @@ jobs:
           grep -q '1.1 · 一个适合 sliding-FE 的有效比较语言' modules/research-track.html
           grep -q 'research-track.html#fair' modules/numerical-modeling.html
           grep -q '<h2>7 · 一套不会自欺的 depinning 数值实验</h2>' modules/numerical-modeling.html
-          grep -q "if Path('scripts').exists():" .github/workflows/pages.yml
+          grep -q 'unused legacy terminology runtime must be removed' .github/workflows/pages.yml
       - name: Apply idempotent provenance patch
         run: python .github/patches/run_receipt_20260901.py
       - name: Verify content and guardrails
@@ -42,8 +42,9 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git checkout -- .github/workflows/pages.yml
           if ! git diff --quiet; then
-            git add modules/research-track.html modules/numerical-modeling.html .github/workflows/pages.yml
+            git add modules/research-track.html modules/numerical-modeling.html
             git commit -m 'Teach run-level provenance and estimator receipts'
             git push
           fi
