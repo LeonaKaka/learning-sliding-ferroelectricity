@@ -1,0 +1,49 @@
+name: Apply run-receipt provenance upgrade
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/apply-run-receipt-upgrade.yml'
+      - '.github/patches/run_receipt_20260901.py'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Preflight anchors
+        run: |
+          grep -q '1.1 · 一个适合 sliding-FE 的有效比较语言' modules/research-track.html
+          grep -q 'research-track.html#fair' modules/numerical-modeling.html
+          grep -q '<h2>7 · 一套不会自欺的 depinning 数值实验</h2>' modules/numerical-modeling.html
+          grep -q "if Path('scripts').exists():" .github/workflows/pages.yml
+      - name: Apply idempotent provenance patch
+        run: python .github/patches/run_receipt_20260901.py
+      - name: Verify content and guardrails
+        run: |
+          test "$(grep -o 'id="fair"' modules/research-track.html | wc -l | tr -d ' ')" = "1"
+          test "$(grep -o 'id="run-receipt"' modules/numerical-modeling.html | wc -l | tr -d ' ')" = "1"
+          grep -q 'Code authority' modules/numerical-modeling.html
+          grep -q 'Resolved configuration' modules/numerical-modeling.html
+          grep -q 'execution_status' modules/numerical-modeling.html
+          grep -q 'physical_assessment' modules/numerical-modeling.html
+          grep -q 'analysis_role' modules/numerical-modeling.html
+          grep -q 'reproducible 不等于 authoritative' modules/numerical-modeling.html
+          grep -q 'unused legacy terminology runtime must be removed' .github/workflows/pages.yml
+      - name: Commit provenance upgrade
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          if ! git diff --quiet; then
+            git add modules/research-track.html modules/numerical-modeling.html .github/workflows/pages.yml
+            git commit -m 'Teach run-level provenance and estimator receipts'
+            git push
+          fi
