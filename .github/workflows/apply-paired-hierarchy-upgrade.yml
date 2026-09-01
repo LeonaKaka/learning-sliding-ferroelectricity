@@ -44,8 +44,13 @@ jobs:
           grep -q 'common random numbers 是 variance-reduction device' modules/research-track.html
           grep -q 'paired censoring / bound 信息' modules/research-track.html
           grep -q 'finite-size 也有 pairing 陷阱' modules/research-track.html
-          grep -q 'Δ̄ = N' modules/research-track.html
-          grep -q 'ȳ<sub>i,c</sub>' modules/research-track.html
+          python - <<'PY'
+          from pathlib import Path
+          s = Path('modules/research-track.html').read_text('utf-8')
+          assert r'\bar' not in s
+          assert 'N<sup>−1</sup> Σ' in s
+          assert 'M<sub>i,c</sub><sup>−1</sup> Σ' in s
+          PY
       - name: Commit paired-hierarchy lesson
         run: |
           git config user.name 'github-actions[bot]'
