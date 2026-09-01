@@ -128,8 +128,12 @@ jobs:
               Path('modules/research-track.html'): (
                   'id="fair"', 'id="data-claim-contract"', 'id="event-contract"', 'id="paired-hierarchy"'
               ),
-              Path('modules/numerical-modeling.html'): ('id="run-receipt"', 'research-track.html#fair'),
-              Path('modules/depinning.html'): ('id="data-claim-bridge"',),
+              Path('modules/numerical-modeling.html'): (
+                  'id="threshold-authority-bridge"', 'id="run-receipt"', 'research-track.html#fair'
+              ),
+              Path('modules/depinning.html'): (
+                  'id="data-claim-bridge"', 'id="threshold-ladder"', 'href="#threshold-ladder"'
+              ),
           }
           for page, markers in contracts.items():
               text = page.read_text(encoding='utf-8')
