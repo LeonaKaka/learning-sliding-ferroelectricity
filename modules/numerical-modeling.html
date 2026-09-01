@@ -37,6 +37,7 @@
 <p>下面不是某篇论文的直接原句，而是本站对 continuum white disorder 的离散化推导。它是做 convergence test 前必须固定的量。</p>
 <div class="eq">⟨h(r)h(r′)⟩ = Δ δ<sup>(d)</sup>(r−r′)　⇒　Var(h<sub>cell</sub>) = Δ / dx<sup>d</sup><small>因此 cell/node 上使用独立 N(0,1) 时，为保持 continuum Δ 不变：σ<sub>grid</sub> = √Δ · dx<sup>−d/2</sup>。二维就是 σ<sub>grid</sub> ∝ 1/dx。</small></div>
 <div class="warn"><b>二维关键结论：</b>如果代码写成 <code>h = σ * normal()</code>，然后把 dx 从 1 改成 0.5 却保持 σ 不变，你并没有只“加密网格”；你同时把 continuum disorder strength 改弱了。反过来，若目标是固定物理白噪声强度，应让输入标准差按 <b>1/dx</b> 缩放。</div>
+<div class="warn"><b>适用范围：</b>上面的 <b>σ<sub>grid</sub> ∝ dx<sup>−d/2</sup></b> 针对的是把 δ-correlated continuum field 离散成每个网格单元的 cell-average / 等价局域场这一约定。若 disorder 有有限相关长度、是固定位置/固定强度的 defects，或代码中的随机量代表对一个 cell 已积分的能量/力而不是局域 field value，就不能机械套用同一缩放；应从实际使用的 covariance 或离散能量项重新推导 dx dependence。</div>
 <div class="twocol"><div class="card"><h3>白噪声 disorder</h3><p>固定的是 Δ，而不是数组里每个 pixel 的标准差。一般 d 维下，std ∝ dx<sup>−d/2</sup>。</p></div><div class="card"><h3>有限相关长度 disorder</h3><p>先定义物理 correlation length ℓ 和 covariance，再离散。只要 dx 足够解析 ℓ，就不应把它继续当 δ-correlated noise 用同一缩放规则硬套。</p></div></div>
 
 <h2>6 · 一套不会自欺的 depinning 数值实验</h2>
@@ -44,5 +45,5 @@
 <div class="check"><div><b>dx convergence：</b>至少保证 wall width 被多个 grid points 解析；同时按物理定义重标 disorder。</div><div><b>dt convergence：</b>减小 dt 后 Ec、v(E)、roughness 不能系统漂移。</div><div><b>size convergence：</b>测多个 L；临界附近 ξ 会增长，单一尺寸的 β 拟合不够。</div><div><b>seed statistics：</b>报告 disorder realizations，而不是只挑一张“漂亮的 wall”。</div><div><b>wall extraction：</b>single-valued 时可用 φ=0 contour → u(y)；出现 overhang/bubble 时必须报告提取规则或改用 bulk observables。</div><div><b>observable chain：</b>Ec → v∼(E−Ec)<sup>β</sup> → B(r)/S(q) → finite-size scaling；每一步都有独立 sanity check。</div></div>
 <div class="q">最终要能说出一句完整的模型声明：<b>“我模拟的是哪一级自由度；disorder 的 continuum 定义是什么；dx 改变时哪些输入随之重标；在哪些尺度 wall 可以约化成 elastic interface；一旦出现哪些几何结构，这个约化就停止可信。”</b></div>
 <div class="bridge">到这里，01–07 的基础链已经闭合：stacking → switching pathway → domain wall → pinning/creep → depinning → disorder/RFIM → numerical model。Module 08 不再补基础课，而是拿这套检查表重新审 2025–2026 的 sliding-FE 最新工作：它们到底已经测到了什么，还缺哪些 universality evidence。</div>
-<div class="next"><a href="disorder-rfim.html">← 06 Disorder & RFIM</a><a href="../index.html#frontier">08 Current Frontiers →</a></div>
+<div class="next"><a href="disorder-rfim.html">← 06 Disorder & RFIM</a><a href="current-frontiers.html">08 Current Frontiers →</a></div>
 </main></body></html>
