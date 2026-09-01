@@ -133,7 +133,7 @@
 <div class="bridge"><a href="research-track.html#temperature">Research Track：finite-T protocol / outer-vs-inner statistics</a>　·　<a href="depinning.html#thermal-rounding">Module 05：thermal rounding measurement logic</a></div>
 <div class="q"><b>代码验收一句话：</b>改 dx 或 dt 后，如果你不能明确说明“为了保持同一个 physical T，随机项到底按什么公式重标了”，finite-T exponent 暂时没有解释资格。</div>
 
-<div id="reproduction-lab-bridge" class="bridge"><b>想把这些规则真正写成代码，而不是只读 checklist？</b> 新的 <a href="reproduction-lab.html">Reproduction Lab</a> 正按 Caballero 2020 一步步复现：L01 解析 kink → L02 2D field→u(y) → L03 EW roughness vs Eq.19 → L04 2D GL→EW validity boundary → L05 bulk RB→effective pinning correlator。每课都有可运行脚本和 hard gate，再把同一 estimator 迁回 sliding-FE。</div>
+<div id="reproduction-lab-bridge" class="bridge"><b>想把这些规则真正写成代码，而不是只读 checklist？</b> 新的 <a href="reproduction-lab.html">Reproduction Lab</a> 正按 Caballero 2020 一步步复现：L01 解析 kink → L02 2D field→u(y) → L03 EW roughness vs Eq.19 → L04 2D GL→EW validity boundary → L05 bulk RB→effective pinning correlator → L06 disordered B/S cross-model checkpoint。每课都有可运行脚本和 hard gate，再把同一 estimator 迁回 sliding-FE。</div>
 <h2 id="velocity-estimator">6.3 · Steady-wall velocity contract：一个 v(E) 点到底怎样才算“测到了”？</h2>
 <p>depinning 最常见的下一步是画 <i>v</i>(E)，但“trajectory 最后动了一点”并不等于得到 steady velocity。尤其靠近 E<sub>c</sub> 时，长 transient、intermittent bursts、有限 observation time 与 wall-topology change 都会把一个单点速度变成分析自由度。这里把 <b>run 是否有效、wall 怎样位移、什么时候进入 steady window、单条 trajectory 的误差和跨 disorder source 的误差</b> 分开。</p>
 <div class="bridge"><b>为什么要这么严格：</b>Module 05 的 Ferrero 2013 已经显示，depinning 附近可以存在很长的 nonsteady crossover；过早把 transient 当 asymptotic regime，会系统性偏置 effective exponent。steady-v route 与 nonsteady-relaxation route 都可以研究 criticality，但不能把两套 estimator 混在同一条 β fit 里。</div>
