@@ -125,12 +125,14 @@ jobs:
               raise SystemExit('temporary bilingual staging marker must not remain')
 
           unique_contracts = {
+              Path('index.html'): ('id="foundations"',),
               Path('modules/research-track.html'): (
                   'id="fair"', 'id="identifiability-bridge"', 'id="data-claim-contract"',
                   'id="event-contract"', 'id="paired-hierarchy"'
               ),
               Path('modules/numerical-modeling.html'): (
-                  'id="identifiability"', 'id="thermal-noise"', 'id="threshold-authority-bridge"', 'id="run-receipt"'
+                  'id="identifiability"', 'id="thermal-noise"', 'id="velocity-estimator"',
+                  'id="threshold-authority-bridge"', 'id="run-receipt"'
               ),
               Path('modules/depinning.html'): (
                   'id="data-claim-bridge"', 'id="threshold-ladder"'
@@ -144,12 +146,14 @@ jobs:
 
           required_links = {
               Path('modules/numerical-modeling.html'): (
-                  'href="#identifiability"', 'href="#thermal-noise"', 'research-track.html#fair'
+                  'href="#identifiability"', 'href="#thermal-noise"', 'depinning.html#threshold-ladder',
+                  'research-track.html#fair'
               ),
               Path('modules/depinning.html'): ('href="#threshold-ladder"',),
               Path('modules/research-track.html'): (
                   'numerical-modeling.html#identifiability', 'numerical-modeling.html#thermal-noise'
               ),
+              Path('modules/foundations.html'): ('../index.html#foundations',),
           }
           for page, markers in required_links.items():
               text = page.read_text(encoding='utf-8')
