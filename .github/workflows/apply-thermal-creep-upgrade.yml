@@ -1,0 +1,42 @@
+name: Apply thermal creep teaching upgrade
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/apply-thermal-creep-upgrade.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install extraction tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq poppler-utils
+          python -m pip install --quiet pillow
+      - name: Apply finite-temperature content patch
+        run: python scripts/thermal_creep_upgrade_20260901.py
+      - name: Verify expected markers
+        run: |
+          test -s assets/pinning-creep/ferrero2021-fig3-finite-temperature.webp
+          grep -q 'finite-T creep 不是' modules/pinning-creep.html
+          grep -q 'Thermal rounding：T&gt;0' modules/depinning.html
+          grep -q 'Temperature 是新的实验轴' modules/research-track.html
+      - name: Commit patched pages
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/pinning-creep/ferrero2021-fig3-finite-temperature.webp modules/pinning-creep.html modules/depinning.html modules/research-track.html
+          git commit -m 'Teach finite-temperature creep and thermal rounding'
+          git push
