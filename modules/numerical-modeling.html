@@ -1,6 +1,6 @@
 <!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Numerical Modeling · Learning Sliding Ferroelectricity</title><style>
 :root{--b:#f3f0e8;--p:#fffdf8;--i:#191a18;--m:#716d66;--l:#d8d1c3;--a:#6d493b;--soft:#eee8dc}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--b);color:var(--i);font:15px/1.78 system-ui,-apple-system,"PingFang SC",sans-serif}.top{position:sticky;top:0;z-index:3;background:#f3f0e8ee;backdrop-filter:blur(12px);border-bottom:1px solid var(--l)}.bar,main{width:min(1040px,calc(100% - 32px));margin:auto}.bar{height:62px;display:flex;align-items:center;justify-content:space-between;gap:20px}.bar b,h1,h2,h3,.q,.bridge,.eq,.step b{font-family:Georgia,"Times New Roman","Songti SC",serif}.bar a,a{color:#504c46}.bar small,.rule,.cap{color:var(--m)}main{padding:52px 0 90px}h1{font-size:clamp(40px,6.8vw,66px);line-height:1.04;margin:12px 0 18px;letter-spacing:-.04em}h2{font-size:29px;line-height:1.25;margin:70px 0 15px}h3{font-size:18px;margin:0 0 6px}.deck{font:19px/1.62 Georgia,"Songti SC",serif;color:#4f4b45;max-width:900px}.q{background:#20211f;color:#f6f1e7;border-radius:14px;padding:20px 22px;font-size:18px;margin:30px 0}.rule,.cap{font-size:12px}.src,.fig{background:#fff;border:1px solid var(--l);border-radius:14px;overflow:hidden;margin:26px 0}.head,.cap{padding:10px 14px;background:#f0ece3}.source-text{padding:21px 24px 19px;background:#fff;margin:0;border:0;border-left:4px solid #c8b9aa;font:15.5px/1.82 Georgia,"Times New Roman",serif;color:#2d2c29}.source-text p{margin:0 0 1em}.source-text p:last-child{margin-bottom:0}.note{padding:14px 18px;background:#faf7f0;border-top:1px solid var(--l);font-size:13px}.fig img{display:block;width:100%;height:auto;background:#fff}.fig.compact img{width:min(100%,720px);margin:auto}.fig.narrow img{width:min(100%,660px);margin:auto}.cap{display:block;border-top:1px solid var(--l)}.zoom{float:right;font-size:11px}.claims,.twocol{display:grid;grid-template-columns:1fr 1fr;gap:12px}.claim,.card,.step{background:var(--p);border:1px solid var(--l);border-radius:11px;padding:15px}.claim p,.card p,.step p{font-size:13px;margin:5px 0}.bridge{font-size:18px;padding:18px 20px;margin:32px 0;border-left:4px solid var(--a);background:var(--soft)}.eq{font-size:18px;text-align:center;padding:14px 12px;margin:16px 0;background:#faf7f0;border:1px solid var(--l);border-radius:10px;overflow-x:auto}.eq small{display:block;font:12px/1.5 system-ui;color:var(--m);margin-top:7px}.warn{background:#fff7e8;border:1px solid #e4d3ad;border-radius:11px;padding:14px 16px;margin:18px 0}.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:22px 0}.step b{font-size:17px}.matrix{width:100%;border-collapse:collapse;margin:22px 0;background:#fff;border:1px solid var(--l)}.matrix th,.matrix td{padding:11px 12px;border-bottom:1px solid var(--l);vertical-align:top;text-align:left}.matrix th{background:#f0ece3;font:13px Georgia,serif}.matrix td{font-size:13px}.matrix tr:last-child td{border-bottom:0}.check{counter-reset:n;display:grid;gap:9px;margin:20px 0}.check div{background:#fff;border:1px solid var(--l);border-radius:10px;padding:12px 14px}.check div:before{counter-increment:n;content:counter(n);display:inline-grid;place-items:center;width:24px;height:24px;margin-right:9px;border:1px solid #a69d8e;border-radius:50%;font:12px Georgia,serif}.next{margin-top:44px;padding-top:20px;border-top:1px solid var(--l);display:flex;justify-content:space-between;gap:16px}@media(max-width:760px){.claims,.twocol,.steps{grid-template-columns:1fr}.bar span{display:none}.source-text{padding:18px 17px;font-size:14.5px}.fig{border-radius:9px}.matrix{display:block;overflow-x:auto}.next{flex-direction:column}h2{margin-top:58px}}
-</style></head><body><header class="top"><div class="bar"><b>Learning Sliding Ferroelectricity <small>· 07 Numerical Modeling</small></b><span><a href="../index.html#map">Map</a> · <a href="#tdgl">TDGL</a> · <a href="#reduction">Model reduction</a> · <a href="#grid">Grid sanity</a> · <a href="#run-receipt">Receipts</a></span></div></header><main>
+</style></head><body><header class="top"><div class="bar"><b>Learning Sliding Ferroelectricity <small>· 07 Numerical Modeling</small></b><span><a href="../index.html#map">Map</a> · <a href="#tdgl">TDGL</a> · <a href="#reduction">Model reduction</a> · <a href="#identifiability">Scale</a> · <a href="#grid">Grid sanity</a> · <a href="#run-receipt">Receipts</a></span></div></header><main>
 <div class="rule"><a href="../index.html">首页</a> / From Theory to Numerical Modeling</div>
 <h1>从 φ(r,t) 到一条会 depin 的畴壁，中间到底做了哪些近似？</h1>
 <p class="deck">前两章已经把问题拆成两种语言：bulk order parameter 可以产生复杂畴结构，elastic interface 则擅长描述 threshold、roughness 和 universality。数值建模真正困难的地方，不是“把 TDGL 写进代码”，而是知道每一步 coarse-graining 保留了什么、丢掉了什么，以及网格有没有悄悄改掉你的物理参数。</p>
@@ -34,6 +34,53 @@
 <div class="eq">u(y,t)　→　{u<sub>1</sub>(y,t), u<sub>2</sub>(y,t), …}<small>若多个 interface 的相对位移会改变能量和动力学，就还需要 interaction term，例如 F<sub>int</sub>[u<sub>1</sub>−u<sub>2</sub>]；这只是 coarse-grained 结构示意，不是 Dai 论文直接给出的 Hamiltonian。</small></div>
 <div class="twocol"><div class="card"><h3>仍可做 single-wall minimal problem</h3><p>当研究问题明确限定在 bilayer-like、一堵预存 wall、其它界面自由度被冻结时，单一 u(y) 仍是最干净的 universality test。</p></div><div class="card"><h3>不能无条件外推</h3><p>trilayer/multilayer 的 intermediate states、coupled DWs 与 inter-DW interaction 可能引入新的长度和时间尺度；单壁 β/ζ/ν 不能自动描述整个 multilayer switching。</p></div></div>
 <div class="warn"><b>模型边界不是缺点。</b>真正严谨的说法是：先用 single-wall problem 测试最小 driven-interface framework；如果未来扩到 multilayer，就显式增加 interface index，而不是把所有额外自由度藏进一个更大的“noise”。</div>
+
+<h2 id="identifiability">4.5 · Nondimensionalization & identifiability：参数多，不等于信息多</h2>
+<p>一套 continuum model 可以同时写 κ、V<sub>0</sub>、P<sub>0</sub>、Γ、disorder amplitude、correlation length 和 temperature；但一条实验曲线通常不能把它们全部独立决定。真正应该先问的是：<b>某个 observable 约束的是哪个参数，还是只约束某个参数组合？</b> 如果这个问题没回答，所谓“参数拟合得很好”可能只是 non-identifiability。</p>
+<div class="q">最重要的校准顺序：<b>先定自由度与 symmetry → 再定 clean statics → 再定 clean dynamics → 再加 disorder → 最后才拿没参与校准的 observable 做验证。</b></div>
+
+<h3>4.5.1 · 先用 clean single-harmonic sector 看清“参数组合”</h3>
+<p>对 Research Track 里采用的 periodic stacking 模型，先暂时关掉 drive 与 disorder，并只保留一维、单谐波 clean sector：</p>
+<div class="eq">F = ∫ dx [ κ/2 (∂<sub>x</sub>φ)² + V<sub>0</sub>(1 − cos(nφ)) ]</div>
+<p>在<b>这个明确 normalization</b> 下，相邻 minima 之间的 sine-Gordon kink 有特征宽度与壁张力：</p>
+<div class="eq">ℓ<sub>w</sub> = √[ κ / (n²V<sub>0</sub>) ]　；　γ<sub>w</sub> = 8√(κV<sub>0</sub>) / n</div>
+<div class="warn"><b>公式边界：</b>这两式只属于这里写出的 clean、单谐波、local-gradient 模型。真实 sliding-FE stacking landscape 若有方向各向异性、多谐波、非局域 elasticity 或多个 coupled interfaces，应重新对实际 energy landscape 做数值 wall calibration，不能把这两个 prefactor 当材料定律。</div>
+<p>这两式立刻暴露 identifiability：只知道 wall width 时，只约束 <b>κ/V<sub>0</sub></b> 的组合；如果还能独立知道 wall tension / wall energy，才有机会在这个简化模型里拆开：</p>
+<div class="eq">V<sub>0</sub> = γ<sub>w</sub> / (8ℓ<sub>w</sub>)　；　κ = n²ℓ<sub>w</sub>γ<sub>w</sub> / 8</div>
+
+<h3>4.5.2 · 哪个 observable 能约束什么？</h3>
+<table class="matrix"><thead><tr><th>observable / prior</th><th>主要约束</th><th>单独做不到什么</th></tr></thead><tbody>
+<tr><td>stacking symmetry / minima 数</td><td>periodicity、允许的 n、order-parameter topology</td><td>不能靠 hysteresis fit 把 symmetry 当自由参数随便调</td></tr>
+<tr><td>clean wall width ℓ<sub>w</sub></td><td>gradient stiffness / local barrier 的长度组合</td><td>通常不能单独拆出 κ 与 V<sub>0</sub></td></tr>
+<tr><td>clean wall energy / tension γ<sub>w</sub></td><td>√(κV<sub>0</sub>) 类型的能量组合</td><td>没有宽度信息时仍不能唯一决定 κ、V<sub>0</sub></td></tr>
+<tr><td>stacking energy landscape / barrier</td><td>local potential 的能量尺度与 harmonic content</td><td>不决定 gradient stiffness κ</td></tr>
+<tr><td>polarization amplitude / electrostatic coupling convention</td><td>P<sub>0</sub> 与 electric-drive energy scale</td><td>不能从 coercive field 单独反推出 P<sub>0</sub></td></tr>
+<tr><td>clean-wall mobility / relaxation time</td><td>在 statics 已冻结后的 Γ / kinetic scale</td><td>若 κ、V<sub>0</sub> 还漂着，Γ 会与能量尺度互相补偿</td></tr>
+<tr><td>P–E loop / coercive scale</td><td>protocol 下多个机制的综合 response</td><td>不能唯一同时识别 κ、V<sub>0</sub>、Γ、σ、ξ<sub>d</sub></td></tr>
+<tr><td>disorder morphology + threshold statistics</td><td>在 clean baseline 冻结后的 coupling law、strength、correlation effects</td><td>不能用来补偿一个本来就错误的 clean wall</td></tr>
+</tbody></table>
+
+<h3>4.5.3 · 无量纲化的价值，是看见真正控制问题的 ratios</h3>
+<p>在上面的单谐波 clean model 中，可以用 ℓ<sub>w</sub> 作为自然长度。于是很多“参数扫描”其实更应该写成 dimensionless ratio：</p>
+<table class="matrix"><thead><tr><th>ratio</th><th>物理含义</th><th>数值上要问什么</th></tr></thead><tbody>
+<tr><td>dx / ℓ<sub>w</sub></td><td>网格相对 wall core 的解析度</td><td>wall 是否被足够多 grid points 解析</td></tr>
+<tr><td>L / ℓ<sub>w</sub></td><td>system size 相对 microscopic wall scale</td><td>finite-size scaling 是否真的离开 wall-core 尺度</td></tr>
+<tr><td>ξ<sub>d</sub> / ℓ<sub>w</sub></td><td>disorder correlation length 相对 wall width</td><td>wall 看到的是近白噪声、有限相关 defect，还是 smooth landscape</td></tr>
+<tr><td>E P<sub>0</sub> / V<sub>0</sub></td><td>drive coupling 相对 local periodic energy scale</td><td>它只是自然 drive ratio，不自动等于 coercive / depinning field</td></tr>
+<tr><td>σ<sub>RF</sub> / V<sub>0</sub> 或 σ<sub>RB</sub> / V<sub>0</sub></td><td>disorder energy scale 相对 clean barrier</td><td>不同 coupling form 仍需 fair matching，不能只比同一个数字 σ</td></tr>
+</tbody></table>
+<div class="bridge">这正好把两处旧知识接起来：<a href="#grid">Grid sanity</a> 负责“dx 改变时 physical disorder 是否保持不变”；<a href="research-track.html#fair">Research Track fair matching</a> 负责“RF 与 RB 是否在明确物理尺度上可比”。这里补的是更上游的一步：<b>先把 clean energy / length scales 冻结。</b></div>
+
+<h3>4.5.4 · Γ 最好在 statics 冻结以后再校准</h3>
+<p>若采用 overdamped TDGL 形式 <span class="eq" style="display:inline-block;padding:2px 7px;margin:0">∂<sub>t</sub>φ = −Γ δF/δφ</span>，那么在这个 normalization 下，clean minimum 附近 local curvature 是 n²V<sub>0</sub>，小扰动的自然局域 relaxation time 满足：</p>
+<div class="eq">τ<sub>0</sub> ∼ 1 / (Γ n²V<sub>0</sub>)</div>
+<p>这里的重点不是把这个 prefactor 当普适常数，而是说明 <b>Γ 只有在能量尺度冻结后才有独立动力学意义</b>。实际 calibration 更稳妥的做法，是先用 statics 决定 wall profile / energy，再用 clean-wall mobility 或独立 relaxation observable 约束 kinetic scale。</p>
+
+<h3>4.5.5 · calibration 与 validation 必须分开</h3>
+<div class="steps"><div class="step"><b>① Structural prior</b><p>由 stacking symmetry / microscopic landscape 决定 order parameter 与 periodicity。</p></div><div class="step"><b>② Clean statics</b><p>用 wall width、wall energy、stacking barrier 等冻结 κ / V<sub>0</sub> 相关组合。</p></div><div class="step"><b>③ Clean dynamics</b><p>再用 mobility / relaxation 约束 Γ，不让 kinetic 参数替 statics 擦屁股。</p></div></div>
+<div class="steps"><div class="step"><b>④ Disorder</b><p>在 clean baseline 不动以后，定义 RF/RB coupling、physical amplitude 与 ξ<sub>d</sub>。</p></div><div class="step"><b>⑤ Calibration set</b><p>明确哪些 observables 被用来定参数。</p></div><div class="step"><b>⑥ Holdout validation</b><p>用没参与校准的 morphology、threshold、size/temperature response 检查 model 是否真的预测到新东西。</p></div></div>
+<div class="warn"><b>一个常见自欺路径：</b>同时调 κ、V<sub>0</sub>、Γ、σ 让同一条 P–E loop 很像实验，然后再把“loop 拟合得好”当成模型验证。那只是 calibration closure，不是 independent validation。</div>
+<div class="q"><b>模型声明至少要补一句：</b>“哪些参数由外部 structural / static / dynamic observable 约束；哪些只在 dimensionless ratio 中可识别；哪些仍是 phenomenological control parameter；最后用什么 holdout observable 验证。”</div>
 
 <h2>5 · Fedeli 2019：disorder 要进入“物理项”，而不是只给结果图加噪声</h2>
 <div class="src"><div class="head"><b>原文 · Fedeli, Kamlah & Frangi 2019</b>　<span class="rule">Smart Mater. Struct. 28, 035021 · Drive PDF</span></div><blockquote class="source-text"><p>Different kinds of defects were considered: holes, point charges and polarization pinning in single crystals, as well as grain boundaries in polycrystals, without and with additional dielectric interphase.</p><p>It can be seen that defects lead to nucleation of new domains. Compared to the energy barrier for switching in an ideal single crystal, the overall coercive field strength is significantly reduced towards realistic values.</p></blockquote><div class="note">这一篇的价值是提醒你：不同 defect 类型对应不同物理耦合，不能全部塞进一个“noise strength σ”后还声称微观机制相同。</div></div>
