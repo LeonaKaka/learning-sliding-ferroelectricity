@@ -1,0 +1,12 @@
+Caballero Fig.5 geometry checkpoint
+T, epsilon, t          = 0.050, 0.100, 1000.0
+GL size / EW length    = 64x128 / 128
+realizations           = 8
+B median rel, r=4..32  = 1.227%
+S log-bin median rel   = 6.122%
+zeta_B GL / EW         = 0.538906 / 0.509213
+zeta_S GL / EW         = 0.694308 / 0.664796
+GL fitted A, w         = 0.982981, 1.371256
+GL profile-fit RMSE    = 0.077925
+CROSS-MODEL GEOMETRY PASS; ASYMPTOTIC ZETA GATE NOT PASSED
+saved: /home/runner/work/learning-sliding-ferroelectricity/learning-sliding-ferroelectricity/assets/reproduction-lab/lesson06_disordered_geometry_checkpoint.svg
