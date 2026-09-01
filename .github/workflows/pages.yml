@@ -130,7 +130,7 @@ jobs:
                   'id="event-contract"', 'id="paired-hierarchy"'
               ),
               Path('modules/numerical-modeling.html'): (
-                  'id="identifiability"', 'id="threshold-authority-bridge"', 'id="run-receipt"'
+                  'id="identifiability"', 'id="thermal-noise"', 'id="threshold-authority-bridge"', 'id="run-receipt"'
               ),
               Path('modules/depinning.html'): (
                   'id="data-claim-bridge"', 'id="threshold-ladder"'
@@ -143,9 +143,13 @@ jobs:
                       raise SystemExit(f'{page}: expected exactly one unique contract marker: {marker}')
 
           required_links = {
-              Path('modules/numerical-modeling.html'): ('href="#identifiability"', 'research-track.html#fair'),
+              Path('modules/numerical-modeling.html'): (
+                  'href="#identifiability"', 'href="#thermal-noise"', 'research-track.html#fair'
+              ),
               Path('modules/depinning.html'): ('href="#threshold-ladder"',),
-              Path('modules/research-track.html'): ('numerical-modeling.html#identifiability',),
+              Path('modules/research-track.html'): (
+                  'numerical-modeling.html#identifiability', 'numerical-modeling.html#thermal-noise'
+              ),
           }
           for page, markers in required_links.items():
               text = page.read_text(encoding='utf-8')
