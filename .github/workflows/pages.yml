@@ -128,14 +128,14 @@ jobs:
               Path('index.html'): ('id="foundations"',),
               Path('modules/research-track.html'): (
                   'id="fair"', 'id="identifiability-bridge"', 'id="data-claim-contract"',
-                  'id="event-contract"', 'id="paired-hierarchy"'
+                  'id="event-contract"', 'id="paired-hierarchy"', 'id="collapse-gate-bridge"'
               ),
               Path('modules/numerical-modeling.html'): (
                   'id="identifiability"', 'id="thermal-noise"', 'id="velocity-estimator"',
                   'id="threshold-authority-bridge"', 'id="run-receipt"'
               ),
               Path('modules/depinning.html'): (
-                  'id="data-claim-bridge"', 'id="threshold-ladder"'
+                  'id="data-claim-bridge"', 'id="collapse-gate"', 'id="threshold-ladder"'
               ),
           }
           for page, markers in unique_contracts.items():
@@ -151,7 +151,8 @@ jobs:
               ),
               Path('modules/depinning.html'): ('href="#threshold-ladder"',),
               Path('modules/research-track.html'): (
-                  'numerical-modeling.html#identifiability', 'numerical-modeling.html#thermal-noise'
+                  'numerical-modeling.html#identifiability', 'numerical-modeling.html#thermal-noise',
+                  'depinning.html#collapse-gate'
               ),
               Path('modules/foundations.html'): ('../index.html#foundations',),
           }
