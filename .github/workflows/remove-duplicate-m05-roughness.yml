@@ -1,0 +1,45 @@
+name: Remove duplicate M05 roughness gate
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/remove-duplicate-m05-roughness.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Remove duplicate section
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('modules/depinning.html')
+          s=p.read_text('utf-8')
+          start='<h3 id="roughness-gate">7.2A · Roughness acceptance gate：先分清 global / local / spectral，再谈 ζ</h3>'
+          end='<h3>7.3 · finite-size scaling 要做“删尺寸复核”</h3>'
+          assert s.count(start)==1, s.count(start)
+          assert s.count(end)==1, s.count(end)
+          a=s.index(start); b=s.index(end)
+          assert a < b
+          s=s[:a]+s[b:]
+          assert 'id="roughness-gate"' not in s
+          assert '三者不一致时' in s
+          assert 'Zhou, Zheng & He 2009' in s
+          assert not any(ord(ch)<32 and ch not in '\n\r\t' for ch in s)
+          p.write_text(s,'utf-8')
+          print('Duplicate M05 roughness gate removed; concise 7.2 checks preserved.')
+          PY
+      - name: Commit cleanup
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add modules/depinning.html
+          git diff --cached --quiet && exit 0
+          git commit -m 'Remove duplicate roughness gate from depinning lesson'
+          git push origin main
