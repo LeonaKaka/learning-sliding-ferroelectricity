@@ -139,7 +139,7 @@ else:
     repo_root = here.parent
 out_dir = repo_root / "assets" / "reproduction-lab"
 out_dir.mkdir(parents=True, exist_ok=True)
-out = out_dir / "lesson02_2d_wall_extract.png"
+out = out_dir / "lesson02_2d_wall_extract.svg"
 fig = plt.figure(figsize=(11.5, 8.4), constrained_layout=True)
 gs = fig.add_gridspec(2, 2)
 
