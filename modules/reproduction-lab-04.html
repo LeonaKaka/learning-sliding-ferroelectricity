@@ -1,0 +1,82 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Reproduction Lab 04 · GL → EW Validity Boundary</title><style>
+:root{--b:#f3f0e8;--p:#fffdf8;--i:#191a18;--m:#716d66;--l:#d8d1c3;--a:#6d493b;--soft:#eee8dc}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--b);color:var(--i);font:15px/1.76 system-ui,-apple-system,"PingFang SC",sans-serif}.top{position:sticky;top:0;z-index:3;background:#f3f0e8ee;backdrop-filter:blur(12px);border-bottom:1px solid var(--l)}.bar,main{width:min(1100px,calc(100% - 32px));margin:auto}.bar{height:62px;display:flex;align-items:center;justify-content:space-between;gap:20px}.bar b,h1,h2,h3,.q,.bridge,.eq{font-family:Georgia,"Times New Roman","Songti SC",serif}.bar a,a{color:#504c46}.bar small,.rule,.cap{color:var(--m)}main{padding:52px 0 90px}h1{font-size:clamp(40px,6.8vw,66px);line-height:1.04;margin:12px 0 18px;letter-spacing:-.04em}h2{font-size:29px;line-height:1.25;margin:64px 0 15px}h3{font-size:18px;margin:0 0 6px}.deck{font:19px/1.62 Georgia,"Songti SC",serif;color:#4f4b45;max-width:930px}.q{background:#20211f;color:#f6f1e7;border-radius:14px;padding:20px 22px;font-size:18px;margin:30px 0}.rule,.cap{font-size:12px}.fig,.codebox{background:#fff;border:1px solid var(--l);border-radius:14px;overflow:hidden;margin:26px 0}.head,.cap{padding:10px 14px;background:#f0ece3}.fig img{display:block;width:100%;height:auto;background:#fff}.cap{display:block;border-top:1px solid var(--l)}.two,.three{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.three{grid-template-columns:repeat(3,1fr)}.card{background:var(--p);border:1px solid var(--l);border-radius:11px;padding:15px}.card p{font-size:13px;margin:5px 0}.bridge{font-size:18px;padding:18px 20px;margin:32px 0;border-left:4px solid var(--a);background:var(--soft)}.eq{font-size:18px;text-align:center;padding:14px 12px;margin:16px 0;background:#faf7f0;border:1px solid var(--l);border-radius:10px;overflow-x:auto}.warn{background:#fff7e8;border:1px solid #e4d3ad;border-radius:11px;padding:14px 16px;margin:18px 0}.pass{background:#eef6ef;border:1px solid #bfd2c4;border-radius:11px;padding:14px 16px;margin:18px 0}.fail{background:#fff0ee;border:1px solid #d7b7b0;border-radius:11px;padding:14px 16px;margin:18px 0}.matrix{width:100%;border-collapse:collapse;margin:22px 0;background:#fff;border:1px solid var(--l)}.matrix th,.matrix td{padding:11px 12px;border-bottom:1px solid var(--l);vertical-align:top;text-align:left}.matrix th{background:#f0ece3;font:13px Georgia,serif}.matrix td{font-size:13px}.matrix tr:last-child td{border-bottom:0}pre{margin:0;padding:20px;overflow:auto;background:#1e201f;color:#f2eee6;font:12.5px/1.58 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.verdict{font:16px/1.65 Georgia,"Songti SC",serif;background:#f7f1e7;border-left:4px solid #b27a2f;padding:16px 18px;margin:18px 0}.next{margin-top:44px;padding-top:20px;border-top:1px solid var(--l);display:flex;justify-content:space-between;gap:16px}@media(max-width:760px){.two,.three{grid-template-columns:1fr}.bar span{display:none}.matrix{display:block;overflow-x:auto}.next{flex-direction:column}h2{margin-top:54px}}
+</style></head><body><header class="top"><div class="bar"><b>Reproduction Lab <small>· Lesson 04 · Model Reduction Boundary</small></b><span><a href="reproduction-lab-03.html">L03</a> · <a href="../index.html">首页</a> · <a href="#compare">Paper vs Ours</a> · <a href="#code">Code</a></span></div></header><main>
+<div class="rule"><a href="../index.html">Learning Sliding Ferroelectricity</a> / Reproduction Lab / Lesson 04</div>
+<h1>最重要的不只是“映射成功”：还要知道什么时候该停止把 bulk wall 当 elastic line</h1>
+<p class="deck">Caballero 2020 的真正价值，不只是证明 2D Ginzburg–Landau 可以降成 1D Edwards–Wilkinson。论文还明确测试了这个 reduction 的适用边界：低温时两种描述吻合；温度升高、bulk fluctuation 变强后，soliton ansatz 与 single-valued interface picture 会逐渐失效。这一课就复现“通过 + 失败”两边。</p>
+<div class="q"><b>本课规则：</b>低温要通过 Eq.19 hard gate；高温则不允许为了“复现成功”继续调参数。只要 bulk→line mapping 的诊断一起恶化，就应该把结果标成 <b>mapping breakdown</b>，而不是硬塞一个 ζ。</div>
+
+<h2 id="compare">0 · 原论文 Fig.3 vs 我们的 boundary thumbnail</h2>
+<div class="two">
+<figure class="fig"><a href="../assets/reproduction-lab/caballero2020-fig3-temperature-boundary.webp" target="_blank" rel="noopener"><img src="../assets/reproduction-lab/caballero2020-fig3-temperature-boundary.webp" alt="Caballero 2020 Figure 3 temperature dependence and GL to EW breakdown"></a><figcaption class="cap"><b>Caballero et al. 2020 · Fig.3。</b><br>作者固定 t=10<sup>3</sup>，扫描 T=0.05,0.07,0.1,0.15,0.2,0.3。EW 仍按 Eq.19；2D GL 在低温与理论接近，但论文正文指出 T 大于约 0.15 后开始出现明显偏离。</figcaption></figure>
+<figure class="fig"><a href="../assets/reproduction-lab/lesson04_gl_to_ew_boundary.svg" target="_blank" rel="noopener"><img src="../assets/reproduction-lab/lesson04_gl_to_ew_boundary.svg" alt="Our low-temperature GL to EW mapping pass and high-temperature breakdown"></a><figcaption class="cap"><b>Our CPU-fast boundary thumbnail。</b><br>只取 T=0.05 与 T=0.30、t=10 与 100。左上：低温 GL extracted-wall roughness 对 EW Eq.19；右上：高温偏离；下排同时看 fitted wall width 与多 crossing / error diagnostics。</figcaption></figure>
+</div>
+<div class="verdict"><b>这不是 Fig.3 的 protocol-identical reproduction。</b> 论文是 L<sub>x</sub>=256、L<sub>y</sub>=4096、t=10<sup>3</sup> 的完整温度扫描；我们是 L<sub>x</sub>=64、L<sub>y</sub>=128、12 realizations 的快速 boundary test。它的作用是先验证“低 T 通过、高 T 失败”这个方法结构，再决定值不值得跑大尺寸。</div>
+
+<h2>1 · 先修正 Lesson 02 的一个教学简化：finite T 不能只找 zero crossing</h2>
+<p>Lesson 02 在 T=0 的 clean wall 上用 φ=0 crossing 很合适，因为每一列只有一个干净 crossing。但论文在 finite T 下采用更严格的 estimator：对固定 y,t 的整个 transverse profile φ(x,y,t) 拟合 soliton，并把 <b>{φ₀,w,u(y)}</b> 都作为 fitting parameters。</p>
+<div class="eq">φ<sub>fit</sub>(x;y)=−A(y) tanh[(x−u(y))/w(y)]</div>
+<div class="codebox"><div class="head"><b>zero crossing 只做初始化，不做最终 estimator</b></div><pre>pars, _ = curve_fit(
+    soliton, x_window, phi_column,
+    p0=(1.0, sqrt(2), u_zero),
+    bounds=((0.5,0.4,u_zero-2),
+            (1.5,3.5,u_zero+2))
+)
+A, w, u = pars</pre></div>
+<div class="bridge"><b>为什么这是方法学升级？</b> thermal fluctuation 会同时扰动 domain interior、wall amplitude、wall width 和 apparent crossing。只用一格之间的符号变化，容易把 bulk noise 当作 wall displacement；拟合整段 profile 则利用了 wall 的完整形状信息。</div>
+
+<h2>2 · 论文 protocol 与我们哪里相同、哪里缩小？</h2>
+<table class="matrix"><thead><tr><th>项目</th><th>Caballero 2020</th><th>本课</th><th>解释</th></tr></thead><tbody>
+<tr><td>GL 参数</td><td>α=δ=γ=η=1，h=0</td><td>相同</td><td>不改物理模型</td></tr>
+<tr><td>boundary</td><td>y periodic；x Dirichlet</td><td>相同</td><td>锁住单一 domain wall</td></tr>
+<tr><td>mesh</td><td>Δx=Δy=1</td><td>相同</td><td>按论文离散尺度</td></tr>
+<tr><td>time step</td><td>semi-implicit Euler，Δt=0.1</td><td>Δt=0.1；linear Laplacian implicit</td><td>保持同一量级；实现细节不是逐行复制论文代码</td></tr>
+<tr><td>system size</td><td>256×4096</td><td>64×128</td><td>快速 thumbnail</td></tr>
+<tr><td>temperature</td><td>0.05…0.30</td><td>0.05 与 0.30</td><td>先取两端测试 validity boundary</td></tr>
+<tr><td>time</td><td>Fig.3: t=1000</td><td>t=10,100</td><td>先做即时可验收版</td></tr>
+<tr><td>wall estimator</td><td>fit {φ₀,w,u(y)}</td><td>相同思路</td><td>zero crossing 只初始化 fit</td></tr>
+</tbody></table>
+
+<h2>3 · 2D thermal noise：这次真的回到 bulk FDT</h2>
+<p>GL Langevin 方程的论文噪声满足：</p>
+<div class="eq">⟨ξ(r,t)ξ(r′,t′)⟩=2ηT δ²(r−r′)δ(t−t′)</div>
+<p>因此二维 cell 面积 ΔxΔy、时间步 Δt 下，直接加到 φ update 的 stochastic increment 是：</p>
+<div class="eq">Δφ<sub>th</sub>=√[2TΔt/(ηΔxΔy)]·N(0,1)</div>
+<div class="warn"><b>这一行不能从 Lesson 03 的 1D EW 代码直接复制。</b> 1D line 的 noise normalization 用 dy；2D bulk 用 dx·dy。模型降维以后 friction/noise 也通过论文 Eq.13–16 被重新投影，不能靠“同一个 seed 同一个 sigma”代替推导。</div>
+
+<h2>4 · 低温 T=0.05：mapping 必须先过</h2>
+<table class="matrix"><thead><tr><th>time</th><th>Eq.19 median error</th><th>RMS error</th><th>mean fitted φ₀</th><th>mean fitted w</th></tr></thead><tbody>
+<tr><td>t=10</td><td><b>7.67%</b></td><td>7.57%</td><td>0.9879</td><td>1.3738</td></tr>
+<tr><td>t=100</td><td><b>4.49%</b></td><td>4.36%</td><td>0.9870</td><td>1.3740</td></tr>
+</tbody></table>
+<p>论文在 T=0.05 的 fit diagnostics 报告 mean φ₀≈0.99、mean w≈1.38，而 clean equilibrium 值是 φ₀=1、w=√2≈1.414。我们的 thumbnail 均值已经落在同一位置；但我们没有声称复现论文的标准差，因为系统尺寸、realization 数与 integrator implementation 都不同。</p>
+<div class="pass"><b>LOW-T MAPPING PASS。</b> 在预先固定的 4≤r≤32 窗口内，低温 GL roughness 能在约 5–8% 内跟随 EW Eq.19，同时 fitted profile 仍接近 clean soliton。这时把 bulk wall 压成 u(y) 是有证据支撑的。</div>
+
+<h2>5 · 高温 T=0.30：这次“失败”才是应该出现的答案</h2>
+<table class="matrix"><thead><tr><th>time</th><th>Eq.19 median error</th><th>mean fitted w</th><th>width std</th><th>multi-cross columns</th></tr></thead><tbody>
+<tr><td>t=10</td><td>26.52%</td><td>1.6664</td><td>0.9806</td><td>5.47%</td></tr>
+<tr><td>t=100</td><td><b>40.51%</b></td><td>1.7018</td><td>0.9760</td><td><b>7.23%</b></td></tr>
+</tbody></table>
+<div class="fail"><b>HIGH-T BREAKDOWN DETECTED。</b> roughness 不再跟 Eq.19，wall-width distribution 急剧变宽，还开始出现同一 y-column 的 multiple crossings。这里如果继续只提一条 u(y)、再拟合 ζ，得到的“漂亮 exponent”反而会掩盖 estimator 已失效。</div>
+<p>论文的物理解释也是这一方向：GL→EW reduction 建立在 low-noise / solitonic ansatz 上；对于 α=δ=γ=η=1，特征温度 T*≈1，随着 T 增大，bulk fluctuations 增强；论文 Fig.3 中 T>0.15 已观察到系统性偏离。</p>
+
+<h2>6 · 这节真正教给你的不是 Caballero，而是一个 universality gate</h2>
+<div class="three"><div class="card"><h3>先验 mapping</h3><p>先证明 bulk field 能稳定压成单值 u(y)，再调用 elastic-interface theory。</p></div><div class="card"><h3>同时验 geometry</h3><p>B(r) 对上还不够；profile width、fit residual、crossing topology 也要一起正常。</p></div><div class="card"><h3>失败要降级 claim</h3><p>mapping gate 失败时，正确语言是 crossover / bulk-interface breakdown，而不是强给 universality label。</p></div></div>
+<div class="bridge"><b>直接对应你的 sliding-FE Paper2：</b> 你后面从 phase field 提取 wall contour、算 B(r)/S(q)、再拟合 ζ/β/ν 时，也应该先做这套 gate。尤其 sliding-FE 的 wall profile 不是 φ⁴ tanh；应使用你的 periodic stacking landscape 对应的 clean wall template / contour rule，而不是把 Caballero 的 tanh 生搬过去。</div>
+
+<h2 id="code">7 · 完整脚本与 hard gates</h2>
+<p><a href="../examples/reproduction-lab/lesson04_gl_to_ew.py"><b>打开 Lesson 04 Python 脚本 →</b></a>　依赖 NumPy + SciPy + Matplotlib；普通 CPU 约几十秒。</p>
+<div class="codebox"><div class="head"><b>核心验收逻辑</b></div><pre># low T must pass
+assert low[t]["median_rel"] &lt; 0.10
+assert low[100]["multi_cross"] &lt; 0.01
+
+# high T is deliberately NOT forced to pass
+assert high[100]["median_rel"] &gt; 0.30
+assert high[100]["W_std"] &gt; 2*low[100]["W_std"]
+assert high[100]["multi_cross"] &gt; 0.03</pre></div>
+<div class="q">这类“必须失败”的测试非常重要。一个 reproduction suite 如果所有 gate 都只接受“越来越像理论”，它就无法发现理论适用边界。</div>
+
+<h2>8 · 下一课：disorder 不只是“往方程里加随机数”</h2>
+<p>Caballero 的 Sec.IV 从 bulk random-bond disorder 出发，推导出 interface 看到的是一个具有有限 u-correlation length 的 pinning force。下一课最适合先复现论文 Fig.4：从理论 Γ(u) 生成很多 F<sub>p</sub>(u,y)，直接检查 sample correlator 是否回到 Γ(u)。这一步算力很小，却是进入 quenched-disorder / depinning 前非常强的 gold test。</p>
+<div class="next"><a href="reproduction-lab-03.html">← Lesson 03 · EW roughness</a><a href="numerical-modeling.html">回 Module 07 →</a></div>
+</main></body></html>
