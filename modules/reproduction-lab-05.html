@@ -1,0 +1,93 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Reproduction Lab 05 · Bulk RB → Pinning Force</title><style>
+:root{--b:#f3f0e8;--p:#fffdf8;--i:#191a18;--m:#716d66;--l:#d8d1c3;--a:#6d493b;--soft:#eee8dc}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--b);color:var(--i);font:15px/1.76 system-ui,-apple-system,"PingFang SC",sans-serif}.top{position:sticky;top:0;z-index:3;background:#f3f0e8ee;backdrop-filter:blur(12px);border-bottom:1px solid var(--l)}.bar,main{width:min(1100px,calc(100% - 32px));margin:auto}.bar{height:62px;display:flex;align-items:center;justify-content:space-between;gap:20px}.bar b,h1,h2,h3,.q,.bridge,.eq{font-family:Georgia,"Times New Roman","Songti SC",serif}.bar a,a{color:#504c46}.bar small,.rule,.cap{color:var(--m)}main{padding:52px 0 90px}h1{font-size:clamp(40px,6.8vw,66px);line-height:1.04;margin:12px 0 18px;letter-spacing:-.04em}h2{font-size:29px;line-height:1.25;margin:64px 0 15px}h3{font-size:18px;margin:0 0 6px}.deck{font:19px/1.62 Georgia,"Songti SC",serif;color:#4f4b45;max-width:930px}.q{background:#20211f;color:#f6f1e7;border-radius:14px;padding:20px 22px;font-size:18px;margin:30px 0}.rule,.cap{font-size:12px}.fig,.codebox{background:#fff;border:1px solid var(--l);border-radius:14px;overflow:hidden;margin:26px 0}.head,.cap{padding:10px 14px;background:#f0ece3}.fig img{display:block;width:100%;height:auto;background:#fff}.cap{display:block;border-top:1px solid var(--l)}.two,.three{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.three{grid-template-columns:repeat(3,1fr)}.card{background:var(--p);border:1px solid var(--l);border-radius:11px;padding:15px}.card p{font-size:13px;margin:5px 0}.bridge{font-size:18px;padding:18px 20px;margin:32px 0;border-left:4px solid var(--a);background:var(--soft)}.eq{font-size:18px;text-align:center;padding:14px 12px;margin:16px 0;background:#faf7f0;border:1px solid var(--l);border-radius:10px;overflow-x:auto}.warn{background:#fff7e8;border:1px solid #e4d3ad;border-radius:11px;padding:14px 16px;margin:18px 0}.pass{background:#eef6ef;border:1px solid #bfd2c4;border-radius:11px;padding:14px 16px;margin:18px 0}.matrix{width:100%;border-collapse:collapse;margin:22px 0;background:#fff;border:1px solid var(--l)}.matrix th,.matrix td{padding:11px 12px;border-bottom:1px solid var(--l);vertical-align:top;text-align:left}.matrix th{background:#f0ece3;font:13px Georgia,serif}.matrix td{font-size:13px}.matrix tr:last-child td{border-bottom:0}pre{margin:0;padding:20px;overflow:auto;background:#1e201f;color:#f2eee6;font:12.5px/1.58 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.verdict{font:16px/1.65 Georgia,"Songti SC",serif;background:#f7f1e7;border-left:4px solid #b27a2f;padding:16px 18px;margin:18px 0}.next{margin-top:44px;padding-top:20px;border-top:1px solid var(--l);display:flex;justify-content:space-between;gap:16px}@media(max-width:760px){.two,.three{grid-template-columns:1fr}.bar span{display:none}.matrix{display:block;overflow-x:auto}.next{flex-direction:column}h2{margin-top:54px}}
+</style></head><body><header class="top"><div class="bar"><b>Reproduction Lab <small>· Lesson 05 · Disorder Projection</small></b><span><a href="reproduction-lab-04.html">L04</a> · <a href="../index.html">首页</a> · <a href="#compare">Paper vs Ours</a> · <a href="#code">Code</a></span></div></header><main>
+<div class="rule"><a href="../index.html">Learning Sliding Ferroelectricity</a> / Reproduction Lab / Lesson 05</div>
+<h1>bulk 里是白噪声 RB，interface 为什么看到的是有相关长度的 pinning force？</h1>
+<p class="deck">这一步和你的项目非常接近。Caballero 2020 在 bulk Ginzburg–Landau 势垒高度里加入 delta-correlated random-bond disorder，然后把它投影到 domain wall。关键结果不是“无序还叫 RB”，而是：经过有限宽度 wall profile 的投影以后，interface 实际感受到的 pinning force 在位移 u 方向变成短程相关，其 correlation length 是 wall width 的量级。</p>
+<div class="q"><b>本课要验证两个东西：</b>第一，Eq.23 从 bulk disorder 得到的 F<sub>p</sub>(u,y)，其 sample correlator 必须回到 Eq.25 的 Γ(u)；第二，continuum white noise 的网格幅度必须随 du<sup>−1/2</sup> 缩放。漏掉这一项，相关函数幅度会直接错一个网格因子。</div>
+
+<h2 id="compare">0 · 原论文 Fig.4 vs 我们的 bulk-projection reproduction</h2>
+<div class="two">
+<figure class="fig"><a href="../assets/reproduction-lab/caballero2020-fig4-pinning-correlator.webp" target="_blank" rel="noopener"><img src="../assets/reproduction-lab/caballero2020-fig4-pinning-correlator.webp" alt="Caballero 2020 Figure 4 pinning force correlations"></a><figcaption class="cap"><b>Caballero et al. 2020 · Fig.4。</b><br>256 个独立 pinning-force realizations 的相关函数；平均值与理论 Γ(u) 对照。Inset 展示 4 条 F<sub>p</sub>(u,y)。这是进入 disordered-interface dynamics 前的 correlator gold test。</figcaption></figure>
+<figure class="fig"><a href="../assets/reproduction-lab/lesson05_rb_projection_correlator.svg" target="_blank" rel="noopener"><img src="../assets/reproduction-lab/lesson05_rb_projection_correlator.svg" alt="Our bulk random-bond projection and pinning-force correlator"></a><figcaption class="cap"><b>Our reproduction。</b><br>统计仍用 256 realizations、M=10000、du=0.1。不同点是我们不直接从 Eq.27 合成 F<sub>p</sub>，而是先生成 continuum-normalized bulk ζ(x,y)，再按 Eq.23 投影；因此更直接检查 bulk→interface 这一步本身。</figcaption></figure>
+</div>
+<div class="verdict"><b>这次比 Lesson04 还便宜，却非常“硬”。</b> 不需要时间积分，也不需要大二维网格；paper-size 的 256×10000 随机场可以在普通 CPU 上很快完成。所以没有“算力不够只能凭趋势判断”的借口。</div>
+
+<h2>1 · bulk random-bond disorder 到底加在哪里？</h2>
+<p>论文不是直接给 interface 一个随机力，而是先改 bulk double-well barrier：</p>
+<div class="eq">V<sub>ζ</sub>[φ(r)] = V[φ(r)] · [1 + ε ζ(r)]</div>
+<p>其中 ζ(r) 是 zero-mean、delta-correlated Gaussian field。这个选择属于 <b>barrier-amplitude / random-bond-like coupling</b>：它改变局域势垒，而不是给两个极化方向加一个直接 local bias。</p>
+<div class="bridge"><b>和你的 sliding-FE 项目怎么接？</b> 你的 barrier-amplitude disorder 也是“改变周期势垒”的 coupling 思路，但具体势函数从 φ⁴ double well 换成 periodic stacking potential。因此 Caballero 的公式不能整段照抄；真正可迁移的是 <b>coupling → generalized force → interface projection → effective correlator</b> 这条方法流。</div>
+
+<h2>2 · Eq.23：wall 本身就是一个空间滤波器</h2>
+<p>把 clean soliton ansatz φ*(x−u) 代入以后，论文得到：</p>
+<div class="eq">F<sub>p</sub>(u,y)=εγ ∫ dx ζ(x+u,y) φ*″(x) φ*′(x)</div>
+<p>所以一格一格独立的 bulk ζ 并不会原样传给 wall。它先被 kernel</p>
+<div class="eq">k(x)=φ*′(x)φ*″(x)</div>
+<p>卷积。因为 k(x) 只在 wall 附近显著，wall width w 自然成为 effective disorder correlation length 的来源。</p>
+<div class="codebox"><div class="head"><b>代码里它就是一次 cross-correlation</b></div><pre>K = np.fft.fft(phi_prime * phi_second)
+Fp = epsilon * gamma * du * np.fft.ifft(
+    np.fft.fft(zeta, axis=1) * np.conj(K)[None, :], axis=1
+).real</pre></div>
+
+<h2>3 · Eq.25：理论 target 不是拟合出来的</h2>
+<div class="eq">Γ(Δu)=γ² ∫ dx k(x) k(x−Δu)</div>
+<p>这就是本课 target。我们直接数值积分 Eq.25，不拿 sample data 去拟合 Γ 的宽度或幅度。论文进一步给出 closed-form Eq.26，并指出 effective disorder 沿 u 是 short-range correlated，相关长度是 wall width w 的量级。</p>
+<div class="three"><div class="card"><h3>wall width</h3><p>α=δ=γ=1 时 w=√2≈1.414。</p></div><div class="card"><h3>Γ first zero</h3><p>理论值约 1.0394，确实与 w 同量级。</p></div><div class="card"><h3>不是新自由参数</h3><p>correlation scale 是 bulk disorder 经 wall profile 投影后的结果。</p></div></div>
+
+<h2>4 · 一个特别容易错的地方：continuum white noise 不是“每格 std=1”</h2>
+<p>连续定义是：</p>
+<div class="eq">⟨ζ(x)ζ(x′)⟩=δ(x−x′)</div>
+<p>离散成格距 du 后，Kronecker delta 与 Dirac delta 之间差一个 1/du，因此：</p>
+<div class="eq">Var(ζ<sub>i</sub>) = 1/du　→　std(ζ<sub>i</sub>) = du<sup>−1/2</sup></div>
+<div class="codebox"><div class="head"><b>正确 vs 故意错误</b></div><pre>base = rng.standard_normal((R, M))
+zeta_correct = base / np.sqrt(du)
+zeta_wrong   = base</pre></div>
+<div class="warn"><b>为什么这对你尤其重要：</b>这里 du=0.1。若忘掉 du<sup>−1/2</sup>，同一批随机数得到的 C(0) 只剩正确 continuum 目标的约 <b>0.1 倍</b>。这就是“看似只是换网格，实际物理无序强度被偷偷改了”。二维 delta-correlated field 对应的 amplitude scaling 则是 dx<sup>−1</sup>。</div>
+
+<h2>5 · 我们尽量贴论文 protocol，但不伪装成完全相同</h2>
+<table class="matrix"><thead><tr><th>项目</th><th>Caballero Fig.4</th><th>本课</th></tr></thead><tbody>
+<tr><td>realizations</td><td>256</td><td><b>256，相同</b></td></tr>
+<tr><td>M</td><td>10⁴</td><td><b>10⁴，相同</b></td></tr>
+<tr><td>grid spacing</td><td>δl=0.1</td><td><b>du=0.1，相同</b></td></tr>
+<tr><td>ε</td><td>1</td><td><b>1，相同</b></td></tr>
+<tr><td>生成 Fp 的方式</td><td>Eq.27 Fourier synthesis；文中 Fig.4 取 D=1</td><td>bulk ζ → Eq.23 projection，α=δ=γ=1</td></tr>
+<tr><td>theory target</td><td>Γ(u), Eq.26</td><td>Γ(u), Eq.25 numerical quadrature</td></tr>
+</tbody></table>
+<p>所以我们复现的是 <b>Fig.4 的物理/统计结构</b>，同时刻意选择更能检查 model reduction 的生成路线；不是逐行重写作者的随机数生成器。</p>
+
+<h2>6 · Hard gates：相关函数必须定量对上</h2>
+<table class="matrix"><thead><tr><th>quantity</th><th>result</th><th>gate</th></tr></thead><tbody>
+<tr><td>Γ(0) theory</td><td>0.0718331</td><td>reference</td></tr>
+<tr><td>C(0)/Γ(0)</td><td><b>0.995554</b></td><td>0.98–1.02</td></tr>
+<tr><td>RMSE / Γ(0), 0≤Δu≤5</td><td><b>0.222%</b></td><td>&lt;1%</td></tr>
+<tr><td>max |error| / Γ(0)</td><td><b>0.445%</b></td><td>&lt;1.5%</td></tr>
+<tr><td>normalized-shape RMSE</td><td><b>0.104%</b></td><td>diagnostic</td></tr>
+<tr><td>first zero: theory</td><td>1.039429</td><td rowspan="2">difference &lt;0.01</td></tr>
+<tr><td>first zero: empirical</td><td><b>1.039472</b></td></tr>
+<tr><td>故意错误 std=1</td><td><b>0.099555 × theory amplitude</b></td><td>应暴露 10× normalization error</td></tr>
+</tbody></table>
+<div class="pass"><b>ALL DISORDER-PROJECTION GATES PASS。</b> 这里的“复现正确”不是因为两条曲线肉眼重合，而是幅度、shape、zero crossing 和故意错误对照都同时过关。</div>
+
+<h2 id="code">7 · 完整脚本</h2>
+<p><a href="../examples/reproduction-lab/lesson05_rb_projection.py"><b>打开 Lesson 05 Python 脚本 →</b></a>　依赖只有 NumPy + Matplotlib；没有 time integration，所以 paper-size correlation test 很轻。</p>
+<div class="codebox"><div class="head"><b>预期输出</b></div><pre>phi0, w                 = 1.000000, 1.414214
+M, du, realizations     = 10000, 0.100, 256
+Gamma(0) theory         = 0.071833070
+C(0)/Gamma(0)           = 0.995554
+RMSE/Gamma(0), 0&lt;=u&lt;=5  = 0.222%
+max abs/Gamma(0)        = 0.445%
+normalized-shape RMSE   = 0.104%
+first zero theory       = 1.039429
+first zero empirical    = 1.039472
+WRONG std=1 amplitude   = 0.099555 x theory
+ALL DISORDER-PROJECTION GATES PASS</pre></div>
+
+<h2>8 · 这一步证明了什么？没证明什么？</h2>
+<div class="two"><div class="card"><h3>已经证明</h3><p>RB bulk coupling 经过有限宽度 soliton 投影后产生短程相关 pinning force；我们的离散实现和 Eq.25 一致；continuum white-noise normalization 正确。</p></div><div class="card"><h3>还没证明</h3><p>没有证明 depinning exponent、没有证明 RF 与 RB 同 universality、也没有证明 sliding-FE 的真实 defect 必然等价于这个 φ⁴ RB model。</p></div></div>
+<div class="bridge"><b>对你自己的模型最重要的迁移问题：</b>你的 RF term 与 barrier-amplitude term 具有不同的 φ-dependence，因此各自投影到 wall 后得到的 effective force correlator 未必只差一个 amplitude。以后真正做 RF↔RB isolated-wall universality comparison 时，可以沿这节方法先算 <b>effective wall-level disorder statistics</b>，再谈 β/ζ 是否相同。</div>
+
+<h2>9 · Lesson 06：从 correlator gold test 进入真正的 disordered wall geometry</h2>
+<p>Caballero Fig.5 下一步同时比较 2D GL 与 1D EW 的 <b>B(r,t)</b> 和 <b>S(q,t)</b>。随着时间增长，large-scale roughness 离开 thermal regime，并接近 random-bond roughness ζ<sub>RB</sub>=2/3。那一课才会开始真正验证：<b>正确的 disorder correlator 是否产生正确的 interface geometry。</b></p>
+<div class="next"><a href="reproduction-lab-04.html">← Lesson 04 · GL→EW validity boundary</a><a href="numerical-modeling.html">回 Module 07 →</a></div>
+</main></body></html>
