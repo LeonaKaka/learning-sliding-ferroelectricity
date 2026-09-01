@@ -126,10 +126,12 @@ jobs:
 
           contracts = {
               Path('modules/research-track.html'): (
-                  'id="fair"', 'id="data-claim-contract"', 'id="event-contract"', 'id="paired-hierarchy"'
+                  'id="fair"', 'id="identifiability-bridge"', 'id="data-claim-contract"',
+                  'id="event-contract"', 'id="paired-hierarchy"'
               ),
               Path('modules/numerical-modeling.html'): (
-                  'id="threshold-authority-bridge"', 'id="run-receipt"', 'research-track.html#fair'
+                  'id="identifiability"', 'href="#identifiability"', 'id="threshold-authority-bridge"',
+                  'id="run-receipt"', 'research-track.html#fair'
               ),
               Path('modules/depinning.html'): (
                   'id="data-claim-bridge"', 'id="threshold-ladder"', 'href="#threshold-ladder"'
