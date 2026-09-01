@@ -128,8 +128,10 @@ jobs:
               Path('index.html'): ('id="foundations"',),
               Path('modules/research-track.html'): (
                   'id="fair"', 'id="identifiability-bridge"', 'id="data-claim-contract"',
-                  'id="event-contract"', 'id="paired-hierarchy"', 'id="collapse-gate-bridge"'
+                  'id="event-contract"', 'id="paired-hierarchy"', 'id="collapse-gate-bridge"',
+                  'id="roughness-gate-bridge"'
               ),
+              Path('modules/pinning-creep.html'): ('id="roughness-gate"',),
               Path('modules/numerical-modeling.html'): (
                   'id="identifiability"', 'id="thermal-noise"', 'id="velocity-estimator"',
                   'id="threshold-authority-bridge"', 'id="run-receipt"'
@@ -152,7 +154,7 @@ jobs:
               Path('modules/depinning.html'): ('href="#threshold-ladder"',),
               Path('modules/research-track.html'): (
                   'numerical-modeling.html#identifiability', 'numerical-modeling.html#thermal-noise',
-                  'depinning.html#collapse-gate'
+                  'depinning.html#collapse-gate', 'pinning-creep.html#roughness-gate'
               ),
               Path('modules/foundations.html'): ('../index.html#foundations',),
           }
