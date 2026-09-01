@@ -112,10 +112,12 @@ jobs:
           for path, (size, digest) in frozen.items():
               p = Path(path)
               if not p.exists() or p.stat().st_size != size:
-                  raise SystemExit(f'bad repaired asset: {path}')
+                  raise SystemExit(f'bad frozen asset: {path}')
               if hashlib.sha256(p.read_bytes()).hexdigest() != digest:
                   raise SystemExit(f'hash mismatch: {path}')
 
+          if Path('assets/repaired-0607').exists():
+              raise SystemExit('temporary repaired-0607 asset directory must not return')
           if Path('scripts').exists():
               raise SystemExit('legacy evidence-regeneration scripts must not remain in static V1')
           for legacy_runtime in ('terms-extra.js', 'terms-cleanup.js'):
