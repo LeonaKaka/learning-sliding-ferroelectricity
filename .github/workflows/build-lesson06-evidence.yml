@@ -1,0 +1,71 @@
+name: Build Reproduction Lab Lesson 06 evidence
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/build-lesson06-evidence.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pinned numerical and PDF dependencies
+        run: python -m pip install --disable-pip-version-check numpy==2.3.5 scipy==1.17.0 matplotlib==3.10.8 pymupdf==1.26.7 pillow==12.3.0
+      - name: Verify paper source and extract Figure 5
+        run: |
+          curl -L --retry 3 --fail -o /tmp/caballero2020.pdf https://arxiv.org/pdf/2006.15130
+          python - <<'PY'
+          import io, fitz
+          from pathlib import Path
+          from PIL import Image
+          doc=fitz.open('/tmp/caballero2020.pdf')
+          assert 'From bulk descriptions to emergent interfaces' in doc[0].get_text()
+          page=doc[7]
+          pix=page.get_pixmap(matrix=fitz.Matrix(450/72,450/72),alpha=False)
+          im=Image.open(io.BytesIO(pix.tobytes('png')))
+          w,h=im.size
+          # Printed page 8, left-column Figure 5 (plots + caption).
+          box=(int(.055*w),int(.035*h),int(.555*w),int(.955*h))
+          crop=im.crop(box)
+          out=Path('assets/reproduction-lab/caballero2020-fig5-disordered-geometry.webp')
+          out.parent.mkdir(parents=True,exist_ok=True)
+          crop.save(out,'WEBP',quality=92,method=6)
+          assert crop.width > 1700 and crop.height > 3500, crop.size
+          assert out.stat().st_size > 150_000, out.stat().st_size
+          print('Verified paper and Fig5 crop:',crop.size,'bytes=',out.stat().st_size)
+          PY
+      - name: Run repository Lesson 06 cross-model benchmark
+        run: python examples/reproduction-lab/lesson06_disordered_geometry.py | tee /tmp/lesson06.log
+      - name: Verify benchmark semantics
+        run: |
+          grep -q 'CROSS-MODEL GEOMETRY PASS; ASYMPTOTIC ZETA GATE NOT PASSED' /tmp/lesson06.log
+          grep -q 'B median rel, r=4..32' /tmp/lesson06.log
+          grep -q 'S log-bin median rel' /tmp/lesson06.log
+          grep -q 'zeta_B GL / EW' /tmp/lesson06.log
+          grep -q 'zeta_S GL / EW' /tmp/lesson06.log
+          test -s assets/reproduction-lab/lesson06_disordered_geometry_checkpoint.svg
+          test -s assets/reproduction-lab/caballero2020-fig5-disordered-geometry.webp
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('examples/reproduction-lab/lesson06_disordered_geometry.py').read_text('utf-8')
+          bad=[ord(ch) for ch in s if ord(ch)<32 and ch not in '\n\r\t']
+          assert not bad,bad[:10]
+          PY
+      - name: Save benchmark log with evidence asset
+        run: cp /tmp/lesson06.log assets/reproduction-lab/lesson06_disordered_geometry_checkpoint.txt
+      - name: Commit Lesson 06 evidence
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/reproduction-lab/
+          git commit -m 'Generate Lesson 06 disordered-geometry evidence'
+          git push
