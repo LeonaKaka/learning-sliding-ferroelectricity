@@ -1,0 +1,92 @@
+name: Build Reproduction Lab Lesson 04 evidence
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/build-lesson04-evidence.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pinned numerical and PDF dependencies
+        run: python -m pip install --disable-pip-version-check numpy==2.3.5 scipy==1.17.0 matplotlib==3.10.8 pymupdf==1.26.7 pillow==12.3.0
+      - name: Verify paper source and extract Figure 3
+        run: |
+          curl -L --retry 3 --fail -o /tmp/caballero2020.pdf https://arxiv.org/pdf/2006.15130
+          python - <<'PY'
+          import io, fitz
+          from pathlib import Path
+          from PIL import Image
+          doc=fitz.open('/tmp/caballero2020.pdf')
+          assert 'From bulk descriptions to emergent interfaces' in doc[0].get_text()
+          page=doc[4]
+          pix=page.get_pixmap(matrix=fitz.Matrix(450/72,450/72),alpha=False)
+          im=Image.open(io.BytesIO(pix.tobytes('png')))
+          w,h=im.size
+          box=(int(.075*w),int(.475*h),int(.930*w),int(.790*h))
+          crop=im.crop(box)
+          out=Path('assets/reproduction-lab/caballero2020-fig3-temperature-boundary.webp')
+          out.parent.mkdir(parents=True,exist_ok=True)
+          crop.save(out,'WEBP',quality=92,method=6)
+          assert crop.width > 2800 and crop.height > 1200, crop.size
+          assert out.stat().st_size > 120_000, out.stat().st_size
+          print('Verified paper and Fig3 crop:',crop.size,'bytes=',out.stat().st_size)
+          PY
+      - name: Run repository Lesson 04 boundary test
+        run: python examples/reproduction-lab/lesson04_gl_to_ew.py | tee /tmp/lesson04.log
+      - name: Link Lesson 03 to Lesson 04 and add M07 learning bridge
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('modules/reproduction-lab-03.html'); s=p.read_text('utf-8')
+          old='<div class="next"><a href="reproduction-lab-02.html">← Lesson 02 · bulk → u(y)</a><a href="numerical-modeling.html">回 Module 07 →</a></div>'
+          new='<div class="next"><a href="reproduction-lab-02.html">← Lesson 02 · bulk → u(y)</a><a href="reproduction-lab-04.html">Lesson 04 · GL → EW validity boundary →</a></div>'
+          if new not in s:
+              assert s.count(old)==1, s.count(old)
+              p.write_text(s.replace(old,new,1),'utf-8')
+
+          p=Path('modules/numerical-modeling.html'); s=p.read_text('utf-8')
+          marker='id="reproduction-lab-bridge"'
+          if marker not in s:
+              anchor='<h2 id="velocity-estimator">6.3 · Steady-wall velocity contract：一个 v(E) 点到底怎样才算“测到了”？</h2>'
+              assert s.count(anchor)==1, s.count(anchor)
+              bridge='''<div id="reproduction-lab-bridge" class="bridge"><b>想把这些规则真正写成代码，而不是只读 checklist？</b> 新的 <a href="reproduction-lab.html">Reproduction Lab</a> 正按 Caballero 2020 一步步复现：L01 解析 kink → L02 2D field→u(y) → L03 EW roughness vs Eq.19 → L04 2D GL→EW 低温通过 / 高温 breakdown。每课都有可运行脚本和 hard gate，再把同一 estimator 迁回 sliding-FE。</div>\n'''
+              p.write_text(s.replace(anchor,bridge+anchor,1),'utf-8')
+          PY
+      - name: Verify quantitative and source gates
+        run: |
+          grep -q 'LOW-T MAPPING PASS; HIGH-T BREAKDOWN DETECTED' /tmp/lesson04.log
+          grep -q 'LOW-T T=0.05 t= 10.0: median=7.67%' /tmp/lesson04.log
+          grep -q 'LOW-T T=0.05 t=100.0: median=4.49%' /tmp/lesson04.log
+          grep -q 'HIGH-T T=0.30 t=100.0: median=40.51%' /tmp/lesson04.log
+          grep -q 'multi=7.23%' /tmp/lesson04.log
+          test -s assets/reproduction-lab/lesson04_gl_to_ew_boundary.svg
+          test -s assets/reproduction-lab/caballero2020-fig3-temperature-boundary.webp
+          grep -q 'caballero2020-fig3-temperature-boundary.webp' modules/reproduction-lab-04.html
+          grep -q 'lesson04_gl_to_ew_boundary.svg' modules/reproduction-lab-04.html
+          grep -q 'reproduction-lab-04.html' modules/reproduction-lab-03.html
+          grep -q 'id="reproduction-lab-bridge"' modules/numerical-modeling.html
+          python - <<'PY'
+          from pathlib import Path
+          for page in [Path('modules/reproduction-lab-04.html'),Path('modules/numerical-modeling.html')]:
+              text=page.read_text('utf-8')
+              bad=[ord(ch) for ch in text if ord(ch)<32 and ch not in '\n\r\t']
+              assert not bad,(page,bad[:10])
+          PY
+      - name: Commit Lesson 04 evidence
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/reproduction-lab/ modules/reproduction-lab-03.html modules/numerical-modeling.html
+          git commit -m 'Generate Lesson 04 GL-to-EW validity evidence'
+          git push
