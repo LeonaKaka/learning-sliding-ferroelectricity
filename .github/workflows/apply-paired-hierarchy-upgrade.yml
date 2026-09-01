@@ -26,15 +26,25 @@ jobs:
           grep -q 'numerical-modeling.html#run-receipt' modules/research-track.html
       - name: Apply idempotent patch
         run: python .github/patches/paired_hierarchy_20260901.py
-      - name: Normalize equations for static HTML
+      - name: Diagnose and repair equation controls
         run: |
           python - <<'PY'
           from pathlib import Path
           p = Path('modules/research-track.html')
           s = p.read_text('utf-8')
+          section = s[s.index('id="paired-hierarchy"'):s.index('<h2>5 · Mechanism falsification')]
+          print('paired-section control chars before repair:', [(ord(c), repr(c)) for c in section if ord(c) < 32 and c not in '\n\r\t'])
+          assert '\x08' in section, 'expected hidden backspace from original \\bar literal'
+          s = s.replace('\x08ar{Δ}', 'Δ̄').replace('\x08ar y', 'ȳ')
           s = s.replace(r'\bar{Δ}', 'Δ̄').replace(r'\bar y', 'ȳ')
           p.write_text(s, 'utf-8')
-          assert r'\bar' not in s
+          repaired = p.read_text('utf-8')
+          section2 = repaired[repaired.index('id="paired-hierarchy"'):repaired.index('<h2>5 · Mechanism falsification')]
+          assert '\x08' not in section2
+          assert r'\bar' not in section2
+          assert 'Δ̄ = N<sup>−1</sup> Σ' in section2
+          assert 'ȳ<sub>i,c</sub> = M<sub>i,c</sub><sup>−1</sup> Σ' in section2
+          print('paired-section hidden controls repaired')
           PY
       - name: Verify statistical hierarchy
         run: |
@@ -44,19 +54,12 @@ jobs:
           grep -q 'common random numbers 是 variance-reduction device' modules/research-track.html
           grep -q 'paired censoring / bound 信息' modules/research-track.html
           grep -q 'finite-size 也有 pairing 陷阱' modules/research-track.html
-          python - <<'PY'
-          from pathlib import Path
-          s = Path('modules/research-track.html').read_text('utf-8')
-          assert r'\bar' not in s
-          assert 'N<sup>−1</sup> Σ' in s
-          assert 'M<sub>i,c</sub><sup>−1</sup> Σ' in s
-          PY
       - name: Commit paired-hierarchy lesson
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           if ! git diff --quiet; then
             git add modules/research-track.html
-            git commit -m 'Polish paired and hierarchical uncertainty'
+            git commit -m 'Repair paired-statistics equation controls'
             git push
           fi
