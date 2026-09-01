@@ -26,6 +26,16 @@ jobs:
           grep -q 'numerical-modeling.html#run-receipt' modules/research-track.html
       - name: Apply idempotent patch
         run: python .github/patches/paired_hierarchy_20260901.py
+      - name: Normalize equations for static HTML
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('modules/research-track.html')
+          s = p.read_text('utf-8')
+          s = s.replace(r'\bar{Δ}', 'Δ̄').replace(r'\bar y', 'ȳ')
+          p.write_text(s, 'utf-8')
+          assert r'\bar' not in s
+          PY
       - name: Verify statistical hierarchy
         run: |
           test "$(grep -o 'id="paired-hierarchy"' modules/research-track.html | wc -l | tr -d ' ')" = "1"
@@ -34,12 +44,14 @@ jobs:
           grep -q 'common random numbers 是 variance-reduction device' modules/research-track.html
           grep -q 'paired censoring / bound 信息' modules/research-track.html
           grep -q 'finite-size 也有 pairing 陷阱' modules/research-track.html
+          grep -q 'Δ̄ = N' modules/research-track.html
+          grep -q 'ȳ<sub>i,c</sub>' modules/research-track.html
       - name: Commit paired-hierarchy lesson
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           if ! git diff --quiet; then
             git add modules/research-track.html
-            git commit -m 'Teach paired and hierarchical uncertainty'
+            git commit -m 'Polish paired and hierarchical uncertainty'
             git push
           fi
