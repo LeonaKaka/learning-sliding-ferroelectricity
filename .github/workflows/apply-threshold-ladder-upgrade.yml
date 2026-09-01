@@ -1,0 +1,54 @@
+name: Apply threshold inference ladder
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/apply-threshold-ladder-upgrade.yml'
+      - '.github/patches/threshold_ladder_20260901.py'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Preflight
+        run: |
+          grep -q 'id="fit-discipline"' modules/depinning.html
+          grep -q 'id="run-receipt"' modules/numerical-modeling.html
+          grep -q 'id="paired-hierarchy"' modules/research-track.html
+      - name: Apply idempotent patch
+        run: python .github/patches/threshold_ladder_20260901.py
+      - name: Verify threshold authority chain
+        run: |
+          test "$(grep -o 'id="threshold-ladder"' modules/depinning.html | wc -l | tr -d ' ')" = "1"
+          test "$(grep -o 'id="threshold-authority-bridge"' modules/numerical-modeling.html | wc -l | tr -d ' ')" = "1"
+          grep -q 'E=0 自己都站不住' modules/depinning.html
+          grep -q 'right-censored，不是 infinite threshold' modules/depinning.html
+          grep -q '不能据此缩 bracket' modules/depinning.html
+          grep -q 'β 只能消费冻结的 threshold authority' modules/depinning.html
+          grep -q 'research-track.html#paired-hierarchy' modules/depinning.html
+          grep -q 'depinning.html#threshold-ladder' modules/numerical-modeling.html
+          python - <<'PY'
+          from pathlib import Path
+          for page in (Path('modules/depinning.html'), Path('modules/numerical-modeling.html')):
+              s = page.read_text('utf-8')
+              bad = [(i, ord(ch)) for i, ch in enumerate(s) if ord(ch) < 32 and ch not in '\n\r\t']
+              assert not bad, (page, bad[:10])
+          PY
+      - name: Commit threshold lesson
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          if ! git diff --quiet; then
+            git add modules/depinning.html modules/numerical-modeling.html
+            git commit -m 'Teach depinning threshold inference ladder'
+            git push
+          fi
