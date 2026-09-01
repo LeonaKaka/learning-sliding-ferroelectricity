@@ -1,0 +1,17 @@
+Lesson 07 threshold-search validation
+seed                        = 20260902
+classifier residual tol     = 2.000e-07
+moving certificate          = COM advance > 2 u-periods
+particle exact fc           = 1.000000000
+particle dt=0.040 bracket   = [0.999975586, 1.000009155]
+particle dt=0.020 bracket   = [0.999975586, 1.000009155]
+particle dt=0.010 bracket   = [0.999975586, 1.000009155]
+particle max |fc-1|         = 7.629e-06
+line L, M, du, rf           = 32, 256, 0.250, 1.000
+line dt=0.100 bracket       = [0.777636719, 0.777783203]
+line dt=0.050 bracket       = [0.777636719, 0.777783203]
+line dt=0.025 bracket       = [0.777636719, 0.777783203]
+line fc midpoint (dt=.05)   = 0.777709961
+line dt-spread              = 0.000e+00
+line final bracket width    = 1.465e-04
+THRESHOLD GOLD TEST + SMALL-LINE BRACKET PASS
