@@ -33,18 +33,13 @@ jobs:
           for page in pages:
               text = page.read_text(encoding='utf-8')
               prefix = '' if page.name == 'index.html' else '../'
-              tags = [
-                  f'<script src="{prefix}terms-extra.js"></script>',
-                  f'<script src="{prefix}terms.js"></script>',
-                  f'<script src="{prefix}terms-cleanup.js"></script>',
-              ]
+              tag = f'<script src="{prefix}terms.js"></script>'
               if '</body>' not in text:
                   raise SystemExit(f'{page}: missing </body>')
-              for tag in tags:
-                  if tag not in text:
-                      text = text.replace('</body>', tag + '</body>')
+              if tag not in text:
+                  text = text.replace('</body>', tag + '</body>')
               page.write_text(text, encoding='utf-8')
-          print(f'Injected bilingual runtimes into {len(pages)} pages.')
+          print(f'Injected single bilingual runtime into {len(pages)} pages.')
           PY
 
       - name: Verify static evidence site
@@ -66,14 +61,11 @@ jobs:
                   raise SystemExit(f'{name}: missing selectable source-text blocks')
               if 'paragraph-' in text or 'paragraph_' in text:
                   raise SystemExit(f'{name}: paragraph screenshots are forbidden')
-              tags = [
-                  '<script src="../terms-extra.js"></script>',
-                  '<script src="../terms.js"></script>',
-                  '<script src="../terms-cleanup.js"></script>',
-              ]
-              pos = [text.find(t) for t in tags]
-              if min(pos) < 0 or pos != sorted(pos):
-                  raise SystemExit(f'{name}: bilingual runtimes missing or wrong order')
+              tag = '<script src="../terms.js"></script>'
+              if tag not in text:
+                  raise SystemExit(f'{name}: terminology runtime missing')
+              if 'terms-extra.js' in text or 'terms-cleanup.js' in text:
+                  raise SystemExit(f'{name}: legacy overlapping terminology runtime injected')
               for ref in re.findall(r'<img[^>]+src="([^"]+)"', text):
                   if ref.startswith(('http://','https://','data:')):
                       raise SystemExit(f'{name}: remote image not allowed: {ref}')
@@ -81,14 +73,10 @@ jobs:
                       raise SystemExit(f'{name}: missing image: {ref}')
 
           index = Path('index.html').read_text(encoding='utf-8')
-          tags = [
-              '<script src="terms-extra.js"></script>',
-              '<script src="terms.js"></script>',
-              '<script src="terms-cleanup.js"></script>',
-          ]
-          pos = [index.find(t) for t in tags]
-          if min(pos) < 0 or pos != sorted(pos):
-              raise SystemExit('index.html: bilingual runtimes missing or wrong order')
+          if '<script src="terms.js"></script>' not in index:
+              raise SystemExit('index.html: terminology runtime missing')
+          if 'terms-extra.js' in index or 'terms-cleanup.js' in index:
+              raise SystemExit('index.html: legacy overlapping terminology runtime injected')
 
           terms = Path('terms.js').read_text(encoding='utf-8')
           required_terms = (
@@ -101,35 +89,12 @@ jobs:
               "['universality','普适性']", "['stacking registry','堆垛构型']",
               "['switching pathway','极化翻转路径']", "['Born effective charge','Born 有效电荷']",
               "['KPFM','开尔文探针力显微镜']",
-              "el.closest('script,style,pre,code,.source-text')",
-              "'foundations.html':'switching-pathways.html'",
-              "'depinning.html':'disorder-rfim.html'",
-              "'disorder-rfim.html':'numerical-modeling.html'",
-              "'numerical-modeling.html':'current-frontiers.html'",
+              "el.closest('script,style,pre,code,kbd,samp,math,.source-text,.eq,h1,h2,h3,a,.brand,.bar')",
+              "addMobileToc()",
           )
           for marker in required_terms:
               if marker not in terms:
                   raise SystemExit(f'terms.js: missing terminology/behavior marker: {marker}')
-
-          extra = Path('terms-extra.js').read_text(encoding='utf-8')
-          for marker in (
-              "['Monte Carlo','蒙特卡洛']", "['self-similar','自相似']",
-              "['soliton profile','孤子剖面']", "['Stark shift','斯塔克位移']",
-              "['pulse width','脉冲宽度']", "['inset','插图']",
-              "['degree of freedom','自由度']", "['Peierls potential','佩尔斯势']",
-              "el.closest('script,style,pre,code,.source-text')",
-          ):
-              if marker not in extra:
-                  raise SystemExit(f'terms-extra.js: missing audit marker: {marker}')
-
-          cleanup = Path('terms-cleanup.js').read_text(encoding='utf-8')
-          for marker in (
-              "['critical-field','临界场']", "['elastic-interface','弹性界面']",
-              "['symmetry-broken configurations','对称性破缺构型']",
-              "['DW-release schematic','畴壁释放示意']", "saved.push",
-          ):
-              if marker not in cleanup:
-                  raise SystemExit(f'terms-cleanup.js: missing normalization marker: {marker}')
 
           frozen = {
               'assets/repaired-0607/zhou2012-fig2-anomalous-roughness.png': (7818, 'd59962ea8bae39ee79afc89969daf071d1cef4721e89958e52ed5df786b13450'),
@@ -148,7 +113,7 @@ jobs:
               raise SystemExit('legacy evidence-regeneration scripts must not remain in static V1')
           if Path('_bilingual_noop.txt').exists():
               raise SystemExit('temporary bilingual staging marker must not remain')
-          print('Static evidence + bilingual terminology validation passed.')
+          print('Static evidence + conservative terminology validation passed.')
           PY
 
       - name: Configure Pages
