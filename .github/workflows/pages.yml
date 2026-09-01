@@ -104,10 +104,10 @@ jobs:
                   raise SystemExit(f'terms.js: missing terminology/behavior marker: {marker}')
 
           frozen = {
-              'assets/repaired-0607/zhou2012-fig2-anomalous-roughness.png': (7818, 'd59962ea8bae39ee79afc89969daf071d1cef4721e89958e52ed5df786b13450'),
-              'assets/repaired-0607/caballero2020-fig1-bulk-to-interface.png': (13797, '8a4493aac052dccb9752a23e7998a23db17947e561bd81cdc60413bb60a10dcc'),
-              'assets/repaired-0607/caballero2020-fig5-roughness.png': (13214, 'a0ec188345c910ecbdb3e49ea63c1c1aa4eac5bf1a1af4cc978d5df7acc78383'),
-              'assets/repaired-0607/caballero2020-fig5-structure-factor.png': (14359, '53b6dedc4183599b445ee30443744f5622702e54a8b542ccc87fe774e515be31'),
+              'assets/interface-scaling/zhou2012-fig2-anomalous-roughness.png': (7818, 'd59962ea8bae39ee79afc89969daf071d1cef4721e89958e52ed5df786b13450'),
+              'assets/interface-scaling/caballero2020-fig1-bulk-to-interface.png': (13797, '8a4493aac052dccb9752a23e7998a23db17947e561bd81cdc60413bb60a10dcc'),
+              'assets/interface-scaling/caballero2020-fig5-roughness.png': (13214, 'a0ec188345c910ecbdb3e49ea63c1c1aa4eac5bf1a1af4cc978d5df7acc78383'),
+              'assets/interface-scaling/caballero2020-fig5-structure-factor.png': (14359, '53b6dedc4183599b445ee30443744f5622702e54a8b542ccc87fe774e515be31'),
           }
           for path, (size, digest) in frozen.items():
               p = Path(path)
