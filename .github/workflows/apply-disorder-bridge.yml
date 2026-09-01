@@ -17,84 +17,17 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Install figure tools
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install extraction tools
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq poppler-utils
           python -m pip install --quiet pillow
-      - name: Recover Paul 2026 Figure 4 from public paper copy
-        run: |
-          mkdir -p assets/disorder-rfim /tmp/paul
-          curl -L --retry 3 -A 'Mozilla/5.0' 'https://arxiv.org/pdf/2606.00665' -o /tmp/paul/paper.pdf
-          pdftoppm -f 6 -l 6 -r 400 -png -singlefile /tmp/paul/paper.pdf /tmp/paul/page6
-          python - <<'PY'
-          from PIL import Image
-          im=Image.open('/tmp/paul/page6.png')
-          s=400/180
-          box=tuple(int(v*s) for v in (60,50,1480,610))
-          crop=im.crop(box).convert('RGB')
-          crop.save('assets/disorder-rfim/paul2026-fig4-multidomain-disorder.webp',format='WEBP',lossless=True,method=6)
-          print(crop.size)
-          PY
-      - name: Patch teaching pages and curriculum metadata
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          R=Path('.')
-          def rep(path,old,new):
-              p=R/path; s=p.read_text('utf-8')
-              assert s.count(old)==1,(path,s.count(old),old[:80])
-              p.write_text(s.replace(old,new,1),'utf-8')
-
-          # Module 06: material defect -> coarse-grained disorder bridge.
-          anchor='<h2 id="rfim">1 · Dahmen & Sethna 1996：无序不是“加点噪声”，它能改变整个 switching 形态</h2>'
-          block='''<h2 id="material-disorder">Research bridge · 真实 sliding-FE 里的 disorder 到底是什么？</h2>
-<p>到这里必须把“模型里的 random field / random bond”和“样品里的 defect”分开。2026 年 Paul 等研究 CVD-grown 3R-WSe₂：growth-induced structural disorder 会显著影响 polarization switching；multi-domain kinetics 又会单独改变 hysteresis 的演化。更具体地，作者比较的器件中还能看到 Se-vacancy-related trap dynamics、不同 domain 的 coercive-field spread、slow-sweep domain relaxation 与 partial back-switching。真实样品因此不是只有一个名叫 σ 的随机数。</p>
-<div class="src"><div class="head"><b>原文 · Paul et al. 2026</b>　<span class="rule">Nanoscale · DOI 10.1039/D6NR01832G · 项目 Drive PDF / arXiv:2606.00665v1</span></div><blockquote class="source-text"><p>We show that the growth-induced structural disorder significantly impacts polarization switching, while multi-domain kinetics governs the evolution of the FE response.</p></blockquote><div class="note"><b>作者直接支持的层级：</b>structural defects、Se-vacancy-related trap dynamics 和 multi-domain relaxation 都会改变器件 switching。<b>作者没有做的事情：</b>没有把这些缺陷唯一识别成 elastic-manifold RF、RB，也没有测 RF/RB depinning exponents。这个“映射”必须由后续 coarse graining 建立。</div></div>
-<figure class="fig"><a href="../assets/disorder-rfim/paul2026-fig4-multidomain-disorder.webp" target="_blank" rel="noopener"><img src="../assets/disorder-rfim/paul2026-fig4-multidomain-disorder.webp" alt="Paul 2026 Figure 4 multi-domain switching and disorder dynamics in 3R-WSe2"></a><figcaption class="cap"><b>Paul 2026 Fig. 4 · multi-domain kinetics 不是一个抽象修饰词。</b><span class="zoom">项目 PDF 同版本公开副本 · 原 Figure 裁取</span><br>D2 在低温慢扫时出现由 domain relaxation / partial back-switching 关联的异常响应；D3 的 multiple resistance jumps 与更强 Se-vacancy trap dynamics 又叠在 multi-domain switching 上。这里最该学的是：<b>不同物理来源可以同时投影到同一条 macroscopic loop。</b></figcaption></figure>
-<table style="width:100%;border-collapse:collapse;margin:24px 0;background:#fff;border:1px solid var(--l)"><thead><tr><th style="padding:10px;border-bottom:1px solid var(--l);text-align:left;background:#f0ece3">真实来源</th><th style="padding:10px;border-bottom:1px solid var(--l);text-align:left;background:#f0ece3">coarse-grained 候选效应</th><th style="padding:10px;border-bottom:1px solid var(--l);text-align:left;background:#f0ece3">不能直接偷换成</th></tr></thead><tbody>
-<tr><td style="padding:10px;border-bottom:1px solid var(--l)">trapped charge / charged defect</td><td style="padding:10px;border-bottom:1px solid var(--l)">local bias（RF-like）+ time-dependent trapping / mobility</td><td style="padding:10px;border-bottom:1px solid var(--l)">“因此就是静态 Gaussian RF”</td></tr>
-<tr><td style="padding:10px;border-bottom:1px solid var(--l)">strain / structural defect / bubble / edge</td><td style="padding:10px;border-bottom:1px solid var(--l)">barrier、wall energy、elasticity、geometry 或 mobility 的空间变化</td><td style="padding:10px;border-bottom:1px solid var(--l)">“因此一定是 RB”</td></tr>
-<tr><td style="padding:10px;border-bottom:1px solid var(--l)">multi-domain initial structure</td><td style="padding:10px;border-bottom:1px solid var(--l)">initial topology、wall population、threshold distribution、relaxation pathway</td><td style="padding:10px;border-bottom:1px solid var(--l)">一个局域 disorder field</td></tr>
-<tr><td style="padding:10px">extended / clustered defects</td><td style="padding:10px">finite correlation length ξ<sub>d</sub>、anisotropy、rare strong pins</td><td style="padding:10px">δ-correlated white noise</td></tr>
-</tbody></table>
-<div class="warn"><b>这就是研究模型应该保持的谦逊：</b>RF/RB 是受控的 effective coupling classes，用来问“耦合形式是否重要”；它们不是对某一个真实缺陷化学身份的一一命名。真正材料映射需要独立的 microscopy / electrostatics / defect energetics 证据。</div>
-<div class="bridge">有了这个边界，再去读 RFIM 才不会犯最常见的错：<b>实验里看见 disorder，不等于已经知道它属于哪个 statistical disorder class。</b></div>
-
-'''+anchor
-          rep(Path('modules/disorder-rfim.html'),anchor,block)
-
-          # Module 07: three axes of disorder and correlated-noise discretization.
-          anchor2='<h2 id="grid">6 · 最容易把数值结果做假的地方：dx 改了，disorder 也跟着变</h2>'
-          block2='''<h2 id="disorder-axes">Research bridge · disorder 至少有三条独立轴：coupling × strength × correlation length</h2>
-<p>只写“RF strength = σ”仍然少了一维信息。即使 coupling law 与 RMS strength 相同，只要空间相关长度不同，wall 看到的 energy landscape 就可以完全不同。最小写法是：</p>
-<div class="eq">⟨h(r)h(r′)⟩ = Δ · C(|r−r′|/ξ<sub>d</sub>)<small>coupling type 决定 h 怎样进入自由能；Δ/σ 决定幅度；ξ<sub>d</sub> 决定 disorder 在空间上是近似白噪声、有限尺寸 defect，还是 extended/clustered landscape。</small></div>
-<div class="twocol"><div class="card"><h3>δ-correlated limit</h3><p>理想 continuum white noise 没有有限 microscopic ξ<sub>d</sub>。离散成 cell-average local field 时，网格方差必须随 cell volume 重标度；二维对应标准差 ∝ dx<sup>−1</sup>。</p></div><div class="card"><h3>finite-correlation disorder</h3><p>若先定义一个物理 ξ<sub>d</sub> 并生成连续 correlated field，dx refinement 的任务是更好地解析同一个 ξ<sub>d</sub>；不能再机械把“每格 σ”按 white-noise 公式解释。</p></div></div>
-<div class="warn"><b>因此 correlated-RF robustness 不是“换一种随机数”。</b>它是在问：当 disorder 本身带有一个新的物理长度 ξ<sub>d</sub> 时，threshold、roughness 和 apparent exponent 是否只发生 nonuniversal shift，还是出现新的 crossover scale / mapping breakdown。</div>
-<div class="bridge"><a href="research-track.html#fair">Research Track 的 fair matching</a> 控制的是不同 coupling 的比较尺度；本节补上第三轴 ξ<sub>d</sub>。二者一起才能把“same disorder strength”说完整。</div>
-
-'''+anchor2
-          rep(Path('modules/numerical-modeling.html'),anchor2,block2)
-
-          # Keep curriculum cards aligned with the refined content.
-          p=Path('curriculum.js'); s=p.read_text('utf-8')
-          pairs=[
-          ("supporting: ['Yang et al. 2023 · shear-transformation-mediated 3R-MoS₂ transistors','Ouyang et al. 2025 · electrically switching ferroelectric order in 3R-MoS₂','Wang et al. 2025 · cluster sliding ferroelectricity']", "supporting: ['Yang et al. 2023 · shear-transformation-mediated 3R-MoS₂ transistors','Ouyang et al. 2025 · electrically switching ferroelectric order in 3R-MoS₂','Wang et al. 2025 · cluster sliding ferroelectricity','Dai et al. 2026 · coupled DW dynamics in trilayer γ-InSe']"),
-          ("question: '如果单畴内部并不会被面外场直接推动，真正完成极化翻转的自由度是什么？'", "question: '什么结构条件下 switching 主要由 pre-existing DW 完成？fully commensurate single-domain 样品为什么又能出现 DW-free switching？'"),
-          ("thesis: '这是全站最重要的概念转折：从“整层 coherent sliding”切换到“pre-existing domain wall propagation”。随后 pinning、creep、depinning 才有必要出现。'", "thesis: '这是全站最重要的机制边界：许多 poly-domain / wall-containing sliding FE 的 switching 落在 pre-existing DW propagation 上，但 fully commensurate single-domain 样品说明 DW 不是无条件必要。随后 pinning、creep、depinning 只针对 wall-mediated 这条受控研究路径展开。'"),
-          ("supporting: ['Shi et al. 2025 · soliton-like DW motion with ultralow damping','Deng et al. 2025 · deterministic and efficient switching','Jia-Wen Li et al. 2026 · ultralow-barrier sliding and pinning in moiré superlattices']", "supporting: ['Shi et al. 2025 · soliton-like DW motion with ultralow damping','Deng et al. 2025 · deterministic and efficient switching','Jia-Wen Li et al. 2026 · ultralow-barrier sliding and pinning in moiré superlattices','Baek et al. 2026 · DW-free switching in fully commensurate 3R-TMD bilayers']"),
-          ("takeaway: '读完后应该能回答“no domain wall, no polarization reversal”这句话依赖什么对称性与实验事实，以及它和早期 coherent-sliding 图像有什么冲突。'", "takeaway: '读完后应该能把“no domain wall, no polarization reversal”改写成带条件的机制命题：它在哪类 wall-containing 3R-MoS₂ 实验中有强证据，为什么不能外推成所有 sliding FE 的一般定律。'"),
-          ("supporting: ['Kleemann 2007 · universal domain-wall dynamics in disordered ferroics','Jo et al. 2009 · nonlinear DW propagation','Liu & Huber 2011 · electrical creep in BaTiO₃','Guyonnet et al. 2012 · multiscaling of FE DW roughness','Tückmantel et al. 2021 · creep vs depinning event statistics','Bulanadi et al. 2024 · point/extended defects and jerky DW motion','Teng et al. 2025 · point-defect control of FE DW dynamics']", "supporting: ['Lemerle et al. 1998 · magnetic DW creep + wandering','Kleemann 2007 · universal domain-wall dynamics in disordered ferroics','Metaxas et al. 2007 · creep-to-flow velocity regimes','Guyonnet et al. 2012 · multiscaling of FE DW roughness','Jeudy et al. 2016 · universal pinning-energy barrier','Tückmantel et al. 2021 · creep vs depinning event statistics','Bulanadi et al. 2024 · point/extended defects and jerky DW motion','Teng et al. 2025 · point-defect control of FE DW dynamics']"),
-          ("supporting: ['Ferrero et al. 2021 · creep motion review','Le Doussal et al. 2004 · functional RG for disordered elastic systems','Drossel & Dahmen 1998 · RFIM DW depinning','Zhou et al. 2009 · short-time RFIM DW dynamics','Qian et al. 2023 · nonsteady dynamic depinning']", "supporting: ['Jeudy et al. 2016 · cross-material barrier collapse','Ferrero et al. 2021 · creep motion review','Le Doussal et al. 2004 · functional RG for disordered elastic systems','Drossel & Dahmen 1998 · RFIM DW depinning','Zhou et al. 2009 · short-time RFIM DW dynamics','Qian et al. 2023 · nonsteady dynamic depinning']"),
-          ("supporting: ['Wang et al. 2004 · phase-field polarization switching','Fedeli et al. 2019 · FE domains with defects','Hong & Viswanathan 2020 · open-source phase-field','Zhu et al. 2022 · FE DW memory','Lv & Lynch 2018 · rhombohedral FE domain walls','FerroX 2023 · GPU phase-field framework']", "supporting: ['Wang et al. 2004 · phase-field polarization switching','Fedeli et al. 2019 · FE domains with defects','Hong & Viswanathan 2020 · open-source phase-field','Dai et al. 2026 · multilayer coupled-interface boundary','Zhu et al. 2022 · FE DW memory','Lv & Lynch 2018 · rhombohedral FE domain walls','FerroX 2023 · GPU phase-field framework']"),
-          ("thesis: '最后不再引入新基础理论，而是重新读最新 sliding-FE 工作：哪些结果已经很强，哪些只是“看起来像 depinning”，哪些量仍然没人系统测。'", "thesis: '最后不再引入新基础理论，而是重新读最新 sliding-FE 工作：哪些样品由 DW 主导、哪些结构允许 DW-free switching、multilayer 何时需要 coupled interfaces，以及哪些关键 scaling observable 仍然没人系统测。'"),
-          ("supporting: ['Paul et al. 2026 · disorder dynamics in CVD 3R-WSe₂','Jia-Wen Li et al. 2026 · DW-mediated ultralow-barrier sliding','Remez & Goldstein 2025 · hierarchical ordering transitions','Lee et al. 2025 · theory of slidetronics']", "supporting: ['Paul et al. 2026 · disorder dynamics in CVD 3R-WSe₂','Baek et al. 2026 · fully commensurate DW-free switching','Dai et al. 2026 · coupled DW dynamics in trilayer γ-InSe','Jia-Wen Li et al. 2026 · DW-mediated ultralow-barrier sliding','Remez & Goldstein 2025 · hierarchical ordering transitions','Lee et al. 2025 · theory of slidetronics']")]
-          for old,new in pairs:
-              assert s.count(old)==1,(s.count(old),old[:100])
-              s=s.replace(old,new,1)
-          p.write_text(s,'utf-8')
-          PY
-      - name: Verify content and asset
+      - name: Apply source patch and recover original figure
+        run: python scripts/disorder_bridge_upgrade_20260901.py
+      - name: Verify expected content
         run: |
           test -s assets/disorder-rfim/paul2026-fig4-multidomain-disorder.webp
           grep -q 'Research bridge · 真实 sliding-FE 里的 disorder' modules/disorder-rfim.html
