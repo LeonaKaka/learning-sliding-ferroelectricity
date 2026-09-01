@@ -1,0 +1,110 @@
+name: Apply scaling discipline upgrade
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/apply-scaling-discipline-upgrade.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Patch scaling and extraction discipline
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          def rep(path, old, new):
+              p=Path(path); s=p.read_text('utf-8'); n=s.count(old)
+              assert n==1,(path,n,old[:120])
+              p.write_text(s.replace(old,new,1),'utf-8')
+
+          # M05: analysis discipline before the existing practical checklist.
+          anchor='<h2>把它变成一个靠谱的数值实验</h2>'
+          addition='''<h2 id="fit-discipline">7 · Exponent extraction discipline：漂亮直线最容易骗人</h2>
+<p>Ferrero 2013 最值得继承的不是某组 QEW 指数，而是一个负面教训：在 microscopic regime 之后仍可能存在很长的 <b>mesoscopic crossover</b>。在这个区间里，log–log 图可以非常直，却给出系统偏置的 effective exponent。作者通过显式 corrections to scaling 与更长时间/更大尺度才逼近 asymptotic critical regime。</p>
+<div class="src"><div class="head"><b>方法警告 · Ferrero et al. 2013</b>　<span class="rule">项目 Drive PDF · Non-steady relaxation and critical exponents at the depinning transition</span></div><div class="note">论文摘要直接指出：长 crossover 可被 power-law corrections 描述；若忽略，会拟合出带 systematic bias 的 effective exponents，文献中 β 的差异可大到约 30%。因此“局部斜率稳定几格”不是验收标准。</div></div>
+
+<h3>7.1 · threshold 先于 β：不要让 f<sub>c</sub> 成为隐藏拟合参数</h3>
+<div class="checks"><div class="check"><b>sample threshold</b><p>对每个 quenched realization，先用独立 pinned/moving 或 nonsteady criterion 得到 bracket / f<sub>c</sub><sup>(i)</sup>。未收敛的 sample 保留为 censored / unresolved，不用一个方便的全局 f<sub>c</sub> 覆盖。</p></div><div class="check"><b>population threshold</b><p>不同 L 的 f<sub>c</sub><sup>(i)</sup> 分布先分别汇总。sample、seed、field rows 不是同一级 n；不要把一个 realization 的多个 field 点当成独立 threshold samples。</p></div></div>
+<div class="eq">δf = (f−f<sub>c</sub>)/f<sub>c</sub>　；　v ∼ δf<sup>β</sup></div>
+<p>β fit 的敏感性至少要同时扫 <b>δf 下限、δf 上限、f<sub>c</sub> uncertainty、transient cut</b>。一个实用诊断是局部有效斜率</p>
+<div class="eq">β<sub>eff</sub>(δf) = d ln v / d ln δf</div>
+<div class="warn"><b>没有 plateau，就先叫 effective exponent。</b> β<sub>eff</sub> 随 fit window 或 δf 系统漂移时，更可能看到 crossover / correction，而不是已经进入 asymptotic regime。</div>
+
+<h3>7.2 · ζ 不应该只从一张 rough wall 图里出来</h3>
+<div class="checks"><div class="check"><b>global width</b><p>W(L) ∼ L<sup>ζ</sup>：需要多个系统尺寸，最直接检查 global roughness。</p></div><div class="check"><b>real-space correlation</b><p>B(r)=⟨[u(y+r)−u(y)]²⟩ ∼ r<sup>2ζ<sub>loc</sub></sup>：最容易暴露可用尺度窗过窄、局域异常标度或 contour noise。</p></div><div class="check"><b>structure factor</b><p>S(q) ∼ q<sup>−(1+2ζ<sub>s</sub>)</sup>：检查 spectral scaling 与 UV/grid cutoff；标准 self-affine 情形才期待 ζ<sub>s</sub> 与 global ζ 相容。</p></div><div class="check"><b>三者不一致时</b><p>先检查 finite size、detrending、wall extraction、overhangs 与 anomalous scaling；不要平均成一个“最终 ζ”。</p></div></div>
+<div class="src"><div class="head"><b>breakdown anchor · Zhou, Zheng & He 2009</b>　<span class="rule">Phys. Rev. B 80, 134425 · APS official record / 项目 Drive PDF</span></div><div class="note">二维 driven RFIM 在 depinning 附近出现显著 overhangs；论文报告 intrinsic anomalous scaling 与 spatial multiscaling，并指出其界面不属于通常的 Edwards–Wilkinson universality class。这里的价值是方法论：<b>一旦 wall 不再是可靠单值函数，ζ 的定义本身就需要重审。</b></div></div>
+
+<h3>7.3 · finite-size scaling 要做“删尺寸复核”</h3>
+<p>如果假设标准 finite-size critical form，可测试例如：</p>
+<div class="eq">f<sub>c</sub>(L)−f<sub>c</sub>(∞) ∼ L<sup>−1/ν</sup></div>
+<div class="eq">v(f,L)L<sup>β/ν</sup> = G[(f−f<sub>c</sub>)L<sup>1/ν</sup>]</div>
+<p>但这两式应该是<b>待检验的 scaling ansatz</b>，不是自动成立的作图模板。至少做一次 leave-one-size-out：每次删掉一个 L，重新估计 f<sub>c</sub>、β/ν、1/ν 与 collapse quality。若删掉最大或最小尺寸后结论明显跳变，就说明结果仍被 crossover / finite-size endpoint 控制。</p>
+<table style="width:100%;border-collapse:collapse;margin:22px 0;background:#fff;border:1px solid var(--l)"><thead><tr><th style="padding:10px;text-align:left;background:#f0ece3">结果层级</th><th style="padding:10px;text-align:left;background:#f0ece3">最少应 survive</th><th style="padding:10px;text-align:left;background:#f0ece3">失败后怎么降级措辞</th></tr></thead><tbody>
+<tr><td style="padding:10px;border-top:1px solid var(--l)">candidate β</td><td style="padding:10px;border-top:1px solid var(--l)">fit-window + f<sub>c</sub> perturbation</td><td style="padding:10px;border-top:1px solid var(--l)">effective nonlinear onset exponent</td></tr>
+<tr><td style="padding:10px;border-top:1px solid var(--l)">candidate ζ</td><td style="padding:10px;border-top:1px solid var(--l)">W / B / S(q) 尺度窗与 extraction sensitivity</td><td style="padding:10px;border-top:1px solid var(--l)">scale-dependent / anomalous roughness</td></tr>
+<tr><td style="padding:10px;border-top:1px solid var(--l)">candidate ν / collapse</td><td style="padding:10px;border-top:1px solid var(--l)">多 L + leave-one-size-out + fixed analysis rule</td><td style="padding:10px;border-top:1px solid var(--l)">finite-size crossover, no universality claim</td></tr>
+<tr><td style="padding:10px;border-top:1px solid var(--l)">universality claim</td><td style="padding:10px;border-top:1px solid var(--l)">β, ζ, ν, z / scaling relations + topology gate</td><td style="padding:10px;border-top:1px solid var(--l)">depinning-like / effective interface regime only</td></tr>
+</tbody></table>
+<div class="q"><b>验收标准：</b>最好的结果不是“所有图都能拟合”，而是同一组预先定义的 threshold、window、size 与 wall-extraction rules 在多个 observables 上给出相互兼容的答案。</div>
+
+'''
+          rep('modules/depinning.html', anchor, addition+anchor)
+
+          # M07: replace the simplistic contour sentence and add an extraction contract.
+          old='<div><b>wall extraction：</b>single-valued 时可用 φ=0 contour → u(y)；出现 overhang/bubble 时必须报告提取规则或改用 bulk observables。</div>'
+          new='<div><b>wall extraction：</b>先定义两个目标 basin 之间有物理意义的 level set / separator，再检查 contour-threshold sensitivity；只有通过 single-valuedness gate 后才压成 u(y)。</div>'
+          rep('modules/numerical-modeling.html', old, new)
+          anchor2='<h2>7 · 一套不会自欺的 depinning 数值实验</h2>'
+          addition2='''<h2 id="wall-extraction">6.5 · 从 diffuse phase field 提取 u(y)：先证明“这是一堵线”</h2>
+<p>phase field 原始自由度是二维 φ(r,t)，elastic-line observable 却假设一维单值 u(y,t)。这一步是一次 <b>model reduction</b>，不能只写一句“取 φ=0 contour”。对周期 stacking coordinate，零点甚至未必总是两个目标 basin 的物理中点；应先定义要分开的两个 states，再指定 separator。</p>
+<div class="check"><div><b>① level-set sensitivity：</b>在 wall core 内选一组相邻 contour thresholds；u(y)、mean velocity 与 roughness scaling 若对小幅阈值变化明显漂移，说明提取仍受 diffuse-core / discretization 控制。</div><div><b>② intersection count：</b>逐个 y 统计 contour 与横截线交点数。0、1、&gt;1 分别对应缺失、single-valued、overhang/multiple-wall 候选；报告非 1 的比例，而不是静默选其中一个交点。</div><div><b>③ topology cross-check：</b>同时监测 bubble / detached island / extra-wall component。projected u(y) 可以在图上很平滑，却把真实二维拓扑丢掉。</div><div><b>④ area-based cross-check：</b>用 domain-area change 得到一个不依赖单值 contour 的平均推进量，与 u(y) center-of-mass velocity 比较；两者明显分叉时先查 topology，而不是继续拟合 β。</div><div><b>⑤ roughness triple：</b>在通过 topology gate 的数据上同时检查 W(L)、B(r)、S(q)，并标出 grid-scale、wall-width 与 system-size cutoff。</div></div>
+<div class="warn"><b>Zhou 2009 给出的反例很具体：</b>driven RFIM 在 depinning 附近因为 overhangs 出现 intrinsic anomalous scaling / multiscaling；也就是说“墙还能画出来”不等于“墙仍属于单值 elastic manifold”。<a href="depinning.html#fit-discipline">去 Module 05 看 exponent robustness →</a></div>
+
+'''
+          rep('modules/numerical-modeling.html', anchor2, addition2+anchor2)
+
+          # Research Track: preregister analysis sensitivities before mechanism claims.
+          anchor3='<h2>5 · Mechanism falsification：先排掉简单解释，再谈“真正机制”</h2>'
+          addition3='''<h2 id="analysis-contract">4.5 · Analysis contract：在看结果前先写下哪些 knob 不能随意调</h2>
+<p>universality 项目最危险的自由度往往不在模拟器，而在分析脚本：f<sub>c</sub>、fit window、L subset、roughness range、contour threshold、transient cut 都可以把结果“调顺”。因此每个主 observable 至少要有 primary rule 与 sensitivity rule。</p>
+<table class="matrix"><thead><tr><th>observable</th><th>primary rule</th><th>必须做的 sensitivity</th><th>红灯</th></tr></thead><tbody>
+<tr><td>f<sub>c</sub></td><td>独立 threshold / nonsteady criterion</td><td>exposure、criterion、L</td><td>同一 finite-T / β fit 里自由回调 f<sub>c</sub></td></tr>
+<tr><td>β</td><td>预定 reduced-force window family</td><td>上下窗口、f<sub>c</sub> perturbation、transient cut</td><td>β<sub>eff</sub> 持续漂移</td></tr>
+<tr><td>ζ</td><td>预定 wall-extraction + scale mask</td><td>contour threshold、W/B/S(q)、detrending</td><td>overhang fraction 高或 local/global/spectral exponent 分裂</td></tr>
+<tr><td>ν / collapse</td><td>固定 size set 与 objective</td><td>leave-one-size-out、端点 L 删除</td><td>collapse 只靠一个 L 或一个自由参数支撑</td></tr>
+<tr><td>z</td><td>明确 initial condition / transient observable</td><td>time window、initial-state preparation</td><td>mesoscopic crossover 被当 asymptotic</td></tr>
+</tbody></table>
+<div class="bridge"><b>预注册不等于僵化。</b>发现新 crossover 后可以升级模型或新增 secondary analysis，但要把它标成 post-hoc，并保留原 primary result。这样“breakdown”才不会被分析自由度悄悄洗掉。</div>
+
+'''
+          rep('modules/research-track.html', anchor3, addition3+anchor3)
+          PY
+      - name: Verify new analysis contract
+        run: |
+          grep -q 'Exponent extraction discipline' modules/depinning.html
+          grep -q 'β<sub>eff</sub>' modules/depinning.html
+          grep -q 'leave-one-size-out' modules/depinning.html
+          grep -q '从 diffuse phase field 提取 u(y)' modules/numerical-modeling.html
+          grep -q 'intersection count' modules/numerical-modeling.html
+          grep -q 'Analysis contract' modules/research-track.html
+          grep -q 'mesoscopic crossover' modules/research-track.html
+      - name: Commit content upgrade
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add modules/depinning.html modules/numerical-modeling.html modules/research-track.html
+          git commit -m 'Add finite-size and exponent extraction discipline'
+          git push
