@@ -1,3 +1,4 @@
+# one-shot content upgrade; delete after successful content commit
 name: Apply scaling discipline upgrade
 
 on:
@@ -30,23 +31,19 @@ jobs:
               assert n==1,(path,n,old[:120])
               p.write_text(s.replace(old,new,1),'utf-8')
 
-          # M05: analysis discipline before the existing practical checklist.
           anchor='<h2>把它变成一个靠谱的数值实验</h2>'
           addition='''<h2 id="fit-discipline">7 · Exponent extraction discipline：漂亮直线最容易骗人</h2>
 <p>Ferrero 2013 最值得继承的不是某组 QEW 指数，而是一个负面教训：在 microscopic regime 之后仍可能存在很长的 <b>mesoscopic crossover</b>。在这个区间里，log–log 图可以非常直，却给出系统偏置的 effective exponent。作者通过显式 corrections to scaling 与更长时间/更大尺度才逼近 asymptotic critical regime。</p>
 <div class="src"><div class="head"><b>方法警告 · Ferrero et al. 2013</b>　<span class="rule">项目 Drive PDF · Non-steady relaxation and critical exponents at the depinning transition</span></div><div class="note">论文摘要直接指出：长 crossover 可被 power-law corrections 描述；若忽略，会拟合出带 systematic bias 的 effective exponents，文献中 β 的差异可大到约 30%。因此“局部斜率稳定几格”不是验收标准。</div></div>
-
 <h3>7.1 · threshold 先于 β：不要让 f<sub>c</sub> 成为隐藏拟合参数</h3>
 <div class="checks"><div class="check"><b>sample threshold</b><p>对每个 quenched realization，先用独立 pinned/moving 或 nonsteady criterion 得到 bracket / f<sub>c</sub><sup>(i)</sup>。未收敛的 sample 保留为 censored / unresolved，不用一个方便的全局 f<sub>c</sub> 覆盖。</p></div><div class="check"><b>population threshold</b><p>不同 L 的 f<sub>c</sub><sup>(i)</sup> 分布先分别汇总。sample、seed、field rows 不是同一级 n；不要把一个 realization 的多个 field 点当成独立 threshold samples。</p></div></div>
 <div class="eq">δf = (f−f<sub>c</sub>)/f<sub>c</sub>　；　v ∼ δf<sup>β</sup></div>
 <p>β fit 的敏感性至少要同时扫 <b>δf 下限、δf 上限、f<sub>c</sub> uncertainty、transient cut</b>。一个实用诊断是局部有效斜率</p>
 <div class="eq">β<sub>eff</sub>(δf) = d ln v / d ln δf</div>
 <div class="warn"><b>没有 plateau，就先叫 effective exponent。</b> β<sub>eff</sub> 随 fit window 或 δf 系统漂移时，更可能看到 crossover / correction，而不是已经进入 asymptotic regime。</div>
-
 <h3>7.2 · ζ 不应该只从一张 rough wall 图里出来</h3>
 <div class="checks"><div class="check"><b>global width</b><p>W(L) ∼ L<sup>ζ</sup>：需要多个系统尺寸，最直接检查 global roughness。</p></div><div class="check"><b>real-space correlation</b><p>B(r)=⟨[u(y+r)−u(y)]²⟩ ∼ r<sup>2ζ<sub>loc</sub></sup>：最容易暴露可用尺度窗过窄、局域异常标度或 contour noise。</p></div><div class="check"><b>structure factor</b><p>S(q) ∼ q<sup>−(1+2ζ<sub>s</sub>)</sup>：检查 spectral scaling 与 UV/grid cutoff；标准 self-affine 情形才期待 ζ<sub>s</sub> 与 global ζ 相容。</p></div><div class="check"><b>三者不一致时</b><p>先检查 finite size、detrending、wall extraction、overhangs 与 anomalous scaling；不要平均成一个“最终 ζ”。</p></div></div>
 <div class="src"><div class="head"><b>breakdown anchor · Zhou, Zheng & He 2009</b>　<span class="rule">Phys. Rev. B 80, 134425 · APS official record / 项目 Drive PDF</span></div><div class="note">二维 driven RFIM 在 depinning 附近出现显著 overhangs；论文报告 intrinsic anomalous scaling 与 spatial multiscaling，并指出其界面不属于通常的 Edwards–Wilkinson universality class。这里的价值是方法论：<b>一旦 wall 不再是可靠单值函数，ζ 的定义本身就需要重审。</b></div></div>
-
 <h3>7.3 · finite-size scaling 要做“删尺寸复核”</h3>
 <p>如果假设标准 finite-size critical form，可测试例如：</p>
 <div class="eq">f<sub>c</sub>(L)−f<sub>c</sub>(∞) ∼ L<sup>−1/ν</sup></div>
@@ -63,7 +60,6 @@ jobs:
 '''
           rep('modules/depinning.html', anchor, addition+anchor)
 
-          # M07: replace the simplistic contour sentence and add an extraction contract.
           old='<div><b>wall extraction：</b>single-valued 时可用 φ=0 contour → u(y)；出现 overhang/bubble 时必须报告提取规则或改用 bulk observables。</div>'
           new='<div><b>wall extraction：</b>先定义两个目标 basin 之间有物理意义的 level set / separator，再检查 contour-threshold sensitivity；只有通过 single-valuedness gate 后才压成 u(y)。</div>'
           rep('modules/numerical-modeling.html', old, new)
@@ -76,7 +72,6 @@ jobs:
 '''
           rep('modules/numerical-modeling.html', anchor2, addition2+anchor2)
 
-          # Research Track: preregister analysis sensitivities before mechanism claims.
           anchor3='<h2>5 · Mechanism falsification：先排掉简单解释，再谈“真正机制”</h2>'
           addition3='''<h2 id="analysis-contract">4.5 · Analysis contract：在看结果前先写下哪些 knob 不能随意调</h2>
 <p>universality 项目最危险的自由度往往不在模拟器，而在分析脚本：f<sub>c</sub>、fit window、L subset、roughness range、contour threshold、transient cut 都可以把结果“调顺”。因此每个主 observable 至少要有 primary rule 与 sensitivity rule。</p>
