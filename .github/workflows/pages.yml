@@ -55,6 +55,14 @@ jobs:
               if bad:
                   raise SystemExit(f'{page}: forbidden control characters found: {bad[:10]}')
 
+              # Every page, including Research Track and Reproduction Lab, must
+              # ship only local image evidence that actually exists in the artifact.
+              for ref in re.findall(r'<img[^>]+src="([^"]+)"', text):
+                  if ref.startswith(('http://','https://','data:')):
+                      raise SystemExit(f'{page}: remote image not allowed: {ref}')
+                  if not (page.parent / ref).resolve().exists():
+                      raise SystemExit(f'{page}: missing image: {ref}')
+
           expected_sources = {
               'foundations.html': 5, 'switching-pathways.html': 3,
               'domain-walls.html': 4, 'pinning-creep.html': 6,
@@ -73,11 +81,6 @@ jobs:
                   raise SystemExit(f'{name}: terminology runtime missing')
               if 'terms-extra.js' in text or 'terms-cleanup.js' in text:
                   raise SystemExit(f'{name}: legacy overlapping terminology runtime injected')
-              for ref in re.findall(r'<img[^>]+src="([^"]+)"', text):
-                  if ref.startswith(('http://','https://','data:')):
-                      raise SystemExit(f'{name}: remote image not allowed: {ref}')
-                  if not (page.parent / ref).resolve().exists():
-                      raise SystemExit(f'{name}: missing image: {ref}')
 
           index = Path('index.html').read_text(encoding='utf-8')
           if '<script src="terms.js"></script>' not in index:
@@ -115,6 +118,67 @@ jobs:
                   raise SystemExit(f'bad frozen asset: {path}')
               if hashlib.sha256(p.read_bytes()).hexdigest() != digest:
                   raise SystemExit(f'hash mismatch: {path}')
+
+          # Reproduction Lab artifact contract. These are not ninth/tenth mother
+          # modules; they are a separate executable evidence track. A green Pages
+          # run now certifies that each lesson's page, code, visual result and the
+          # original Caballero comparison figure (where applicable) co-exist in
+          # the final artifact. Lesson 05/06 additionally require run receipts.
+          reproduction_contracts = {
+              'modules/reproduction-lab.html': (
+                  'examples/reproduction-lab/lesson01_tdgl_wall.py',
+                  'assets/reproduction-lab/lesson01_tdgl_wall_result.svg',
+              ),
+              'modules/reproduction-lab-02.html': (
+                  'examples/reproduction-lab/lesson02_2d_wall_extract.py',
+                  'assets/reproduction-lab/lesson02_2d_wall_extract.svg',
+              ),
+              'modules/reproduction-lab-03.html': (
+                  'examples/reproduction-lab/lesson03_ew_roughness.py',
+                  'assets/reproduction-lab/lesson03_ew_roughness_thumbnail.svg',
+                  'assets/reproduction-lab/caballero2020-fig2-time-roughness.webp',
+              ),
+              'modules/reproduction-lab-04.html': (
+                  'examples/reproduction-lab/lesson04_gl_to_ew.py',
+                  'assets/reproduction-lab/lesson04_gl_to_ew_boundary.svg',
+                  'assets/reproduction-lab/caballero2020-fig3-temperature-boundary.webp',
+              ),
+              'modules/reproduction-lab-05.html': (
+                  'examples/reproduction-lab/lesson05_rb_projection.py',
+                  'assets/reproduction-lab/lesson05_rb_projection_correlator.svg',
+                  'assets/reproduction-lab/lesson05_rb_projection_correlator.txt',
+                  'assets/reproduction-lab/caballero2020-fig4-pinning-correlator.webp',
+              ),
+              'modules/reproduction-lab-06.html': (
+                  'examples/reproduction-lab/lesson06_disordered_geometry.py',
+                  'assets/reproduction-lab/lesson06_disordered_geometry_checkpoint.svg',
+                  'assets/reproduction-lab/lesson06_disordered_geometry_checkpoint.txt',
+                  'assets/reproduction-lab/caballero2020-fig5-disordered-geometry.webp',
+              ),
+          }
+          for page_name, required_files in reproduction_contracts.items():
+              page = Path(page_name)
+              if not page.exists():
+                  raise SystemExit(f'missing reproduction page: {page_name}')
+              text = page.read_text(encoding='utf-8')
+              for required in required_files:
+                  p = Path(required)
+                  if not p.exists() or p.stat().st_size == 0:
+                      raise SystemExit(f'{page_name}: missing reproduction artifact: {required}')
+                  # Page must visibly link/embed lesson code and result evidence.
+                  rel = Path(required).relative_to('modules') if required.startswith('modules/') else None
+                  basename = p.name
+                  if p.suffix in {'.py', '.svg', '.webp'} and basename not in text:
+                      raise SystemExit(f'{page_name}: artifact exists but is not referenced: {required}')
+
+          l05_receipt = Path('assets/reproduction-lab/lesson05_rb_projection_correlator.txt').read_text(encoding='utf-8')
+          for marker in ('Eq25-vs-Eq26', 'sample RMSE/Gamma0', 'ALL DISORDER-PROJECTION GATES PASS'):
+              if marker not in l05_receipt:
+                  raise SystemExit(f'Lesson05 receipt missing marker: {marker}')
+          l06_receipt = Path('assets/reproduction-lab/lesson06_disordered_geometry_checkpoint.txt').read_text(encoding='utf-8')
+          for marker in ('B median rel', 'S log-bin median rel', 'ASYMPTOTIC ZETA GATE NOT PASSED'):
+              if marker not in l06_receipt:
+                  raise SystemExit(f'Lesson06 receipt missing marker: {marker}')
 
           if Path('assets/repaired-0607').exists():
               raise SystemExit('temporary repaired-0607 asset directory must not return')
@@ -165,7 +229,7 @@ jobs:
               for marker in markers:
                   if marker not in text:
                       raise SystemExit(f'{page}: missing required cross-link: {marker}')
-          print('Static evidence + conservative terminology validation passed.')
+          print('Static evidence + Reproduction Lab artifact + conservative terminology validation passed.')
           PY
 
       - name: Configure Pages
