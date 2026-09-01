@@ -33,7 +33,7 @@ jobs:
           grep -q 'ordinary least-squares pointwise error 不是 disorder uncertainty' modules/numerical-modeling.html
           grep -q 'resolved-pinned under registered exposure' modules/numerical-modeling.html
           grep -q 'id="foundations"' index.html
-          grep -q "if(m.id!='foundations')el.id=m.id" index.html
+          grep -q "if(m.id!=='foundations')el.id=m.id" index.html
           python - <<'PY'
           from pathlib import Path
           for page in [Path('index.html'), Path('modules/numerical-modeling.html')]:
