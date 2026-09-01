@@ -134,7 +134,7 @@
 
 <h3 id="paired-hierarchy">4.8 · Pairing & hierarchical uncertainty：同一 source 内做差，跨 source 才谈 population</h3>
 <p>“matched comparison” 不只是在横轴上把两个参数调到同一个数。若 A/B 两个 coupling 能由同一个预先定义的 latent source 生成，<b>paired design</b> 可以先消掉 realization-to-realization 的大波动，再问 coupling law 本身改变了多少。但 pairing 是实验设计，不是事后统计技巧：必须在看 outcome 前定义，而且不能跨本来就不可交换的 evidence strata 强行配对。</p>
-<div class="eq">Δ<sub>i</sub> = y<sub>A,i</sub> − y<sub>B,i</sub>　；　ar{Δ} = N<sup>−1</sup> Σ<sub>i=1</sub><sup>N</sup> Δ<sub>i</sub></div>
+<div class="eq">Δ<sub>i</sub> = y<sub>A,i</sub> − y<sub>B,i</sub>　；　Δ̄ = N<sup>−1</sup> Σ<sub>i=1</sub><sup>N</sup> Δ<sub>i</sub></div>
 <p>这里真正进入 population inference 的基本对象是独立 source <b>i</b> 的 paired contrast Δ<sub>i</sub>，不是 A/B 两边所有 time rows 的总和。</p>
 
 <h3>4.8.1 · pairing 什么时候是公平的？</h3>
@@ -151,7 +151,7 @@
 </tbody></table>
 
 <h3>4.8.3 · finite-T：先在 quenched source 内平均，再跨 source 推断</h3>
-<div class="eq">ar y<sub>i,c</sub> = M<sub>i,c</sub><sup>−1</sup> Σ<sub>j</sub> y<sub>i,c,j</sub>　；　Δ<sub>i</sub> = ar y<sub>i,A</sub> − ar y<sub>i,B</sub></div>
+<div class="eq">ȳ<sub>i,c</sub> = M<sub>i,c</sub><sup>−1</sup> Σ<sub>j</sub> y<sub>i,c,j</sub>　；　Δ<sub>i</sub> = ȳ<sub>i,A</sub> − ȳ<sub>i,B</sub></div>
 <p>其中 i 是 quenched realization，j 是 thermal seed，c 是 condition。若研究问题是“平均 thermal response 在不同 coupling 间是否不同”，最简单的 authority 是先得到每个 i,c 的 conditional estimator，再对 Δ<sub>i</sub> 做 outer-level inference。若 inner stochastic variance 本身也是科学问题，可用 hierarchical / nested bootstrap，但外层独立单位仍然是 i。</p>
 <div class="warn"><b>不要把更多 thermal seeds 当成更多 disorder。</b> 增加 inner repeats 会降低给定 landscape 下 thermal mean 的 Monte Carlo noise，却不能凭空增加对 disorder population 的覆盖。</div>
 
