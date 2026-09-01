@@ -65,6 +65,17 @@
 <p>真正容易过度 claim 的地方不是模型，而是把一个 observable 直接命名成某个 mechanism。下面这张表是整条 Research Track 的“证据尺子”。</p>
 <table class="matrix"><thead><tr><th>observable</th><th>主要回答</th><th>不能单独证明</th></tr></thead><tbody><tr><td>P–E / hysteresis</td><td>macroscopic switching response 与 history</td><td>DW-only mechanism / depinning universality</td></tr><tr><td>coercive half-width / switching threshold</td><td>protocol 下的 field scale</td><td>T=0 isolated-wall E<sub>c</sub></td></tr><tr><td>external loop work</td><td>control protocol 的 hysteretic work</td><td>直接等同于 microscopic DW dissipation</td></tr><tr><td>dP/dt / switching-rate trace</td><td>activity 在时间上如何组织</td><td>某一个唯一 microscopic bottleneck</td></tr><tr><td>burst concentration</td><td>activity 是集中释放还是时间分散</td><td>RFIM avalanche universality</td></tr><tr><td>connected components</td><td>空间 fragmentation / coalescence context</td><td>单独定义“nucleation 数量”</td></tr><tr><td>interface density</td><td>boundary-richness / morphology complexity</td><td>wall energy 或 dissipation 的直接测量</td></tr><tr><td>steady v(E)</td><td>isolated wall driven dynamics</td><td>只凭一条幂律就确定 universality class</td></tr><tr><td>B(r), S(q), W(L)</td><td>interface geometry / roughness scaling</td><td>动力学 exponent β</td></tr><tr><td>E<sub>c</sub>(L) + collapse</td><td>finite-size critical test</td><td>通过自由调参“调漂亮”的 collapse 不算证据</td></tr></tbody></table>
 
+<h2 id="analysis-contract">4.5 · Analysis contract：在看结果前先写下哪些 knob 不能随意调</h2>
+<p>universality 项目最危险的自由度往往不在模拟器，而在分析脚本：f<sub>c</sub>、fit window、L subset、roughness range、contour threshold、transient cut 都可以把结果“调顺”。因此每个主 observable 至少要有 primary rule 与 sensitivity rule。</p>
+<table class="matrix"><thead><tr><th>observable</th><th>primary rule</th><th>必须做的 sensitivity</th><th>红灯</th></tr></thead><tbody>
+<tr><td>f<sub>c</sub></td><td>独立 threshold / nonsteady criterion</td><td>exposure、criterion、L</td><td>同一 finite-T / β fit 里自由回调 f<sub>c</sub></td></tr>
+<tr><td>β</td><td>预定 reduced-force window family</td><td>上下窗口、f<sub>c</sub> perturbation、transient cut</td><td>β<sub>eff</sub> 持续漂移</td></tr>
+<tr><td>ζ</td><td>预定 wall-extraction + scale mask</td><td>contour threshold、W/B/S(q)、detrending</td><td>overhang fraction 高或 local/global/spectral exponent 分裂</td></tr>
+<tr><td>ν / collapse</td><td>固定 size set 与 objective</td><td>leave-one-size-out、端点 L 删除</td><td>collapse 只靠一个 L 或一个自由参数支撑</td></tr>
+<tr><td>z</td><td>明确 initial condition / transient observable</td><td>time window、initial-state preparation</td><td>mesoscopic crossover 被当 asymptotic</td></tr>
+</tbody></table>
+<div class="bridge"><b>预注册不等于僵化。</b>发现新 crossover 后可以升级模型或新增 secondary analysis，但要把它标成 post-hoc，并保留原 primary result。这样“breakdown”才不会被分析自由度悄悄洗掉。</div>
+
 <h2>5 · Mechanism falsification：先排掉简单解释，再谈“真正机制”</h2>
 <p>研究型阅读与普通教材最大的区别之一：数据往往更擅长<b>否定一个过于简单的机制</b>，而不是直接唯一确定微观机制。</p>
 <div class="twocol"><div class="card"><b>假说 A：disorder 只增加一个统一 delay</b><p>预期：不同 strength 下 temporal ordering 应保持同一方向，主要只是整体变慢/变快。</p><p><b>若 ordering 随 strength / switching stage 改变：</b>可以排除一个 intensity-independent scalar-delay picture；但还不能因此命名唯一新机制。</p></div><div class="card"><b>假说 B：某种 coupling 永远“更碎”</b><p>预期：component count、interface density、largest-component fraction 应给出跨 stage 一致的 fragmentation ordering。</p><p><b>若不同 morphology metrics 不给统一 ordering：</b>应放弃单一 fragmentation cartoon，转向 stage-dependent pathway。</p></div></div>
