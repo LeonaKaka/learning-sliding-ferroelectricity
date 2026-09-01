@@ -1,0 +1,97 @@
+name: Build Reproduction Lab Lesson 03 evidence
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/build-lesson03-evidence.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pinned numerical and PDF dependencies
+        run: python -m pip install --disable-pip-version-check numpy matplotlib pymupdf pillow
+      - name: Download and verify Caballero 2020 public paper copy
+        run: |
+          curl -L --retry 3 --fail -o /tmp/caballero2020.pdf https://arxiv.org/pdf/2006.15130
+          python - <<'PY'
+          import fitz
+          doc=fitz.open('/tmp/caballero2020.pdf')
+          text=doc[0].get_text()
+          assert 'From bulk descriptions to emergent interfaces' in text
+          assert len(doc) >= 5
+          print('Verified Caballero arXiv:2006.15130, pages=',len(doc))
+          PY
+      - name: Extract web figure from Caballero Figure 2
+        run: |
+          python - <<'PY'
+          import io, fitz
+          from pathlib import Path
+          from PIL import Image
+          doc=fitz.open('/tmp/caballero2020.pdf')
+          page=doc[4]
+          scale=450/72
+          pix=page.get_pixmap(matrix=fitz.Matrix(scale,scale),alpha=False)
+          im=Image.open(io.BytesIO(pix.tobytes('png')))
+          w,h=im.size
+          # Normalized box visually registered against the project Drive PDF page 5.
+          box=(int(.0647*w),int(.0568*h),int(.744*w),int(.260*h))
+          crop=im.crop(box)
+          out=Path('assets/reproduction-lab/caballero2020-fig2-time-roughness.webp')
+          out.parent.mkdir(parents=True,exist_ok=True)
+          crop.save(out,'WEBP',quality=92,method=6)
+          assert crop.width > 2200 and crop.height > 700, crop.size
+          assert out.stat().st_size > 100_000
+          print('Fig2 crop:',crop.size,'bytes=',out.stat().st_size)
+          PY
+      - name: Run repository Lesson 03 thumbnail
+        run: python examples/reproduction-lab/lesson03_ew_roughness.py | tee /tmp/lesson03.log
+      - name: Link lessons in sequence
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('modules/reproduction-lab.html'); s=p.read_text('utf-8')
+          old='<h2>8 · Lesson 02 预告</h2>'
+          new='<h2>8 · <a href="reproduction-lab-02.html">Lesson 02 已上线：2D bulk → u(y) → B(r)</a></h2>'
+          if new not in s:
+              assert s.count(old)==1, s.count(old)
+              s=s.replace(old,new,1)
+              p.write_text(s,'utf-8')
+
+          p=Path('modules/reproduction-lab-02.html'); s=p.read_text('utf-8')
+          old='<div class="next"><a href="reproduction-lab.html">← Lesson 01 · 1D kink gold test</a><a href="numerical-modeling.html">回 Module 07 →</a></div>'
+          new='<div class="next"><a href="reproduction-lab.html">← Lesson 01 · 1D kink gold test</a><a href="reproduction-lab-03.html">Lesson 03 · EW roughness thumbnail →</a></div>'
+          if new not in s:
+              assert s.count(old)==1, s.count(old)
+              s=s.replace(old,new,1)
+              p.write_text(s,'utf-8')
+          PY
+      - name: Verify quantitative and provenance gates
+        run: |
+          grep -q 'ALL THUMBNAIL GATES PASS' /tmp/lesson03.log
+          grep -q 't=  10.0: median rel err=0.91%' /tmp/lesson03.log
+          grep -q 't= 100.0: median rel err=1.39%' /tmp/lesson03.log
+          grep -q 't=1000.0: median rel err=1.02%' /tmp/lesson03.log
+          grep -q 'late B/(Tr/c), r=2..10 = 0.9592' /tmp/lesson03.log
+          test -s assets/reproduction-lab/lesson03_ew_roughness_thumbnail.svg
+          test -s assets/reproduction-lab/caballero2020-fig2-time-roughness.webp
+          grep -q 'caballero2020-fig2-time-roughness.webp' modules/reproduction-lab-03.html
+          grep -q 'lesson03_ew_roughness_thumbnail.svg' modules/reproduction-lab-03.html
+          grep -q 'reproduction-lab-02.html' modules/reproduction-lab.html
+          grep -q 'reproduction-lab-03.html' modules/reproduction-lab-02.html
+      - name: Commit Lesson 03 evidence
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/reproduction-lab/ modules/reproduction-lab.html modules/reproduction-lab-02.html
+          git commit -m 'Generate Lesson 03 EW roughness evidence and paper comparison'
+          git push
