@@ -43,6 +43,13 @@
 <div class="q"><b>一句话：</b>coercive field 可以是非常有用的 switching observable，但不能因为数值上“像一个阈值”就重命名成 depinning critical field。</div>
 <div class="steps"><div class="step"><b>① E=0 relax</b><p>先确认 initial wall 自己不会因为准备方式继续漂移。</p></div><div class="step"><b>② constant E</b><p>每个 field 独立测长期 wall trajectory，而不是从 sweep 中截一段。</p></div><div class="step"><b>③ steady-v gate</b><p>排除明显 transient；低于 threshold 要区分 truly pinned 与 exposure 不足。</p></div><div class="step"><b>④ topology gate</b><p>出现 persistent bubbles / overhangs / nucleation 时，不再盲目把 wall 写成单值 u(y)。</p></div></div>
 
+<h2 id="temperature">2.5 · Temperature 是新的实验轴，不是把 random seed 多跑几次</h2>
+<p>当 isolated-wall T=0 protocol 稳定以后，有限温度自然分成两个不同的问题：</p>
+<div class="twocol"><div class="card"><b>Deep subcritical · creep</b><p>f&lt;f<sub>c</sub> 且离阈值足够远：问 thermally activated barriers 是否产生可测的长期 drift，是否存在稳定 creep window 与 μ candidate。</p></div><div class="card"><b>Near threshold · thermal rounding</b><p>f≈f<sub>c</sub>：问 T=0 singularity 怎样被温度圆滑，是否存在 v(f<sub>c</sub>,T)∼T<sup>ψ</sup> 与 joint field–temperature scaling。</p></div></div>
+<table class="matrix"><thead><tr><th>层次</th><th>应该固定什么</th><th>重复什么</th><th>独立统计单元</th></tr></thead><tbody><tr><td>quenched disorder</td><td>一个 landscape h(r)/δV(r)</td><td>换 disorder seed</td><td>用于 disorder population inference 的 outer block</td></tr><tr><td>thermal noise</td><td>同一个 quenched landscape</td><td>换 Langevin/noise seed</td><td>同一 landscape 内的 conditional repeat</td></tr><tr><td>trajectory frames</td><td>同一次 run</td><td>随时间采样</td><td>不是新的 disorder sample</td></tr></tbody></table>
+<div class="warn"><b>最重要的 anti-overfit rule：</b>thermal rounding 必须继承独立 T=0 threshold。若允许每个 disorder seed 在同一批 finite-T 数据里自由移动自己的 f<sub>c</sub>，再去优化 ψ / collapse，就可能人为抹掉 sample-to-sample threshold variation。</div>
+<div class="bridge"><a href="pinning-creep.html#finite-temperature">Module 04：怎么找可测 creep window</a>　·　<a href="depinning.html#thermal-rounding">Module 05：怎么测 thermal rounding / ψ</a></div>
+
 <h2 id="model">3 · 从 stacking registry 到 minimal sliding-FE phase field</h2>
 <p>普通 φ⁴ phase field 能教 interface dynamics，却容易把 sliding FE 最重要的“周期性 stacking coordinate”藏掉。一个更贴近本项目问题、但仍保持 minimal 的教学模型，是把 local registry 压成周期变量 φ(r,t)，再把 polarization 写成 φ 的周期函数。</p>
 <div class="eq">P(φ)=P<sub>0</sub> sinφ</div>
