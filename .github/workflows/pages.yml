@@ -124,24 +124,34 @@ jobs:
           if Path('_bilingual_noop.txt').exists():
               raise SystemExit('temporary bilingual staging marker must not remain')
 
-          contracts = {
+          unique_contracts = {
               Path('modules/research-track.html'): (
                   'id="fair"', 'id="identifiability-bridge"', 'id="data-claim-contract"',
                   'id="event-contract"', 'id="paired-hierarchy"'
               ),
               Path('modules/numerical-modeling.html'): (
-                  'id="identifiability"', 'href="#identifiability"', 'id="threshold-authority-bridge"',
-                  'id="run-receipt"', 'research-track.html#fair'
+                  'id="identifiability"', 'id="threshold-authority-bridge"', 'id="run-receipt"'
               ),
               Path('modules/depinning.html'): (
-                  'id="data-claim-bridge"', 'id="threshold-ladder"', 'href="#threshold-ladder"'
+                  'id="data-claim-bridge"', 'id="threshold-ladder"'
               ),
           }
-          for page, markers in contracts.items():
+          for page, markers in unique_contracts.items():
               text = page.read_text(encoding='utf-8')
               for marker in markers:
                   if text.count(marker) != 1:
-                      raise SystemExit(f'{page}: expected exactly one contract marker: {marker}')
+                      raise SystemExit(f'{page}: expected exactly one unique contract marker: {marker}')
+
+          required_links = {
+              Path('modules/numerical-modeling.html'): ('href="#identifiability"', 'research-track.html#fair'),
+              Path('modules/depinning.html'): ('href="#threshold-ladder"',),
+              Path('modules/research-track.html'): ('numerical-modeling.html#identifiability',),
+          }
+          for page, markers in required_links.items():
+              text = page.read_text(encoding='utf-8')
+              for marker in markers:
+                  if marker not in text:
+                      raise SystemExit(f'{page}: missing required cross-link: {marker}')
           print('Static evidence + conservative terminology validation passed.')
           PY
 
