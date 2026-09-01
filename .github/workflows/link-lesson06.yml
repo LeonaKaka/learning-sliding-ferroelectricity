@@ -1,0 +1,61 @@
+name: Link Reproduction Lab Lesson 06
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/link-lesson06.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  link:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch lesson navigation and M07 bridge
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('modules/reproduction-lab-05.html'); s=p.read_text('utf-8')
+          old='<div class="next"><a href="reproduction-lab-04.html">← Lesson 04 · GL→EW validity boundary</a><a href="numerical-modeling.html">回 Module 07 →</a></div>'
+          new='<div class="next"><a href="reproduction-lab-04.html">← Lesson 04 · GL→EW validity boundary</a><a href="reproduction-lab-06.html">Lesson 06 · disordered GL↔EW geometry →</a></div>'
+          if new not in s:
+              assert s.count(old)==1,s.count(old)
+              p.write_text(s.replace(old,new,1),'utf-8')
+
+          p=Path('modules/numerical-modeling.html'); s=p.read_text('utf-8')
+          old='L01 解析 kink → L02 2D field→u(y) → L03 EW roughness vs Eq.19 → L04 2D GL→EW validity boundary → L05 bulk RB→effective pinning correlator。'
+          new='L01 解析 kink → L02 2D field→u(y) → L03 EW roughness vs Eq.19 → L04 2D GL→EW validity boundary → L05 bulk RB→effective pinning correlator → L06 disordered B/S cross-model checkpoint。'
+          if new not in s:
+              assert s.count(old)==1,s.count(old)
+              p.write_text(s.replace(old,new,1),'utf-8')
+          PY
+      - name: Verify Lesson 06 evidence chain
+        run: |
+          test -s modules/reproduction-lab-06.html
+          test -s assets/reproduction-lab/caballero2020-fig5-disordered-geometry.webp
+          test -s assets/reproduction-lab/lesson06_disordered_geometry_checkpoint.svg
+          test -s assets/reproduction-lab/lesson06_disordered_geometry_checkpoint.txt
+          test -s examples/reproduction-lab/lesson06_disordered_geometry.py
+          grep -q 'B median relative difference = 1.227%' modules/reproduction-lab-06.html
+          grep -q 'S(q) log-bin median relative difference = 6.122%' modules/reproduction-lab-06.html
+          grep -q 'ASYMPTOTIC ζ GATE NOT PASSED' modules/reproduction-lab-06.html
+          grep -q 'reproduction-lab-06.html' modules/reproduction-lab-05.html
+          grep -q 'L06 disordered B/S cross-model checkpoint' modules/numerical-modeling.html
+          python - <<'PY'
+          from pathlib import Path
+          for page in [Path('modules/reproduction-lab-05.html'),Path('modules/reproduction-lab-06.html'),Path('modules/numerical-modeling.html')]:
+              s=page.read_text('utf-8')
+              bad=[ord(ch) for ch in s if ord(ch)<32 and ch not in '\n\r\t']
+              assert not bad,(page,bad[:10])
+          PY
+      - name: Commit Lesson 06 links
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add modules/reproduction-lab-05.html modules/numerical-modeling.html
+          git commit -m 'Link Lesson 06 into reproduction curriculum'
+          git push
