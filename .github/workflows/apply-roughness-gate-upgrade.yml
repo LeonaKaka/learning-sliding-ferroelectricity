@@ -1,0 +1,50 @@
+name: Apply roughness acceptance gate
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/apply-roughness-gate-upgrade.yml'
+      - '.github/patches/roughness_gate_20260901.py'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Preflight
+        run: |
+          grep -q 'id="roughness"' modules/pinning-creep.html
+          grep -q '<tr><td>ζ</td>' modules/research-track.html
+      - name: Apply idempotent patch
+        run: python .github/patches/roughness_gate_20260901.py
+      - name: Verify roughness gate
+        run: |
+          grep -q 'id="roughness-gate"' modules/pinning-creep.html
+          grep -q 'id="roughness-gate-bridge"' modules/research-track.html
+          grep -q 'super-rough 特别警告' modules/pinning-creep.html
+          grep -q 'R3 · cross-observable' modules/pinning-creep.html
+          grep -q 'single-valued-interface mapping failure' modules/pinning-creep.html
+          python - <<'PY'
+          from pathlib import Path
+          for page in [Path('modules/pinning-creep.html'), Path('modules/research-track.html')]:
+              text=page.read_text('utf-8')
+              bad=[(i,ord(ch)) for i,ch in enumerate(text) if ord(ch)<32 and ch not in '\n\r\t']
+              assert not bad, (page,bad[:10])
+          print('roughness gate HTML control-character scan passed')
+          PY
+      - name: Commit lesson
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add modules/pinning-creep.html modules/research-track.html
+          git diff --cached --quiet && exit 0
+          git commit -m 'Teach roughness acceptance gate'
+          git push origin main
