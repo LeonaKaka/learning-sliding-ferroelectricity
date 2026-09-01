@@ -46,6 +46,7 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          from xml.etree import ElementTree as ET
           import hashlib, re
 
           all_pages = [Path('index.html'), *sorted(Path('modules').glob('*.html'))]
@@ -119,11 +120,9 @@ jobs:
               if hashlib.sha256(p.read_bytes()).hexdigest() != digest:
                   raise SystemExit(f'hash mismatch: {path}')
 
-          # Reproduction Lab artifact contract. These are not ninth/tenth mother
-          # modules; they are a separate executable evidence track. A green Pages
-          # run now certifies that each lesson's page, code, visual result and the
-          # original Caballero comparison figure (where applicable) co-exist in
-          # the final artifact. Lesson 05/06 additionally require run receipts.
+          # Reproduction Lab is a separate executable evidence track, not a ninth
+          # mother module. A green Pages run must certify page + code + result +
+          # original-paper comparison evidence in the final deploy artifact.
           reproduction_contracts = {
               'modules/reproduction-lab.html': (
                   'examples/reproduction-lab/lesson01_tdgl_wall.py',
@@ -155,6 +154,19 @@ jobs:
                   'assets/reproduction-lab/lesson06_disordered_geometry_checkpoint.txt',
                   'assets/reproduction-lab/caballero2020-fig5-disordered-geometry.webp',
               ),
+              'modules/reproduction-lab-07.html': (
+                  'examples/reproduction-lab/lesson07_threshold_search.py',
+                  'assets/reproduction-lab/lesson07_threshold_search.svg',
+                  'assets/reproduction-lab/lesson07_threshold_search.txt',
+                  'assets/reproduction-lab/ferrero2013-fig4a-critical-structure.svg',
+                  'assets/reproduction-lab/ferrero2013-fig4b-finite-size-threshold.svg',
+              ),
+              'modules/reproduction-lab-08.html': (
+                  'examples/reproduction-lab/lesson08_steady_velocity.py',
+                  'assets/reproduction-lab/lesson08_steady_velocity.svg',
+                  'assets/reproduction-lab/lesson08_steady_velocity.txt',
+                  'assets/reproduction-lab/ferrero2013-fig1b-velocity-force.svg',
+              ),
           }
           for page_name, required_files in reproduction_contracts.items():
               page = Path(page_name)
@@ -165,11 +177,16 @@ jobs:
                   p = Path(required)
                   if not p.exists() or p.stat().st_size == 0:
                       raise SystemExit(f'{page_name}: missing reproduction artifact: {required}')
-                  # Page must visibly link/embed lesson code and result evidence.
-                  rel = Path(required).relative_to('modules') if required.startswith('modules/') else None
                   basename = p.name
                   if p.suffix in {'.py', '.svg', '.webp'} and basename not in text:
                       raise SystemExit(f'{page_name}: artifact exists but is not referenced: {required}')
+                  # Parse every SVG in the final artifact. This catches truncated
+                  # embedded figures that a mere existence check cannot detect.
+                  if p.suffix == '.svg':
+                      try:
+                          ET.parse(p)
+                      except Exception as exc:
+                          raise SystemExit(f'{page_name}: invalid SVG {required}: {exc}')
 
           l05_receipt = Path('assets/reproduction-lab/lesson05_rb_projection_correlator.txt').read_text(encoding='utf-8')
           for marker in ('Eq25-vs-Eq26', 'sample RMSE/Gamma0', 'ALL DISORDER-PROJECTION GATES PASS'):
@@ -179,6 +196,14 @@ jobs:
           for marker in ('B median rel', 'S log-bin median rel', 'ASYMPTOTIC ZETA GATE NOT PASSED'):
               if marker not in l06_receipt:
                   raise SystemExit(f'Lesson06 receipt missing marker: {marker}')
+          l07_receipt = Path('assets/reproduction-lab/lesson07_threshold_search.txt').read_text(encoding='utf-8')
+          for marker in ('particle max |fc-1|', 'line final bracket width', 'THRESHOLD GOLD TEST + SMALL-LINE BRACKET PASS'):
+              if marker not in l07_receipt:
+                  raise SystemExit(f'Lesson07 receipt missing marker: {marker}')
+          l08_receipt = Path('assets/reproduction-lab/lesson08_steady_velocity.txt').read_text(encoding='utf-8')
+          for marker in ('coarse dt=.100 max error', 'production dt=.025 max err', 'NO BETA FIT IN LESSON 08', 'STEADY VELOCITY ESTIMATOR + DT CONVERGENCE PASS'):
+              if marker not in l08_receipt:
+                  raise SystemExit(f'Lesson08 receipt missing marker: {marker}')
 
           if Path('assets/repaired-0607').exists():
               raise SystemExit('temporary repaired-0607 asset directory must not return')
@@ -223,13 +248,16 @@ jobs:
                   'depinning.html#collapse-gate', 'pinning-creep.html#roughness-gate'
               ),
               Path('modules/foundations.html'): ('../index.html#foundations',),
+              Path('modules/reproduction-lab-06.html'): ('reproduction-lab-07.html',),
+              Path('modules/reproduction-lab-07.html'): ('reproduction-lab-08.html',),
+              Path('modules/reproduction-lab-08.html'): ('reproduction-lab-07.html', 'depinning.html#collapse-gate'),
           }
           for page, markers in required_links.items():
               text = page.read_text(encoding='utf-8')
               for marker in markers:
                   if marker not in text:
                       raise SystemExit(f'{page}: missing required cross-link: {marker}')
-          print('Static evidence + Reproduction Lab artifact + conservative terminology validation passed.')
+          print('Static evidence + Reproduction Lab L01-L08 artifact + SVG-integrity + conservative terminology validation passed.')
           PY
 
       - name: Configure Pages
