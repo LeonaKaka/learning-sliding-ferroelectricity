@@ -26,7 +26,7 @@
 <div class="source"><span class="tag">inference anchor</span><b>Ovchinnikov et al., PRL 103, 157203 (2009)</b><p>在 random-bond–random-field Ising framework 中，用 hysteresis loop shape 识别 disorder type / strength；它证明“loop shape 含 disorder 信息”，但不意味着真实 sliding FE 自动服从同一 Ising model。<a href="https://doi.org/10.1103/PhysRevLett.103.157203" target="_blank" rel="noopener">DOI 10.1103/PhysRevLett.103.157203</a></p></div>
 <div class="bridge">因此真正公平的问题不是“RF 的 σ 和 RB 的 σ 谁大”，而是：<b>在明确的 matching rule 下，改变 coupling law 本身是否仍改变 switching？</b></div>
 
-<h3>1.1 · 一个适合 sliding-FE 的有效比较语言</h3>
+<h3 id="fair">1.1 · 一个适合 sliding-FE 的有效比较语言</h3>
 <div class="twocol"><div class="card"><b>Additive random-field-like coupling</b><div class="eq">F<sub>RF</sub> = −h(r) cos[φ−α(r)]</div><p>local generalized force / torque：<br><b>τ<sub>RF</sub> ∝ −h sin(φ−α)</b>。它可以直接偏置 local phase coordinate。</p></div><div class="card"><b>Barrier-amplitude / random-bond-like coupling</b><div class="eq">F<sub>RB</sub> = δV(r)[1−cos(nφ)]</div><p>local generalized force / torque：<br><b>τ<sub>RB</sub> ∝ −nδV sin(nφ)</b>。它主要修改 periodic landscape 的 barrier / curvature。</p></div></div>
 <div class="warn"><b>术语纪律：</b>这里的 “random-field-like / random-bond-like” 指 continuum effective coupling。它不等于说模型已经变成 RFIM，也不意味着真实 defect 只有这两种 microscopic origin。</div>
 <table class="matrix"><thead><tr><th>matching rule</th><th>优点</th><th>局限</th></tr></thead><tbody><tr><td>same parameter std</td><td>代码最简单</td><td>不同 coupling function 下通常没有明确“等强”物理意义</td></tr><tr><td>same energy variance</td><td>比较 energy landscape fluctuation</td><td>动力学由 derivative / force 决定时仍可能不公平</td></tr><tr><td>same phase-averaged local-force RMS</td><td>直接对齐 driving equation 里 disorder force scale</td><td>依赖选定 phase measure；不能抹掉 coupling form 的差异</td></tr></tbody></table>
@@ -130,7 +130,7 @@
 <tr><td>E4 · universality / breakdown</td><td>scaling relations、collapse、topology gate、corrections 与替代解释一起 survive</td><td>candidate universality class；或明确 mapping breakdown</td></tr>
 </tbody></table>
 <div class="warn"><b>Breakdown 不是“没做成”。</b> 如果 β/ζ/ν 无法在同一 authority chain 下相容，或 topology gate 系统失败，正确结果可能就是：该 sliding-FE regime 只能称为 depinning-like / effective-interface crossover，而不是强行给它套 universality label。</div>
-<div class="bridge"><b>公开边界：</b>这里给的是可复用的 analysis contract，不展示项目未发表数值、内部 campaign label 或当前 gate 状态。真正分析时再把每个 dataset 映射到这张表。</div>
+<div class="bridge"><b>公开边界：</b>这里给的是可复用的 analysis contract，不展示项目未发表数值、内部 campaign label 或当前 gate 状态。真正分析时再把每个 dataset 映射到这张表。上游每个 simulation run 还必须能回答“它到底由哪版代码、哪份 resolved config、哪组随机源与哪种停止状态生成”；<a href="numerical-modeling.html#run-receipt">去 Module 07 看 run receipt / provenance contract →</a></div>
 
 <h2>5 · Mechanism falsification：先排掉简单解释，再谈“真正机制”</h2>
 <p>研究型阅读与普通教材最大的区别之一：数据往往更擅长<b>否定一个过于简单的机制</b>，而不是直接唯一确定微观机制。</p>
