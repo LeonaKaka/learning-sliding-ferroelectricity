@@ -48,6 +48,13 @@ jobs:
           from pathlib import Path
           import hashlib, re
 
+          all_pages = [Path('index.html'), *sorted(Path('modules').glob('*.html'))]
+          for page in all_pages:
+              text = page.read_text(encoding='utf-8')
+              bad = [(i, ord(ch)) for i, ch in enumerate(text) if ord(ch) < 32 and ch not in '\n\r\t']
+              if bad:
+                  raise SystemExit(f'{page}: forbidden control characters found: {bad[:10]}')
+
           expected_sources = {
               'foundations.html': 5, 'switching-pathways.html': 3,
               'domain-walls.html': 4, 'pinning-creep.html': 6,
@@ -118,7 +125,9 @@ jobs:
               raise SystemExit('temporary bilingual staging marker must not remain')
 
           contracts = {
-              Path('modules/research-track.html'): ('id="fair"', 'id="data-claim-contract"', 'id="event-contract"'),
+              Path('modules/research-track.html'): (
+                  'id="fair"', 'id="data-claim-contract"', 'id="event-contract"', 'id="paired-hierarchy"'
+              ),
               Path('modules/numerical-modeling.html'): ('id="run-receipt"', 'research-track.html#fair'),
               Path('modules/depinning.html'): ('id="data-claim-bridge"',),
           }
