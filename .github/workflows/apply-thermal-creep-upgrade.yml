@@ -20,11 +20,27 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Preflight current source anchors
+        run: |
+          grep -Fq '<div class="q">本章最小判断框架：' modules/pinning-creep.html
+          grep -Fq '<div class="bridge">到这里，问题已经从“墙会不会动”变成' modules/depinning.html
+          grep -Fq '<h2 id="model">3 · 从 stacking registry 到 minimal sliding-FE phase field</h2>' modules/research-track.html
       - name: Install extraction tools
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq poppler-utils
           python -m pip install --quiet pillow
+      - name: Migrate stale research-track anchor in one-shot script
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('scripts/thermal_creep_upgrade_20260901.py')
+          s=p.read_text('utf-8')
+          old='<h2 id="model">3 · 从 stacking registry 到一个可控的 sliding-FE effective model</h2>'
+          new='<h2 id="model">3 · 从 stacking registry 到 minimal sliding-FE phase field</h2>'
+          assert s.count(old)==1, s.count(old)
+          p.write_text(s.replace(old,new,1),'utf-8')
+          PY
       - name: Apply finite-temperature content patch
         run: python scripts/thermal_creep_upgrade_20260901.py
       - name: Verify expected markers
@@ -33,6 +49,8 @@ jobs:
           grep -q 'finite-T creep 不是' modules/pinning-creep.html
           grep -q 'Thermal rounding：T&gt;0' modules/depinning.html
           grep -q 'Temperature 是新的实验轴' modules/research-track.html
+          grep -q 'Outer block · disorder seed' modules/pinning-creep.html
+          grep -q 'freeze T=0 authority' modules/depinning.html
       - name: Commit patched pages
         run: |
           git config user.name 'github-actions[bot]'
