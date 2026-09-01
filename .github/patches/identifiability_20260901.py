@@ -81,8 +81,8 @@ replace_once(
     '<a href="#reduction">Model reduction</a> · <a href="#identifiability">Scale</a> · <a href="#grid">Grid sanity</a>',
 )
 
-# Research Track bridge from the periodic model to the calibration lesson.
-rt_anchor = '<div class="warn"><b>建模边界：</b>这个模型的价值是把 “periodic stacking + diffuse wall + quenched disorder + drive” 放在同一最小框架里，用于比较机制与 universality。若结论依赖 multilayer interface identity、真实 anisotropic stacking landscape 或 long-range electrostatics，就必须显式升级模型。</div>'
+# Research Track bridge from the exact current model-boundary sentence.
+rt_anchor = '<div class="warn"><b>建模边界：</b>这个模型的价值是把 “periodic stacking + diffuse wall + quenched disorder + drive” 放在同一最小框架里，用于比较机制与 universality。若结论依赖特定 3R lattice direction、层间 shear tensor、off-diagonal Born effective charge、multilayer interface coupling，就必须回到更细的自由度。</div>'
 rt_new = rt_anchor + '\n<div id="identifiability-bridge" class="bridge"><b>参数不是越多越真实：</b>这个 periodic model 写出 κ、V<sub>0</sub>、P<sub>0</sub>、Γ 与 disorder 后，下一步不是一起拟合，而是先问哪些 observable 能独立约束哪些参数组合。<a href="numerical-modeling.html#identifiability">去 Module 07 看 nondimensionalization / identifiability →</a></div>'
 replace_once('modules/research-track.html', rt_anchor, rt_new)
 
