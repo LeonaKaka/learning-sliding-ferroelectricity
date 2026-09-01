@@ -1,0 +1,94 @@
+name: Build Reproduction Lab Lesson 05 evidence
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/build-lesson05-evidence.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pinned numerical and PDF dependencies
+        run: python -m pip install --disable-pip-version-check numpy==2.3.5 matplotlib==3.10.8 pymupdf==1.26.7 pillow==12.3.0
+      - name: Verify paper source and extract Figure 4
+        run: |
+          curl -L --retry 3 --fail -o /tmp/caballero2020.pdf https://arxiv.org/pdf/2006.15130
+          python - <<'PY'
+          import io, fitz
+          from pathlib import Path
+          from PIL import Image
+          doc=fitz.open('/tmp/caballero2020.pdf')
+          assert 'From bulk descriptions to emergent interfaces' in doc[0].get_text()
+          page=doc[5]
+          pix=page.get_pixmap(matrix=fitz.Matrix(450/72,450/72),alpha=False)
+          im=Image.open(io.BytesIO(pix.tobytes('png')))
+          w,h=im.size
+          # Figure 4 + caption on printed page 6, upper-right panel.
+          box=(int(.475*w),int(.035*h),int(.955*w),int(.505*h))
+          crop=im.crop(box)
+          out=Path('assets/reproduction-lab/caballero2020-fig4-pinning-correlator.webp')
+          out.parent.mkdir(parents=True,exist_ok=True)
+          crop.save(out,'WEBP',quality=92,method=6)
+          assert crop.width > 1600 and crop.height > 1800, crop.size
+          assert out.stat().st_size > 100_000, out.stat().st_size
+          print('Verified paper and Fig4 crop:',crop.size,'bytes=',out.stat().st_size)
+          PY
+      - name: Run repository Lesson 05 disorder projection
+        run: python examples/reproduction-lab/lesson05_rb_projection.py | tee /tmp/lesson05.log
+      - name: Link Lesson 04 to Lesson 05 and update M07 bridge
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('modules/reproduction-lab-04.html'); s=p.read_text('utf-8')
+          old='<div class="next"><a href="reproduction-lab-03.html">← Lesson 03 · EW roughness</a><a href="numerical-modeling.html">回 Module 07 →</a></div>'
+          new='<div class="next"><a href="reproduction-lab-03.html">← Lesson 03 · EW roughness</a><a href="reproduction-lab-05.html">Lesson 05 · bulk RB → pinning correlator →</a></div>'
+          if new not in s:
+              assert s.count(old)==1, s.count(old)
+              p.write_text(s.replace(old,new,1),'utf-8')
+
+          p=Path('modules/numerical-modeling.html'); s=p.read_text('utf-8')
+          old='L01 解析 kink → L02 2D field→u(y) → L03 EW roughness vs Eq.19 → L04 2D GL→EW 低温通过 / 高温 breakdown。'
+          new='L01 解析 kink → L02 2D field→u(y) → L03 EW roughness vs Eq.19 → L04 2D GL→EW validity boundary → L05 bulk RB→effective pinning correlator。'
+          if new not in s:
+              assert s.count(old)==1, s.count(old)
+              p.write_text(s.replace(old,new,1),'utf-8')
+          PY
+      - name: Verify quantitative, source and HTML gates
+        run: |
+          grep -q 'ALL DISORDER-PROJECTION GATES PASS' /tmp/lesson05.log
+          grep -q 'C(0)/Gamma(0)           = 0.995554' /tmp/lesson05.log
+          grep -q 'RMSE/Gamma(0), 0<=u<=5  = 0.222%' /tmp/lesson05.log
+          grep -q 'max abs/Gamma(0)        = 0.445%' /tmp/lesson05.log
+          grep -q 'first zero theory       = 1.039429' /tmp/lesson05.log
+          grep -q 'first zero empirical    = 1.039472' /tmp/lesson05.log
+          grep -q 'WRONG std=1 amplitude   = 0.099555 x theory' /tmp/lesson05.log
+          test -s assets/reproduction-lab/lesson05_rb_projection_correlator.svg
+          test -s assets/reproduction-lab/caballero2020-fig4-pinning-correlator.webp
+          grep -q 'caballero2020-fig4-pinning-correlator.webp' modules/reproduction-lab-05.html
+          grep -q 'lesson05_rb_projection_correlator.svg' modules/reproduction-lab-05.html
+          grep -q 'reproduction-lab-05.html' modules/reproduction-lab-04.html
+          grep -q 'L05 bulk RB→effective pinning correlator' modules/numerical-modeling.html
+          python - <<'PY'
+          from pathlib import Path
+          for page in [Path('modules/reproduction-lab-05.html'),Path('modules/reproduction-lab-04.html'),Path('modules/numerical-modeling.html')]:
+              text=page.read_text('utf-8')
+              bad=[ord(ch) for ch in text if ord(ch)<32 and ch not in '\n\r\t']
+              assert not bad,(page,bad[:10])
+          PY
+      - name: Commit Lesson 05 evidence
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/reproduction-lab/ modules/reproduction-lab-04.html modules/numerical-modeling.html
+          git commit -m 'Generate Lesson 05 disorder-projection evidence'
+          git push
