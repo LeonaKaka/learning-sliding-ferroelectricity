@@ -1,0 +1,22 @@
+Lesson 08 steady-velocity validation
+seed                         = 20260902
+registered fc bracket        = [0.777636719, 0.777783203]
+registered fc midpoint       = 0.777709961
+velocity dt gate             = 0.500%
+particle gold-test dt        = 0.0200
+particle max rel error       = 0.001387%
+line L, M, du, rf            = 32, 256, 0.250, 1.000
+line delta-f ladder          = 0.02, 0.04, 0.08, 0.16
+steady protocol             = discard 1 u-period; measure next 3 periods
+coarse dt=.100 max error     = 1.010%  FAIL (<0.5% gate)
+dt=.050 max error            = 0.439%
+production dt=.025 max err  = 0.147%  PASS
+reference dt=.0125           = comparison authority for this lesson
+first-period transient shift = 3.47% .. 4.93%
+steady 3-period spread max   = 0.0010%
+df=0.020 f=0.797709961 v(dt=.025)=0.304157138 v(dt=.0125)=0.304576417
+df=0.040 f=0.817709961 v(dt=.025)=0.336752820 v(dt=.0125)=0.337223824
+df=0.080 f=0.857709961 v(dt=.025)=0.390721774 v(dt=.0125)=0.391295561
+df=0.160 f=0.937709961 v(dt=.025)=0.492101344 v(dt=.0125)=0.492828001
+NO BETA FIT IN LESSON 08
+STEADY VELOCITY ESTIMATOR + DT CONVERGENCE PASS
