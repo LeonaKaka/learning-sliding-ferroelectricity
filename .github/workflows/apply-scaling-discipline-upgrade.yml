@@ -1,4 +1,4 @@
-name: Apply scaling discipline upgrade
+name: Correct Zhou source provenance
 
 on:
   push:
@@ -15,31 +15,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - name: Preflight anchors
+      - name: Correct source level
         run: |
-          grep -Fq '<h2>把它变成一个靠谱的数值实验</h2>' modules/depinning.html
-          grep -Fq 'single-valued 时可用 φ=0 contour → u(y)' modules/numerical-modeling.html
-          grep -Fq '<h2>5 · Mechanism falsification：先排掉简单解释，再谈“真正机制”</h2>' modules/research-track.html
-      - name: Apply patch
-        run: python .github/patches/scaling_discipline_20260901.py
-      - name: Verify markers
-        run: |
-          grep -q 'Exponent extraction discipline' modules/depinning.html
-          grep -q 'β<sub>eff</sub>' modules/depinning.html
-          grep -q 'leave-one-size-out' modules/depinning.html
-          grep -q '从 diffuse phase field 提取 u(y)' modules/numerical-modeling.html
-          grep -q 'intersection count' modules/numerical-modeling.html
-          grep -q 'Analysis contract' modules/research-track.html
-          grep -q 'mesoscopic crossover' modules/research-track.html
-      - name: Commit content upgrade
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('modules/depinning.html')
+          s=p.read_text('utf-8')
+          old='Phys. Rev. B 80, 134425 · APS official record / 项目 Drive PDF'
+          new='Phys. Rev. B 80, 134425 · APS official record；项目 Drive 另存同组相关 RFIM overhang study（非该正式版 PDF）'
+          assert s.count(old)==1, s.count(old)
+          p.write_text(s.replace(old,new,1),'utf-8')
+          PY
+          grep -q '非该正式版 PDF' modules/depinning.html
+      - name: Commit provenance correction
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add modules/depinning.html modules/numerical-modeling.html modules/research-track.html
-          git commit -m 'Add finite-size and exponent extraction discipline'
+          git add modules/depinning.html
+          git commit -m 'Correct Zhou source provenance'
           git push
