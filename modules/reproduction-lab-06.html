@@ -5,18 +5,15 @@
 <h1>模型降维已经对上，不代表 \(\zeta=2/3\) 已经有资格宣布</h1>
 <p class="deck">Caballero 2020 Fig.5 是这篇论文最接近你后续 Paper2 的一张图：同一个 random-bond problem，同时跑 2D Ginzburg–Landau bulk 和映射后的 1D Edwards–Wilkinson line，再用 real-space roughness B(r,t) 与 Fourier-space structure factor S(q,t) 检查两种描述是否一致。更重要的是，这一课第一次把“模型映射是否正确”和“是否已经进入渐近普适区”严格拆成两个不同问题。</p>
 <div class="q"><b>本课判据：</b>GL↔EW 必须在 <b>B(r)</b> 和 <b>S(q)</b> 两个 observable 上同时接近，才能叫 cross-model geometry mapping pass；而要声称 random-bond \(\zeta=2/3\)，还必须要求 B-derived 与 S-derived effective exponent 在同一受控尺度窗内彼此兼容。前者通过，不自动推出后者。</div>
-
 <h2 id="compare">0 · 原论文 Fig.5 vs 我们的 t=1000 checkpoint</h2>
 <div class="two">
 <figure class="fig"><a href="../assets/reproduction-lab/caballero2020-fig5-disordered-geometry.webp" target="_blank" rel="noopener"><img src="../assets/reproduction-lab/caballero2020-fig5-disordered-geometry.webp" alt="Caballero 2020 Figure 5 disordered GL and EW roughness and structure factor"></a><figcaption class="cap"><b>Caballero et al. 2020 · Fig.5。</b><br>2D GL 用实线，等效 1D EW 用点划线；T=0.05、ε=0.1、从 flat wall 出发，平均 10 realizations。上图 B(r,t)，下图 S(q,t)。作者把 large-time regime 与 random-bond roughness ζ<sub>RB</sub>=2/3 比较。</figcaption></figure>
 <figure class="fig"><a href="../assets/reproduction-lab/lesson06_disordered_geometry_checkpoint.svg" target="_blank" rel="noopener"><img src="../assets/reproduction-lab/lesson06_disordered_geometry_checkpoint.svg" alt="Our disordered GL versus EW geometry checkpoint"></a><figcaption class="cap"><b>Our CPU-fast checkpoint。</b><br>T=0.05、ε=0.1、t=1000；GL 64×128，EW length 128，8 realizations。左上比较 B，右上比较 S；右下故意把 B 与 S 各自给出的 effective ζ 放到一起，防止只挑一个最像 2/3 的 estimator。</figcaption></figure>
 </div>
 <div class="verdict"><b>结论先写在前面：</b>我们的 GL 与 EW geometry 已经明显互相跟随；但当前小系统/有限时间下，B-derived 和 S-derived ζ 还没有闭合，所以这一步只能写 <b>cross-model mapping pass</b>，不能写“已复现 random-bond universality”。</div>
-
 <h2>1 · 论文真正测试的是两层命题</h2>
 <div class="two"><div class="card"><h3>命题 A · model reduction</h3><p>给定同一 bulk disorder physics，2D GL 提取出的 wall 和映射后的 1D EW 是否产生相同几何统计？这主要由 B(r) 与 S(q) 的 cross-model agreement 检验。</p></div><div class="card"><h3>命题 B · asymptotic scaling</h3><p>系统是否已经进入足够大的尺度/足够长的时间，使 roughness exponent 接近 random-bond equilibrium value ζ=2/3？这需要 estimator consistency 与 size/time convergence。</p></div></div>
 <div class="warn"><b>最常见的逻辑跳跃：</b>看到 S(q) 的斜率接近 2/3，就直接说 universality 成立。但如果同一份 interface 的 B(r) 还给出明显不同的 effective ζ，这最多说明“某个 Fourier window 看起来接近目标”，不是闭合证据。</div>
-
 <h2>2 · 我们保持哪些 paper physics？缩小了哪些东西？</h2>
 <table class="matrix"><thead><tr><th>项目</th><th>Caballero Fig.5</th><th>本课 checkpoint</th></tr></thead><tbody>
 <tr><td>bulk coupling</td><td>Vζ(φ)=V(φ)[1+εζ]</td><td>相同</td></tr>
@@ -29,25 +26,21 @@
 <tr><td>time range</td><td>多时间，延伸到很长时标</td><td>先看 t=1000 checkpoint</td></tr>
 </tbody></table>
 <p>所以这节不是 protocol-identical Fig.5 reproduction，而是一个严格的小系统 checkpoint：先问 GL→EW mapping 有没有走对，再决定是否值得把算力投给 long-time / large-size exponent closure。</p>
-
 <h2>3 · 2D GL 与 1D EW 现在共享同一条 disorder lineage</h2>
 <p>2D bulk 继续使用 Lesson05 的 random-bond coupling：</p>
 <div class="eq">V<sub>ζ</sub>(φ)=V(φ)[1+εζ(x,y)]</div>
 <p>1D EW 不再随便造一个“看起来有点相关”的 random force，而是使用 Lesson05 已经验证的 wall-level pinning statistics：</p>
 <div class="eq">η̃∂<sub>t</sub>u = c∂²<sub>y</sub>u + F<sub>p</sub>(u,y) + ξ̃</div>
 <div class="bridge"><b>这就是复现梯子的意义：</b>Lesson03 已锁死 EW thermal dynamics；Lesson04 已锁死 finite-T bulk→wall estimator；Lesson05 已锁死 bulk RB→pinning correlator。Lesson06 如果出问题，我们已经不需要从“是不是 Laplacian 写反了”重新怀疑，而能把诊断集中到 disordered dynamics、finite size/time 或 mapping assumptions。</div>
-
 <h2>4 · 第一关：B(r) 的 cross-model geometry</h2>
 <div class="eq">B(r)=⟨[u(y+r)−u(y)]²⟩</div>
 <p>在预先声明的 4≤r≤32 窗口中，我们用 symmetric relative difference 比较 GL 与 EW，而不是拿其中一个当“真值”。CI 保存的最终结果：</p>
 <div class="pass"><b>B median relative difference = 1.227%</b><br>这已经是非常强的 cross-model agreement。它说明在这个 checkpoint 上，bulk GL 与 reduced EW 对 real-space wall geometry 的描述是相容的。</div>
-
 <h2>5 · 第二关：S(q) 必须独立跟上</h2>
 <div class="eq">S(q)=⟨|u<sub>q</sub>|²/L⟩</div>
 <p>Fourier space 对 small-scale / large-scale crossover 的权重和 B(r) 不同，因此它不是“重复画一遍 B”。我们先对 q 做预定义 log bins，只用 bin center 比较两模型，避免高 q 密集 modes 机械支配误差：</p>
 <div class="pass"><b>S(q) log-bin median relative difference = 6.122%</b><br>仍在事先设定的 10% gate 内，所以 cross-model mapping 在 Fourier observable 上也通过。</div>
 <div class="warn"><b>log bins 不是新的 n。</b> 它只是让跨数量级的 q 区域获得更均衡的 estimator weight；统计独立单位仍然是 realization，不是 Fourier modes，也不是 bins。</div>
-
 <h2>6 · 然后才看 exponent：这里故意不“挑漂亮答案”</h2>
 <table class="matrix"><thead><tr><th>estimator</th><th>2D GL</th><th>1D EW</th><th>paper asymptotic guide</th></tr></thead><tbody>
 <tr><td>ζ from B(r)</td><td><b>0.538906</b></td><td><b>0.509213</b></td><td rowspan="2">ζ<sub>RB</sub>=2/3≈0.6667</td></tr>
@@ -55,15 +48,12 @@
 </tbody></table>
 <p>如果只看 S(q)，你很容易说“EW=0.665，几乎就是 2/3，复现成功”。但同一时刻 B(r) 仍只有约 0.51–0.54。这说明当前系统仍有明显 crossover / finite-size / finite-time structure，不能把一条 estimator 的接近当作渐近 universality。</p>
 <div class="hold"><b>ASYMPTOTIC ζ GATE NOT PASSED。</b> 当前正确写法是：GL 与 EW 在同一 observable 上高度一致，说明 model reduction 已有强证据；但 B-derived 与 S-derived exponent 尚未在同一 scaling regime 中闭合，因此 ζ=2/3 只能作为 paper target / slope guide，不能升级成我们的 measured asymptotic exponent。</div>
-
 <h2>7 · 为什么这个“没通过”反而很有教学价值？</h2>
 <div class="three"><div class="card"><h3>排除代码基础错误</h3><p>B 和 S 的 GL↔EW agreement 已很好，说明两套模型的 geometry pipeline 不是各跑各的。</p></div><div class="card"><h3>暴露 crossover</h3><p>同一模型的 B 与 S 给不同 effective ζ，直接告诉你目前 fit window 不处在单一 asymptotic regime。</p></div><div class="card"><h3>决定算力投向</h3><p>下一步应优先做 cheaper EW 的 time/size ladder，确认 exponent convergence 后再决定是否值得把 2D GL 也扩大。</p></div></div>
-
 <h2>8 · 另一个 sanity check：bulk wall profile 还健康吗？</h2>
 <p>如果 disorder 已把 wall 撕成 bubbles / multiple-valued geometry，即使 B 与 S 看起来还能算，single-line mapping 也可能失去物理意义。本课的 finite-T soliton fit 给出：</p>
 <table class="matrix"><tbody><tr><th>mean fitted amplitude A</th><td>0.982981</td></tr><tr><th>mean fitted width w</th><td>1.371256</td></tr><tr><th>mean profile-fit RMSE</th><td>0.077925</td></tr></tbody></table>
 <p>A 与 w 仍接近 clean low-T profile（A≈1、w≈√2），因此当前 checkpoint 还在一个可合理约化成 interface 的 regime。以后 disorder 更强时，这一层 topology/profile QC 必须先于 ζ fit。</p>
-
 <h2 id="code">9 · 完整脚本与机器生成的 benchmark receipt</h2>
 <p><a href="../examples/reproduction-lab/lesson06_disordered_geometry.py"><b>打开 Lesson 06 Python 脚本 →</b></a>　<a href="../assets/reproduction-lab/lesson06_disordered_geometry_checkpoint.txt"><b>打开 CI 保存的 benchmark log →</b></a></p>
 <div class="codebox"><div class="head"><b>CI 保存的最终输出</b></div><pre>Caballero Fig.5 geometry checkpoint
@@ -77,11 +67,9 @@ zeta_S GL / EW         = 0.694308 / 0.664796
 GL fitted A, w         = 0.982981, 1.371256
 GL profile-fit RMSE    = 0.077925
 CROSS-MODEL GEOMETRY PASS; ASYMPTOTIC ZETA GATE NOT PASSED</pre></div>
-
-<h2>10 · 下一课：先用便宜的 EW 做 time/size ladder</h2>
-<p>如果我们现在直接把 2D GL 从 64×128 推到论文的 256×4096 并跑到 10⁶，只是在用算力掩盖诊断不清。更合理的是先在便宜很多的 1D EW 上做：</p>
-<div class="eq">L: 128 → 256 → 512 → 1024　；　t: 10³ → 10⁴ → 10⁵</div>
-<p>看 ζ<sub>B</sub> 与 ζ<sub>S</sub> 是否朝同一个 plateau 收敛。只有这一层成立，才值得把对应的 selected checkpoint 回填到 2D GL。这个策略正是为了解决“经典论文很耗算力，学习者跑不出来就无法判断正确性”的问题。</p>
-<div class="bridge"><b>再往你的 sliding-FE 项目迁移：</b>以后测 ζ 时，不会因为某一个 S(q) window 给出漂亮值就宣布 universality。先要求 wall mapping / topology 合法，再要求 B 与 S 在同一 scale story 下兼容，最后才看 size/time convergence。这就是你 Paper2 roughness gate 的代码版来源。</div>
-<div class="next"><a href="reproduction-lab-05.html">← Lesson 05 · disorder projection</a><a href="numerical-modeling.html">回 Module 07 →</a></div>
+<h2>10 · Paper1 方法链在这里收口；下一步切到 Paper2 depinning</h2>
+<div class="pass"><b>Paper1 boundary。</b> Lesson01–06 已经覆盖了 clean wall → field-to-line mapping → EW roughness benchmark → finite-T mapping boundary → RB disorder projection → disordered GL/EW geometry checkpoint。它们直接服务 Paper1 的 switching / disorder comparison 方法可信度。</div>
+<p>这里的 asymptotic ζ gate 仍然没有通过，所以不把 Lesson06 写成“universality 已证明”。继续加 time/size ladder 仍然是未来 roughness 精修的一条支线；但按两篇论文的科学分工，<b>正式主线现在进入 Paper2：</b>预先存在的 isolated wall、constant drive、sample-dependent depinning threshold。</p>
+<div class="bridge"><b>从下一课开始不要再混用两个 E<sub>c</sub>。</b> Paper1 的 hysteresis / switching coercive scale 可以包含 nucleation、多墙和 protocol-rate effects；Paper2 的 depinning threshold 是一条预先存在的 wall 在 constant drive 下 pinned ↔ moving 的临界点。</div>
+<div class="next"><a href="reproduction-lab-05.html">← Lesson05 · disorder projection</a><a href="reproduction-lab-07.html">Lesson07 · threshold search →</a></div>
 </main></body></html>
