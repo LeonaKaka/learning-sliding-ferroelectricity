@@ -1,0 +1,42 @@
+name: Apply avalanche statistics upgrade
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/apply-avalanche-statistics-upgrade.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Preflight
+        run: |
+          grep -Fq '宏观 hysteresis 告诉你 disorder 能制造 criticality' modules/disorder-rfim.html
+          grep -Fq '预注册不等于僵化' modules/research-track.html
+      - name: Apply patch
+        run: python .github/patches/avalanche_statistics_20260901.py
+      - name: Verify
+        run: |
+          grep -q 'Avalanche statistics' modules/disorder-rfim.html
+          grep -q 'Power law 是 candidate' modules/disorder-rfim.html
+          grep -q 'bootstrap draws' modules/disorder-rfim.html
+          grep -q 'Event-statistics contract' modules/research-track.html
+          grep -q 'burst ≠ avalanche' modules/research-track.html
+      - name: Commit
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add modules/disorder-rfim.html modules/research-track.html
+          git commit -m 'Teach avalanche event statistics and evidence levels'
+          git push
