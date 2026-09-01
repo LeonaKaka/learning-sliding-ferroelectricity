@@ -1,0 +1,45 @@
+name: Apply paired-hierarchy statistics upgrade
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/apply-paired-hierarchy-upgrade.yml'
+      - '.github/patches/paired_hierarchy_20260901.py'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Preflight
+        run: |
+          grep -q 'id="data-claim-contract"' modules/research-track.html
+          grep -q '<h2>5 · Mechanism falsification' modules/research-track.html
+          grep -q 'numerical-modeling.html#run-receipt' modules/research-track.html
+      - name: Apply idempotent patch
+        run: python .github/patches/paired_hierarchy_20260901.py
+      - name: Verify statistical hierarchy
+        run: |
+          test "$(grep -o 'id="paired-hierarchy"' modules/research-track.html | wc -l | tr -d ' ')" = "1"
+          grep -q 'outer independent unit' modules/research-track.html
+          grep -q 'inner stochastic repeat' modules/research-track.html
+          grep -q 'common random numbers 是 variance-reduction device' modules/research-track.html
+          grep -q 'paired censoring / bound 信息' modules/research-track.html
+          grep -q 'finite-size 也有 pairing 陷阱' modules/research-track.html
+      - name: Commit paired-hierarchy lesson
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          if ! git diff --quiet; then
+            git add modules/research-track.html
+            git commit -m 'Teach paired and hierarchical uncertainty'
+            git push
+          fi
