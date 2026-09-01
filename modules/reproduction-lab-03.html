@@ -1,0 +1,85 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Reproduction Lab 03 · EW Thermal Roughening Thumbnail</title><style>
+:root{--b:#f3f0e8;--p:#fffdf8;--i:#191a18;--m:#716d66;--l:#d8d1c3;--a:#6d493b;--soft:#eee8dc}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--b);color:var(--i);font:15px/1.76 system-ui,-apple-system,"PingFang SC",sans-serif}.top{position:sticky;top:0;z-index:3;background:#f3f0e8ee;backdrop-filter:blur(12px);border-bottom:1px solid var(--l)}.bar,main{width:min(1100px,calc(100% - 32px));margin:auto}.bar{height:62px;display:flex;align-items:center;justify-content:space-between;gap:20px}.bar b,h1,h2,h3,.q,.bridge,.eq,.step b{font-family:Georgia,"Times New Roman","Songti SC",serif}.bar a,a{color:#504c46}.bar small,.rule,.cap{color:var(--m)}main{padding:52px 0 90px}h1{font-size:clamp(40px,6.8vw,66px);line-height:1.04;margin:12px 0 18px;letter-spacing:-.04em}h2{font-size:29px;line-height:1.25;margin:64px 0 15px}h3{font-size:18px;margin:0 0 6px}.deck{font:19px/1.62 Georgia,"Songti SC",serif;color:#4f4b45;max-width:930px}.q{background:#20211f;color:#f6f1e7;border-radius:14px;padding:20px 22px;font-size:18px;margin:30px 0}.rule,.cap{font-size:12px}.fig,.codebox{background:#fff;border:1px solid var(--l);border-radius:14px;overflow:hidden;margin:26px 0}.head,.cap{padding:10px 14px;background:#f0ece3}.fig img{display:block;width:100%;height:auto;background:#fff}.cap{display:block;border-top:1px solid var(--l)}.two,.three{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.three{grid-template-columns:repeat(3,1fr)}.card,.step{background:var(--p);border:1px solid var(--l);border-radius:11px;padding:15px}.card p,.step p{font-size:13px;margin:5px 0}.bridge{font-size:18px;padding:18px 20px;margin:32px 0;border-left:4px solid var(--a);background:var(--soft)}.eq{font-size:18px;text-align:center;padding:14px 12px;margin:16px 0;background:#faf7f0;border:1px solid var(--l);border-radius:10px;overflow-x:auto}.eq small{display:block;font:12px/1.5 system-ui;color:var(--m);margin-top:7px}.warn{background:#fff7e8;border:1px solid #e4d3ad;border-radius:11px;padding:14px 16px;margin:18px 0}.pass{background:#eef6ef;border:1px solid #bfd2c4;border-radius:11px;padding:14px 16px;margin:18px 0}.matrix{width:100%;border-collapse:collapse;margin:22px 0;background:#fff;border:1px solid var(--l)}.matrix th,.matrix td{padding:11px 12px;border-bottom:1px solid var(--l);vertical-align:top;text-align:left}.matrix th{background:#f0ece3;font:13px Georgia,serif}.matrix td{font-size:13px}.matrix tr:last-child td{border-bottom:0}pre{margin:0;padding:20px;overflow:auto;background:#1e201f;color:#f2eee6;font:12.5px/1.58 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.verdict{font:16px/1.65 Georgia,"Songti SC",serif;background:#f7f1e7;border-left:4px solid #b27a2f;padding:16px 18px;margin:18px 0}.next{margin-top:44px;padding-top:20px;border-top:1px solid var(--l);display:flex;justify-content:space-between;gap:16px}@media(max-width:760px){.two,.three{grid-template-columns:1fr}.bar span{display:none}.matrix{display:block;overflow-x:auto}.next{flex-direction:column}h2{margin-top:54px}}
+</style></head><body><header class="top"><div class="bar"><b>Reproduction Lab <small>· Lesson 03 · First Paper-Curve Thumbnail</small></b><span><a href="reproduction-lab-02.html">L02</a> · <a href="../index.html">首页</a> · <a href="#compare">Paper vs Ours</a> · <a href="#code">Code</a></span></div></header><main>
+<div class="rule"><a href="../index.html">Learning Sliding Ferroelectricity</a> / Reproduction Lab / Lesson 03</div>
+<h1>第一次真正复现论文曲线：thermal roughness 为什么从 0 长出来？</h1>
+<p class="deck">前两课都还是 gold test：先验证 wall profile，再验证 wall extractor。现在第一次进入 Caballero 2020 的定量主结果。论文 Fig.2 从完全平的 interface 出发，让 thermal noise 逐步建立几何相关，并把数值 B(r,t) 与解析 Eq. (19) 直接比较。我们先只复现其中最干净的 1D Edwards–Wilkinson 层，因为这里既有论文 Figure，也有 exact analytic benchmark。</p>
+<div class="q"><b>本课验收标准升级：</b>不是“曲线趋势一样”，而是 paper protocol → analytic Eq.19 → our simulation 三层对照。我们预先冻结比较窗口 4≤r≤64，再看 relative error；不能看完结果后再挑一段最像的。</div>
+
+<h2 id="compare">0 · 原论文 Fig.2 vs 我们的 thumbnail</h2>
+<div class="two">
+<figure class="fig"><a href="../assets/reproduction-lab/caballero2020-fig2-time-roughness.webp" target="_blank" rel="noopener"><img src="../assets/reproduction-lab/caballero2020-fig2-time-roughness.webp" alt="Caballero 2020 Figure 2 time dependence of interface roughness"></a><figcaption class="cap"><b>Caballero et al. 2020 · Fig.2。</b><br>上排是 1D Edwards–Wilkinson，下排是 2D Ginzburg–Landau。作者从 flat interface 出发，在 t=10<sup>j</sup>, j=1…6 观察 B(r,t)，彩色虚线是 Eq. (19)，黑色点线是 long-time thermal roughness Tr/c。</figcaption></figure>
+<figure class="fig"><a href="../assets/reproduction-lab/lesson03_ew_roughness_thumbnail.svg" target="_blank" rel="noopener"><img src="../assets/reproduction-lab/lesson03_ew_roughness_thumbnail.svg" alt="Our small EW simulation compared to Caballero Eq. 19"></a><figcaption class="cap"><b>Our thumbnail reproduction。</b><br>只取 t=10,100,1000，实线/点是数值模拟，虚线是论文 Eq. (19)。右上直接画 relative error；右下展示同一 thermal realization 随时间逐渐 roughen。</figcaption></figure>
+</div>
+<div class="verdict"><b>现在可以叫“论文曲线的 thumbnail reproduction”。</b> 因为我们已经在复现 Fig.2 中明确的 observable、time dependence 和 analytic benchmark。但还不能叫 full reproduction：系统长度、dt、时间范围和 realization 数都没有逐项照搬论文。</div>
+
+<h2>1 · 先把 paper protocol 写下来，防止偷偷改题</h2>
+<table class="matrix"><thead><tr><th>项目</th><th>Caballero 2020</th><th>本课</th><th>为什么不同</th></tr></thead><tbody>
+<tr><td>模型</td><td>1D Edwards–Wilkinson Eq. (15)</td><td>相同</td><td>这一层先不碰 2D GL</td></tr>
+<tr><td>映射参数</td><td>α=δ=γ=η=1 → η̃=c=2√2/3</td><td>相同</td><td>直接用论文 Eq. (16)</td></tr>
+<tr><td>温度</td><td>T=0.05</td><td>T=0.05</td><td>相同</td></tr>
+<tr><td>line length</td><td>L=4096，dy=1</td><td>N=256，dy=1</td><td>先做 CPU-fast thumbnail</td></tr>
+<tr><td>time step</td><td>Δt=10<sup>−2</sup></td><td>Δt=0.1</td><td>更粗，但必须被 Eq.19 error gate 约束</td></tr>
+<tr><td>times</td><td>10,10²,…,10⁶</td><td>10,100,1000</td><td>避免为了“完整”先跑长时大系统</td></tr>
+<tr><td>realizations</td><td>10</td><td>64</td><td>1D 很便宜，多取样降低 Monte Carlo noise；因此不是 protocol-identical</td></tr>
+</tbody></table>
+<div class="warn"><b>“我们 realizations 更多”不代表比论文更高级。</b> system size 与 time horizon 更小，所以这仍然是 thumbnail。复现课最重要的是把哪些地方相同、哪些地方缩小写在同一张表里。</div>
+
+<h2>2 · Eq. (15)：这次第一次真的加 thermal noise</h2>
+<div class="eq">η̃ ∂<sub>t</sub>u = c ∂²<sub>y</sub>u + ξ̃(y,t)</div>
+<div class="eq">⟨ξ̃(y,t) ξ̃(y′,t′)⟩ = 2 η̃ T δ(y−y′) δ(t−t′)</div>
+<p>论文通过 bulk-to-line projection 得到这条 EW equation。α=δ=γ=η=1 时，Eq. (16) 给出 η̃=c=2√2/3，因此 diffusion ratio c/η̃=1。离散到 dy、dt 后，每一步直接加到 u 的 thermal increment 是：</p>
+<div class="eq">Δu<sub>th</sub> = √[2TΔt/(η̃ dy)] · N(0,1)</div>
+<div class="bridge"><b>这和你的 2D quenched disorder 缩放不是一回事。</b> thermal white noise 同时是 spatial + temporal delta correlation，所以离散振幅同时依赖 cell size 和 dt；quenched RF 只在空间上随机、时间上冻结。</div>
+
+<h2>3 · Eq. (19)：为什么这篇特别适合拿来学代码？</h2>
+<p>因为它不仅给模型，还给了 flat initial condition 下 B(r,t) 的解析答案。令：</p>
+<div class="eq">z = √[η̃/(8ct)]</div>
+<div class="eq">B(r,t)=Tr/c · [1 − erf(zr) − {exp[−(zr)²]−1}/(√π zr)]</div>
+<p>而长时间极限进一步变成：</p>
+<div class="eq">B<sub>th</sub>(r)=Tr/c</div>
+<p>所以这一课至少有两道独立标尺：完整 Eq.19 检查 finite-time crossover，Tr/c 检查 late-time short-scale thermal regime。</p>
+
+<h2>4 · 从连续 Langevin 到 6 行 Euler</h2>
+<div class="codebox"><div class="head"><b>真正的 EW 更新</b></div><pre>lap = (np.roll(u,-1,axis=1)
+       - 2*u
+       + np.roll(u,1,axis=1)) / dy**2
+
+u += dt * (c/eta_tilde) * lap
+u += np.sqrt(2*T*dt/(eta_tilde*dy)) * rng.standard_normal(u.shape)</pre></div>
+<p>这里每一行都有可核验含义：periodic Laplacian 对应 line elasticity；第二行是 deterministic relaxation；第三行来自论文 Eq. (14–15) 的 FDT noise。没有额外“调出来的”噪声幅度。</p>
+
+<h2>5 · B(r,t) 不是拿一条 interface 就结束</h2>
+<div class="eq">B(r,t)=⟨[u(y+r,t)−u(y,t)]²⟩</div>
+<p>本课括号里同时平均 y 和 independent thermal realizations。论文 Fig.2 左列展示 10 条 realization 的离散程度，中列再画平均值。我们为了快速降低 Monte Carlo noise 用 64 realizations，但最终 statistical unit 仍然是 realization，不是 r-bins。</p>
+<div class="warn"><b>r=1…64 的 64 个点不是 n=64 个独立实验。</b> 它们来自同一批 interfaces，只是同一个 correlation function 的不同 separation。</div>
+
+<h2>6 · Hard gate：先冻结窗口，再算误差</h2>
+<p>最靠近 lattice scale 的 r 会受离散 Laplacian 影响；接近 L/2 又会开始感受到 finite-size / periodicity。因此在看结果前，我们声明：</p>
+<div class="eq">comparison window: 4 ≤ r ≤ 64</div>
+<table class="matrix"><thead><tr><th>time</th><th>median relative error</th><th>RMS relative error</th><th>max relative error</th><th>gate</th></tr></thead><tbody>
+<tr><td>t=10</td><td>0.91%</td><td>1.36%</td><td>3.04%</td><td><b>PASS</b></td></tr>
+<tr><td>t=100</td><td>1.39%</td><td>1.86%</td><td>3.40%</td><td><b>PASS</b></td></tr>
+<tr><td>t=1000</td><td>1.02%</td><td>1.33%</td><td>2.46%</td><td><b>PASS</b></td></tr>
+</tbody></table>
+<p>另外，t=1000 时 r=2…10 的平均 B/(Tr/c)=<b>0.9592</b>，也已经接近 long-time thermal slope。</p>
+<div class="pass"><b>这就是“论文图 + 解析式 + 我们曲线”三重闭环。</b> 即使我们的图看起来很像论文，如果 Eq.19 relative error 超过预先设定阈值，也不能算通过；反过来，即使颜色和排版完全不像，数值量对上才是真正重要的复现。</div>
+
+<h2 id="code">7 · 完整脚本</h2>
+<p><a href="../examples/reproduction-lab/lesson03_ew_roughness.py"><b>打开 Lesson 03 Python 脚本 →</b></a>　依赖仍然只有 NumPy + Matplotlib；普通 CPU 约十秒级。</p>
+<div class="codebox"><div class="head"><b>预期输出</b></div><pre>eta_tilde = c     = 0.942809042
+T                 = 0.050
+N, realizations   = 256, 64
+dy, dt            = 1.000, 0.100
+t=  10.0: median rel err=0.91%  rms=1.36%  max=3.04%
+t= 100.0: median rel err=1.39%  rms=1.86%  max=3.40%
+t=1000.0: median rel err=1.02%  rms=1.33%  max=2.46%
+late B/(Tr/c), r=2..10 = 0.9592
+ALL THUMBNAIL GATES PASS</pre></div>
+
+<h2>8 · 为什么还没跑 2D GL？</h2>
+<div class="three"><div class="card"><h3>先验 estimator</h3><p>EW + Eq.19 先证明 B(r,t) implementation 和 thermal FDT 没问题。</p></div><div class="card"><h3>再测 reduction</h3><p>下一课把同一 T、同一 mapped parameters 放回 2D GL，才是在检验 bulk→line mapping。</p></div><div class="card"><h3>算力可分层</h3><p>如果 GL 小系统偏离，我们能区分是 solver/noise 错，还是 finite wall width / bulk fluctuation 引起。</p></div></div>
+<div class="verdict"><b>Lesson 04 才是 Caballero 这篇的核心跨模型复现：</b>同一张图里放 1D EW theory、1D EW simulation、2D GL extracted wall 三者，逐尺寸看 GL 是否向 line prediction 靠近。那一步通过以后，才把同一套 extractor/B(r)/S(q) 迁到 sliding-FE periodic model。</div>
+
+<div class="next"><a href="reproduction-lab-02.html">← Lesson 02 · bulk → u(y)</a><a href="numerical-modeling.html">回 Module 07 →</a></div>
+</main></body></html>
