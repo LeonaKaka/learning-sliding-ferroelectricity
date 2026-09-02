@@ -1,0 +1,39 @@
+Lesson 09 beta-window validation
+scope                        = Paper2-oriented; small-QEW checkpoint
+independent disorder n       = 8
+statistical unit             = disorder realization (not df points)
+seeds                        = 20260902..20260909
+line L, M, du, rf            = 32, 256, 0.250, 1.000
+threshold dt                 = 0.0500
+velocity dt                  = 0.0250
+steady protocol              = discard 1 u-period; measure next 3 periods
+delta-f ladder                = 0.015, 0.025, 0.040, 0.065, 0.105, 0.170
+particle beta windows         = 0.503850, 0.502473, 0.501617
+particle max |beta-0.5|       = 0.003850
+max threshold bracket width  = 0.000146484
+seed=20260902 fc bracket          = [0.777636719, 0.777783203]
+seed=20260903 fc bracket          = [0.811035156, 0.811181641]
+seed=20260904 fc bracket          = [0.755371094, 0.755517578]
+seed=20260905 fc bracket          = [0.800488281, 0.800634766]
+seed=20260906 fc bracket          = [0.730908203, 0.731054687]
+seed=20260907 fc bracket          = [0.777343750, 0.777490234]
+seed=20260908 fc bracket          = [0.709521484, 0.709667969]
+seed=20260909 fc bracket          = [0.799902344, 0.800048828]
+df=0.015 disorder-mean v     = 0.250404439
+df=0.025 disorder-mean v     = 0.268473880
+df=0.040 disorder-mean v     = 0.294751204
+df=0.065 disorder-mean v     = 0.333295069
+df=0.105 disorder-mean v     = 0.392643257
+df=0.170 disorder-mean v     = 0.482420250
+max df=0.170 beta             = 0.267993
+max df=0.105 beta             = 0.229890
+max df=0.065 beta             = 0.195041
+max df=0.040 beta             = 0.165810
+window beta drift            = 0.102183
+window drift gate            = < 0.030
+all-six beta                 = 0.267993
+sample bootstrap 95% CI      = [0.247165, 0.289579]
+bootstrap median             = 0.268270
+threshold-edge beta span     = 0.001004
+UNIVERSAL BETA CLAIM          = NOT AUTHORIZED
+WINDOW-STABILITY GATE         = NOT PASSED
