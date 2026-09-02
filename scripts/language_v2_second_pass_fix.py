@@ -1,87 +1,186 @@
 from __future__ import annotations
 
-from bs4 import BeautifulSoup, NavigableString
+from pathlib import Path
+from urllib.parse import urlsplit
+
+from bs4 import BeautifulSoup
 from language_v2_second_pass import ROOT
 
 TARGET = ROOT / "modules/reproduction-lab-06.html"
+PYTHON = ROOT / "examples/reproduction-lab/lesson06_disordered_geometry.py"
+SVG = ROOT / "assets/reproduction-lab/lesson06_disordered_geometry_checkpoint.svg"
+RECEIPT = ROOT / "assets/reproduction-lab/lesson06_disordered_geometry_checkpoint.txt"
+PAPER_FIG = ROOT / "assets/reproduction-lab/caballero2020-fig5-disordered-geometry.webp"
+
 LOCKED_RESULTS = (
     "1.227%", "6.122%", "0.538906", "0.509213", "0.694308",
     "0.664796", "0.982981", "1.371256", "0.077925",
 )
-
-REPLACEMENTS = (
-    ("第二篇工作 的一张图", "第二篇工作的一张图"),
-    ("还必须要求 由 B 与 S", "还必须要求由 B 与 S"),
-    ("这需要 估计量一致性 与尺寸/时间收敛", "这需要估计量一致性与尺寸/时间收敛"),
-    ("傅里叶尺度区间 看起来", "傅里叶尺度区间看起来"),
-    ("二维体场 继续使用 第 05 课 的随机键耦合", "二维体场继续使用第 05 课的随机键耦合"),
-    ("使用 第 05 课 已经验证的", "使用第 05 课已经验证的"),
-    ("第 03 课 已锁死", "第 03 课已锁死"),
-    ("第 04 课 已锁死", "第 04 课已锁死"),
-    ("第 05 课 已锁死", "第 05 课已锁死"),
-    ("第 06 课 如果出问题", "第 06 课如果出问题"),
-    ("这个阶段验证 上", "这个阶段验证上"),
-    ("对实空间畴壁几何 的描述", "对实空间畴壁几何的描述"),
-    ("小尺度/大尺度过渡 的权重", "小尺度/大尺度过渡的权重"),
-    ("分箱中心 比较", "分箱中心比较"),
-    ("密集模式 机械支配", "密集模式机械支配"),
-    ("所以 跨模型映射 在", "所以跨模型映射在"),
-    ("不是 傅里叶模式", "不是傅里叶模式"),
-    ("但 由 B 与 S", "但由 B 与 S"),
-    ("几何分析流程 不是", "几何分析流程不是"),
-    ("第 01–06 课 已经", "第 01–06 课已经"),
-    ("渐近 ζ 判据 仍然", "渐近 ζ 判据仍然"),
-    ("不把 第 06 课 写成", "不把第 06 课写成"),
-    ("时间/尺寸阶梯 仍然", "时间/尺寸阶梯仍然"),
-    ("运动态 的临界点", "运动态的临界点"),
+MACHINE_MARKER = "CROSS-MODEL GEOMETRY PASS; ASYMPTOTIC ZETA GATE NOT PASSED"
+EXPECTED_FIGURES = (
+    "../assets/reproduction-lab/caballero2020-fig5-disordered-geometry.webp",
+    "../assets/reproduction-lab/lesson06_disordered_geometry_checkpoint.svg",
+)
+EXPECTED_ALTS = (
+    "Caballero 2020 图 5：含无序 GL 与 EW 的粗糙度和结构因子",
+    "本课含无序 GL 与 EW 几何阶段验证",
+)
+FORBIDDEN_VISIBLE = (
+    "checkpoint", "realizations", "estimator", "fit window", "benchmark",
+    "Paper1", "Paper2", "Lesson0", "pinned", " moving", "modes", " weight",
+    "consistency",
+)
+REQUIRED_VISIBLE = (
+    "random-bond（随机键）",
+    "Ginzburg–Landau（GL）",
+    "Edwards–Wilkinson（EW）",
+    "roughness（粗糙度）",
+    "structure factor（结构因子）",
+    "Laplacian（拉普拉斯算子）",
+    "depinning（退钉扎）",
+    "跨模型映射通过",
+    "渐近 ζ 判据：未通过。",
+)
+PYTHON_LOCKS = (
+    "T = 0.05",
+    "epsilon = 0.1",
+    "Lx, Ly = 64.0, 128.0",
+    "n_realizations = 8",
+    "t_final = 1000.0",
+    "n_steps = int(round(t_final / dt))",
+    "du = 0.1",
+    "M = 1024",
+    "zeta = base / math.sqrt(du)",
+    "b_window = (r >= 4.0) & (r <= 32.0)",
+    "b_fit = (r >= 4.0) & (r <= 20.0)",
+    "q_fit = (q >= 0.1) & (q <= 0.5)",
+    "assert B_median_rel < 0.05, B_median_rel",
+    "assert S_binned_median_rel < 0.10, S_binned_median_rel",
+    "assert abs(zeta_B_gl - zeta_B_ew) < 0.06",
+    "assert abs(zeta_S_gl - zeta_S_ew) < 0.06",
+    "assert 0.95 < A_mean < 1.02",
+    "assert 1.20 < W_mean < 1.50",
+    "assert abs(zeta_B_gl - zeta_S_gl) > 0.10",
+    "assert abs(zeta_B_ew - zeta_S_ew) > 0.10",
+    MACHINE_MARKER,
+    'label="二维 GL 提取畴壁"',
+    'label="一维 EW"',
+    'label="GL 对数分箱"',
+    'label="EW 对数分箱"',
+    'ax.set_title("t=1000 的实空间粗糙度")',
+    'ax.set_title("傅里叶空间结构因子")',
+    'ax.set_title("代表性界面")',
+    'ax.set_ylabel("有效 ζ")',
+    'ax.set_title("几何映射先通过，渐近指数尚未闭合")',
+    'fig.suptitle("复现实验室 · 第 06 课 · 含无序 GL 与 EW 几何对照", fontsize=14)',
+)
+SVG_REQUIRED = (
+    "t=1000 的实空间粗糙度",
+    "傅里叶空间结构因子",
+    "代表性界面",
+    "几何映射先通过，渐近指数尚未闭合",
+    "复现实验室 · 第 06 课 · 含无序 GL 与 EW 几何对照",
+)
+SVG_FORBIDDEN = (
+    "Real-space roughness at t=1000",
+    "Fourier-space structure factor",
+    "Representative interfaces",
+    "Mapping passes before asymptotic exponent closes",
+    "Reproduction Lab · Lesson 06 · disordered GL vs EW geometry",
 )
 
 
-def blocked(node: NavigableString) -> bool:
-    p = node.parent
-    if p is None or p.name in {"script", "style", "pre", "code", "math"}:
-        return True
-    return bool(p.find_parent(class_="eq") or "eq" in p.get("class", []))
+def visible_text(soup: BeautifulSoup) -> str:
+    clone = BeautifulSoup(str(soup), "html.parser")
+    for node in clone.select("style, script, pre, code, .eq"):
+        node.decompose()
+    return clone.get_text(" ", strip=True)
+
+
+def verify_local_links(soup: BeautifulSoup) -> None:
+    for tag in soup.find_all(["a", "img"]):
+        value = tag.get("href") if tag.name == "a" else tag.get("src")
+        if not value:
+            continue
+        parts = urlsplit(value)
+        if parts.scheme or parts.netloc or not parts.path:
+            continue
+        resolved = (TARGET.parent / parts.path).resolve()
+        try:
+            resolved.relative_to(ROOT.resolve())
+        except ValueError as exc:
+            raise RuntimeError(f"Lab 06 local link escapes repository: {value}") from exc
+        if not resolved.exists():
+            raise RuntimeError(f"Lab 06 broken local link: {value}")
 
 
 def main() -> None:
+    for path in (TARGET, PYTHON, SVG, RECEIPT, PAPER_FIG):
+        if not path.exists():
+            raise RuntimeError(f"Lab 06 required artifact missing: {path.relative_to(ROOT)}")
+
     raw = TARGET.read_text(encoding="utf-8")
     soup = BeautifulSoup(raw, "html.parser")
-    before_eq = [x.get_text(" ", strip=False) for x in soup.select(".eq")]
-    before_pre = [x.get_text() for x in soup.select("pre")]
-    before_hrefs = [x.get("href") for x in soup.find_all("a")]
-    before_srcs = [x.get("src") for x in soup.find_all("img")]
-    before_results = {x: raw.count(x) for x in LOCKED_RESULTS}
+    title = soup.title.get_text(strip=True) if soup.title else ""
+    if title != "Reproduction Lab（复现实验室）06 · 含无序 GL ↔ EW 几何":
+        raise RuntimeError(f"Lab 06 title drifted: {title!r}")
 
-    for node in list(soup.find_all(string=True)):
-        if not isinstance(node, NavigableString) or blocked(node):
-            continue
-        old = str(node)
-        new = old
-        for src, dst in REPLACEMENTS:
-            new = new.replace(src, dst)
-        if new != old:
-            node.replace_with(new)
+    visible = visible_text(soup)
+    for token in REQUIRED_VISIBLE:
+        if token not in visible:
+            raise RuntimeError(f"Lab 06 required Language V2 text missing: {token}")
+    for token in FORBIDDEN_VISIBLE:
+        if token in visible:
+            raise RuntimeError(f"Lab 06 ordinary workflow English remains visible: {token}")
+    for token in LOCKED_RESULTS:
+        if token not in raw:
+            raise RuntimeError(f"Lab 06 locked result missing: {token}")
 
-    after = str(soup)
-    if before_eq != [x.get_text(" ", strip=False) for x in soup.select(".eq")]:
-        raise RuntimeError("Lab 06 equations changed")
-    if before_pre != [x.get_text() for x in soup.select("pre")]:
-        raise RuntimeError("Lab 06 machine/code blocks changed")
-    if before_hrefs != [x.get("href") for x in soup.find_all("a")]:
-        raise RuntimeError("Lab 06 href wiring changed")
-    if before_srcs != [x.get("src") for x in soup.find_all("img")]:
-        raise RuntimeError("Lab 06 Figure wiring changed")
-    for token, count in before_results.items():
-        if after.count(token) != count:
-            raise RuntimeError(f"Lab 06 locked result changed: {token}")
-    if "渐近 ζ 判据：未通过。" not in after:
-        raise RuntimeError("Lab 06 asymptotic-zeta failure boundary missing")
-    if "CROSS-MODEL GEOMETRY PASS; ASYMPTOTIC ZETA GATE NOT PASSED" not in "\n".join(before_pre):
-        raise RuntimeError("Lab 06 machine verdict marker changed")
+    equations = soup.select(".eq")
+    if len(equations) != 4:
+        raise RuntimeError(f"Lab 06 expected 4 equation blocks, found {len(equations)}")
 
-    TARGET.write_text(after, encoding="utf-8")
-    print("Lab 06 Chinese prose spacing pass complete; science/results unchanged.")
+    figures = soup.select("figure.fig img")
+    if tuple(x.get("src") for x in figures) != EXPECTED_FIGURES:
+        raise RuntimeError("Lab 06 Figure wiring drifted")
+    if tuple(x.get("alt") for x in figures) != EXPECTED_ALTS:
+        raise RuntimeError("Lab 06 Figure alt text drifted")
+
+    pre_text = "\n".join(x.get_text() for x in soup.select("pre"))
+    if MACHINE_MARKER not in pre_text:
+        raise RuntimeError("Lab 06 visible machine verdict marker changed")
+    verify_local_links(soup)
+
+    py = PYTHON.read_text(encoding="utf-8")
+    for token in PYTHON_LOCKS:
+        if token not in py:
+            raise RuntimeError(f"Lab 06 Python contract drifted: {token}")
+
+    receipt = RECEIPT.read_text(encoding="utf-8")
+    receipt_locks = (
+        "B median rel, r=4..32  = 1.227%",
+        "S log-bin median rel   = 6.122%",
+        "zeta_B GL / EW         = 0.538906 / 0.509213",
+        "zeta_S GL / EW         = 0.694308 / 0.664796",
+        "GL fitted A, w         = 0.982981, 1.371256",
+        "GL profile-fit RMSE    = 0.077925",
+        MACHINE_MARKER,
+    )
+    for token in receipt_locks:
+        if token not in receipt:
+            raise RuntimeError(f"Lab 06 receipt drifted: {token}")
+
+    svg = SVG.read_text(encoding="utf-8")
+    for token in SVG_REQUIRED:
+        if token not in svg:
+            raise RuntimeError(f"Lab 06 localized SVG label missing: {token}")
+    for token in SVG_FORBIDDEN:
+        if token in svg:
+            raise RuntimeError(f"Lab 06 old English SVG label remains: {token}")
+    if "NotoSansCJK" not in svg:
+        raise RuntimeError("Lab 06 SVG does not contain embedded CJK glyph definitions")
+
+    print("Lab 06 read-only Language V2 seal PASS; science/results/Figures/links preserved.")
 
 
 if __name__ == "__main__":
