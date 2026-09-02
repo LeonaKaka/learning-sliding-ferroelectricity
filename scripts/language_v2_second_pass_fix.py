@@ -5,150 +5,179 @@ from urllib.parse import urlsplit
 import csv
 import json
 import math
-import re
+import statistics
 import struct
 
 from bs4 import BeautifulSoup
 from language_v2_second_pass import ROOT
 
-TARGET = ROOT / "modules/reproduction-lab-10.html"
-PYTHON = ROOT / "examples/reproduction-lab/lesson10_superrough_zeta.py"
-RECEIPT = ROOT / "assets/reproduction-lab/lesson10_superrough_zeta.txt"
-SAMPLE_CSV = ROOT / "assets/reproduction-lab/lesson10_superrough_zeta.csv"
-CURVES_CSV = ROOT / "assets/reproduction-lab/lesson10_geometry_curves.csv"
+TARGET = ROOT / "modules/reproduction-lab-11.html"
+PYTHON = ROOT / "examples/reproduction-lab/lesson11_fss_nu.py"
+RECEIPT = ROOT / "assets/reproduction-lab/lesson11_fss_nu.txt"
+RAW_CSV = ROOT / "assets/reproduction-lab/lesson11_fc_raw.csv"
 SOURCE_RECEIPT = ROOT / "assets/reproduction-lab/source-figure-receipt.json"
-PAPER_FIG = ROOT / "assets/reproduction-lab/source-ferrero2013-pre-fig1-full.png"
+PAPER_FIG = ROOT / "assets/reproduction-lab/source-ferrero2013-pre-fig2-full.png"
 PLOT_FILES = (
-    ROOT / "assets/reproduction-lab/lesson10_profiles.png",
-    ROOT / "assets/reproduction-lab/lesson10_Sq.png",
-    ROOT / "assets/reproduction-lab/lesson10_Br.png",
-    ROOT / "assets/reproduction-lab/lesson10_zeta_vs_size.png",
+    ROOT / "assets/reproduction-lab/lesson11_mean_fc.png",
+    ROOT / "assets/reproduction-lab/lesson11_std_fc.png",
+    ROOT / "assets/reproduction-lab/lesson11_nu_vs_window.png",
+    ROOT / "assets/reproduction-lab/lesson11_collapse_score.png",
 )
 EXPECTED_SRCS = (
-    "../assets/reproduction-lab/lesson10_profiles.png",
-    "../assets/reproduction-lab/source-ferrero2013-pre-fig1-full.png",
-    "../assets/reproduction-lab/lesson10_Sq.png",
-    "../assets/reproduction-lab/lesson10_Br.png",
-    "../assets/reproduction-lab/lesson10_zeta_vs_size.png",
+    "../assets/reproduction-lab/source-ferrero2013-pre-fig2-full.png",
+    "../assets/reproduction-lab/lesson11_mean_fc.png",
+    "../assets/reproduction-lab/lesson11_std_fc.png",
+    "../assets/reproduction-lab/lesson11_nu_vs_window.png",
+    "../assets/reproduction-lab/lesson11_collapse_score.png",
 )
 EXPECTED_ALTS = (
-    "L=128 与 L=256 的最后钉扎 QEW 界面形貌",
-    "Ferrero PRE 2013 图 1 完整原图区域",
-    "L=128 与 L=256 的模拟结构因子 S(q)",
-    "L=128 与 L=256 的局域粗糙度 B(r)",
-    "有效粗糙度指数随系统尺寸变化及样本自助法区间",
+    "Ferrero PRE 2013 图 2 完整原图区域",
+    "单样本临界力的平均值随系统尺寸变化",
+    "阈值标准差随系统尺寸变化及有限尺寸拟合",
+    "不同有限尺寸区间给出的有效 ν",
+    "不同假设 ν 下的分位数坍缩评分",
 )
 REQUIRED_VISIBLE = (
-    "structure factor（结构因子）",
-    "super-rough（超粗糙）",
+    "finite-size scaling（有限尺寸标度）",
+    "finite-size correction（有限尺寸修正）",
     "quenched disorder（淬火无序）",
-    "Fourier space（傅里叶空间）",
-    "已知答案测试通过",
-    "小尺寸 QEW 超粗糙特征：通过",
-    "热力学 ζ 闭合：未通过",
-    "1.315621",
-    "1.201060",
-    "[1.060960, 1.480197]",
-    "[1.016524, 1.431058]",
-    "0.114561",
-    "0.10 判据",
-    "不能挑出 1.316 或 1.201 中的任何一个",
+    "ν=1.318867",
+    "1.557481",
+    "1.503976",
+    "1.709690",
+    "0.205713",
+    "0.15 判据",
+    "尺寸区间稳定性：未通过",
+    "有限尺寸趋势：存在",
+    "普适 ν 结论：不授权",
+    "[1.241478, 1.903499]",
+    "ν=1.405",
+    "评分=0.117003",
+    "评分=0.120858",
+    "评分=0.123243",
 )
 FORBIDDEN_VISIBLE = (
-    "Lesson 10",
+    "Lesson 11",
     "Paper2 Method Track",
     "真实 simulation plot",
-    "last-pinned wall profile",
-    "fit window",
-    "size dependence",
-    "simulation 里真正的 wall",
-    "independent quenched-disorder samples",
-    "last-pinned configuration",
-    "center of mass",
-    "Our simulation output",
-    "threshold search",
-    "global roughness",
+    "finite-size threshold",
+    "sample-to-sample",
+    "mean finite-size threshold",
+    "aspect protocol",
+    "ν-sensitive observable",
+    "size-window gate",
+    "finite-size critical force",
+    "aspect-ratio",
     "original caption",
-    "discretization effects",
-    "observable-level",
-    "exact critical configuration",
-    "direct-relaxation last-pinned sample",
-    "scaling form",
-    "effective slope",
-    "real-space height-difference correlation",
-    "another estimator",
-    "synthetic Fourier interface",
-    "same pipeline",
+    "thermodynamic critical force",
+    "Our simulation output",
+    "quenched-disorder realizations",
+    "sample threshold",
+    "observable-level bridge",
+    "M grid",
+    "independent realizations",
+    "disorder normalization",
+    "force units",
+    "critical-state algorithm",
+    "finite geometry",
+    "distribution width",
+    "sample-specific thresholds",
+    "sample-to-sample fluctuation",
+    "48-realization distribution width",
+    "log–log effective fit",
+    "same regression",
+    "synthetic data",
     "gold test PASS",
-    "central estimate",
-    "SMALL-QEW SUPER-ROUGH SIGNATURE = PASS",
-    "THERMODYNAMIC ZETA CLOSURE = NOT PASSED",
-    "pre-registered 0.10 gate",
+    "all-four",
+    "raw threshold table",
+    "size-window audit",
+    "pre-registered",
+    "SIZE-WINDOW STABILITY GATE",
+    "thermodynamic ν",
+    "distribution collapse",
+    "quantile-collapse score",
+    "variance fit",
+    "best scan",
+    "optimum",
+    "FINITE-SIZE TREND EXISTS",
+    "UNIVERSAL NU CLAIM",
+    "bootstrap 95%",
     "run receipt",
-    "realization table",
-    "plotted curves CSV",
+    "192-row threshold table",
     "论文截图 receipt",
-    "structure factor（结构因子）（结构因子）",
+    "finite-size scaling（有限尺寸标度）（有限尺寸标度）",
     "quenched disorder（淬火无序）（淬火无序）",
 )
 PYTHON_LOCKS = (
-    "DU=0.25; DT=0.05; RF=1.0; THRESH_ITERS=10; TOL=2e-7; MAX_STEPS=400_000",
-    "REALIZATIONS=6; BOOTSTRAPS=1000; SYNTH_ZETA=1.25",
-    "assert abs(synth_zS-SYNTH_ZETA)<.05 and .85<synth_zB<1.05 and synth_zS-synth_zB>.15",
-    "cert_spread=max(r[-1] for r in cert); assert cert_spread<5e-4",
-    "r128=qew_ensemble(128,2048,20269128); r256=qew_ensemble(256,4096,20269256)",
-    "assert r['span_max']<.35 and .85<r['zB']<1.05 and r['zS']>1.00 and r['zS']-r['zB']>.08",
-    "global_drift=abs(r128['zS']-r256['zS']); local_drift=abs(r128['zB']-r256['zB']); THERMO_GATE=.10; thermo_pass=global_drift<THERMO_GATE",
-    "'SMALL-QEW SUPER-ROUGH SIGNATURE = PASS'",
-    "f\"THERMODYNAMIC ZETA CLOSURE   = {'PASS' if thermo_pass else 'NOT PASSED'}\"",
-    "'FINITE-SIZE SCALING REQUIRED BEFORE UNIVERSAL ZETA CLAIM'",
-    "(out/'lesson10_superrough_zeta.txt').write_text",
-    "out/'lesson10_superrough_zeta.csv'",
-    "finish(fig,'lesson10_profiles.png')",
-    "finish(fig,'lesson10_Br.png')",
-    "finish(fig,'lesson10_Sq.png')",
-    "finish(fig,'lesson10_zeta_vs_size.png')",
+    "TARGET_NU=4/3",
+    "WINDOW_DRIFT_GATE=0.15",
+    "BOOTSTRAPS=3000",
+    "EXPECTED={32:320,64:736,128:1728,256:4096}",
+    "N_PER_SIZE=48",
+    "assert len(rr)==N_PER_SIZE",
+    "assert all(r['M']==M for r in rr)",
+    "assert len({r['seed'] for r in rr})==N_PER_SIZE",
+    "assert all(abs((r['fc_hi']-r['fc_lo'])-1/512)<1e-12 for r in rr)",
+    "def fit_nu(Ls,stds):",
+    "def collapse_score(rows,Ls,nu,probs=np.linspace(.1,.9,9)):",
+    "def synthetic_gold(Ls,nu=TARGET_NU,seed=20261110):",
+    "assert abs(syn_nu-TARGET_NU)<.05",
+    "rng=np.random.default_rng(20261111); boot=[]",
+    "grid=np.linspace(.8,2.2,281)",
+    "window_pass=window_drift<WINDOW_DRIFT_GATE",
+    "f'SIZE-WINDOW STABILITY GATE     = {\"PASS\" if window_pass else \"NOT PASSED\"}'",
+    "'UNIVERSAL NU CLAIM              = NOT AUTHORIZED'",
+    "'FINITE-SIZE TREND EXISTS; THERMODYNAMIC CLOSURE REQUIRES LARGER-SCALE EVIDENCE'",
+    "(out/'lesson11_fss_nu.txt').write_text",
+    "finish(fig,'lesson11_mean_fc.png')",
+    "finish(fig,'lesson11_std_fc.png')",
+    "finish(fig,'lesson11_nu_vs_window.png')",
+    "finish(fig,'lesson11_collapse_score.png')",
 )
 RECEIPT_LOCKS = (
-    "synthetic target zeta_global = 1.250000",
-    "synthetic zeta_B local       = 0.951442",
-    "synthetic zeta_S global      = 1.223335",
-    "SYNTHETIC SUPER-ROUGH GOLD TEST = PASS",
-    "moving-cert midpoint spread = 0.000000e+00",
-    "moving certificate          = 1 period validated against 2 periods on 2 realizations",
-    "L=128 M=2048 realizations       = 6",
-    "L=128 zeta_B local                  = 0.928961",
-    "L=128 zeta_B realization-bootstrap 95% = [0.910299, 0.944262]",
-    "L=128 zeta_S global                 = 1.315621",
-    "L=128 zeta_S realization-bootstrap 95% = [1.060960, 1.480197]",
-    "L=128 max wall-span / u-period      = 0.199629",
-    "L=256 M=4096 realizations       = 6",
-    "L=256 zeta_B local                  = 0.949576",
-    "L=256 zeta_B realization-bootstrap 95% = [0.916449, 0.966650]",
-    "L=256 zeta_S global                 = 1.201060",
-    "L=256 zeta_S realization-bootstrap 95% = [1.016524, 1.431058]",
-    "L=256 max wall-span / u-period      = 0.283296",
-    "cross-size zeta_B drift      = 0.020615",
-    "cross-size zeta_S drift      = 0.114561",
-    "thermodynamic zeta drift gate = < 0.100",
-    "SMALL-QEW SUPER-ROUGH SIGNATURE = PASS",
-    "THERMODYNAMIC ZETA CLOSURE   = NOT PASSED",
-    "FINITE-SIZE SCALING REQUIRED BEFORE UNIVERSAL ZETA CLAIM",
+    "paper relation                 = Var(fc_sample) ~ L^(-2/nu_dep)",
+    "paper aspect protocol          = M_phys ~ L^zeta_dep with zeta_dep=1.25",
+    "raw statistical unit           = disorder realization",
+    "realizations per L            = 48",
+    "L ladder                       = 32, 64, 128, 256",
+    "M grid ladder                  = 320, 736, 1728, 4096",
+    "moving certificate             = 1 u-period",
+    "fc bracket width               = 0.001953125",
+    "synthetic target nu           = 1.333333",
+    "synthetic recovered nu        = 1.318867",
+    "SYNTHETIC FSS GOLD TEST         = PASS",
+    "L= 32 M= 320 mean fc             = 0.819978841",
+    "L= 32 M= 320 std(fc)             = 0.064453427",
+    "L= 64 M= 736 mean fc             = 0.823315430",
+    "L= 64 M= 736 std(fc)             = 0.033881635",
+    "L=128 M=1728 mean fc             = 0.823396810",
+    "L=128 M=1728 std(fc)             = 0.026465858",
+    "L=256 M=4096 mean fc             = 0.821850586",
+    "L=256 M=4096 std(fc)             = 0.015059779",
+    "nu all four sizes             = 1.503976",
+    "nu smallest three             = 1.557481",
+    "nu largest three              = 1.709690",
+    "size-window nu drift          = 0.205713",
+    "size-window drift gate        = < 0.150",
+    "realization-bootstrap 95% nu  = [1.241478, 1.903499]",
+    "quantile-collapse best nu      = 1.405000",
+    "collapse score best            = 0.117003",
+    "collapse score nu=4/3          = 0.120858",
+    "collapse score variance-fit nu = 0.123243",
+    "SIZE-WINDOW STABILITY GATE     = NOT PASSED",
+    "UNIVERSAL NU CLAIM              = NOT AUTHORIZED",
+    "FINITE-SIZE TREND EXISTS; THERMODYNAMIC CLOSURE REQUIRES LARGER-SCALE EVIDENCE",
 )
-EXPECTED_SAMPLE_GROUPS = {
-    128: (2048, tuple(range(20269128, 20269134)), 0.19962895694449667),
-    256: (4096, tuple(range(20269256, 20269262)), 0.28329573190874063),
-}
-EXPECTED_ZETA = {
-    128: (0.928961, 1.315621),
-    256: (0.949576, 1.201060),
-}
+EXPECTED_M = {32: 320, 64: 736, 128: 1728, 256: 4096}
+EXPECTED_MEAN = {32: 0.819978841, 64: 0.823315430, 128: 0.823396810, 256: 0.821850586}
+EXPECTED_STD = {32: 0.064453427, 64: 0.033881635, 128: 0.026465858, 256: 0.015059779}
+EXPECTED_NU = (1.557481, 1.503976, 1.709690)
 
 
 def png_size(path: Path) -> tuple[int, int]:
     data = path.read_bytes()
     if data[:8] != b"\x89PNG\r\n\x1a\n" or data[12:16] != b"IHDR":
-        raise RuntimeError(f"Lab 10 artifact is not canonical PNG: {path.relative_to(ROOT)}")
+        raise RuntimeError(f"Lab 11 artifact is not canonical PNG: {path.relative_to(ROOT)}")
     return struct.unpack(">II", data[16:24])
 
 
@@ -171,147 +200,135 @@ def verify_local_links(soup: BeautifulSoup) -> None:
         try:
             resolved.relative_to(ROOT.resolve())
         except ValueError as exc:
-            raise RuntimeError(f"Lab 10 local link escapes repository: {value}") from exc
+            raise RuntimeError(f"Lab 11 local link escapes repository: {value}") from exc
         if not resolved.exists():
-            raise RuntimeError(f"Lab 10 broken local link: {value}")
+            raise RuntimeError(f"Lab 11 broken local link: {value}")
 
 
 def verify_source_provenance() -> None:
     data = json.loads(SOURCE_RECEIPT.read_text(encoding="utf-8"))
     if data.get("render_dpi", 0) < 500:
-        raise RuntimeError("Lab 10 source-figure receipt render DPI drifted")
+        raise RuntimeError("Lab 11 source-figure receipt render DPI drifted")
     matches = [x for x in data.get("figures", []) if x.get("file") == PAPER_FIG.name]
     if len(matches) != 1:
-        raise RuntimeError("Lab 10 Ferrero Fig.1 provenance missing or duplicated")
+        raise RuntimeError("Lab 11 Ferrero Fig.2 provenance missing or duplicated")
     entry = matches[0]
-    if entry.get("source_page") != 5 or entry.get("pixel_size") != [1800, 1684]:
-        raise RuntimeError("Lab 10 Ferrero Fig.1 provenance dimensions/page drifted")
-    if "Fig. 1" not in entry.get("citation", ""):
-        raise RuntimeError("Lab 10 Ferrero Fig.1 citation identity drifted")
-    if png_size(PAPER_FIG) != (1800, 1684):
-        raise RuntimeError("Lab 10 Ferrero Fig.1 actual dimensions no longer match receipt")
+    if entry.get("source_page") != 5 or entry.get("pixel_size") != [1783, 1550]:
+        raise RuntimeError("Lab 11 Ferrero Fig.2 provenance dimensions/page drifted")
+    if "Fig. 2" not in entry.get("citation", ""):
+        raise RuntimeError("Lab 11 Ferrero Fig.2 citation identity drifted")
+    if png_size(PAPER_FIG) != (1783, 1550):
+        raise RuntimeError("Lab 11 Ferrero Fig.2 actual dimensions no longer match receipt")
 
 
-def verify_sample_csv() -> None:
-    with SAMPLE_CSV.open(newline="", encoding="utf-8") as handle:
-        rows = list(csv.DictReader(handle))
-    expected_header = ["L", "M", "seed", "fc_lo", "fc_hi", "fc_mid", "wall_span_over_period"]
-    if not rows or list(rows[0].keys()) != expected_header:
-        raise RuntimeError("Lab 10 sample CSV header drifted")
-    if len(rows) != 12:
-        raise RuntimeError(f"Lab 10 sample CSV must contain 12 independent disorder rows, found {len(rows)}")
-    for L, (M, seeds, expected_max_span) in EXPECTED_SAMPLE_GROUPS.items():
-        group = [row for row in rows if int(row["L"]) == L]
-        if len(group) != 6:
-            raise RuntimeError(f"Lab 10 L={L} must contain 6 disorder rows")
-        if tuple(int(row["seed"]) for row in group) != seeds:
-            raise RuntimeError(f"Lab 10 L={L} seed identities drifted")
-        if any(int(row["M"]) != M for row in group):
-            raise RuntimeError(f"Lab 10 L={L} M drifted")
-        spans = []
-        for row in group:
-            lo, hi, mid = map(float, (row["fc_lo"], row["fc_hi"], row["fc_mid"]))
-            if not (lo < mid < hi and abs(mid - 0.5 * (lo + hi)) < 1e-12):
-                raise RuntimeError(f"Lab 10 malformed fc bracket for seed {row['seed']}")
-            if abs((hi - lo) - 0.0009765625) > 1e-12:
-                raise RuntimeError(f"Lab 10 threshold bracket width drifted for seed {row['seed']}")
-            span = float(row["wall_span_over_period"])
-            if not (0 < span < 0.35):
-                raise RuntimeError(f"Lab 10 wall span contract failed for seed {row['seed']}")
-            spans.append(span)
-        if abs(max(spans) - expected_max_span) > 1e-12:
-            raise RuntimeError(f"Lab 10 L={L} max wall span drifted")
-
-
-def linear_slope(points: list[tuple[float, float]]) -> float:
+def slope(points: list[tuple[float, float]]) -> float:
     xs = [math.log(x) for x, _ in points]
     ys = [math.log(y) for _, y in points]
     xm = sum(xs) / len(xs)
     ym = sum(ys) / len(ys)
     den = sum((x - xm) ** 2 for x in xs)
-    if den <= 0:
-        raise RuntimeError("Lab 10 degenerate log-fit window")
     return sum((x - xm) * (y - ym) for x, y in zip(xs, ys)) / den
 
 
-def verify_curve_csv() -> None:
-    with CURVES_CSV.open(newline="", encoding="utf-8") as handle:
+def fit_nu(Ls: list[int], stds: list[float]) -> float:
+    return -1.0 / slope(list(zip(Ls, stds)))
+
+
+def verify_raw_csv() -> None:
+    with RAW_CSV.open(newline="", encoding="utf-8") as handle:
         rows = list(csv.DictReader(handle))
-    expected_header = ["L", "observable", "x", "mean_value", "fit_window"]
+    expected_header = ["L", "M", "seed", "fc_lo", "fc_hi", "fc_mid"]
     if not rows or list(rows[0].keys()) != expected_header:
-        raise RuntimeError("Lab 10 curve CSV header drifted")
-    for L, (expected_zB, expected_zS) in EXPECTED_ZETA.items():
-        bfit = [(float(r["x"]), float(r["mean_value"])) for r in rows if int(r["L"]) == L and r["observable"] == "B(r)" and r["fit_window"] == "1"]
-        sfit = [(float(r["x"]), float(r["mean_value"])) for r in rows if int(r["L"]) == L and r["observable"] == "S(q)" and r["fit_window"] == "1"]
-        if len(bfit) != 7:
-            raise RuntimeError(f"Lab 10 L={L} B(r) fit window must be r=2..8")
-        expected_s_n = 13 if L == 128 else 25
-        if len(sfit) != expected_s_n:
-            raise RuntimeError(f"Lab 10 L={L} S(q) fractional fit-window row count drifted")
-        zB = 0.5 * linear_slope(bfit)
-        zS = -0.5 * (linear_slope(sfit) + 1.0)
-        if abs(zB - expected_zB) > 8e-7:
-            raise RuntimeError(f"Lab 10 L={L} B(r) curve no longer reproduces zeta_B: {zB:.6f}")
-        if abs(zS - expected_zS) > 8e-7:
-            raise RuntimeError(f"Lab 10 L={L} S(q) curve no longer reproduces zeta_S: {zS:.6f}")
+        raise RuntimeError("Lab 11 raw threshold CSV header drifted")
+    if len(rows) != 192:
+        raise RuntimeError(f"Lab 11 raw threshold CSV must contain 192 rows, found {len(rows)}")
 
+    means = {}
+    stds = {}
+    for L, M in EXPECTED_M.items():
+        group = [row for row in rows if int(row["L"]) == L]
+        if len(group) != 48:
+            raise RuntimeError(f"Lab 11 L={L} must contain 48 independent disorder rows")
+        if any(int(row["M"]) != M for row in group):
+            raise RuntimeError(f"Lab 11 L={L} M grid drifted")
+        if len({int(row["seed"]) for row in group}) != 48:
+            raise RuntimeError(f"Lab 11 L={L} seed identities are not independent/unique")
+        vals = []
+        for row in group:
+            lo, hi, mid = map(float, (row["fc_lo"], row["fc_hi"], row["fc_mid"]))
+            if abs((hi - lo) - 1 / 512) > 1e-12:
+                raise RuntimeError(f"Lab 11 fc bracket width drifted for L={L}, seed={row['seed']}")
+            if abs(mid - 0.5 * (lo + hi)) > 1e-12:
+                raise RuntimeError(f"Lab 11 fc midpoint inconsistent for L={L}, seed={row['seed']}")
+            vals.append(mid)
+        means[L] = statistics.fmean(vals)
+        stds[L] = statistics.stdev(vals)
+        if abs(means[L] - EXPECTED_MEAN[L]) > 5e-10:
+            raise RuntimeError(f"Lab 11 L={L} mean fc drifted: {means[L]:.9f}")
+        if abs(stds[L] - EXPECTED_STD[L]) > 5e-10:
+            raise RuntimeError(f"Lab 11 L={L} std(fc) drifted: {stds[L]:.9f}")
 
-def verify_receipt_consistency() -> None:
-    receipt = RECEIPT.read_text(encoding="utf-8")
-    for token in RECEIPT_LOCKS:
-        if token not in receipt:
-            raise RuntimeError(f"Lab 10 receipt/result/failure boundary drifted: {token}")
-    m = re.search(r"cross-size zeta_S drift\s+= ([0-9.]+)", receipt)
-    if not m or abs(float(m.group(1)) - abs(EXPECTED_ZETA[128][1] - EXPECTED_ZETA[256][1])) > 1e-6:
-        raise RuntimeError("Lab 10 cross-size zeta_S drift inconsistent with locked estimates")
-    if float(m.group(1)) <= 0.100:
-        raise RuntimeError("Lab 10 thermodynamic closure failure boundary was weakened")
+    Ls = [32, 64, 128, 256]
+    ss = [stds[L] for L in Ls]
+    nu_small = fit_nu(Ls[:3], ss[:3])
+    nu_all = fit_nu(Ls, ss)
+    nu_large = fit_nu(Ls[1:], ss[1:])
+    for got, expected in zip((nu_small, nu_all, nu_large), EXPECTED_NU):
+        if abs(got - expected) > 8e-7:
+            raise RuntimeError(f"Lab 11 raw CSV no longer reproduces nu: {got:.6f} vs {expected:.6f}")
+    drift = max(nu_small, nu_all, nu_large) - min(nu_small, nu_all, nu_large)
+    if abs(drift - 0.205713) > 8e-7:
+        raise RuntimeError(f"Lab 11 size-window drift changed: {drift:.6f}")
+    if drift <= 0.15:
+        raise RuntimeError("Lab 11 size-window failure boundary was weakened")
 
 
 def main() -> None:
-    for path in (TARGET, PYTHON, RECEIPT, SAMPLE_CSV, CURVES_CSV, SOURCE_RECEIPT, PAPER_FIG, *PLOT_FILES):
+    for path in (TARGET, PYTHON, RECEIPT, RAW_CSV, SOURCE_RECEIPT, PAPER_FIG, *PLOT_FILES):
         if not path.exists():
-            raise RuntimeError(f"Lab 10 required artifact missing: {path.relative_to(ROOT)}")
+            raise RuntimeError(f"Lab 11 required artifact missing: {path.relative_to(ROOT)}")
 
     raw = TARGET.read_text(encoding="utf-8")
     soup = BeautifulSoup(raw, "html.parser")
     title = soup.title.get_text(strip=True) if soup.title else ""
-    if title != "Reproduction Lab（复现实验室）10 · 超粗糙几何":
-        raise RuntimeError(f"Lab 10 title drifted: {title!r}")
+    if title != "Reproduction Lab（复现实验室）11 · 有限尺寸标度与 ν":
+        raise RuntimeError(f"Lab 11 title drifted: {title!r}")
 
     visible = visible_text(soup)
     for token in REQUIRED_VISIBLE:
         if token not in visible:
-            raise RuntimeError(f"Lab 10 required Language V2 text missing: {token}")
+            raise RuntimeError(f"Lab 11 required Language V2 text missing: {token}")
     for token in FORBIDDEN_VISIBLE:
         if token in visible:
-            raise RuntimeError(f"Lab 10 ordinary workflow English remains visible: {token}")
+            raise RuntimeError(f"Lab 11 ordinary workflow English remains visible: {token}")
 
     figures = soup.select("figure.figure img")
     if tuple(x.get("src") for x in figures) != EXPECTED_SRCS:
-        raise RuntimeError("Lab 10 Figure wiring drifted")
+        raise RuntimeError("Lab 11 Figure wiring drifted")
     if tuple(x.get("alt") for x in figures) != EXPECTED_ALTS:
-        raise RuntimeError("Lab 10 Figure alt text drifted")
+        raise RuntimeError("Lab 11 Figure alt text drifted")
     verify_local_links(soup)
 
     py = PYTHON.read_text(encoding="utf-8")
     for token in PYTHON_LOCKS:
         if token not in py:
-            raise RuntimeError(f"Lab 10 Python contract drifted: {token}")
+            raise RuntimeError(f"Lab 11 Python contract drifted: {token}")
 
-    verify_receipt_consistency()
-    verify_sample_csv()
-    verify_curve_csv()
+    receipt = RECEIPT.read_text(encoding="utf-8")
+    for token in RECEIPT_LOCKS:
+        if token not in receipt:
+            raise RuntimeError(f"Lab 11 receipt/result/failure boundary drifted: {token}")
+
+    verify_raw_csv()
     verify_source_provenance()
-
     for plot in PLOT_FILES:
         w, h = png_size(plot)
         if w < 900 or h < 500:
-            raise RuntimeError(f"Lab 10 code plot below evidence resolution contract: {plot.name} {w}x{h}")
+            raise RuntimeError(f"Lab 11 code plot below evidence resolution contract: {plot.name} {w}x{h}")
         if plot.stat().st_size < 10_000:
-            raise RuntimeError(f"Lab 10 code plot suspiciously small: {plot.name}")
+            raise RuntimeError(f"Lab 11 code plot suspiciously small: {plot.name}")
 
-    print("Lab 10 read-only Language V2 seal PASS; super-rough signature/thermodynamic-zeta failure/provenance/curves/Figures/links preserved.")
+    print("Lab 11 read-only Language V2 seal PASS; synthetic gold test/size-window failure/raw thresholds/provenance/Figures/links preserved.")
 
 
 if __name__ == "__main__":
