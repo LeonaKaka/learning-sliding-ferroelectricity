@@ -1,55 +1,50 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Reproduction Lab 02 · 2D Wall Extraction Gold Test</title><style>
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>复现实验室（复现实验室）02 · 二维畴壁提取已知答案测试</title><style>
 :root{--b:#f3f0e8;--p:#fffdf8;--i:#191a18;--m:#716d66;--l:#d8d1c3;--a:#6d493b;--soft:#eee8dc}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--b);color:var(--i);font:15px/1.76 system-ui,-apple-system,"PingFang SC",sans-serif}.top{position:sticky;top:0;z-index:3;background:#f3f0e8ee;backdrop-filter:blur(12px);border-bottom:1px solid var(--l)}.bar,main{width:min(1080px,calc(100% - 32px));margin:auto}.bar{height:62px;display:flex;align-items:center;justify-content:space-between;gap:20px}.bar b,h1,h2,h3,.q,.bridge,.eq,.step b{font-family:Georgia,"Times New Roman","Songti SC",serif}.bar a,a{color:#504c46}.bar small,.rule,.cap{color:var(--m)}main{padding:52px 0 90px}h1{font-size:clamp(40px,6.8vw,66px);line-height:1.04;margin:12px 0 18px;letter-spacing:-.04em}h2{font-size:29px;line-height:1.25;margin:64px 0 15px}h3{font-size:18px;margin:0 0 6px}.deck{font:19px/1.62 Georgia,"Songti SC",serif;color:#4f4b45;max-width:920px}.q{background:#20211f;color:#f6f1e7;border-radius:14px;padding:20px 22px;font-size:18px;margin:30px 0}.rule,.cap{font-size:12px}.fig,.codebox{background:#fff;border:1px solid var(--l);border-radius:14px;overflow:hidden;margin:26px 0}.head,.cap{padding:10px 14px;background:#f0ece3}.fig img{display:block;width:100%;height:auto;background:#fff}.cap{display:block;border-top:1px solid var(--l)}.two,.three{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.three{grid-template-columns:repeat(3,1fr)}.card,.step{background:var(--p);border:1px solid var(--l);border-radius:11px;padding:15px}.card p,.step p{font-size:13px;margin:5px 0}.bridge{font-size:18px;padding:18px 20px;margin:32px 0;border-left:4px solid var(--a);background:var(--soft)}.eq{font-size:18px;text-align:center;padding:14px 12px;margin:16px 0;background:#faf7f0;border:1px solid var(--l);border-radius:10px;overflow-x:auto}.eq small{display:block;font:12px/1.5 system-ui;color:var(--m);margin-top:7px}.warn{background:#fff7e8;border:1px solid #e4d3ad;border-radius:11px;padding:14px 16px;margin:18px 0}.pass{background:#eef6ef;border:1px solid #bfd2c4;border-radius:11px;padding:14px 16px;margin:18px 0}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:22px 0}.matrix{width:100%;border-collapse:collapse;margin:22px 0;background:#fff;border:1px solid var(--l)}.matrix th,.matrix td{padding:11px 12px;border-bottom:1px solid var(--l);vertical-align:top;text-align:left}.matrix th{background:#f0ece3;font:13px Georgia,serif}.matrix td{font-size:13px}.matrix tr:last-child td{border-bottom:0}pre{margin:0;padding:20px;overflow:auto;background:#1e201f;color:#f2eee6;font:12.5px/1.58 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.verdict{font:16px/1.65 Georgia,"Songti SC",serif;background:#f7f1e7;border-left:4px solid #b27a2f;padding:16px 18px;margin:18px 0}.next{margin-top:44px;padding-top:20px;border-top:1px solid var(--l);display:flex;justify-content:space-between;gap:16px}@media(max-width:760px){.two,.three,.steps{grid-template-columns:1fr}.bar span{display:none}.matrix{display:block;overflow-x:auto}.next{flex-direction:column}h2{margin-top:54px}}
-</style></head><body><header class="top"><div class="bar"><b>Reproduction Lab <small>· Lesson 02 · Bulk → Interface</small></b><span><a href="reproduction-lab.html">L01</a> · <a href="../index.html">首页</a> · <a href="numerical-modeling.html">M07</a> · <a href="#compare">Paper vs Ours</a> · <a href="#code">Code</a></span></div></header><main>
-<div class="rule"><a href="../index.html">Learning Sliding Ferroelectricity</a> / Reproduction Lab / Lesson 02</div>
+</style></head><body><header class="top"><div class="bar"><b>复现实验室 <small>· 第 02 课 · 体场 → 界面</small></b><span><a href="reproduction-lab.html">L01</a> · <a href="../index.html">首页</a> · <a href="numerical-modeling.html">模块 07</a> · <a href="#compare">论文对照</a> · <a href="#code">代码</a></span></div></header><main>
+<div class="rule"><a href="../index.html">Learning Sliding Ferroelectricity</a> / 复现实验室 / Lesson 02</div>
 <h1>二维场里那条“墙”，到底怎么变成一条可测的 u(y)？</h1>
-<p class="deck">Lesson 01 只证明 1D TDGL 能回到正确的 tanh kink。现在进入 Caballero 2020 真正关键的 model-reduction 步骤：先跑 2D Ginzburg–Landau field，再从每一条 y-column 里提取 φ=0 crossing，把 diffuse wall 压成单值 interface u(y)，最后验证 clean flat wall 应满足 B(r)≈0。</p>
-<div class="q">这节的核心不是“画出一条黑线”。<b>只有当每个 y 都恰好有一个 crossing、横截面仍符合 tanh、u(y) 真的变平、B(r) 真的降到接近 0，这个 wall extractor 才算通过。</b></div>
-
+<p class="deck">第 01 课只证明一维 TDGL 能回到正确的 tanh kink（双曲正切扭结）。现在进入 Caballero 2020 真正关键的 model reduction（模型约化）步骤：先跑二维 Ginzburg–Landau（GL）场，再从每一条 y 列中提取 φ=0 零点交叉，把 diffuse wall（弥散畴壁）压成单值界面 u(y)，最后验证无序为零的平直畴壁应满足 B(r)≈0。</p>
+<div class="q">这节的核心不是“画出一条黑线”。<b>只有当每个 y 都恰好有一个零点交叉、横截面仍符合 tanh、u(y) 真的变平、B(r) 真的降到接近 0，这个畴壁提取器才算通过。</b></div>
 <h2 id="compare">0 · 这次开始真的和论文 Figure 并排比</h2>
 <div class="two">
-<figure class="fig"><a href="../assets/interface-scaling/caballero2020-fig1-bulk-to-interface.png" target="_blank" rel="noopener"><img src="../assets/interface-scaling/caballero2020-fig1-bulk-to-interface.png" alt="Caballero 2020 Figure 1 bulk GL field and extracted interface"></a><figcaption class="cap"><b>Caballero et al. 2020 · Fig. 1。</b><br>论文展示 2D GL field φ(x,y)、从 bulk field 抽出的 interface，以及横穿 domain wall 的 tanh-like soliton profile。论文 caption 的示例参数为 η=α=δ=γ=1、T=0.05、t=10<sup>5</sup>。</figcaption></figure>
-<figure class="fig"><a href="../assets/reproduction-lab/lesson02_2d_wall_extract.svg" target="_blank" rel="noopener"><img src="../assets/reproduction-lab/lesson02_2d_wall_extract.svg" alt="Our 2D GL field, extracted wall, roughness B(r), and analytic profile comparison"></a><figcaption class="cap"><b>Our small-system gold test。</b><br>同一个 φ⁴ / Model-A clean framework，但取 T=0，并故意从一条 sinusoidal wavy wall 出发，让 2D TDGL 自己把它拉平；然后用 φ=0 crossing 提取 u(y)。</figcaption></figure>
+<figure class="fig"><a href="../assets/interface-scaling/caballero2020-fig1-bulk-to-interface.png" rel="noopener" target="_blank"><img alt="Caballero 2020 Figure 1：二维 GL 体场与提取界面" src="../assets/interface-scaling/caballero2020-fig1-bulk-to-interface.png"/></a><figcaption class="cap"><b>Caballero et al. 2020 · Fig. 1。</b><br/>论文展示 二维 GL 场 φ(x,y)、从体场抽出的界面，以及横穿畴壁的类 tanh 孤子剖面。论文图注的示例参数为 η=α=δ=γ=1、T=0.05、t=10<sup>5</sup>。</figcaption></figure>
+<figure class="fig"><a href="../assets/reproduction-lab/lesson02_2d_wall_extract.svg" rel="noopener" target="_blank"><img alt="本课二维 GL 场、提取畴壁、B(r) 与解析剖面对照" src="../assets/reproduction-lab/lesson02_2d_wall_extract.svg"/></a><figcaption class="cap"><b>本课小系统已知答案测试。</b><br/>同一个 φ⁴ / Model A（A 型模型）无序为零框架，但取 T=0，并故意从一条正弦起伏畴壁出发，让二维 TDGL 自己把它拉平；然后用 φ=0 零点交叉提取 u(y)。</figcaption></figure>
 </div>
-<div class="verdict"><b>这次比较到什么程度？</b> 我们已经复现了 Caballero Fig.1 的<strong>方法结构</strong>：bulk φ(x,y) → wall crossing → u(y) → transverse tanh profile。因为我们的 T、运行时间和初态与论文 Fig.1 不同，所以现在仍不叫“Fig.1 数值像素级复现”。Lesson 03/04 才会开始对论文的 roughness / structure-factor 曲线做定量 thumbnail reproduction。</div>
-
+<div class="verdict"><b>这次比较到什么程度？</b> 我们已经复现了 Caballero Fig.1 的<strong>方法结构</strong>：体场 φ(x,y) → 畴壁零点交叉 → u(y) → 横向 tanh 剖面。因为我们的 T、运行时间和初态与论文 Fig.1 不同，所以现在仍不叫“Fig.1 数值像素级复现”。第 03/04 课才会开始对论文的 roughness（粗糙度）/ structure factor（结构因子）曲线做定量缩略复现。</div>
 <h2>1 · 为什么先从一条故意弯的墙开始？</h2>
-<p>如果直接初始化一个完全平的 wall，最终得到 B(r)=0 并不稀奇——你的 y-Laplacian 写错了也可能“看起来没事”。所以这里先人为加一个长波正弦位移：</p>
+<p>如果直接初始化一堵完全平直的畴壁，最终得到 B(r)=0 并不稀奇——你的 y 方向 Laplacian（拉普拉斯算子）写错了也可能“看起来没事”。所以这里先人为加一个长波正弦位移：</p>
 <div class="eq">u(y,0)=1.5 sin(2πy/L<sub>y</sub>)</div>
 <div class="eq">φ(x,y,0)=−tanh[(x−u(y,0))/w]</div>
-<p>clean T=0、h=0 下，gradient energy 会惩罚弯曲。正确的二维 TDGL 应该让这条墙逐步变平，而不是凭边界条件把它瞬间钉死。</p>
-<div class="three"><div class="card"><h3>检查 x 方向</h3><p>每个横截面的 wall profile 仍应接近解析 tanh。</p></div><div class="card"><h3>检查 y 方向</h3><p>sinusoidal u(y) 应因 line tension 衰减。</p></div><div class="card"><h3>检查整体</h3><p>free energy 应单调下降，而不是靠 extractor “伪造”平墙。</p></div></div>
-
-<h2>2 · 从 diffuse field 提取 u(y)</h2>
-<p>对每个固定 y<sub>j</sub> 的 column，寻找唯一一对相邻格点满足：</p>
+<p>在无序为零且 T=0、h=0 时，gradient energy（梯度能）会惩罚弯曲。正确的二维 TDGL 应该让这堵畴壁逐步变平，而不是凭边界条件把它瞬间钉死。</p>
+<div class="three"><div class="card"><h3>检查 x 方向</h3><p>每个横截面的畴壁剖面仍应接近解析 tanh。</p></div><div class="card"><h3>检查 y 方向</h3><p>正弦 u(y) 应因 line tension（线张力）衰减。</p></div><div class="card"><h3>检查整体</h3><p>自由能应单调下降，而不是靠畴壁提取器“伪造”平墙。</p></div></div>
+<h2>2 · 从弥散场提取 u(y)</h2>
+<p>对每个固定 y<sub>j</sub> 这一列中，寻找唯一一对相邻格点满足：</p>
 <div class="eq">φ(x<sub>i</sub>,y<sub>j</sub>) ≥ 0，　φ(x<sub>i+1</sub>,y<sub>j</sub>) &lt; 0</div>
 <p>再做一次线性插值：</p>
 <div class="eq">u(y<sub>j</sub>) = x<sub>i</sub> − φ<sub>i,j</sub> Δx / [φ<sub>i+1,j</sub>−φ<sub>i,j</sub>]</div>
-<div class="codebox"><div class="head"><b>Extractor 的真正 hard gate</b></div><pre>ids = np.where((col[:-1] >= 0.0) & (col[1:] < 0.0))[0]
+<div class="codebox"><div class="head"><b>畴壁提取器的真正硬性验收条件</b></div><pre>ids = np.where((col[:-1] &gt;= 0.0) &amp; (col[1:] &lt; 0.0))[0]
 if len(ids) != 1:
     raise RuntimeError("expected exactly one wall crossing")
 
 i = ids[0]
 u[j] = x[i] - col[i] * dx / (col[i+1] - col[i])</pre></div>
-<div class="warn"><b>这一句 <code>len(ids) != 1</code> 很重要。</b> 如果出现 bubble、overhang 或多重 crossing，就不应该继续默默算一个 u(y)。这正是网站前面一直强调的 topology gate：elastic-line observable 只有在 single-valued mapping 成立时才合法。</div>
-
-<h2>3 · 为什么 flat wall 的 B(r) 是另一个独立验收？</h2>
+<div class="warn"><b>这一句 <code>len(ids) != 1</code> 很重要。</b> 如果出现 bubble（气泡畴）、overhang（悬垂）或多重零点交叉，就不应该继续默默计算一个 u(y)。这正是网站前面一直强调的 topology gate（拓扑判据）：elastic line（弹性线）可观测量只有在 single-valued mapping（单值映射）成立时才合法。</div>
+<h2>3 · 为什么平直畴壁的 B(r) 是另一个独立验收？</h2>
 <div class="eq">B(r)=⟨[u(y+r)−u(y)]²⟩<sub>y</sub></div>
-<p>如果最终 wall 真正变成平直单墙，那么所有 y 上的 u 都应该近似相同，因此 B(r) 应趋近 0。这里不是拟合 ζ，也不是追求 power law；它只是检验“wall extraction + y 方向动力学”是否自洽。</p>
-<div class="bridge"><b>Lesson 01 验的是 solver 的横向 wall profile；Lesson 02 新增的是 wall geometry estimator。</b> 两节通过以后，我们才有资格在 Lesson 03 给它加 thermal noise，再去看真实的 roughness growth。</div>
-
-<h2>4 · 实际运行结果：四个 gate 一起过</h2>
-<table class="matrix"><thead><tr><th>检查</th><th>Hard gate</th><th>实际结果</th><th>判定</th></tr></thead><tbody>
-<tr><td>single crossing</td><td>每个 y 恰好 1 个 φ=0 crossing</td><td>48/48 columns 合法</td><td><b>PASS</b></td></tr>
-<tr><td>final wall RMS</td><td>&lt; 5×10<sup>−3</sup></td><td>2.629×10<sup>−3</sup></td><td><b>PASS</b></td></tr>
-<tr><td>max B(r)</td><td>&lt; 5×10<sup>−5</sup></td><td>2.764×10<sup>−5</sup></td><td><b>PASS</b></td></tr>
-<tr><td>tanh profile RMSE</td><td>&lt; 8×10<sup>−4</sup></td><td>4.020×10<sup>−4</sup></td><td><b>PASS</b></td></tr>
-<tr><td>free energy</td><td>sampled F(t) 单调不增</td><td>总下降 0.870339</td><td><b>PASS</b></td></tr>
+<p>如果最终畴壁真正变成平直单墙，那么所有 y 上的 u 都应该近似相同，因此 B(r) 应趋近 0。这里不是拟合 ζ，也不是追求幂律；它只是检验“畴壁提取 + y 方向动力学”是否自洽。</p>
+<div class="bridge"><b>第 01 课验证的是求解器的横向畴壁剖面；第 02 课新增的是畴壁几何估计量。</b> 两节通过以后，我们才有资格在 第 03 课给它加热噪声，再去看真实的粗糙度增长。</div>
+<h2>4 · 实际运行结果：全部验收条件一起通过</h2>
+<table class="matrix"><thead><tr><th>检查</th><th>硬性验收条件</th><th>实际结果</th><th>判定</th></tr></thead><tbody>
+<tr><td>单一零点交叉</td><td>每个 y 恰好 1 个 φ=0 零点交叉</td><td>48/48 列合法</td><td><b>通过</b></td></tr>
+<tr><td>最终畴壁 RMS</td><td>&lt; 5×10<sup>−3</sup></td><td>2.629×10<sup>−3</sup></td><td><b>通过</b></td></tr>
+<tr><td>最大 B(r)</td><td>&lt; 5×10<sup>−5</sup></td><td>2.764×10<sup>−5</sup></td><td><b>通过</b></td></tr>
+<tr><td>tanh 剖面 RMSE</td><td>&lt; 8×10<sup>−4</sup></td><td>4.020×10<sup>−4</sup></td><td><b>通过</b></td></tr>
+<tr><td>自由能</td><td>采样的 F(t) 单调不增</td><td>总下降 0.870339</td><td><b>通过</b></td></tr>
 </tbody></table>
-<div class="pass"><b>这比“和论文图长得像”多了一层保护。</b> 原论文 Figure 告诉我们应该复现怎样的模型结构；解析 tanh、single-crossing topology、B(r)≈0 和 energy descent 则分别从不同方向检查代码。如果其中一项不过，就不能只靠视觉相似宣布复现成功。</div>
-
+<div class="pass"><b>这比“和论文图长得像”多了一层保护。</b> 原论文 Figure 告诉我们应该复现怎样的模型结构；解析 tanh、单一零点交叉拓扑、B(r)≈0 和自由能下降则分别从不同方向检查代码。如果其中一项不过，就不能只靠视觉相似宣布复现成功。</div>
 <h2>5 · 代码里新增了什么？</h2>
-<div class="steps"><div class="step"><b>① 2D Laplacian</b><p>x 用固定边界，y 用 periodic boundary。</p></div><div class="step"><b>② Wavy initial wall</b><p>让 line tension 有真实工作要做。</p></div><div class="step"><b>③ Zero crossing</b><p>把 diffuse φ(x,y) 压成 u(y)。</p></div><div class="step"><b>④ B(r)</b><p>从几何线计算最基础 roughness observable。</p></div></div>
+<div class="steps"><div class="step"><b>① 二维 Laplacian（拉普拉斯算子）</b><p>x 用固定边界，y 用 periodic boundary（周期边界）。</p></div><div class="step"><b>② 起伏初始畴壁</b><p>让线张力真正参与弛豫。</p></div><div class="step"><b>③ 零点交叉</b><p>把弥散 φ(x,y) 压成 u(y)。</p></div><div class="step"><b>④ B(r)</b><p>从几何线计算最基础的粗糙度可观测量。</p></div></div>
 <div class="codebox"><div class="head"><b>二维 TDGL 核心</b></div><pre>lap_x = (phi[2:] - 2*phi[1:-1] + phi[:-2]) / dx**2
 lap_y = (roll_y(+1) - 2*phi[1:-1] + roll_y(-1)) / dy**2
 
@@ -58,9 +53,8 @@ rhs = (gamma*(lap_x + lap_y)
        - delta*phi[1:-1]**3) / eta
 
 phi[1:-1] += dt * rhs</pre></div>
-
 <h2 id="code">6 · 完整脚本与预期输出</h2>
-<p><a href="../examples/reproduction-lab/lesson02_2d_wall_extract.py"><b>打开完整 Python 脚本 →</b></a>　仍然只有 NumPy + Matplotlib。脚本会生成上面的 4-panel 结果图，并自动执行全部 hard gates。</p>
+<p><a href="../examples/reproduction-lab/lesson02_2d_wall_extract.py"><b>打开完整 Python 脚本 →</b></a>　仍然只有 NumPy + Matplotlib。脚本会生成上面的四面板结果图，并自动执行全部硬性验收条件。</p>
 <div class="codebox"><div class="head"><b>部署脚本应打印</b></div><pre>grid              = 241 x 48
 dx, dy            = 0.200, 0.500
 dt, steps         = 0.0040, 22000
@@ -71,17 +65,14 @@ max B(r)          = 2.764004e-05
 profile RMSE      = 4.019818e-04
 free-energy drop  = 0.870339
 ALL HARD GATES PASS</pre></div>
-
-<h2>7 · 这一步在你的 sliding-FE 项目里对应什么？</h2>
+<h2>7 · 这一步在你的滑移铁电项目里对应什么？</h2>
 <table class="matrix"><thead><tr><th>本课</th><th>你的项目</th><th>以后为什么重要</th></tr></thead><tbody>
-<tr><td>φ=0 crossing</td><td>从 phase field 提取 wall contour</td><td>决定 u(y,t)、v(E)、B(r)、S(q) 的输入是否可信</td></tr>
-<tr><td>single-crossing gate</td><td>overhang / bubble / multiple-wall diagnostic</td><td>mapping 失败时不能硬套 elastic-line universality</td></tr>
-<tr><td>B(r)≈0 clean test</td><td>roughness estimator regression test</td><td>避免以后 disorder roughness 其实来自 extractor bias</td></tr>
-<tr><td>wavy-wall relaxation</td><td>clean E=0 wall stability</td><td>先确认 wall 自己稳定，再讨论 driven depinning</td></tr>
+<tr><td>φ=0 零点交叉</td><td>从 phase field（相场）提取畴壁轮廓</td><td>决定 u(y,t)、v(E)、B(r)、S(q) 的输入是否可信</td></tr>
+<tr><td>单一零点交叉判据</td><td>悬垂 / 气泡畴 / 多畴壁诊断</td><td>映射失败时不能硬套弹性线普适性</td></tr>
+<tr><td>B(r)≈0 无序为零测试</td><td>粗糙度估计量回归测试</td><td>避免以后无序粗糙度其实来自提取器偏差</td></tr>
+<tr><td>起伏畴壁弛豫</td><td>无序为零、E=0 的畴壁稳定性</td><td>先确认畴壁自身稳定，再讨论受驱退钉扎</td></tr>
 </tbody></table>
-
-<h2>8 · Lesson 03：开始第一次真正的论文曲线复现</h2>
-<div class="verdict"><b>下一课不再只是 gold test。</b> 保留同一个 2D clean wall，加 Caballero Eq. (4) 的 thermal white noise；同时跑 1D Edwards–Wilkinson line。然后第一次把论文中的 <b>B(r,t)</b> scaling curve 与我们的 small-system curve 并排，做真正的 thumbnail reproduction，并用解析 EW prediction 检查有限尺寸偏差。</div>
-
-<div class="next"><a href="reproduction-lab.html">← Lesson 01 · 1D kink gold test</a><a href="reproduction-lab-03.html">Lesson 03 · EW roughness thumbnail →</a></div>
+<h2>8 · 第 03 课：开始第一次真正的论文曲线复现</h2>
+<div class="verdict"><b>下一课不再只是已知答案测试。</b> 保留同一个二维无序为零畴壁，加 Caballero Eq. (4) 的 thermal white noise（热白噪声）；同时跑一维 Edwards–Wilkinson（EW）线。然后第一次把论文中的 <b>B(r,t)</b> scaling curve 与我们的 small-system curve 并排，做真正的 thumbnail reproduction，并用解析 EW prediction 检查有限尺寸偏差。</div>
+<div class="next"><a href="reproduction-lab.html">← 第 01 课 · 一维扭结已知答案测试</a><a href="reproduction-lab-03.html">第 03 课 · EW 粗糙度缩略复现 →</a></div>
 </main></body></html>
