@@ -7,6 +7,9 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
+plt.rcParams["font.sans-serif"] = ["Noto Sans CJK SC", "DejaVu Sans"]
+plt.rcParams["axes.unicode_minus"] = False
+
 SEED=20260902
 FC_LO,FC_HI=0.77763671875,0.777783203125
 DT_GATE=5e-3
@@ -111,12 +114,12 @@ def finish(fig,name):
 fig,ax=plt.subplots(figsize=(7.2,4.5))
 vprod=np.array([r[1] for r in runs[.025]])
 vref=np.array([r[1] for r in runs[.0125]])
-ax.plot(fs,vprod,marker='o',label='production dt=0.025')
-ax.plot(fs,vref,marker='s',linestyle='--',label='reference dt=0.0125')
-ax.axvline(fc,linestyle=':',label='L07 bracket midpoint')
-ax.set_xlabel('drive f')
-ax.set_ylabel('steady center-of-mass velocity v')
-ax.set_title('Steady v(f) measured only above the sample threshold')
+ax.plot(fs,vprod,marker='o',label='正式计算 dt=0.025')
+ax.plot(fs,vref,marker='s',linestyle='--',label='参考 dt=0.0125')
+ax.axvline(fc,linestyle=':',label='L07 阈值区间中点')
+ax.set_xlabel('驱动力 f')
+ax.set_ylabel('质心稳态速度 v')
+ax.set_title('只在单样本阈值上方测量稳态 v(f)')
 ax.legend()
 finish(fig,'lesson08_vf.png')
 
@@ -124,12 +127,12 @@ finish(fig,'lesson08_vf.png')
 fig,ax=plt.subplots(figsize=(7.2,4.5))
 for j,df in enumerate(dfs):
     vv=np.r_[runs[.025][j][0],runs[.025][j][3]]
-    ax.plot(np.arange(1,5),vv,marker='o',label=f'delta f={df:.3f}')
-ax.axvline(1.5,linestyle=':',label='measurement begins after traversal 1')
+    ax.plot(np.arange(1,5),vv,marker='o',label=f'Δf={df:.3f}')
+ax.axvline(1.5,linestyle=':',label='第 1 个周期后开始测量')
 ax.set_xticks([1,2,3,4])
-ax.set_xlabel('disorder-period traversal')
-ax.set_ylabel('period-averaged velocity')
-ax.set_title('The first traversal still contains depinning transient')
+ax.set_xlabel('无序周期编号')
+ax.set_ylabel('周期平均速度')
+ax.set_title('第 1 个周期仍含退钉扎瞬态')
 ax.legend(fontsize=8)
 finish(fig,'lesson08_transient_periods.png')
 
@@ -137,21 +140,21 @@ finish(fig,'lesson08_transient_periods.png')
 fig,ax=plt.subplots(figsize=(7.2,4.5))
 for dt in (.1,.05,.025):
     ax.plot(dfs,100*np.array(errs(dt)),marker='o',label=f'dt={dt:g}')
-ax.axhline(100*DT_GATE,linestyle='--',label='registered 0.5% gate')
-ax.set_xlabel('delta f = f - fc(midpoint)')
-ax.set_ylabel('relative error vs dt=0.0125 (%)')
-ax.set_title('Velocity estimator time-step convergence')
+ax.axhline(100*DT_GATE,linestyle='--',label='预设 0.5% 判据')
+ax.set_xlabel('Δf = f - fc（阈值区间中点）')
+ax.set_ylabel('相对 dt=0.0125 参考值的误差（%）')
+ax.set_title('速度估计量的 dt 收敛')
 ax.legend()
 finish(fig,'lesson08_dt_error.png')
 
 # 4) Analytic moving-state gold test.
 fig,ax=plt.subplots(figsize=(6.8,4.3))
 px=np.array([x[0] for x in particle]); ex=np.array([x[1] for x in particle]); nu=np.array([x[2] for x in particle])
-ax.plot(px,ex,marker='o',label=r'exact $\sqrt{f^2-1}$')
-ax.plot(px,nu,marker='s',linestyle='--',label='numerical estimator')
-ax.set_xlabel('drive f')
-ax.set_ylabel('mean velocity')
-ax.set_title('Gold test for the moving-state velocity estimator')
+ax.plot(px,ex,marker='o',label=r'解析 $\sqrt{f^2-1}$')
+ax.plot(px,nu,marker='s',linestyle='--',label='数值速度估计')
+ax.set_xlabel('驱动力 f')
+ax.set_ylabel('平均速度')
+ax.set_title('运动态速度估计量的已知答案测试')
 ax.legend()
 finish(fig,'lesson08_particle_velocity_gold.png')
 
