@@ -1,31 +1,10 @@
 from __future__ import annotations
 
-from bs4 import BeautifulSoup, NavigableString
+from bs4 import BeautifulSoup
 from language_v2_second_pass import ROOT, source_blocks
 
-# Second, narrow reverse-audit pass for Module 08.  Do not repeat the broad
-# normalization: only repair terminology and prose that survived the first pass.
+# Micro-pass: only two residuals found by reverse scanning the bot-produced HTML.
 TARGET = ROOT / "modules/current-frontiers.html"
-
-REPLACEMENTS = {
-    "KPFM、Raman、DFT/BEC": "KPFM、Raman（拉曼）、DFT/BEC",
-    "Raman（拉曼）成像把器件": "拉曼成像把器件",
-    "KPFM/Raman 图": "KPFM / 拉曼图",
-    "作者使用 avalanchelike 描述": "作者使用 avalanchelike（类雪崩）描述",
-    "分步 / 区域依赖翻转是对无序敏感的动力学的证据": "分步 / 区域依赖翻转是动力学对无序敏感的证据",
-    "这把 Chen 的 ““无畴壁，不反转””": "这把 Chen 的“无畴壁，不反转”",
-}
-
-
-def blocked(node: NavigableString) -> bool:
-    parent = node.parent
-    if parent is None or parent.name in {"script", "style", "pre", "code", "math"}:
-        return True
-    if parent.find_parent(class_="source-text") or "source-text" in parent.get("class", []):
-        return True
-    if parent.find_parent(class_="eq") or "eq" in parent.get("class", []):
-        return True
-    return False
 
 
 def main() -> None:
@@ -35,46 +14,30 @@ def main() -> None:
     before_images = [(img.get("src"), img.get("alt")) for img in soup.find_all("img")]
     before_figure_links = [a.get("href") for a in soup.select("figure a")]
 
-    for node in list(soup.find_all(string=True)):
-        if not isinstance(node, NavigableString) or blocked(node):
-            continue
-        old = str(node)
-        new = old
-        for a, b in sorted(REPLACEMENTS.items(), key=lambda item: len(item[0]), reverse=True):
-            new = new.replace(a, b)
-        if new != old:
-            node.replace_with(new)
+    # The author term is split across a <b> node, so string-level prose
+    # replacement could not reach it. Annotate the visible teaching note only.
+    candidates = [b for b in soup.find_all("b") if b.get_text(strip=True) == "avalanchelike"]
+    if len(candidates) != 1:
+        raise RuntimeError(f"Expected one visible avalanchelike term, found {len(candidates)}")
+    if candidates[0].find_parent(class_="source-text"):
+        raise RuntimeError("Refusing to edit avalanchelike inside source-text")
+    candidates[0].string = "avalanchelike（类雪崩）"
 
-    # First pedagogical occurrence of the full BEC term: keep the English
-    # recognition form once, then retain Chinese prose afterwards.
-    h3 = None
-    for h2 in soup.find_all("h2"):
-        if h2.get_text(" ", strip=True).startswith("3 · Wang & Dong"):
-            h3 = h2
-            break
-    if h3 is None:
-        raise RuntimeError("Module 08 Wang/Ke section not found")
-    intro = h3.find_next_sibling("p")
-    if intro is None or "Born 有效电荷" not in intro.get_text():
-        raise RuntimeError("Module 08 first Born effective charge teaching occurrence not found")
-    for node in list(intro.find_all(string=True)):
-        old = str(node)
-        if "非对角 Born 有效电荷" in old:
-            node.replace_with(old.replace(
-                "非对角 Born 有效电荷",
-                "非对角 Born effective charge（Born 有效电荷）",
-                1,
-            ))
-            break
+    # FSS is not a required preserved abbreviation; keep the evidence matrix
+    # readable in Chinese.
+    headers = [th for th in soup.select(".matrix th") if th.get_text(" ", strip=True) == "β / ν + FSS"]
+    if len(headers) != 1:
+        raise RuntimeError(f"Expected one FSS matrix header, found {len(headers)}")
+    headers[0].string = "β / ν + 有限尺寸标度"
 
     if source_blocks(soup) != before_sources:
-        raise RuntimeError("Module 08 source-text changed during terminology audit")
+        raise RuntimeError("Module 08 source-text changed during final terminology cleanup")
     if [el.get_text(" ", strip=False) for el in soup.select(".eq")] != before_equations:
-        raise RuntimeError("Module 08 equation card changed during terminology audit")
+        raise RuntimeError("Module 08 equation card changed during final terminology cleanup")
     if [(img.get("src"), img.get("alt")) for img in soup.find_all("img")] != before_images:
-        raise RuntimeError("Module 08 image wiring changed during terminology audit")
+        raise RuntimeError("Module 08 image wiring changed during final terminology cleanup")
     if [a.get("href") for a in soup.select("figure a")] != before_figure_links:
-        raise RuntimeError("Module 08 figure link changed during terminology audit")
+        raise RuntimeError("Module 08 figure link changed during final terminology cleanup")
 
     TARGET.write_text(str(soup), encoding="utf-8")
 
