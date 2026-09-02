@@ -1,63 +1,64 @@
 <!DOCTYPE html>
+
 <html lang="zh-CN"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Reproduction Lab（复现实验室）06 · 含无序 GL ↔ EW 几何</title><style>
 :root{--b:#f3f0e8;--p:#fffdf8;--i:#191a18;--m:#716d66;--l:#d8d1c3;--a:#6d493b;--soft:#eee8dc}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--b);color:var(--i);font:15px/1.76 system-ui,-apple-system,"PingFang SC",sans-serif}.top{position:sticky;top:0;z-index:3;background:#f3f0e8ee;backdrop-filter:blur(12px);border-bottom:1px solid var(--l)}.bar,main{width:min(1100px,calc(100% - 32px));margin:auto}.bar{height:62px;display:flex;align-items:center;justify-content:space-between;gap:20px}.bar b,h1,h2,h3,.q,.bridge,.eq{font-family:Georgia,"Times New Roman","Songti SC",serif}.bar a,a{color:#504c46}.bar small,.rule,.cap{color:var(--m)}main{padding:52px 0 90px}h1{font-size:clamp(40px,6.8vw,66px);line-height:1.04;margin:12px 0 18px;letter-spacing:-.04em}h2{font-size:29px;line-height:1.25;margin:64px 0 15px}h3{font-size:18px;margin:0 0 6px}.deck{font:19px/1.62 Georgia,"Songti SC",serif;color:#4f4b45;max-width:930px}.q{background:#20211f;color:#f6f1e7;border-radius:14px;padding:20px 22px;font-size:18px;margin:30px 0}.rule,.cap{font-size:12px}.fig,.codebox{background:#fff;border:1px solid var(--l);border-radius:14px;overflow:hidden;margin:26px 0}.head,.cap{padding:10px 14px;background:#f0ece3}.fig img{display:block;width:100%;height:auto;background:#fff}.cap{display:block;border-top:1px solid var(--l)}.two,.three{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.three{grid-template-columns:repeat(3,1fr)}.card{background:var(--p);border:1px solid var(--l);border-radius:11px;padding:15px}.card p{font-size:13px;margin:5px 0}.bridge{font-size:18px;padding:18px 20px;margin:32px 0;border-left:4px solid var(--a);background:var(--soft)}.eq{font-size:18px;text-align:center;padding:14px 12px;margin:16px 0;background:#faf7f0;border:1px solid var(--l);border-radius:10px;overflow-x:auto}.warn{background:#fff7e8;border:1px solid #e4d3ad;border-radius:11px;padding:14px 16px;margin:18px 0}.pass{background:#eef6ef;border:1px solid #bfd2c4;border-radius:11px;padding:14px 16px;margin:18px 0}.hold{background:#fff0ee;border:1px solid #d7b7b0;border-radius:11px;padding:14px 16px;margin:18px 0}.matrix{width:100%;border-collapse:collapse;margin:22px 0;background:#fff;border:1px solid var(--l)}.matrix th,.matrix td{padding:11px 12px;border-bottom:1px solid var(--l);vertical-align:top;text-align:left}.matrix th{background:#f0ece3;font:13px Georgia,serif}.matrix td{font-size:13px}.matrix tr:last-child td{border-bottom:0}pre{margin:0;padding:20px;overflow:auto;background:#1e201f;color:#f2eee6;font:12.5px/1.58 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.verdict{font:16px/1.65 Georgia,"Songti SC",serif;background:#f7f1e7;border-left:4px solid #b27a2f;padding:16px 18px;margin:18px 0}.next{margin-top:44px;padding-top:20px;border-top:1px solid var(--l);display:flex;justify-content:space-between;gap:16px}@media(max-width:760px){.two,.three{grid-template-columns:1fr}.bar span{display:none}.matrix{display:block;overflow-x:auto}.next{flex-direction:column}h2{margin-top:54px}}
-</style></head><body><header class="top"><div class="bar"><b>Reproduction Lab（复现实验室） <small>· 第 06 课 · 先验证几何，再讨论普适性</small></b><span><a href="reproduction-lab-05.html">L05</a> · <a href="../index.html">首页</a> · <a href="#compare">论文对照</a> · <a href="#code">Code</a></span></div></header><main>
-<div class="rule"><a href="../index.html">Learning Sliding Ferroelectricity</a> / Reproduction Lab（复现实验室） / Lesson 06</div>
+</style></head><body><header class="top"><div class="bar"><b>Reproduction Lab（复现实验室） <small>· 第 06 课 · 先验证几何，再讨论普适性</small></b><span><a href="reproduction-lab-05.html">L05</a> · <a href="../index.html">首页</a> · <a href="#compare">论文对照</a> · <a href="#code">代码</a></span></div></header><main>
+<div class="rule"><a href="../index.html">Learning Sliding Ferroelectricity</a> / 复现实验室 / 第 06 课</div>
 <h1>模型降维已经对上，不代表 \(\zeta=2/3\) 已经有资格宣布</h1>
-<p class="deck">Caballero 2020 Fig.5 是这篇论文最接近你后续 Paper2 的一张图：同一个 random-bond（随机键）问题，同时跑 二维 Ginzburg–Landau（GL）体场 和映射后的 一维 Edwards–Wilkinson（EW）界面，再用 real-space roughness（实空间粗糙度） B(r,t) 与 structure factor（傅里叶空间结构因子） S(q,t) 检查两种描述是否一致。更重要的是，这一课第一次把“模型映射是否正确”和“是否已经进入渐近普适区”严格拆成两个不同问题。</p>
-<div class="q"><b>本课判据：</b>GL↔EW 必须在 <b>B(r)</b> 和 <b>S(q)</b> 两个观测量 上同时接近，才能叫 跨模型几何映射通过；而要声称 random-bond \(\zeta=2/3\)，还必须要求 由 B 与 S 得到的有效指数 在同一受控尺度窗内彼此兼容。前者通过，不自动推出后者。</div>
+<p class="deck">Caballero 2020 Fig.5 是这篇论文最接近你后续第二篇工作 的一张图：同一个 random-bond（随机键）问题，同时跑二维 Ginzburg–Landau（GL）体场和映射后的一维 Edwards–Wilkinson（EW）界面，再用实空间 roughness（粗糙度） B(r,t) 与傅里叶空间 structure factor（结构因子） S(q,t) 检查两种描述是否一致。更重要的是，这一课第一次把“模型映射是否正确”和“是否已经进入渐近普适区”严格拆成两个不同问题。</p>
+<div class="q"><b>本课判据：</b>GL↔EW 必须在 <b>B(r)</b> 和 <b>S(q)</b> 两个观测量上同时接近，才能叫跨模型几何映射通过；而要声称随机键 \(\zeta=2/3\)，还必须要求 由 B 与 S 得到的有效指数在同一受控尺度窗内彼此兼容。前者通过，不自动推出后者。</div>
 <h2 id="compare">0 · 原论文 Fig.5 与我们的 t=1000 阶段验证</h2>
 <div class="two">
-<figure class="fig"><a href="../assets/reproduction-lab/caballero2020-fig5-disordered-geometry.webp" rel="noopener" target="_blank"><img alt="Caballero 2020 Figure 5 disordered GL and EW roughness and structure factor" src="../assets/reproduction-lab/caballero2020-fig5-disordered-geometry.webp"/></a><figcaption class="cap"><b>Caballero et al. 2020 · Fig.5。</b><br/>2D GL 用实线，等效 1D EW 用点划线；T=0.05、ε=0.1、从平直畴壁出发，平均 10 个独立无序样本。上图 B(r,t)，下图 S(q,t)。作者把 长时间区间 与 随机键粗糙度 ζ<sub>RB</sub>=2/3 比较。</figcaption></figure>
-<figure class="fig"><a href="../assets/reproduction-lab/lesson06_disordered_geometry_checkpoint.svg" rel="noopener" target="_blank"><img alt="Our disordered GL versus EW geometry checkpoint" src="../assets/reproduction-lab/lesson06_disordered_geometry_checkpoint.svg"/></a><figcaption class="cap"><b>本课小系统阶段验证。</b><br/>T=0.05、ε=0.1、t=1000；GL 64×128，EW 长度 128，8 个独立无序样本。左上比较 B，右上比较 S；右下故意把 B 与 S 各自给出的 有效 ζ 放到一起，防止只挑一个最像 2/3 的 估计量。</figcaption></figure>
+<figure class="fig"><a href="../assets/reproduction-lab/caballero2020-fig5-disordered-geometry.webp" rel="noopener" target="_blank"><img alt="Caballero 2020 图 5：含无序 GL 与 EW 的粗糙度和结构因子" src="../assets/reproduction-lab/caballero2020-fig5-disordered-geometry.webp"/></a><figcaption class="cap"><b>Caballero et al. 2020 · Fig.5。</b><br/>2D GL 用实线，等效 1D EW 用点划线；T=0.05、ε=0.1、从平直畴壁出发，平均 10 个独立无序样本。上图 B(r,t)，下图 S(q,t)。作者把长时间区间与随机键粗糙度 ζ<sub>RB</sub>=2/3 比较。</figcaption></figure>
+<figure class="fig"><a href="../assets/reproduction-lab/lesson06_disordered_geometry_checkpoint.svg" rel="noopener" target="_blank"><img alt="本课含无序 GL 与 EW 几何阶段验证" src="../assets/reproduction-lab/lesson06_disordered_geometry_checkpoint.svg"/></a><figcaption class="cap"><b>本课小系统阶段验证。</b><br/>T=0.05、ε=0.1、t=1000；GL 64×128，EW 长度 128，8 个独立无序样本。左上比较 B，右上比较 S；右下故意把 B 与 S 各自给出的有效 ζ 放到一起，防止只挑一个最像 2/3 的估计量。</figcaption></figure>
 </div>
-<div class="verdict"><b>结论先写在前面：</b>我们的 GL 与 EW 几何统计 已经明显互相跟随；但当前小系统/有限时间下，B-derived 和 S-derived ζ 还没有闭合，所以这一步只能写 <b>跨模型映射通过</b>，不能写“已复现 随机键普适性”。</div>
+<div class="verdict"><b>结论先写在前面：</b>我们的 GL 与 EW 几何统计已经明显互相跟随；但当前小系统/有限时间下，由 B 与 S 得到的 ζ 还没有闭合，所以这一步只能写 <b>跨模型映射通过</b>，不能写“已复现随机键普适性”。</div>
 <h2>1 · 论文真正测试的是两层命题</h2>
-<div class="two"><div class="card"><h3>命题 A · 模型降维</h3><p>给定同一 体场无序物理，2D GL 提取出的畴壁 和映射后的 1D EW 是否产生相同几何统计？这主要由 B(r) 与 S(q) 的 跨模型一致性 检验。</p></div><div class="card"><h3>命题 B · 渐近标度</h3><p>系统是否已经进入足够大的尺度/足够长的时间，使 粗糙指数 接近 随机键平衡值 ζ=2/3？这需要 估计量 consistency 与 尺寸/时间收敛。</p></div></div>
-<div class="warn"><b>最常见的逻辑跳跃：</b>看到 S(q) 的斜率接近 2/3，就直接说 普适性成立。但如果同一条界面 的 B(r) 还给出明显不同的 有效 ζ，这最多说明“某个 傅里叶尺度区间 看起来接近目标”，不是闭合证据。</div>
-<h2>2 · 我们保持哪些 论文物理设定？缩小了哪些东西？</h2>
+<div class="two"><div class="card"><h3>命题 A · 模型降维</h3><p>给定同一体场无序物理，2D GL 提取出的畴壁和映射后的 1D EW 是否产生相同几何统计？这主要由 B(r) 与 S(q) 的跨模型一致性检验。</p></div><div class="card"><h3>命题 B · 渐近标度</h3><p>系统是否已经进入足够大的尺度/足够长的时间，使粗糙指数接近随机键平衡值 ζ=2/3？这需要 估计量一致性 与尺寸/时间收敛。</p></div></div>
+<div class="warn"><b>最常见的逻辑跳跃：</b>看到 S(q) 的斜率接近 2/3，就直接说普适性成立。但如果同一条界面的 B(r) 还给出明显不同的有效 ζ，这最多说明“某个傅里叶尺度区间 看起来接近目标”，不是闭合证据。</div>
+<h2>2 · 我们保持哪些论文物理设定？缩小了哪些东西？</h2>
 <table class="matrix"><thead><tr><th>项目</th><th>Caballero Fig.5</th><th>本课阶段验证</th></tr></thead><tbody>
 <tr><td>体场耦合</td><td>Vζ(φ)=V(φ)[1+εζ]</td><td>相同</td></tr>
 <tr><td>T / ε</td><td>0.05 / 0.1</td><td><b>0.05 / 0.1，相同</b></td></tr>
 <tr><td>初始条件</td><td>平直界面</td><td>相同</td></tr>
-<tr><td>GL wall 估计量</td><td>有限温孤子拟合</td><td>第 04 课已验证的 {A,w,u} 拟合</td></tr>
+<tr><td>GL 畴壁估计量</td><td>有限温孤子拟合</td><td>第 04 课已验证的 {A,w,u} 拟合</td></tr>
 <tr><td>GL 尺寸</td><td>256×4096</td><td>64×128</td></tr>
 <tr><td>EW 长度</td><td>4096</td><td>128</td></tr>
 <tr><td>独立无序样本</td><td>10</td><td>8</td></tr>
 <tr><td>时间范围</td><td>多时间，延伸到很长时标</td><td>先看 t=1000 阶段验证</td></tr>
 </tbody></table>
-<p>所以这节不是 与 Fig.5 完全同协议的复现，而是一个严格的小系统阶段验证：先问 GL→EW 映射 有没有走对，再决定是否值得把算力投给 长时间/大尺寸下的指数闭合。</p>
-<h2>3 · 2D GL 与 1D EW 现在共享同一条 无序传递链</h2>
-<p>2D bulk 继续使用 Lesson05 的 随机键耦合：</p>
+<p>所以这节不是与 Fig.5 完全同协议的复现，而是一个严格的小系统阶段验证：先问 GL→EW 映射有没有走对，再决定是否值得把算力投给长时间/大尺寸下的指数闭合。</p>
+<h2>3 · 2D GL 与 1D EW 现在共享同一条无序传递链</h2>
+<p>二维体场 继续使用 第 05 课 的随机键耦合：</p>
 <div class="eq">V<sub>ζ</sub>(φ)=V(φ)[1+εζ(x,y)]</div>
-<p>1D EW 不再随便造一个“看起来有点相关”的 随机力，而是使用 Lesson05 已经验证的 畴壁层钉扎统计：</p>
+<p>1D EW 不再随便造一个“看起来有点相关”的随机力，而是使用 第 05 课 已经验证的畴壁层钉扎统计：</p>
 <div class="eq">η̃∂<sub>t</sub>u = c∂²<sub>y</sub>u + F<sub>p</sub>(u,y) + ξ̃</div>
-<div class="bridge"><b>这就是复现梯子的意义：</b>Lesson03 已锁死 EW 热噪声动力学；Lesson04 已锁死 finite-T bulk→wall 估计量；Lesson05 已锁死 体场 RB→钉扎力相关函数。Lesson06 如果出问题，我们已经不需要从“是不是 Laplacian 写反了”重新怀疑，而能把诊断集中到 含无序动力学、有限尺寸/有限时间 或 映射假设。</div>
+<div class="bridge"><b>这就是复现梯子的意义：</b>第 03 课 已锁死 EW 热噪声动力学；第 04 课 已锁死 有限温体场→畴壁估计量；第 05 课 已锁死 体场 RB→钉扎力相关函数。第 06 课 如果出问题，我们已经不需要从“是不是 Laplacian（拉普拉斯算子）写反了”重新怀疑，而能把诊断集中到含无序动力学、有限尺寸/有限时间或映射假设。</div>
 <h2>4 · 第一关：B(r) 的跨模型几何对照</h2>
 <div class="eq">B(r)=⟨[u(y+r)−u(y)]²⟩</div>
-<p>在预先声明的 4≤r≤32 窗口中，我们用 对称相对差 比较 GL 与 EW，而不是拿其中一个当“真值”。自动化测试保存的最终结果：</p>
-<div class="pass"><b>B 中位相对差 = 1.227%</b><br/>这已经是非常强的 跨模型一致性。它说明在这个 checkpoint 上，体场 GL 与 降维后的 EW 对 实空间畴壁几何 的描述是相容的。</div>
+<p>在预先声明的 4≤r≤32 窗口中，我们用对称相对差比较 GL 与 EW，而不是拿其中一个当“真值”。自动化测试保存的最终结果：</p>
+<div class="pass"><b>B 中位相对差 = 1.227%</b><br/>这已经是非常强的跨模型一致性。它说明在这个阶段验证 上，体场 GL 与降维后的 EW 对实空间畴壁几何 的描述是相容的。</div>
 <h2>5 · 第二关：S(q) 必须独立跟上</h2>
 <div class="eq">S(q)=⟨|u<sub>q</sub>|²/L⟩</div>
-<p>傅里叶空间 对 小尺度/大尺度过渡 的权重和 B(r) 不同，因此它不是“重复画一遍 B”。我们先对 q 做预定义 对数分箱，只用 分箱中心 比较两模型，避免高 q 密集 modes 机械支配误差：</p>
-<div class="pass"><b>S(q) 对数分箱中位相对差 = 6.122%</b><br/>仍在事先设定的 10% 判据 内，所以 cross-model mapping 在 傅里叶观测量 上也通过。</div>
-<div class="warn"><b>对数分箱 不是新的 n。</b> 它只是让跨数量级的 q 区域获得更均衡的 估计量 weight；统计独立单位仍然是 realization，不是 傅里叶模式，也不是分箱。</div>
+<p>傅里叶空间对小尺度/大尺度过渡 的权重和 B(r) 不同，因此它不是“重复画一遍 B”。我们先对 q 做预定义对数分箱，只用分箱中心 比较两模型，避免高 q 密集模式 机械支配误差：</p>
+<div class="pass"><b>S(q) 对数分箱中位相对差 = 6.122%</b><br/>仍在事先设定的 10% 判据内，所以 跨模型映射 在傅里叶观测量上也通过。</div>
+<div class="warn"><b>对数分箱不是新的 n。</b> 它只是让跨数量级的 q 区域获得更均衡的估计量权重；统计独立单位仍然是独立无序样本，不是 傅里叶模式，也不是分箱。</div>
 <h2>6 · 然后才看指数：这里故意不“挑漂亮答案”</h2>
 <table class="matrix"><thead><tr><th>估计量</th><th>2D GL</th><th>1D EW</th><th>论文渐近参考</th></tr></thead><tbody>
 <tr><td>由 B(r) 得到 ζ</td><td><b>0.538906</b></td><td><b>0.509213</b></td><td rowspan="2">ζ<sub>RB</sub>=2/3≈0.6667</td></tr>
 <tr><td>由 S(q) 得到 ζ</td><td><b>0.694308</b></td><td><b>0.664796</b></td></tr>
 </tbody></table>
-<p>如果只看 S(q)，你很容易说“EW=0.665，几乎就是 2/3，复现成功”。但同一时刻 B(r) 仍只有约 0.51–0.54。这说明当前系统仍有明显 跨尺度过渡、有限尺寸和有限时间效应，不能把一条 估计量 的接近当作渐近普适性。</p>
-<div class="hold"><b>渐近 ζ 判据：未通过。</b> 当前正确写法是：GL 与 EW 在同一观测量 上高度一致，说明 模型降维 已有强证据；但 由 B 与 S 得到的指数 尚未在同一 标度区间 中闭合，因此 ζ=2/3 只能作为 论文目标值/斜率参考，不能升级成我们的 测得的渐近指数。</div>
+<p>如果只看 S(q)，你很容易说“EW=0.665，几乎就是 2/3，复现成功”。但同一时刻 B(r) 仍只有约 0.51–0.54。这说明当前系统仍有明显的跨尺度过渡、有限尺寸和有限时间效应，不能把一个估计量的接近当作渐近普适性。</p>
+<div class="hold"><b>渐近 ζ 判据：未通过。</b> 当前正确写法是：GL 与 EW 在同一观测量上高度一致，说明模型降维已有强证据；但 由 B 与 S 得到的指数尚未在同一标度区间中闭合，因此 ζ=2/3 只能作为论文目标值/斜率参考，不能升级成我们测得的渐近指数。</div>
 <h2>7 · 为什么这个“没通过”反而很有教学价值？</h2>
-<div class="three"><div class="card"><h3>排除代码基础错误</h3><p>B 和 S 的 GL↔EW 一致性 已很好，说明两套模型的 几何分析流程 不是各跑各的。</p></div><div class="card"><h3>暴露跨尺度过渡</h3><p>同一模型的 B 与 S 给不同 有效 ζ，直接告诉你目前 拟合区间 不处在单一 渐近区间。</p></div><div class="card"><h3>决定算力投向</h3><p>下一步应优先做 计算更省的 EW 的 时间/尺寸阶梯，确认 指数收敛 后再决定是否值得把 2D GL 也扩大。</p></div></div>
-<h2>8 · 另一个 合理性检查：体场畴壁剖面 还健康吗？</h2>
-<p>如果 无序已把畴壁撕成气泡或多值几何，即使 B 与 S 看起来还能算，单值界面映射 也可能失去物理意义。本课的 有限温孤子拟合 给出：</p>
+<div class="three"><div class="card"><h3>排除代码基础错误</h3><p>B 和 S 的 GL↔EW 一致性已经很好，说明两套模型的几何分析流程 不是各跑各的。</p></div><div class="card"><h3>暴露跨尺度过渡</h3><p>同一模型的 B 与 S 给出不同的有效 ζ，直接告诉你目前拟合区间不处在单一渐近区间。</p></div><div class="card"><h3>决定算力投向</h3><p>下一步应优先对计算更省的 EW 做时间/尺寸阶梯，确认指数收敛后再决定是否值得把 2D GL 也扩大。</p></div></div>
+<h2>8 · 另一个合理性检查：体场畴壁剖面还健康吗？</h2>
+<p>如果无序已把畴壁撕成气泡或多值几何，即使 B 与 S 看起来还能算，单值界面映射也可能失去物理意义。本课的有限温孤子拟合给出：</p>
 <table class="matrix"><tbody><tr><th>平均拟合振幅 A</th><td>0.982981</td></tr><tr><th>平均拟合宽度 w</th><td>1.371256</td></tr><tr><th>平均剖面拟合 RMSE</th><td>0.077925</td></tr></tbody></table>
-<p>A 与 w 仍接近 干净低温剖面（A≈1、w≈√2），因此当前阶段验证 还在一个可合理约化成单值界面的区间。以后 disorder 更强时，这一层 拓扑/剖面质量检查 必须先于 ζ 拟合。</p>
+<p>A 与 w 仍接近干净低温剖面（A≈1、w≈√2），因此当前阶段验证还在一个可合理约化成单值界面的区间。以后无序更强时，这一层拓扑/剖面质量检查必须先于 ζ 拟合。</p>
 <h2 id="code">9 · 完整脚本与机器生成的基准测试回执</h2>
 <p><a href="../examples/reproduction-lab/lesson06_disordered_geometry.py"><b>打开第 06 课 Python 脚本 →</b></a>　<a href="../assets/reproduction-lab/lesson06_disordered_geometry_checkpoint.txt"><b>打开自动化测试保存的基准测试日志 →</b></a></p>
-<div class="codebox"><div class="head"><b>CI 保存的最终输出</b></div><pre>Caballero Fig.5 geometry checkpoint
+<div class="codebox"><div class="head"><b>自动化测试保存的最终输出</b></div><pre>Caballero Fig.5 geometry checkpoint
 T, epsilon, t          = 0.050, 0.100, 1000.0
 GL size / EW length    = 64x128 / 128
 realizations           = 8
@@ -69,8 +70,8 @@ GL fitted A, w         = 0.982981, 1.371256
 GL profile-fit RMSE    = 0.077925
 CROSS-MODEL GEOMETRY PASS; ASYMPTOTIC ZETA GATE NOT PASSED</pre></div>
 <h2>10 · 第一篇工作的方法链在这里收口；下一步切到第二篇工作的 depinning（退钉扎）</h2>
-<div class="pass"><b>第一篇工作边界。</b> Lesson01–06 已经覆盖了 干净畴壁 → 外场到界面驱动力映射 → EW 粗糙度基准测试 → 有限温映射边界 → RB 无序投影 → 含无序 GL/EW 几何阶段验证。它们直接服务 第一篇工作的翻转/无序比较 方法可信度。</div>
-<p>这里的 渐近 ζ 判据 仍然没有通过，所以不把 Lesson06 写成“普适性已证明”。继续加 时间/尺寸阶梯 仍然是未来 粗糙度精修的一条支线；但按两篇论文的科学分工，<b>正式主线现在进入第二篇工作：</b>预先存在的 孤立畴壁、恒定驱动、样本依赖的退钉扎阈值。</p>
-<div class="bridge"><b>从下一课开始不要再混用两个 E<sub>c</sub>。</b> 第一篇工作的滞回/翻转矫顽尺度 可以包含 成核、多墙和 协议速率效应；第二篇工作的退钉扎阈值 是一条预先存在的 wall 在 恒定驱动 下 pinned ↔ moving 的临界点。</div>
+<div class="pass"><b>第一篇工作边界。</b> 第 01–06 课 已经覆盖了干净畴壁 → 外场到界面驱动力映射 → EW 粗糙度基准测试 → 有限温映射边界 → RB 无序投影 → 含无序 GL/EW 几何阶段验证。它们直接服务第一篇工作的翻转/无序比较方法可信度。</div>
+<p>这里的渐近 ζ 判据 仍然没有通过，所以不把 第 06 课 写成“普适性已证明”。继续增加时间/尺寸阶梯 仍然是未来粗糙度精修的一条支线；但按两篇论文的科学分工，<b>正式主线现在进入第二篇工作：</b>预先存在的孤立畴壁、恒定驱动、样本依赖的退钉扎阈值。</p>
+<div class="bridge"><b>从下一课开始不要再混用两个 E<sub>c</sub>。</b> 第一篇工作的滞回/翻转矫顽尺度可以包含成核、多墙和协议速率效应；第二篇工作的退钉扎阈值是一条预先存在的畴壁在恒定驱动下钉扎态 ↔ 运动态 的临界点。</div>
 <div class="next"><a href="reproduction-lab-05.html">← 第 05 课 · 无序投影</a><a href="reproduction-lab-07.html">第 07 课 · 阈值搜索 →</a></div>
 </main></body></html>
