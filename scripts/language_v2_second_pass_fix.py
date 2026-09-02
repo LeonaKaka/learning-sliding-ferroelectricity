@@ -20,6 +20,9 @@ TEXT_REPLACEMENTS = {
     "在 第 03 课给它加热噪声": "在第 03 课给它加热噪声",
     "B(r,t) scaling curve 与我们的 small-system curve 并排，做真正的 thumbnail reproduction，并用解析 EW prediction 检查有限尺寸偏差。":
         "B(r,t) 标度曲线与我们的小系统曲线并排，做真正的缩略复现，并用解析 EW 预测检查有限尺寸偏差。",
+    "论文 Figure": "论文图",
+    "topology gate（拓扑判据）": "拓扑判据",
+    "periodic boundary（周期边界）": "周期边界",
 }
 
 
@@ -62,6 +65,7 @@ def main() -> None:
     figures = soup.select("figure.fig img")
     if len(figures) != 2:
         raise RuntimeError(f"Lab 02 expected 2 Figures, found {len(figures)}")
+    figures[0]["alt"] = "Caballero 2020 图 1：二维 GL 体场与提取界面"
 
     if [equation_body_text(eq) for eq in soup.select(".eq")] != before_eq:
         raise RuntimeError("Lab 02 equation body changed")
