@@ -12,6 +12,10 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 
+# Keep generated scientific plots readable on Linux CI as well as local machines.
+plt.rcParams["font.sans-serif"] = ["Noto Sans CJK SC", "DejaVu Sans"]
+plt.rcParams["axes.unicode_minus"] = False
+
 # --- Caballero clean phi^4 / Model-A parameters ---
 alpha = 1.0
 delta = 1.0
