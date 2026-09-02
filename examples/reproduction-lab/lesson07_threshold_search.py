@@ -203,6 +203,8 @@ here = Path(__file__).resolve()
 repo_root = here.parents[2] if here.parent.name == "reproduction-lab" else here.parent
 out_dir = repo_root / "assets" / "reproduction-lab"
 out_dir.mkdir(parents=True, exist_ok=True)
+receipt_out = out_dir / "lesson07_threshold_search.txt"
+receipt_out.write_text("\n".join(receipt_lines) + "\n", encoding="utf-8")
 
 def finish(fig, name):
     fig.tight_layout()
@@ -264,3 +266,4 @@ ax.legend()
 finish(fig,'lesson07_particle_gold.png')
 
 print('saved figures:', ', '.join(['lesson07_last_pinned_profile.png','lesson07_bisection.png','lesson07_dt_threshold.png','lesson07_particle_gold.png']))
+print(f'saved receipt: {receipt_out}')
