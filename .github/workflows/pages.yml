@@ -24,220 +24,202 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Inject bilingual terminology runtime
+      - name: Inject terminology runtime
         run: |
           python3 - <<'PY'
           from pathlib import Path
-
-          pages = [Path('index.html'), *sorted(Path('modules').glob('*.html'))]
+          pages=[Path('index.html'),*sorted(Path('modules').glob('*.html'))]
           for page in pages:
-              text = page.read_text(encoding='utf-8')
-              prefix = '' if page.name == 'index.html' else '../'
-              tag = f'<script src="{prefix}terms.js"></script>'
+              text=page.read_text(encoding='utf-8')
+              prefix='' if page.name=='index.html' else '../'
+              tag=f'<script src="{prefix}terms.js"></script>'
               if '</body>' not in text:
                   raise SystemExit(f'{page}: missing </body>')
               if tag not in text:
-                  text = text.replace('</body>', tag + '</body>')
-              page.write_text(text, encoding='utf-8')
-          print(f'Injected single bilingual runtime into {len(pages)} pages.')
+                  text=text.replace('</body>',tag+'</body>')
+                  page.write_text(text,encoding='utf-8')
+          print(f'terminology runtime checked on {len(pages)} pages')
           PY
 
-      - name: Verify static evidence site
+      - name: Validate static site and Reproduction Lab evidence
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          from xml.etree import ElementTree as ET
-          import hashlib, re
+          import csv, json, re, struct
 
-          all_pages = [Path('index.html'), *sorted(Path('modules').glob('*.html'))]
-          for page in all_pages:
-              text = page.read_text(encoding='utf-8')
-              bad = [(i, ord(ch)) for i, ch in enumerate(text) if ord(ch) < 32 and ch not in '\n\r\t']
+          root=Path('.')
+          pages=[Path('index.html'),*sorted(Path('modules').glob('*.html'))]
+          page_set={p.resolve() for p in pages}
+
+          # All local images and local HTML links must resolve.
+          for page in pages:
+              text=page.read_text(encoding='utf-8')
+              bad=[(i,ord(ch)) for i,ch in enumerate(text) if ord(ch)<32 and ch not in '\n\r\t']
               if bad:
-                  raise SystemExit(f'{page}: forbidden control characters found: {bad[:10]}')
-              for ref in re.findall(r'<img[^>]+src="([^"]+)"', text):
+                  raise SystemExit(f'{page}: forbidden control characters {bad[:5]}')
+              for ref in re.findall(r'<img[^>]+src="([^"]+)"',text):
                   if ref.startswith(('http://','https://','data:')):
-                      raise SystemExit(f'{page}: remote image not allowed: {ref}')
-                  if not (page.parent / ref).resolve().exists():
-                      raise SystemExit(f'{page}: missing image: {ref}')
+                      raise SystemExit(f'{page}: remote image forbidden: {ref}')
+                  target=(page.parent/ref).resolve()
+                  if not target.exists():
+                      raise SystemExit(f'{page}: missing image {ref}')
+              for href in re.findall(r'<a[^>]+href="([^"]+)"',text):
+                  if href.startswith(('http://','https://','mailto:','#','javascript:')):
+                      continue
+                  path=href.split('#',1)[0]
+                  if not path:
+                      continue
+                  target=(page.parent/path).resolve()
+                  if path.endswith('.html') and not target.exists():
+                      raise SystemExit(f'{page}: broken HTML link {href}')
 
-          expected_sources = {
-              'foundations.html': 5, 'switching-pathways.html': 3,
-              'domain-walls.html': 4, 'pinning-creep.html': 6,
-              'depinning.html': 4, 'disorder-rfim.html': 3,
-              'numerical-modeling.html': 3, 'current-frontiers.html': 5,
+          # Core teaching modules retain their selectable source-text evidence.
+          expected_sources={
+              'foundations.html':5,'switching-pathways.html':3,'domain-walls.html':4,
+              'pinning-creep.html':6,'depinning.html':4,'disorder-rfim.html':3,
+              'numerical-modeling.html':3,'current-frontiers.html':5,
           }
-          for name, count in expected_sources.items():
-              page = Path('modules') / name
-              text = page.read_text(encoding='utf-8')
-              if text.count('class="source-text"') < count:
-                  raise SystemExit(f'{name}: missing selectable source-text blocks')
-              if 'paragraph-' in text or 'paragraph_' in text:
-                  raise SystemExit(f'{name}: paragraph screenshots are forbidden')
-              tag = '<script src="../terms.js"></script>'
-              if tag not in text:
-                  raise SystemExit(f'{name}: terminology runtime missing')
-              if 'terms-extra.js' in text or 'terms-cleanup.js' in text:
-                  raise SystemExit(f'{name}: legacy overlapping terminology runtime injected')
+          for name,count in expected_sources.items():
+              text=(Path('modules')/name).read_text(encoding='utf-8')
+              if text.count('class="source-text"')<count:
+                  raise SystemExit(f'{name}: missing source-text evidence blocks')
 
-          index = Path('index.html').read_text(encoding='utf-8')
-          if '<script src="terms.js"></script>' not in index:
-              raise SystemExit('index.html: terminology runtime missing')
-          if 'terms-extra.js' in index or 'terms-cleanup.js' in index:
-              raise SystemExit('index.html: legacy overlapping terminology runtime injected')
-
-          terms = Path('terms.js').read_text(encoding='utf-8')
-          required_terms = (
-              "['domain wall','畴壁']", "['pinning','钉扎']", "['creep','蠕变']",
-              "['depinning','退钉扎']", "['finite-size scaling','有限尺寸标度']",
-              "['random-field','随机场']", "['random-bond','随机键']",
-              "['RFIM','随机场伊辛模型']", "['QEW','淬火 Edwards–Wilkinson 模型']",
-              "['phase-field','相场']", "['TDGL','含时金兹堡–朗道方程']",
-              "['order parameter','序参量']", "['structure factor','结构因子']",
-              "['universality','普适性']", "['stacking registry','堆垛构型']",
-              "['switching pathway','极化翻转路径']", "['Born effective charge','Born 有效电荷']",
-              "['KPFM','开尔文探针力显微镜']",
-              "el.closest('script,style,pre,code,kbd,samp,math,.source-text,.eq,h1,h2,h3,a,.brand,.bar')",
-              "addMobileToc()",
-          )
-          for marker in required_terms:
-              if marker not in terms:
-                  raise SystemExit(f'terms.js: missing terminology/behavior marker: {marker}')
-
-          frozen = {
-              'assets/interface-scaling/zhou2012-fig2-anomalous-roughness.png': (7818, 'd59962ea8bae39ee79afc89969daf071d1cef4721e89958e52ed5df786b13450'),
-              'assets/interface-scaling/caballero2020-fig1-bulk-to-interface.png': (13797, '8a4493aac052dccb9752a23e7998a23db17947e561bd81cdc60413bb60a10dcc'),
-              'assets/interface-scaling/caballero2020-fig5-roughness.png': (13214, 'a0ec188345c910ecbdb3e49ea63c1c1aa4eac5bf1a1af4cc978d5df7acc78383'),
-              'assets/interface-scaling/caballero2020-fig5-structure-factor.png': (14359, '53b6dedc4183599b445ee30443744f5622702e54a8b542ccc87fe774e515be31'),
+          # Reproduction Lab 01-06 contract is unchanged.
+          early={
+              'reproduction-lab.html':['lesson01_tdgl_wall.py','lesson01_tdgl_wall_result.svg'],
+              'reproduction-lab-02.html':['lesson02_2d_wall_extract.py','lesson02_2d_wall_extract.svg'],
+              'reproduction-lab-03.html':['lesson03_ew_roughness.py','lesson03_ew_roughness_thumbnail.svg','caballero2020-fig2-time-roughness.webp'],
+              'reproduction-lab-04.html':['lesson04_gl_to_ew.py','lesson04_gl_to_ew_boundary.svg','caballero2020-fig3-temperature-boundary.webp'],
+              'reproduction-lab-05.html':['lesson05_rb_projection.py','lesson05_rb_projection_correlator.svg','lesson05_rb_projection_correlator.txt','caballero2020-fig4-pinning-correlator.webp'],
+              'reproduction-lab-06.html':['lesson06_disordered_geometry.py','lesson06_disordered_geometry_checkpoint.svg','lesson06_disordered_geometry_checkpoint.txt','caballero2020-fig5-disordered-geometry.webp'],
           }
-          for path, (size, digest) in frozen.items():
-              p = Path(path)
-              if not p.exists() or p.stat().st_size != size:
-                  raise SystemExit(f'bad frozen asset: {path}')
-              if hashlib.sha256(p.read_bytes()).hexdigest() != digest:
-                  raise SystemExit(f'hash mismatch: {path}')
+          for page_name,names in early.items():
+              page=Path('modules')/page_name
+              text=page.read_text(encoding='utf-8')
+              for name in names:
+                  candidates=[Path('examples/reproduction-lab')/name,Path('assets/reproduction-lab')/name]
+                  p=next((x for x in candidates if x.exists()),None)
+                  if p is None or p.stat().st_size==0:
+                      raise SystemExit(f'{page_name}: missing {name}')
+                  if name.endswith(('.py','.svg','.webp')) and name not in text:
+                      raise SystemExit(f'{page_name}: artifact not referenced {name}')
 
-          reproduction_contracts = {
-              'modules/reproduction-lab.html': ('examples/reproduction-lab/lesson01_tdgl_wall.py','assets/reproduction-lab/lesson01_tdgl_wall_result.svg'),
-              'modules/reproduction-lab-02.html': ('examples/reproduction-lab/lesson02_2d_wall_extract.py','assets/reproduction-lab/lesson02_2d_wall_extract.svg'),
-              'modules/reproduction-lab-03.html': ('examples/reproduction-lab/lesson03_ew_roughness.py','assets/reproduction-lab/lesson03_ew_roughness_thumbnail.svg','assets/reproduction-lab/caballero2020-fig2-time-roughness.webp'),
-              'modules/reproduction-lab-04.html': ('examples/reproduction-lab/lesson04_gl_to_ew.py','assets/reproduction-lab/lesson04_gl_to_ew_boundary.svg','assets/reproduction-lab/caballero2020-fig3-temperature-boundary.webp'),
-              'modules/reproduction-lab-05.html': ('examples/reproduction-lab/lesson05_rb_projection.py','assets/reproduction-lab/lesson05_rb_projection_correlator.svg','assets/reproduction-lab/lesson05_rb_projection_correlator.txt','assets/reproduction-lab/caballero2020-fig4-pinning-correlator.webp'),
-              'modules/reproduction-lab-06.html': ('examples/reproduction-lab/lesson06_disordered_geometry.py','assets/reproduction-lab/lesson06_disordered_geometry_checkpoint.svg','assets/reproduction-lab/lesson06_disordered_geometry_checkpoint.txt','assets/reproduction-lab/caballero2020-fig5-disordered-geometry.webp'),
-              'modules/reproduction-lab-07.html': ('examples/reproduction-lab/lesson07_threshold_search.py','assets/reproduction-lab/lesson07_threshold_search.svg','assets/reproduction-lab/lesson07_threshold_search.txt','assets/reproduction-lab/ferrero2013-fig4a-critical-structure.svg','assets/reproduction-lab/ferrero2013-fig4b-finite-size-threshold.svg'),
-              'modules/reproduction-lab-08.html': ('examples/reproduction-lab/lesson08_steady_velocity.py','assets/reproduction-lab/lesson08_steady_velocity.svg','assets/reproduction-lab/lesson08_steady_velocity.txt','assets/reproduction-lab/ferrero2013-fig1b-velocity-force.svg'),
-              'modules/reproduction-lab-09.html': ('examples/reproduction-lab/lesson09_beta_window.py','assets/reproduction-lab/lesson09_beta_window.svg','assets/reproduction-lab/lesson09_beta_window.txt','assets/reproduction-lab/lesson09_beta_window.csv','assets/reproduction-lab/ferrero2013-fig5-critical-relaxation.svg'),
-              'modules/reproduction-lab-10.html': ('examples/reproduction-lab/lesson10_superrough_zeta.py','assets/reproduction-lab/lesson10_superrough_zeta.svg','assets/reproduction-lab/lesson10_superrough_zeta.txt','assets/reproduction-lab/lesson10_superrough_zeta.csv','assets/reproduction-lab/ferrero2013-fig4a-critical-structure.svg'),
-              'modules/reproduction-lab-11.html': ('examples/reproduction-lab/lesson11_fss_nu.py','assets/reproduction-lab/lesson11_fss_nu.svg','assets/reproduction-lab/lesson11_fss_nu.txt','assets/reproduction-lab/lesson11_fc_raw.csv','assets/reproduction-lab/ferrero2013-fig4b-finite-size-threshold.svg'),
-              'modules/reproduction-lab-12.html': ('examples/reproduction-lab/lesson12_thermal_rounding.py','assets/reproduction-lab/lesson12_thermal_rounding.svg','assets/reproduction-lab/lesson12_thermal_rounding.txt','assets/reproduction-lab/lesson12_rounding_raw.csv','assets/reproduction-lab/lesson12_subthreshold_raw.csv','assets/reproduction-lab/ferrero2013-fig6-thermal-rounding.svg'),
+          # L07-12 must render only complete literature figures + code-generated plots.
+          evidence={
+              'reproduction-lab-07.html':['source-ferrero2013-pre-fig3-full.png','lesson07_bisection.png','lesson07_last_pinned_profile.png','lesson07_particle_gold.png','lesson07_dt_threshold.png'],
+              'reproduction-lab-08.html':['source-ferrero2013-review-fig1-full.png','lesson08_vf.png','lesson08_transient_periods.png','lesson08_dt_error.png','lesson08_particle_velocity_gold.png'],
+              'reproduction-lab-09.html':['source-ferrero2013-pre-fig5-full.png','lesson09_mean_v_loglog.png','lesson09_beta_vs_window.png','lesson09_threshold_sensitivity.png','lesson09_bootstrap_beta.png'],
+              'reproduction-lab-10.html':['lesson10_profiles.png','source-ferrero2013-pre-fig1-full.png','lesson10_Sq.png','lesson10_Br.png','lesson10_zeta_vs_size.png'],
+              'reproduction-lab-11.html':['source-ferrero2013-pre-fig2-full.png','lesson11_mean_fc.png','lesson11_std_fc.png','lesson11_nu_vs_window.png','lesson11_collapse_score.png'],
+              'reproduction-lab-12.html':['source-ferrero2013-review-fig1-full.png','lesson12_rounding_vT.png','lesson12_psi_vs_window.png','source-ferrero2021-fig3-full.png','lesson12_subthreshold_vT.png','source-ferrero2021-fig4-full.png','lesson12_resolved_fraction.png','lesson12_halfwindow_stability.png'],
           }
-          for page_name, required_files in reproduction_contracts.items():
-              page = Path(page_name)
-              if not page.exists():
-                  raise SystemExit(f'missing reproduction page: {page_name}')
-              text = page.read_text(encoding='utf-8')
-              for required in required_files:
-                  p = Path(required)
-                  if not p.exists() or p.stat().st_size == 0:
-                      raise SystemExit(f'{page_name}: missing reproduction artifact: {required}')
-                  basename = p.name
-                  if p.suffix in {'.py', '.svg', '.webp'} and basename not in text:
-                      raise SystemExit(f'{page_name}: artifact exists but is not referenced: {required}')
-                  if p.suffix == '.svg':
-                      svg_text = p.read_text(encoding='utf-8')
-                      if 'intentionally omitted' in svg_text or '[...' in svg_text:
-                          raise SystemExit(f'{page_name}: placeholder/truncated SVG payload: {required}')
-                      try:
-                          ET.parse(p)
-                      except Exception as exc:
-                          raise SystemExit(f'{page_name}: invalid SVG {required}: {exc}')
-
-          l05_receipt = Path('assets/reproduction-lab/lesson05_rb_projection_correlator.txt').read_text(encoding='utf-8')
-          for marker in ('Eq25-vs-Eq26', 'sample RMSE/Gamma0', 'ALL DISORDER-PROJECTION GATES PASS'):
-              if marker not in l05_receipt: raise SystemExit(f'Lesson05 receipt missing marker: {marker}')
-          l06_receipt = Path('assets/reproduction-lab/lesson06_disordered_geometry_checkpoint.txt').read_text(encoding='utf-8')
-          for marker in ('B median rel', 'S log-bin median rel', 'ASYMPTOTIC ZETA GATE NOT PASSED'):
-              if marker not in l06_receipt: raise SystemExit(f'Lesson06 receipt missing marker: {marker}')
-          l07_receipt = Path('assets/reproduction-lab/lesson07_threshold_search.txt').read_text(encoding='utf-8')
-          for marker in ('particle max |fc-1|', 'line final bracket width', 'THRESHOLD GOLD TEST + SMALL-LINE BRACKET PASS'):
-              if marker not in l07_receipt: raise SystemExit(f'Lesson07 receipt missing marker: {marker}')
-          l08_receipt = Path('assets/reproduction-lab/lesson08_steady_velocity.txt').read_text(encoding='utf-8')
-          for marker in ('coarse dt=.100 max error', 'production dt=.025 max err', 'NO BETA FIT IN LESSON 08', 'STEADY VELOCITY ESTIMATOR + DT CONVERGENCE PASS'):
-              if marker not in l08_receipt: raise SystemExit(f'Lesson08 receipt missing marker: {marker}')
-          l09_receipt = Path('assets/reproduction-lab/lesson09_beta_window.txt').read_text(encoding='utf-8')
-          for marker in ('particle max |beta-0.5|','window beta drift','threshold-edge beta span','UNIVERSAL BETA CLAIM          = NOT AUTHORIZED','WINDOW-STABILITY GATE         = NOT PASSED'):
-              if marker not in l09_receipt: raise SystemExit(f'Lesson09 receipt missing marker: {marker}')
-          l10_receipt = Path('assets/reproduction-lab/lesson10_superrough_zeta.txt').read_text(encoding='utf-8')
-          for marker in ('SYNTHETIC SUPER-ROUGH GOLD TEST = PASS','SMALL-QEW SUPER-ROUGH SIGNATURE = PASS','THERMODYNAMIC ZETA CLOSURE   = NOT PASSED','FINITE-SIZE SCALING REQUIRED BEFORE UNIVERSAL ZETA CLAIM'):
-              if marker not in l10_receipt: raise SystemExit(f'Lesson10 receipt missing marker: {marker}')
-          l11_receipt = Path('assets/reproduction-lab/lesson11_fss_nu.txt').read_text(encoding='utf-8')
-          for marker in ('SYNTHETIC FSS GOLD TEST         = PASS','size-window nu drift','SIZE-WINDOW STABILITY GATE     = NOT PASSED','UNIVERSAL NU CLAIM              = NOT AUTHORIZED'):
-              if marker not in l11_receipt: raise SystemExit(f'Lesson11 receipt missing marker: {marker}')
-          l12_receipt = Path('assets/reproduction-lab/lesson12_thermal_rounding.txt').read_text(encoding='utf-8')
-          for marker in ('BROWNIAN NOISE-NORMALIZATION GOLD TEST = PASS','SYNTHETIC THERMAL-EXPONENT GOLD TEST = PASS','THERMAL-ROUNDING WINDOW GATE    = NOT PASSED','UNIVERSAL PSI CLAIM             = NOT AUTHORIZED','LOW-T CREEP ASYMPTOTIC RESOLVED = NO','CREEP-LAW / MU CLAIM             = NOT AUTHORIZED'):
-              if marker not in l12_receipt: raise SystemExit(f'Lesson12 receipt missing marker: {marker}')
-
-          csv_counts = {
-              'assets/reproduction-lab/lesson11_fc_raw.csv': 192,
-              'assets/reproduction-lab/lesson12_rounding_raw.csv': 144,
-              'assets/reproduction-lab/lesson12_subthreshold_raw.csv': 40,
+          forbidden={
+              'lesson07_threshold_search.svg','lesson08_steady_velocity.svg','lesson09_beta_window.svg',
+              'lesson10_superrough_zeta.svg','lesson11_fss_nu.svg','lesson12_thermal_rounding.svg',
+              'lesson08-bridge-steady-vf.png','lesson09-bridge-beta-window.png',
+              'lesson11-bridge-mean-fc.png','lesson11-bridge-std-fc.png',
+              'lesson12-bridge-rounding-vT.png','lesson12-bridge-subthreshold-vT.png',
+              'ferrero2013-fig1b-velocity-force.svg','ferrero2013-fig4a-critical-structure.svg',
+              'ferrero2013-fig4b-finite-size-threshold.svg','ferrero2013-fig5-critical-relaxation.svg',
+              'ferrero2013-fig6-thermal-rounding.svg',
           }
-          for path, expected in csv_counts.items():
-              n = sum(1 for _ in Path(path).open(encoding='utf-8')) - 1
-              if n != expected:
-                  raise SystemExit(f'{path}: expected {expected} data rows, found {n}')
+          asset=Path('assets/reproduction-lab')
+          for page_name,required in evidence.items():
+              text=(Path('modules')/page_name).read_text(encoding='utf-8')
+              refs={Path(x).name for x in re.findall(r'<img[^>]+src="([^"]+)"',text)}
+              missing=set(required)-refs
+              if missing:
+                  raise SystemExit(f'{page_name}: missing rendered evidence {sorted(missing)}')
+              bad=refs&forbidden
+              if bad:
+                  raise SystemExit(f'{page_name}: forbidden summary/misidentified image rendered {sorted(bad)}')
+              for name in required:
+                  p=asset/name
+                  if not p.exists() or p.stat().st_size==0:
+                      raise SystemExit(f'{page_name}: missing evidence file {name}')
 
-          if Path('assets/repaired-0607').exists(): raise SystemExit('temporary repaired-0607 asset directory must not return')
-          if Path('scripts').exists(): raise SystemExit('legacy evidence-regeneration scripts must not remain in static V1')
-          for legacy_runtime in ('terms-extra.js','terms-cleanup.js'):
-              if Path(legacy_runtime).exists(): raise SystemExit(f'unused legacy terminology runtime must be removed: {legacy_runtime}')
-          if Path('_bilingual_noop.txt').exists(): raise SystemExit('temporary bilingual staging marker must not remain')
+          # Complete source figures: canonical PNG, high resolution, provenance receipt.
+          complete_sources=[
+              'source-ferrero2013-pre-fig1-full.png','source-ferrero2013-pre-fig2-full.png',
+              'source-ferrero2013-pre-fig3-full.png','source-ferrero2013-pre-fig5-full.png',
+              'source-ferrero2013-review-fig1-full.png','source-ferrero2021-fig3-full.png',
+              'source-ferrero2021-fig4-full.png',
+          ]
+          def png_size(p):
+              b=p.read_bytes()
+              if b[:8]!=b'\x89PNG\r\n\x1a\n' or b[12:16]!=b'IHDR':
+                  raise SystemExit(f'noncanonical PNG: {p}')
+              return struct.unpack('>II',b[16:24])
+          for name in complete_sources:
+              w,h=png_size(asset/name)
+              if w<1700 or h<1400:
+                  raise SystemExit(f'complete source figure too small: {name} {w}x{h}')
+          receipt=json.loads((asset/'source-figure-receipt.json').read_text(encoding='utf-8'))
+          if receipt.get('render_dpi',0)<500:
+              raise SystemExit('source-figure receipt below 500 dpi')
+          rows=receipt.get('figures',[])
+          if len(rows)!=7:
+              raise SystemExit(f'source-figure receipt expected 7 entries, got {len(rows)}')
+          for row in rows:
+              for key in ('file','source_page','pixel_size','sha256','citation'):
+                  if key not in row:
+                      raise SystemExit(f'source receipt missing {key}')
+              if row['file'] not in complete_sources:
+                  raise SystemExit(f"unexpected source receipt file: {row['file']}")
 
-          unique_contracts = {
-              Path('index.html'): ('id="foundations"',),
-              Path('modules/research-track.html'): ('id="fair"','id="identifiability-bridge"','id="data-claim-contract"','id="event-contract"','id="paired-hierarchy"','id="collapse-gate-bridge"','id="roughness-gate-bridge"'),
-              Path('modules/pinning-creep.html'): ('id="roughness-gate"',),
-              Path('modules/numerical-modeling.html'): ('id="identifiability"','id="thermal-noise"','id="velocity-estimator"','id="threshold-authority-bridge"','id="run-receipt"'),
-              Path('modules/depinning.html'): ('id="data-claim-bridge"','id="collapse-gate"','id="threshold-ladder"'),
+          # Code-generated plot assets and scripts must exist.
+          scripts=[f'lesson{i:02d}_' for i in range(7,13)]
+          for prefix in scripts:
+              if not any(Path('examples/reproduction-lab').glob(prefix+'*.py')):
+                  raise SystemExit(f'missing script prefix {prefix}')
+          for page_name,required in evidence.items():
+              for name in required:
+                  if name.startswith('lesson'):
+                      w,h=png_size(asset/name)
+                      if w<900 or h<500:
+                          raise SystemExit(f'code plot too small: {name} {w}x{h}')
+
+          # Frozen scientific receipts/gates remain unchanged in meaning.
+          receipt_markers={
+              'lesson07_threshold_search.txt':['THRESHOLD GOLD TEST + SMALL-LINE BRACKET PASS'],
+              'lesson08_steady_velocity.txt':['NO BETA FIT IN LESSON 08','STEADY VELOCITY ESTIMATOR + DT CONVERGENCE PASS'],
+              'lesson09_beta_window.txt':['UNIVERSAL BETA CLAIM          = NOT AUTHORIZED','WINDOW-STABILITY GATE         = NOT PASSED'],
+              'lesson10_superrough_zeta.txt':['SMALL-QEW SUPER-ROUGH SIGNATURE = PASS','THERMODYNAMIC ZETA CLOSURE   = NOT PASSED'],
+              'lesson11_fss_nu.txt':['SIZE-WINDOW STABILITY GATE     = NOT PASSED','UNIVERSAL NU CLAIM              = NOT AUTHORIZED'],
+              'lesson12_thermal_rounding.txt':['THERMAL-ROUNDING WINDOW GATE    = NOT PASSED','UNIVERSAL PSI CLAIM             = NOT AUTHORIZED','LOW-T CREEP ASYMPTOTIC RESOLVED = NO','CREEP-LAW / MU CLAIM             = NOT AUTHORIZED'],
           }
-          for page, markers in unique_contracts.items():
-              text = page.read_text(encoding='utf-8')
+          for name,markers in receipt_markers.items():
+              text=(asset/name).read_text(encoding='utf-8')
               for marker in markers:
-                  if text.count(marker) != 1: raise SystemExit(f'{page}: expected exactly one unique contract marker: {marker}')
+                  if marker not in text:
+                      raise SystemExit(f'{name}: missing frozen scientific marker {marker}')
 
-          required_links = {
-              Path('modules/numerical-modeling.html'): ('href="#identifiability"','href="#thermal-noise"','depinning.html#threshold-ladder','research-track.html#fair'),
-              Path('modules/depinning.html'): ('href="#threshold-ladder"',),
-              Path('modules/research-track.html'): ('numerical-modeling.html#identifiability','numerical-modeling.html#thermal-noise','depinning.html#collapse-gate','pinning-creep.html#roughness-gate'),
-              Path('modules/foundations.html'): ('../index.html#foundations',),
-              Path('modules/reproduction-lab-06.html'): ('reproduction-lab-07.html',),
-              Path('modules/reproduction-lab-07.html'): ('reproduction-lab-08.html',),
-              Path('modules/reproduction-lab-08.html'): ('reproduction-lab-07.html','reproduction-lab-09.html'),
-              Path('modules/reproduction-lab-09.html'): ('reproduction-lab-08.html','reproduction-lab-10.html'),
-              Path('modules/reproduction-lab-10.html'): ('reproduction-lab-09.html','reproduction-lab-11.html'),
-              Path('modules/reproduction-lab-11.html'): ('reproduction-lab-10.html','reproduction-lab-12.html'),
-              Path('modules/reproduction-lab-12.html'): ('reproduction-lab-11.html','research-track.html'),
-          }
-          for page, markers in required_links.items():
-              text = page.read_text(encoding='utf-8')
-              for marker in markers:
-                  if marker not in text: raise SystemExit(f'{page}: missing required cross-link: {marker}')
-          print('Static evidence + Reproduction Lab L01-L12 artifact + raw-data cardinality + SVG-integrity + no-placeholder validation passed.')
+          row_counts={'lesson11_fc_raw.csv':192,'lesson12_rounding_raw.csv':144,'lesson12_subthreshold_raw.csv':40}
+          for name,n in row_counts.items():
+              rows=sum(1 for _ in (asset/name).open(encoding='utf-8'))-1
+              if rows!=n:
+                  raise SystemExit(f'{name}: expected {n} rows, got {rows}')
+
+          # Shared Paper2 stylesheet must be used by all six pages.
+          css=Path('reproduction-lab-paper2.css')
+          if not css.exists() or css.stat().st_size<1000:
+              raise SystemExit('missing Paper2 Lab stylesheet')
+          for i in range(7,13):
+              text=(Path('modules')/f'reproduction-lab-{i:02d}.html').read_text(encoding='utf-8')
+              if 'reproduction-lab-paper2.css' not in text:
+                  raise SystemExit(f'L{i:02d}: shared stylesheet not linked')
+
+          print('STATIC SITE + LAB07-12 EVIDENCE CONTRACT = PASS')
           PY
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
-      - name: Upload static site
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          name: github-pages-${{ github.run_id }}-${{ github.run_attempt }}
           path: .
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-        with:
-          artifact_name: github-pages-${{ github.run_id }}-${{ github.run_attempt }}

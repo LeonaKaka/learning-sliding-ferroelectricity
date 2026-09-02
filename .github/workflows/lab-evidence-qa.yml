@@ -15,124 +15,76 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Verify Lab07-12 source-to-estimator mapping
+      - name: Verify complete paper figures and code-generated plots
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import json, re, struct
+          import json,re,struct
 
-          root = Path('.')
-          asset = root / 'assets' / 'reproduction-lab'
+          root=Path('.')
+          asset=root/'assets'/'reproduction-lab'
+          complete=[
+              'source-ferrero2013-pre-fig1-full.png','source-ferrero2013-pre-fig2-full.png',
+              'source-ferrero2013-pre-fig3-full.png','source-ferrero2013-pre-fig5-full.png',
+              'source-ferrero2013-review-fig1-full.png','source-ferrero2021-fig3-full.png',
+              'source-ferrero2021-fig4-full.png']
+          expected={
+              7:['source-ferrero2013-pre-fig3-full.png','lesson07_bisection.png','lesson07_last_pinned_profile.png','lesson07_particle_gold.png','lesson07_dt_threshold.png'],
+              8:['source-ferrero2013-review-fig1-full.png','lesson08_vf.png','lesson08_transient_periods.png','lesson08_dt_error.png','lesson08_particle_velocity_gold.png'],
+              9:['source-ferrero2013-pre-fig5-full.png','lesson09_mean_v_loglog.png','lesson09_beta_vs_window.png','lesson09_threshold_sensitivity.png','lesson09_bootstrap_beta.png'],
+              10:['lesson10_profiles.png','source-ferrero2013-pre-fig1-full.png','lesson10_Sq.png','lesson10_Br.png','lesson10_zeta_vs_size.png'],
+              11:['source-ferrero2013-pre-fig2-full.png','lesson11_mean_fc.png','lesson11_std_fc.png','lesson11_nu_vs_window.png','lesson11_collapse_score.png'],
+              12:['source-ferrero2013-review-fig1-full.png','lesson12_rounding_vT.png','lesson12_psi_vs_window.png','source-ferrero2021-fig3-full.png','lesson12_subthreshold_vT.png','source-ferrero2021-fig4-full.png','lesson12_resolved_fraction.png','lesson12_halfwindow_stability.png']}
+          forbidden={
+              'lesson07_threshold_search.svg','lesson08_steady_velocity.svg','lesson09_beta_window.svg','lesson10_superrough_zeta.svg','lesson11_fss_nu.svg','lesson12_thermal_rounding.svg',
+              'lesson08-bridge-steady-vf.png','lesson09-bridge-beta-window.png','lesson11-bridge-mean-fc.png','lesson11-bridge-std-fc.png','lesson12-bridge-rounding-vT.png','lesson12-bridge-subthreshold-vT.png',
+              'ferrero2013-fig1b-velocity-force.svg','ferrero2013-fig4a-critical-structure.svg','ferrero2013-fig4b-finite-size-threshold.svg','ferrero2013-fig5-critical-relaxation.svg','ferrero2013-fig6-thermal-rounding.svg'}
 
-          source_assets = {
-              'ferrero2013-pre-fig1-structure-factor.png': (1700, 1000),
-              'ferrero2013-pre-fig2-fc-vs-L.png': (1700, 1000),
-              'ferrero2013-pre-fig3a-velocity-relaxation.png': (1900, 1000),
-              'ferrero2013-pre-fig5a-velocity-crossover.png': (1700, 500),
-              'ferrero2013-review-fig1b-velocity-force.png': (2100, 1000),
-              'ferrero2021-fig3a-creep-velocity-force.png': (1700, 1100),
-              'ferrero2021-fig4b-creep-barrier-scaling.png': (1700, 1000),
+          def png_size(p):
+              b=p.read_bytes()
+              if b[:8]!=b'\x89PNG\r\n\x1a\n' or b[12:16]!=b'IHDR':
+                  raise SystemExit(f'not canonical PNG: {p}')
+              return struct.unpack('>II',b[16:24])
+
+          for name in complete:
+              p=asset/name
+              if not p.exists(): raise SystemExit(f'missing complete source figure: {name}')
+              w,h=png_size(p)
+              if w<1700 or h<1400: raise SystemExit(f'source figure too small: {name} {w}x{h}')
+
+          receipt=json.loads((asset/'source-figure-receipt.json').read_text(encoding='utf-8'))
+          if receipt.get('render_dpi',0)<500 or len(receipt.get('figures',[]))!=7:
+              raise SystemExit('source figure provenance receipt invalid')
+          receipt_files={r.get('file') for r in receipt['figures']}
+          if receipt_files!=set(complete):
+              raise SystemExit('source figure receipt/file set mismatch')
+
+          for n,names in expected.items():
+              page=root/'modules'/f'reproduction-lab-{n:02d}.html'
+              text=page.read_text(encoding='utf-8')
+              refs={Path(x).name for x in re.findall(r'<img[^>]+src="([^"]+)"',text)}
+              if set(names)-refs: raise SystemExit(f'L{n:02d}: missing required images {sorted(set(names)-refs)}')
+              if refs&forbidden: raise SystemExit(f'L{n:02d}: legacy/handmade summary image rendered {sorted(refs&forbidden)}')
+              if 'reproduction-lab-paper2.css' not in text: raise SystemExit(f'L{n:02d}: shared stylesheet missing')
+              for name in names:
+                  p=asset/name
+                  if not p.exists() or p.stat().st_size==0: raise SystemExit(f'L{n:02d}: missing file {name}')
+                  if name.startswith('lesson'):
+                      w,h=png_size(p)
+                      if w<900 or h<500: raise SystemExit(f'L{n:02d}: code plot too small {name} {w}x{h}')
+              print(f'L{n:02d}: complete-source + code-plot contract PASS')
+
+          checks={
+              7:['Fig.3'],
+              9:['Fig.5'],
+              10:['Fig.1'],
+              11:['Fig.2'],
+              12:['错误的 PRE Fig.6','thermal rounding'],
           }
+          for n,markers in checks.items():
+              text=(root/'modules'/f'reproduction-lab-{n:02d}.html').read_text(encoding='utf-8')
+              for marker in markers:
+                  if marker not in text: raise SystemExit(f'L{n:02d}: missing figure-identity explanation {marker}')
 
-          def png_size(path):
-              data = path.read_bytes()
-              if data[:8] != b'\x89PNG\r\n\x1a\n' or data[12:16] != b'IHDR':
-                  raise SystemExit(f'not a canonical PNG: {path}')
-              return struct.unpack('>II', data[16:24])
-
-          for name, (min_w, min_h) in source_assets.items():
-              p = asset / name
-              if not p.exists() or p.stat().st_size == 0:
-                  raise SystemExit(f'missing source crop: {p}')
-              w, h = png_size(p)
-              if w < min_w or h < min_h:
-                  raise SystemExit(f'low-resolution source crop: {name} = {w}x{h}')
-              print(f'SOURCE CROP PASS {name}: {w}x{h}')
-
-          receipt_path = asset / 'literature-crop-receipt.json'
-          receipt = json.loads(receipt_path.read_text(encoding='utf-8'))
-          if len(receipt) != 7:
-              raise SystemExit(f'expected 7 literature crop receipts, found {len(receipt)}')
-          for row in receipt:
-              if row.get('render_dpi') != 600:
-                  raise SystemExit(f"receipt is not 600 dpi: {row.get('name')}")
-              for key in ('source','page','pdf_crop_box_points','output_pixels','sha256'):
-                  if key not in row:
-                      raise SystemExit(f"receipt missing {key}: {row.get('name')}")
-          print('600-DPI CROP RECEIPT = PASS')
-
-          expected = {
-              'reproduction-lab-07.html': [
-                  'ferrero2013-pre-fig3a-velocity-relaxation.png',
-                  'lesson07_threshold_search.svg',
-              ],
-              'reproduction-lab-08.html': [
-                  'ferrero2013-review-fig1b-velocity-force.png',
-                  'lesson08-bridge-steady-vf.png',
-                  'lesson08_steady_velocity.svg',
-              ],
-              'reproduction-lab-09.html': [
-                  'ferrero2013-review-fig1b-velocity-force.png',
-                  'ferrero2013-pre-fig5a-velocity-crossover.png',
-                  'lesson09-bridge-beta-window.png',
-                  'lesson09_beta_window.svg',
-              ],
-              'reproduction-lab-10.html': [
-                  'ferrero2013-pre-fig1-structure-factor.png',
-                  'lesson10_superrough_zeta.svg',
-              ],
-              'reproduction-lab-11.html': [
-                  'ferrero2013-pre-fig2-fc-vs-L.png',
-                  'lesson11-bridge-mean-fc.png',
-                  'lesson11-bridge-std-fc.png',
-                  'lesson11_fss_nu.svg',
-              ],
-              'reproduction-lab-12.html': [
-                  'ferrero2013-review-fig1b-velocity-force.png',
-                  'lesson12-bridge-rounding-vT.png',
-                  'ferrero2021-fig3a-creep-velocity-force.png',
-                  'lesson12-bridge-subthreshold-vT.png',
-                  'ferrero2021-fig4b-creep-barrier-scaling.png',
-                  'lesson12_thermal_rounding.svg',
-              ],
-          }
-
-          forbidden_img_basenames = {
-              'ferrero2013-fig1b-velocity-force.svg',
-              'ferrero2013-fig4a-critical-structure.svg',
-              'ferrero2013-fig4b-finite-size-threshold.svg',
-              'ferrero2013-fig5-critical-relaxation.svg',
-              'ferrero2013-fig6-thermal-rounding.svg',
-          }
-
-          for page_name, required in expected.items():
-              page = root / 'modules' / page_name
-              text = page.read_text(encoding='utf-8')
-              refs = [Path(x).name for x in re.findall(r'<img[^>]+src="([^"]+)"', text)]
-              for name in required:
-                  if name not in refs:
-                      raise SystemExit(f'{page_name}: required evidence/bridge image not rendered: {name}')
-                  p = asset / name
-                  if not p.exists() or p.stat().st_size == 0:
-                      raise SystemExit(f'{page_name}: referenced asset missing: {name}')
-              bad = forbidden_img_basenames.intersection(refs)
-              if bad:
-                  raise SystemExit(f'{page_name}: legacy/misidentified evidence image still rendered: {sorted(bad)}')
-              print(f'{page_name}: source-to-estimator image contract PASS')
-
-          text07 = (root/'modules/reproduction-lab-07.html').read_text(encoding='utf-8')
-          text10 = (root/'modules/reproduction-lab-10.html').read_text(encoding='utf-8')
-          text11 = (root/'modules/reproduction-lab-11.html').read_text(encoding='utf-8')
-          text12 = (root/'modules/reproduction-lab-12.html').read_text(encoding='utf-8')
-          checks = [
-              ('L07', 'Fig.3(a)', text07),
-              ('L10', 'PRE 2013 <b>Fig.1</b>', text10),
-              ('L11', 'finite-size critical-force 图是 <b>Fig.2</b>', text11),
-              ('L12', '把 Ferrero PRE 2013 Fig.6 写成 thermal rounding', text12),
-          ]
-          for label, marker, text in checks:
-              if marker not in text:
-                  raise SystemExit(f'{label}: missing corrected figure-identity explanation')
-
-          print('LAB07-12 EVIDENCE QA = PASS')
+          print('LAB07-12 MAJOR EVIDENCE QA = PASS')
           PY

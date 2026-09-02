@@ -1,9 +1,9 @@
 {
   "disabled": false,
-  "drive_file_id": "12o3TWRYIAAN43vCINNl2jHiGUAmaw8PN",
-  "archive_name": "learning-sliding-ferroelectricity-lab0712-600dpi-crops-20260902.zip",
+  "drive_file_id": "1K9LiCXKnaOIGKCT-R7L7TMFhYLFsn22B",
+  "archive_name": "learning-sliding-ferroelectricity-lab0712-major-repair-20260902.zip",
   "destination": ".",
-  "sha256": "f1ca9a5949d4b27b81ab15de642f5684c4f238a31f48821e607d242d1459cd71",
+  "sha256": "c489d9281cf6dc84e94dcfa7feb3495be75af7b4b81b62cf8fa17567b3943acb",
   "mode": "merge",
-  "requested_at": "2026-09-02T15:41:00+08:00"
+  "requested_at": "2026-09-02T16:31:00+08:00"
 }
