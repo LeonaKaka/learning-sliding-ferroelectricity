@@ -12,13 +12,10 @@ LOCKED_RESULTS = (
 )
 
 TEXT_REPLACEMENTS = {
-    "2 · Eq. (15)：这次第一次真的加 thermal noise（热噪声）": "2 · Eq. (15)：这次第一次真的加热噪声",
-    "Eq.19 相对误差 超过": "Eq.19 相对误差超过",
-    "接近 长时热斜率": "接近长时热斜率",
-    "1D Edwards–Wilkinson 层": "一维 Edwards–Wilkinson 层",
-    "上排是 1D Edwards–Wilkinson，下排是 2D Ginzburg–Landau": "上排是一维 Edwards–Wilkinson，下排是二维 Ginzburg–Landau",
-    "这一层先不碰 2D GL": "这一层先不碰二维 GL",
-    "1D 很便宜": "一维模型很便宜",
+    "最干净的 一维 Edwards–Wilkinson 层": "最干净的一维 Edwards–Wilkinson 层",
+    "1D Edwards–Wilkinson Eq. (15)": "一维 Edwards–Wilkinson Eq. (15)",
+    "8 · 为什么还没跑 2D GL？": "8 · 为什么还没跑二维 GL？",
+    "放回 2D GL": "放回二维 GL",
 }
 
 
