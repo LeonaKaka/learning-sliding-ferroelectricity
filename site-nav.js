@@ -1,10 +1,9 @@
 (()=>{
   const path=location.pathname.replace(/\/+$/,'');
   const inModules=/\/modules\//.test(path);
-  const prefix=inModules?'../':'';
 
   // Three legacy SVG wrappers contained damaged/non-canonical embedded JPEG
-  // payloads.  Their source-panel JPEGs were independently verified from the
+  // payloads. Their source-panel JPEGs were independently verified from the
   // Drive relay batch, so the rendered site routes those exact figures to the
   // verified local JPEG assets while keeping old SVG paths as legacy history.
   const repairedFerrero=new Set([
@@ -44,7 +43,10 @@
     ['L11 · FSS / ν','modules/reproduction-lab-11.html'],
     ['L12 · Thermal rounding','modules/reproduction-lab-12.html'],
   ];
-  const hrefFor=f=>prefix+f.replace(/^modules\//,inModules?'':'modules/');
+  const hrefFor=f=>{
+    if(f.startsWith('modules/')) return inModules?f.replace(/^modules\//,''):f;
+    return inModules?`../${f}`:f;
+  };
   const currentFile=(path.split('/').pop()||'index.html');
   const isActive=f=>currentFile===f.split('/').pop();
   const labLink=([t,f])=>`<a class="site-nav-sub ${isActive(f)?'active':''}" href="${hrefFor(f)}">${t}</a>`;
