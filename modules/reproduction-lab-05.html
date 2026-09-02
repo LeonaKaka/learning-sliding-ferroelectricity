@@ -10,7 +10,7 @@
 <h2 id="compare">0 · 原论文 Fig.4 与我们的体场投影复现</h2>
 <div class="two">
 <figure class="fig"><a href="../assets/reproduction-lab/caballero2020-fig4-pinning-correlator.webp" rel="noopener" target="_blank"><img alt="Caballero 2020 图 4：钉扎力相关函数" src="../assets/reproduction-lab/caballero2020-fig4-pinning-correlator.webp"/></a><figcaption class="cap"><b>Caballero et al. 2020 · Fig.4。</b><br/>256 个独立钉扎力样本的相关函数；平均值与解析 Γ(u), Eq.26 对照。插图展示 4 条 F<sub>p</sub>(u,y)。这是进入 disordered interface（无序界面）动力学前的相关函数已知答案测试。</figcaption></figure>
-<figure class="fig"><a href="../assets/reproduction-lab/lesson05_rb_projection_correlator.svg" rel="noopener" target="_blank"><img alt="本课体场随机键无序投影与钉扎力相关函数" src="../assets/reproduction-lab/lesson05_rb_projection_correlator.svg"/></a><figcaption class="cap"><b>本课复现。</b><br/>统计仍用 256 个独立无序样本、M=10000、du=0.1。不同点是我们不直接从 Eq.27 合成 F<sub>p</sub>，而是先生成按连续极限归一化的体场 ζ(x,y)，再按 Eq.23 投影；因此更直接检查体场→界面 这一步本身。</figcaption></figure>
+<figure class="fig"><a href="../assets/reproduction-lab/lesson05_rb_projection_correlator.svg" rel="noopener" target="_blank"><img alt="本课体场随机键无序投影与钉扎力相关函数" src="../assets/reproduction-lab/lesson05_rb_projection_correlator.svg"/></a><figcaption class="cap"><b>本课复现。</b><br/>统计仍用 256 个独立无序样本、M=10000、du=0.1。不同点是我们不直接从 Eq.27 合成 F<sub>p</sub>，而是先生成按连续极限归一化的体场 ζ(x,y)，再按 Eq.23 投影；因此更直接检查体场→界面这一步本身。</figcaption></figure>
 </div>
 <div class="verdict"><b>这次比第 04 课还便宜，却非常“硬”。</b> 不需要时间积分，也不需要大二维网格；论文同规模的 256×10000 随机场可以在普通 CPU 上很快完成。所以没有“算力不够只能凭趋势判断”的借口。</div>
 <h2>1 · 体场 random-bond disorder（随机键无序）到底加在哪里？</h2>
@@ -35,7 +35,7 @@ Fp = epsilon * gamma * du * np.fft.ifft(
 <h2>4 · 一个特别容易错的地方：连续白噪声不是“每格 std=1”</h2>
 <p>连续定义是：</p>
 <div class="eq">⟨ζ(x)ζ(x′)⟩=δ(x−x′)</div>
-<p>离散成格距 du 后，Kronecker delta（克罗内克 δ）与 Dirac delta（狄拉克 δ） 之间差一个 1/du，因此：</p>
+<p>离散成格距 du 后，Kronecker delta（克罗内克 δ）与 Dirac delta（狄拉克 δ）之间差一个 1/du，因此：</p>
 <div class="eq">Var(ζ<sub>i</sub>) = 1/du　→　std(ζ<sub>i</sub>) = du<sup>−1/2</sup></div>
 <div class="codebox"><div class="head"><b>正确归一化与故意错误对照</b></div><pre>base = rng.standard_normal((R, M))
 zeta_correct = base / np.sqrt(du)
@@ -64,9 +64,9 @@ zeta_wrong   = base</pre></div>
 <tr><td>首零点：经验</td><td><b>1.039472</b></td></tr>
 <tr><td>故意错误 std=1</td><td><b>0.099555 × 理论幅度</b></td><td>应暴露 10× 归一化错误</td></tr>
 </tbody></table>
-<div class="pass"><b>无序投影全部验收条件：通过。</b> 这里的“复现正确”不是因为两条曲线肉眼重合，而是 解析 Eq.26、Eq.25 投影、样本幅度/形状/零点交叉 和故意错误对照全部闭合。</div>
+<div class="pass"><b>无序投影全部验收条件：通过。</b> 这里的“复现正确”不是因为两条曲线肉眼重合，而是解析 Eq.26、Eq.25 投影、样本幅度/形状/零点交叉和故意错误对照全部闭合。</div>
 <h2 id="code">7 · 完整脚本</h2>
-<p><a href="../examples/reproduction-lab/lesson05_rb_projection.py"><b>打开第 05 课 Python 脚本 →</b></a>　依赖只有 NumPy + Matplotlib；没有时间积分，所以 论文同规模的相关函数测试很轻。<a href="../assets/reproduction-lab/lesson05_rb_projection_correlator.txt">查看本次运行回执 →</a></p>
+<p><a href="../examples/reproduction-lab/lesson05_rb_projection.py"><b>打开第 05 课 Python 脚本 →</b></a>　依赖只有 NumPy + Matplotlib；没有时间积分，所以论文同规模的相关函数测试很轻。<a href="../assets/reproduction-lab/lesson05_rb_projection_correlator.txt">查看本次运行回执 →</a></p>
 <div class="codebox"><div class="head"><b>预期输出</b></div><pre>phi0, w                    = 1.000000, 1.414214
 M, du, realizations        = 10000, 0.100, 256
 Gamma(0) Eq.26             = 0.071833070
@@ -81,9 +81,9 @@ first zero empirical       = 1.039472
 WRONG std=1 amplitude      = 0.099555 x theory
 ALL DISORDER-PROJECTION GATES PASS</pre></div>
 <h2>8 · 这一步证明了什么？没证明什么？</h2>
-<div class="two"><div class="card"><h3>已经证明</h3><p>RB 体场耦合经过有限宽度孤子投影后产生短程相关钉扎力；Eq.25 数值投影与解析 Eq.26 独立闭合；连续白噪声归一化正确。</p></div><div class="card"><h3>还没证明</h3><p>没有证明退钉扎指数、没有证明 RF 与 RB 属于同一 universality（普适类）、也没有证明滑移铁电中的真实缺陷 必然等价于这个 φ⁴ RB 模型。</p></div></div>
+<div class="two"><div class="card"><h3>已经证明</h3><p>RB 体场耦合经过有限宽度孤子投影后产生短程相关钉扎力；Eq.25 数值投影与解析 Eq.26 独立闭合；连续白噪声归一化正确。</p></div><div class="card"><h3>还没证明</h3><p>没有证明退钉扎指数、没有证明 RF 与 RB 属于同一 universality（普适类）、也没有证明滑移铁电中的真实缺陷必然等价于这个 φ⁴ RB 模型。</p></div></div>
 <div class="bridge"><b>对你自己的模型最重要的迁移问题：</b>你的 RF 项与势垒幅度项具有不同的 φ 依赖，因此各自投影到畴壁后得到的 effective force correlator（有效力相关函数）未必只差一个幅度。以后真正做 RF↔RB 孤立畴壁普适性比较时，可以沿这节方法先算 <b>effective wall-level disorder statistics（有效畴壁层级无序统计）</b>，再谈 β/ζ 是否相同。</div>
 <h2>9 · 第 06 课：从相关函数已知答案测试进入真正的无序畴壁几何</h2>
-<p>Caballero Fig.5 下一步同时比较 二维 GL 与一维 EW 的 <b>B(r,t)</b> 和 <b>S(q,t)</b>。随着时间增长，大尺度粗糙度离开 thermal regime（热涨落区间），并接近 random-bond roughness（随机键粗糙度） ζ<sub>RB</sub>=2/3。那一课才会开始真正验证：<b>正确的无序相关函数是否产生正确的界面几何。</b></p>
+<p>Caballero Fig.5 下一步同时比较二维 GL 与一维 EW 的 <b>B(r,t)</b> 和 <b>S(q,t)</b>。随着时间增长，大尺度粗糙度离开 thermal regime（热涨落区间），并接近 random-bond roughness（随机键粗糙度） ζ<sub>RB</sub>=2/3。那一课才会开始真正验证：<b>正确的无序相关函数是否产生正确的界面几何。</b></p>
 <div class="next"><a href="reproduction-lab-04.html">← 第 04 课 · GL→EW 适用边界</a><a href="reproduction-lab-06.html">第 06 课 · 无序 GL↔EW 几何 →</a></div>
 </main></body></html>
