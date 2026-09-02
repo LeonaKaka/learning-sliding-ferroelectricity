@@ -1,0 +1,45 @@
+name: Regenerate Lab 02 plot
+
+on:
+  push:
+    paths:
+      - '.github/workflows/regenerate-lab02-plot.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install CJK font and Python dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk
+          python -m pip install --disable-pip-version-check numpy matplotlib
+      - name: Regenerate scientific SVG from the authoritative script
+        env:
+          MPLBACKEND: Agg
+        run: |
+          python examples/reproduction-lab/lesson02_2d_wall_extract.py | tee /tmp/lab02.out
+          grep -F 'final wall RMS    = 2.628690e-03' /tmp/lab02.out
+          grep -F 'max B(r)          = 2.764004e-05' /tmp/lab02.out
+          grep -F 'profile RMSE      = 4.019818e-04' /tmp/lab02.out
+          grep -F 'free-energy drop  = 0.870339' /tmp/lab02.out
+          grep -F 'ALL HARD GATES PASS' /tmp/lab02.out
+      - name: Commit only the regenerated Lab 02 SVG
+        run: |
+          set -euo pipefail
+          git diff -- assets/reproduction-lab/lesson02_2d_wall_extract.svg
+          if git diff --quiet -- assets/reproduction-lab/lesson02_2d_wall_extract.svg; then
+            echo 'SVG already up to date.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/reproduction-lab/lesson02_2d_wall_extract.svg
+          git commit -m 'Regenerate Lab 02 localized scientific plot'
+          git push
