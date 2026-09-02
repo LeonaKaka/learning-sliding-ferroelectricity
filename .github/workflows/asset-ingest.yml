@@ -23,6 +23,10 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Install relay downloader
+        run: |
+          python3 -m pip install --disable-pip-version-check --quiet gdown
+
       - name: Read manifest
         id: manifest
         shell: bash
@@ -31,14 +35,19 @@ jobs:
           import json
           from pathlib import Path
           m=json.loads(Path('.github/asset-ingest.json').read_text())
+          if m.get('disabled') is True:
+              print('disabled=true')
+              raise SystemExit(0)
           required=('drive_file_id','archive_name','destination','sha256','mode')
           missing=[k for k in required if not m.get(k)]
           if missing: raise SystemExit(f'manifest missing: {missing}')
           if m['mode']!='merge': raise SystemExit('only merge mode is allowed')
+          print('disabled=false')
           for k in required: print(f'{k}={m[k]}')
           PY
 
       - name: Download ZIP from Google Drive relay
+        if: steps.manifest.outputs.disabled != 'true'
         env:
           DRIVE_FILE_ID: ${{ steps.manifest.outputs.drive_file_id }}
           GDRIVE_BEARER_TOKEN: ${{ secrets.GDRIVE_BEARER_TOKEN }}
@@ -51,14 +60,14 @@ jobs:
               "https://www.googleapis.com/drive/v3/files/${DRIVE_FILE_ID}?alt=media" \
               -o /tmp/asset-batch.zip
           else
-            echo 'No GDRIVE_BEARER_TOKEN secret found; trying link-download mode.'
-            curl --fail --location --retry 3 \
-              "https://drive.usercontent.google.com/download?id=${DRIVE_FILE_ID}&export=download&confirm=t" \
-              -o /tmp/asset-batch.zip
+            echo 'No GDRIVE_BEARER_TOKEN secret found; using gdown file-id flow.'
+            gdown --id "${DRIVE_FILE_ID}" --output /tmp/asset-batch.zip
           fi
           file /tmp/asset-batch.zip
+          unzip -t /tmp/asset-batch.zip
 
       - name: Verify SHA-256
+        if: steps.manifest.outputs.disabled != 'true'
         env:
           EXPECTED_SHA: ${{ steps.manifest.outputs.sha256 }}
         run: |
@@ -69,6 +78,7 @@ jobs:
           test "$ACTUAL_SHA" = "$EXPECTED_SHA"
 
       - name: Safe merge extract
+        if: steps.manifest.outputs.disabled != 'true'
         env:
           DESTINATION: ${{ steps.manifest.outputs.destination }}
         run: |
@@ -95,6 +105,7 @@ jobs:
           PY
 
       - name: Show changes
+        if: steps.manifest.outputs.disabled != 'true'
         run: |
           set -euo pipefail
           git status --short
@@ -103,6 +114,7 @@ jobs:
           test "$COUNT" -gt 0
 
       - name: Commit ingested assets
+        if: steps.manifest.outputs.disabled != 'true'
         run: |
           set -euo pipefail
           git config user.name 'github-actions[bot]'
