@@ -11,8 +11,8 @@
 .site-nav-lab{border:1px solid var(--site-nav-line);background:#fffdf8;margin:8px 0 12px!important;font-weight:700}
 .site-nav-sub{padding-left:17px!important;font-size:12px}
 .page-toc a{padding:4px 8px;color:#68635b}
-.page-toc a.toc-h3{padding-left:18px;font-size:11.5px}
 .page-toc a.active{color:#111;font-weight:700;background:#ebe5da}
+main h2[id]{scroll-margin-top:84px}
 .nav-drawer-btn{display:none;position:fixed;z-index:60;top:10px;width:42px;height:42px;border:1px solid var(--site-nav-line);border-radius:10px;background:#fffdf8;color:#222;font-size:18px;box-shadow:0 3px 14px #00000012}
 .nav-drawer-btn.left{left:10px}.nav-drawer-btn.right{right:10px}
 .mobile-toc{display:none!important}
