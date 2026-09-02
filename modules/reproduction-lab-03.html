@@ -5,7 +5,7 @@
 </style></head><body><header class="top"><div class="bar"><b>复现实验室 <small>· 第 03 课 · 首次论文曲线缩略复现</small></b><span><a href="reproduction-lab-02.html">L02</a> · <a href="../index.html">首页</a> · <a href="#compare">论文对照</a> · <a href="#code">代码</a></span></div></header><main>
 <div class="rule"><a href="../index.html">Learning Sliding Ferroelectricity</a> / 复现实验室 / 第 03 课</div>
 <h1>第一次真正复现论文曲线：thermal roughness（热粗糙度）为什么从 0 长出来？</h1>
-<p class="deck">前两课都还是已知答案测试：先验证畴壁剖面，再验证畴壁提取器。现在第一次进入 Caballero 2020 的定量主结果。论文 Fig.2 从完全平直的界面出发，让 thermal noise（热噪声）逐步建立几何相关，并把数值 B(r,t) 与解析 Eq. (19) 直接比较。我们先只复现其中最干净的 一维 Edwards–Wilkinson 层，因为这里既有论文图，也有精确解析基准。</p>
+<p class="deck">前两课都还是已知答案测试：先验证畴壁剖面，再验证畴壁提取器。现在第一次进入 Caballero 2020 的定量主结果。论文 Fig.2 从完全平直的界面出发，让 thermal noise（热噪声）逐步建立几何相关，并把数值 B(r,t) 与解析 Eq. (19) 直接比较。我们先只复现其中最干净的一维 Edwards–Wilkinson 层，因为这里既有论文图，也有精确解析基准。</p>
 <div class="q"><b>本课验收标准升级：</b>不是“曲线趋势一样”，而是论文方案 → 解析 Eq.19 → 我们的数值模拟三层对照。我们预先冻结比较窗口 4≤r≤64，再看相对误差；不能看完结果后再挑一段最像的。</div>
 <h2 id="compare">0 · 原论文 Fig.2 与我们的缩略复现</h2>
 <div class="two">
@@ -15,7 +15,7 @@
 <div class="verdict"><b>现在可以叫“论文曲线的缩略复现”。</b> 因为我们已经在复现 Fig.2 中明确的可观测量、时间演化和解析基准。但还不能叫完整复现：系统长度、dt、时间范围和独立样本数都没有逐项照搬论文。</div>
 <h2>1 · 先把论文方案写下来，防止偷偷改题</h2>
 <table class="matrix"><thead><tr><th>项目</th><th>Caballero 2020</th><th>本课</th><th>为什么不同</th></tr></thead><tbody>
-<tr><td>模型</td><td>1D Edwards–Wilkinson Eq. (15)</td><td>相同</td><td>这一层先不碰二维 GL</td></tr>
+<tr><td>模型</td><td>一维 Edwards–Wilkinson Eq. (15)</td><td>相同</td><td>这一层先不碰二维 GL</td></tr>
 <tr><td>映射参数</td><td>α=δ=γ=η=1 → η̃=c=2√2/3</td><td>相同</td><td>直接用论文 Eq. (16)</td></tr>
 <tr><td>温度</td><td>T=0.05</td><td>T=0.05</td><td>相同</td></tr>
 <tr><td>线长</td><td>L=4096，dy=1</td><td>N=256，dy=1</td><td>先做 CPU 快速缩略复现</td></tr>
@@ -70,8 +70,8 @@ t= 100.0: median rel err=1.39%  rms=1.86%  max=3.40%
 t=1000.0: median rel err=1.02%  rms=1.33%  max=2.46%
 late B/(Tr/c), r=2..10 = 0.9592
 ALL THUMBNAIL GATES PASS</pre></div>
-<h2>8 · 为什么还没跑 2D GL？</h2>
-<div class="three"><div class="card"><h3>先验估计量</h3><p>EW + Eq.19 先证明 B(r,t) 实现和热噪声 FDT 没问题。</p></div><div class="card"><h3>再测模型约化</h3><p>下一课把同一 T、同一映射参数放回 2D GL，才是在检验体场→界面线映射。</p></div><div class="card"><h3>算力可分层</h3><p>如果 GL 小系统偏离，我们能区分是求解器/噪声出错，还是有限畴壁宽度 / 体场涨落引起。</p></div></div>
+<h2>8 · 为什么还没跑二维 GL？</h2>
+<div class="three"><div class="card"><h3>先验估计量</h3><p>EW + Eq.19 先证明 B(r,t) 实现和热噪声 FDT 没问题。</p></div><div class="card"><h3>再测模型约化</h3><p>下一课把同一 T、同一映射参数放回二维 GL，才是在检验体场→界面线映射。</p></div><div class="card"><h3>算力可分层</h3><p>如果 GL 小系统偏离，我们能区分是求解器/噪声出错，还是有限畴壁宽度 / 体场涨落引起。</p></div></div>
 <div class="verdict"><b>第 04 课才是 Caballero 这篇的核心跨模型复现：</b>同一张图里放一维 EW 理论、一维 EW 数值模拟、二维 GL 提取畴壁三者，逐尺寸看 GL 是否向界面线预测靠近。那一步通过以后，才把同一套提取器/B(r)/S(q) 迁到滑移铁电周期模型。</div>
 <div class="next"><a href="reproduction-lab-02.html">← 第 02 课 · 体场 → u(y)</a><a href="reproduction-lab-04.html">第 04 课 · GL → EW 适用边界 →</a></div>
 </main></body></html>
