@@ -24,6 +24,9 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
+plt.rcParams["font.sans-serif"] = ["Noto Sans CJK SC", "DejaVu Sans"]
+plt.rcParams["axes.unicode_minus"] = False
+
 SEED = 20260902
 
 # ---------------- Gold test: tilted washboard particle ----------------
@@ -210,21 +213,21 @@ def finish(fig, name):
 fig,ax=plt.subplots(figsize=(7.2,4.2))
 x=np.arange(L)
 ax.plot(x,pinned_u-pinned_u.mean(),marker='o',markersize=3)
-ax.set_xlabel('x (lattice site)')
+ax.set_xlabel('x（格点编号）')
 ax.set_ylabel(r'$u(x)-\langle u\rangle$')
-ax.set_title(f'Last-pinned configuration at f={lo_line:.6f} (one disorder realization)')
+ax.set_title(f'最后一个钉扎构型：f={lo_line:.6f}（一个无序样本）')
 finish(fig,'lesson07_last_pinned_profile.png')
 
 # 2) Bisection history: the two certified sides close onto each other.
 it=np.arange(1,len(hist)+1)
 los=np.array([h[0] for h in hist]); his=np.array([h[1] for h in hist])
 fig,ax=plt.subplots(figsize=(7.2,4.3))
-ax.plot(it,los,marker='o',label='last pinned f_minus')
-ax.plot(it,his,marker='s',label='first moving f_plus')
-ax.fill_between(it,los,his,alpha=.15,label='uncertainty bracket')
-ax.set_xlabel('bisection iteration')
-ax.set_ylabel('drive f')
-ax.set_title('Threshold search on one quenched elastic-line sample')
+ax.plot(it,los,marker='o',label='最后一个钉扎点 f_minus')
+ax.plot(it,his,marker='s',label='第一个运动点 f_plus')
+ax.fill_between(it,los,his,alpha=.15,label='未决阈值区间')
+ax.set_xlabel('二分迭代次数')
+ax.set_ylabel('驱动力 f')
+ax.set_title('单个淬火无序弹性界面的阈值搜索')
 ax.legend()
 finish(fig,'lesson07_bisection.png')
 
@@ -237,9 +240,9 @@ xpos=np.arange(len(dt_vals))
 fig,ax=plt.subplots(figsize=(6.6,4.2))
 ax.errorbar(xpos,mid_vals,yerr=half_width,marker='o',capsize=5)
 ax.set_xticks(xpos,[f'{d:.3f}' for d in dt_vals])
-ax.set_xlabel('time step dt (smaller to the right)')
-ax.set_ylabel('sample threshold midpoint')
-ax.set_title('The sample-specific threshold bracket is unchanged when dt is reduced')
+ax.set_xlabel('积分步长 dt（向右减小）')
+ax.set_ylabel('单样本阈值区间中点')
+ax.set_title('减小 dt 后单样本阈值区间保持不变')
 finish(fig,'lesson07_dt_threshold.png')
 
 # 4) Analytic gold test: plot the tiny error from the exact fc=1 rather than
@@ -251,14 +254,13 @@ err_micro=(pmid-1.0)*1e6
 half_micro=phalf*1e6
 xpos=np.arange(len(pdt))
 fig,ax=plt.subplots(figsize=(6.6,4.2))
-ax.errorbar(xpos,err_micro,yerr=half_micro,marker='o',capsize=5,label='numerical bracket')
-ax.axhline(0.0,linestyle='--',label='exact fc=1')
+ax.errorbar(xpos,err_micro,yerr=half_micro,marker='o',capsize=5,label='数值阈值区间')
+ax.axhline(0.0,linestyle='--',label='解析值 fc=1')
 ax.set_xticks(xpos,[f'{d:.3f}' for d in pdt])
-ax.set_xlabel('time step dt (smaller to the right)')
+ax.set_xlabel('积分步长 dt（向右减小）')
 ax.set_ylabel(r'$10^6\,(f_{c,\mathrm{num}}-1)$')
-ax.set_title('Gold test: threshold-search error around the exact fc=1')
+ax.set_title('已知答案测试：数值阈值围绕解析 fc=1')
 ax.legend()
 finish(fig,'lesson07_particle_gold.png')
 
 print('saved figures:', ', '.join(['lesson07_last_pinned_profile.png','lesson07_bisection.png','lesson07_dt_threshold.png','lesson07_particle_gold.png']))
-
