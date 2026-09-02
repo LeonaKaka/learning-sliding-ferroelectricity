@@ -88,11 +88,11 @@ assert width_error < 5e-3
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 4.5))
 for step in (0, 200, 1000, 5000, 15000):
     ax1.plot(x, snapshots[step], label=f"t={step * dt:.1f}")
-ax1.plot(x, phi_exact, "--", linewidth=2, label="analytic kink")
+ax1.plot(x, phi_exact, "--", linewidth=2, label="解析扭结")
 ax1.set_xlim(-7, 7)
 ax1.set_xlabel("x")
-ax1.set_ylabel("phi")
-ax1.set_title("Relaxation toward the domain-wall profile")
+ax1.set_ylabel("φ")
+ax1.set_title("畴壁剖面弛豫")
 ax1.legend(fontsize=8)
 
 times = np.array([t for t, _ in energies])
@@ -101,7 +101,7 @@ ax2.plot(times, free_energy - free_energy[-1])
 ax2.set_yscale("log")
 ax2.set_xlabel("t")
 ax2.set_ylabel("F(t) - F(final)")
-ax2.set_title("Free energy decreases under TDGL")
+ax2.set_title("TDGL 下自由能下降")
 
 fig.tight_layout()
 fig.savefig("lesson01_tdgl_wall_result.png", dpi=180)
