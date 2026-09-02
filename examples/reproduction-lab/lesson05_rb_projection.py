@@ -24,6 +24,9 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 
+plt.rcParams["font.sans-serif"] = ["Noto Sans CJK SC", "DejaVu Sans"]
+plt.rcParams["axes.unicode_minus"] = False
+
 # Clean GL parameters used throughout Caballero 2020.
 alpha = 1.0
 delta = 1.0
@@ -213,25 +216,25 @@ gs = fig.add_gridspec(2, 2)
 ax = fig.add_subplot(gs[:, 0])
 for j in range(0, 64, 2):
     ax.plot(u_plot, C_each[j, :51], linewidth=0.55, alpha=0.18)
-ax.plot(u_plot, C_avg[:51], linewidth=2.1, label="256-realization average")
+ax.plot(u_plot, C_avg[:51], linewidth=2.1, label="256 个独立无序样本平均")
 ax.plot(u_plot, Gamma_closed_target, linestyle="--", linewidth=2.0,
-        label="analytic Eq. (26)")
+        label="解析 Eq. (26)")
 ax.plot(u_plot, Gamma_target[:51], linestyle=":", linewidth=1.5,
-        label="numerical Eq. (25)")
+        label="数值 Eq. (25)")
 ax.axhline(0.0, linewidth=0.7)
-ax.set_xlabel("Delta u")
-ax.set_ylabel("<Fp(u) Fp(u+Delta u)>")
-ax.set_title("Projected pinning-force correlator")
+ax.set_xlabel("位移差 Δu")
+ax.set_ylabel("⟨Fp(u) Fp(u+Δu)⟩")
+ax.set_title("投影钉扎力相关函数")
 ax.legend(fontsize=8)
 
 ax = fig.add_subplot(gs[0, 1])
 for j in range(4):
     start = M // 2
     ax.plot(np.arange(101) * du, Fp[j, start:start + 101], linewidth=1.0,
-            label=f"realization {j+1}")
+            label=f"样本 {j+1}")
 ax.set_xlabel("u")
 ax.set_ylabel("Fp(u,y)")
-ax.set_title("Four independent projected pinning forces")
+ax.set_title("四条独立投影钉扎力")
 ax.legend(fontsize=7)
 
 ax = fig.add_subplot(gs[1, 1])
@@ -239,15 +242,15 @@ ax = fig.add_subplot(gs[1, 1])
 # because the same underlying standard-normal field is reused.
 C_wrong_curve = C_avg[:51] * du
 ax.plot(u_plot, Gamma_closed_target, linestyle="--", linewidth=2.0,
-        label="analytic Eq. (26)")
-ax.plot(u_plot, C_avg[:51], linewidth=1.8, label="correct white-noise scaling")
-ax.plot(u_plot, C_wrong_curve, linewidth=1.8, label="wrong: std=1 per grid point")
+        label="解析 Eq. (26)")
+ax.plot(u_plot, C_avg[:51], linewidth=1.8, label="正确白噪声幅度缩放")
+ax.plot(u_plot, C_wrong_curve, linewidth=1.8, label="错误：每格 std=1")
 ax.axhline(0.0, linewidth=0.7)
-ax.set_xlabel("Delta u")
-ax.set_ylabel("correlator")
-ax.set_title("Discretization trap: missing du^(-1/2)")
+ax.set_xlabel("位移差 Δu")
+ax.set_ylabel("相关函数")
+ax.set_title("离散化陷阱：漏掉 du^(-1/2)")
 ax.legend(fontsize=7)
 
-fig.suptitle("Reproduction Lab · Lesson 05 · bulk RB disorder -> correlated pinning force", fontsize=14)
+fig.suptitle("复现实验室 · 第 05 课 · 体场 RB 无序 → 短程相关钉扎力", fontsize=14)
 fig.savefig(out)
 print(f"saved: {out}")
