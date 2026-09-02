@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>复现实验室（复现实验室）02 · 二维畴壁提取已知答案测试</title><style>
+
+<html lang="zh-CN"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Reproduction Lab（复现实验室）02 · 二维畴壁提取已知答案测试</title><style>
 :root{--b:#f3f0e8;--p:#fffdf8;--i:#191a18;--m:#716d66;--l:#d8d1c3;--a:#6d493b;--soft:#eee8dc}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--b);color:var(--i);font:15px/1.76 system-ui,-apple-system,"PingFang SC",sans-serif}.top{position:sticky;top:0;z-index:3;background:#f3f0e8ee;backdrop-filter:blur(12px);border-bottom:1px solid var(--l)}.bar,main{width:min(1080px,calc(100% - 32px));margin:auto}.bar{height:62px;display:flex;align-items:center;justify-content:space-between;gap:20px}.bar b,h1,h2,h3,.q,.bridge,.eq,.step b{font-family:Georgia,"Times New Roman","Songti SC",serif}.bar a,a{color:#504c46}.bar small,.rule,.cap{color:var(--m)}main{padding:52px 0 90px}h1{font-size:clamp(40px,6.8vw,66px);line-height:1.04;margin:12px 0 18px;letter-spacing:-.04em}h2{font-size:29px;line-height:1.25;margin:64px 0 15px}h3{font-size:18px;margin:0 0 6px}.deck{font:19px/1.62 Georgia,"Songti SC",serif;color:#4f4b45;max-width:920px}.q{background:#20211f;color:#f6f1e7;border-radius:14px;padding:20px 22px;font-size:18px;margin:30px 0}.rule,.cap{font-size:12px}.fig,.codebox{background:#fff;border:1px solid var(--l);border-radius:14px;overflow:hidden;margin:26px 0}.head,.cap{padding:10px 14px;background:#f0ece3}.fig img{display:block;width:100%;height:auto;background:#fff}.cap{display:block;border-top:1px solid var(--l)}.two,.three{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.three{grid-template-columns:repeat(3,1fr)}.card,.step{background:var(--p);border:1px solid var(--l);border-radius:11px;padding:15px}.card p,.step p{font-size:13px;margin:5px 0}.bridge{font-size:18px;padding:18px 20px;margin:32px 0;border-left:4px solid var(--a);background:var(--soft)}.eq{font-size:18px;text-align:center;padding:14px 12px;margin:16px 0;background:#faf7f0;border:1px solid var(--l);border-radius:10px;overflow-x:auto}.eq small{display:block;font:12px/1.5 system-ui;color:var(--m);margin-top:7px}.warn{background:#fff7e8;border:1px solid #e4d3ad;border-radius:11px;padding:14px 16px;margin:18px 0}.pass{background:#eef6ef;border:1px solid #bfd2c4;border-radius:11px;padding:14px 16px;margin:18px 0}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:22px 0}.matrix{width:100%;border-collapse:collapse;margin:22px 0;background:#fff;border:1px solid var(--l)}.matrix th,.matrix td{padding:11px 12px;border-bottom:1px solid var(--l);vertical-align:top;text-align:left}.matrix th{background:#f0ece3;font:13px Georgia,serif}.matrix td{font-size:13px}.matrix tr:last-child td{border-bottom:0}pre{margin:0;padding:20px;overflow:auto;background:#1e201f;color:#f2eee6;font:12.5px/1.58 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.verdict{font:16px/1.65 Georgia,"Songti SC",serif;background:#f7f1e7;border-left:4px solid #b27a2f;padding:16px 18px;margin:18px 0}.next{margin-top:44px;padding-top:20px;border-top:1px solid var(--l);display:flex;justify-content:space-between;gap:16px}@media(max-width:760px){.two,.three,.steps{grid-template-columns:1fr}.bar span{display:none}.matrix{display:block;overflow-x:auto}.next{flex-direction:column}h2{margin-top:54px}}
 </style></head><body><header class="top"><div class="bar"><b>复现实验室 <small>· 第 02 课 · 体场 → 界面</small></b><span><a href="reproduction-lab.html">L01</a> · <a href="../index.html">首页</a> · <a href="numerical-modeling.html">模块 07</a> · <a href="#compare">论文对照</a> · <a href="#code">代码</a></span></div></header><main>
-<div class="rule"><a href="../index.html">Learning Sliding Ferroelectricity</a> / 复现实验室 / Lesson 02</div>
+<div class="rule"><a href="../index.html">Learning Sliding Ferroelectricity</a> / 复现实验室 / 第 02 课</div>
 <h1>二维场里那条“墙”，到底怎么变成一条可测的 u(y)？</h1>
 <p class="deck">第 01 课只证明一维 TDGL 能回到正确的 tanh kink（双曲正切扭结）。现在进入 Caballero 2020 真正关键的 model reduction（模型约化）步骤：先跑二维 Ginzburg–Landau（GL）场，再从每一条 y 列中提取 φ=0 零点交叉，把 diffuse wall（弥散畴壁）压成单值界面 u(y)，最后验证无序为零的平直畴壁应满足 B(r)≈0。</p>
 <div class="q">这节的核心不是“画出一条黑线”。<b>只有当每个 y 都恰好有一个零点交叉、横截面仍符合 tanh、u(y) 真的变平、B(r) 真的降到接近 0，这个畴壁提取器才算通过。</b></div>
@@ -19,7 +20,7 @@
 <p>在无序为零且 T=0、h=0 时，gradient energy（梯度能）会惩罚弯曲。正确的二维 TDGL 应该让这堵畴壁逐步变平，而不是凭边界条件把它瞬间钉死。</p>
 <div class="three"><div class="card"><h3>检查 x 方向</h3><p>每个横截面的畴壁剖面仍应接近解析 tanh。</p></div><div class="card"><h3>检查 y 方向</h3><p>正弦 u(y) 应因 line tension（线张力）衰减。</p></div><div class="card"><h3>检查整体</h3><p>自由能应单调下降，而不是靠畴壁提取器“伪造”平墙。</p></div></div>
 <h2>2 · 从弥散场提取 u(y)</h2>
-<p>对每个固定 y<sub>j</sub> 这一列中，寻找唯一一对相邻格点满足：</p>
+<p>对每个固定的 y<sub>j</sub> 列，寻找唯一一对相邻格点满足：</p>
 <div class="eq">φ(x<sub>i</sub>,y<sub>j</sub>) ≥ 0，　φ(x<sub>i+1</sub>,y<sub>j</sub>) &lt; 0</div>
 <p>再做一次线性插值：</p>
 <div class="eq">u(y<sub>j</sub>) = x<sub>i</sub> − φ<sub>i,j</sub> Δx / [φ<sub>i+1,j</sub>−φ<sub>i,j</sub>]</div>
@@ -33,7 +34,7 @@ u[j] = x[i] - col[i] * dx / (col[i+1] - col[i])</pre></div>
 <h2>3 · 为什么平直畴壁的 B(r) 是另一个独立验收？</h2>
 <div class="eq">B(r)=⟨[u(y+r)−u(y)]²⟩<sub>y</sub></div>
 <p>如果最终畴壁真正变成平直单墙，那么所有 y 上的 u 都应该近似相同，因此 B(r) 应趋近 0。这里不是拟合 ζ，也不是追求幂律；它只是检验“畴壁提取 + y 方向动力学”是否自洽。</p>
-<div class="bridge"><b>第 01 课验证的是求解器的横向畴壁剖面；第 02 课新增的是畴壁几何估计量。</b> 两节通过以后，我们才有资格在 第 03 课给它加热噪声，再去看真实的粗糙度增长。</div>
+<div class="bridge"><b>第 01 课验证的是求解器的横向畴壁剖面；第 02 课新增的是畴壁几何估计量。</b> 两节通过以后，我们才有资格在第 03 课给它加热噪声，再去看真实的粗糙度增长。</div>
 <h2>4 · 实际运行结果：全部验收条件一起通过</h2>
 <table class="matrix"><thead><tr><th>检查</th><th>硬性验收条件</th><th>实际结果</th><th>判定</th></tr></thead><tbody>
 <tr><td>单一零点交叉</td><td>每个 y 恰好 1 个 φ=0 零点交叉</td><td>48/48 列合法</td><td><b>通过</b></td></tr>
