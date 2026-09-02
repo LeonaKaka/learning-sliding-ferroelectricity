@@ -189,8 +189,21 @@
     document.head.appendChild(style);
   }
 
+  function loadGlobalNavigation() {
+    if (document.querySelector('script[data-site-nav]')) return;
+    const src = document.currentScript?.src || '';
+    const base = src ? src.replace(/terms\.js(?:\?.*)?$/, '') : (location.pathname.includes('/modules/') ? '../' : '');
+    const css = document.createElement('link');
+    css.rel = 'stylesheet'; css.href = `${base}site-nav.css`; css.dataset.siteNav = '1';
+    document.head.appendChild(css);
+    const js = document.createElement('script');
+    js.src = `${base}site-nav.js`; js.defer = true; js.dataset.siteNav = '1';
+    document.body.appendChild(js);
+  }
+
   applyPageSpecificReadingFixes();
   annotateConceptChips();
   annotateText();
   addMobileToc();
+  loadGlobalNavigation();
 })();
