@@ -21,6 +21,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 
+plt.rcParams["font.sans-serif"] = ["Noto Sans CJK SC", "DejaVu Sans"]
+plt.rcParams["axes.unicode_minus"] = False
+
 # ---------------- Paper parameters ----------------
 alpha = delta = gamma = eta = 1.0
 phi0 = 1.0
@@ -307,49 +310,49 @@ out = out_dir / "lesson06_disordered_geometry_checkpoint.svg"
 fig, axes = plt.subplots(2, 2, figsize=(11.4, 8.2), constrained_layout=True)
 
 ax = axes[0, 0]
-ax.loglog(r, B_gl, linewidth=1.8, label="2D GL extracted wall")
-ax.loglog(r, B_ew, linestyle="--", linewidth=1.8, label="1D EW")
-ax.loglog(r, (T / c) * r, linestyle=":", linewidth=1.5, label="thermal Tr/c")
+ax.loglog(r, B_gl, linewidth=1.8, label="二维 GL 提取畴壁")
+ax.loglog(r, B_ew, linestyle="--", linewidth=1.8, label="一维 EW")
+ax.loglog(r, (T / c) * r, linestyle=":", linewidth=1.5, label="热涨落参考 Tr/c")
 # A slope guide only; amplitude anchored at r=10, not a fit claim.
 rref = np.array([6.0, 28.0])
 anchor_r = 10.0
 anchor_B = np.interp(anchor_r, r, 0.5 * (B_gl + B_ew))
 ax.loglog(rref, anchor_B * (rref / anchor_r) ** (4.0 / 3.0), linestyle="-.", linewidth=1.3,
-          label="slope guide: r^(4/3)")
+          label="斜率参考：r^(4/3)")
 ax.axvspan(4.0, 32.0, alpha=0.06)
 ax.set_xlabel("r")
 ax.set_ylabel("B(r,t)")
-ax.set_title("Real-space roughness at t=1000")
+ax.set_title("t=1000 的实空间粗糙度")
 ax.legend(fontsize=7)
 
 ax = axes[0, 1]
-ax.loglog(q, S_gl, linewidth=1.2, label="2D GL")
-ax.loglog(q, S_ew, linestyle="--", linewidth=1.2, label="1D EW")
-ax.scatter(qb_gl, Sb_gl, s=20, label="GL log bins")
-ax.scatter(qb_ew, Sb_ew, s=20, marker="x", label="EW log bins")
+ax.loglog(q, S_gl, linewidth=1.2, label="二维 GL")
+ax.loglog(q, S_ew, linestyle="--", linewidth=1.2, label="一维 EW")
+ax.scatter(qb_gl, Sb_gl, s=20, label="GL 对数分箱")
+ax.scatter(qb_ew, Sb_ew, s=20, marker="x", label="EW 对数分箱")
 ax.axvspan(0.1, 0.5, alpha=0.06)
 ax.set_xlabel("q")
 ax.set_ylabel("S(q,t)")
-ax.set_title("Fourier-space structure factor")
+ax.set_title("傅里叶空间结构因子")
 ax.legend(fontsize=7)
 
 ax = axes[1, 0]
-ax.plot(np.arange(Ny), U_gl[0] - U_gl[0].mean(), linewidth=1.0, label="GL realization 1")
-ax.plot(np.arange(Ny), U_ew[0] - U_ew[0].mean(), linewidth=1.0, label="EW realization 1")
+ax.plot(np.arange(Ny), U_gl[0] - U_gl[0].mean(), linewidth=1.0, label="GL 样本 1")
+ax.plot(np.arange(Ny), U_ew[0] - U_ew[0].mean(), linewidth=1.0, label="EW 样本 1")
 ax.set_xlabel("y")
-ax.set_ylabel("u(y)-mean(u)")
-ax.set_title("Representative interfaces")
+ax.set_ylabel("u(y)−平均位移")
+ax.set_title("代表性界面")
 ax.legend(fontsize=7)
 
 ax = axes[1, 1]
-labels = ["zeta_B GL", "zeta_B EW", "zeta_S GL", "zeta_S EW", "2/3"]
+labels = ["B→ζ GL", "B→ζ EW", "S→ζ GL", "S→ζ EW", "2/3"]
 vals = [zeta_B_gl, zeta_B_ew, zeta_S_gl, zeta_S_ew, 2.0 / 3.0]
 ax.bar(np.arange(len(vals)), vals)
 ax.set_xticks(np.arange(len(vals)), labels, rotation=24, ha="right")
 ax.set_ylim(0.0, 0.8)
-ax.set_ylabel("effective zeta")
-ax.set_title("Mapping passes before asymptotic exponent closes")
+ax.set_ylabel("有效 ζ")
+ax.set_title("几何映射先通过，渐近指数尚未闭合")
 
-fig.suptitle("Reproduction Lab · Lesson 06 · disordered GL vs EW geometry", fontsize=14)
+fig.suptitle("复现实验室 · 第 06 课 · 含无序 GL 与 EW 几何对照", fontsize=14)
 fig.savefig(out)
 print(f"saved: {out}")
