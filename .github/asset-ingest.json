@@ -1,9 +1,9 @@
 {
-  "disabled": true,
-  "drive_file_id": "1WGGwsXxYWkOLLYEg1oj8Rz03uTKlYd2A",
-  "archive_name": "learning-sliding-ferroelectricity-lab12-fig4-tight-20260902.zip",
+  "disabled": false,
+  "drive_file_id": "1aZhEQhU-gJ1kspSFfU56dBjBV3Te716k",
+  "archive_name": "language-v2-main-modules-04-08-research-20260902.zip",
   "destination": ".",
-  "sha256": "bef2d4fd4d15b5f4869f9450815cef3c2c984758862406fcf163387b9a1a2c0e",
+  "sha256": "b97a87ea0276478d8ec3122e5238b792239db81baa5733c1f6b9ae92ab944fc1",
   "mode": "merge",
-  "requested_at": "2026-09-02T16:46:00+08:00"
+  "requested_at": "2026-09-02T18:12:00+08:00"
 }
