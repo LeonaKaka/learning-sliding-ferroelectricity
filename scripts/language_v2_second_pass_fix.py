@@ -88,8 +88,8 @@ def main() -> None:
             raise RuntimeError(f"Lab 01 HTML locked numerical result missing: {token}")
 
     equations = soup.select(".eq")
-    if len(equations) != 5:
-        raise RuntimeError(f"Lab 01 expected 5 equations, found {len(equations)}")
+    if len(equations) != 4:
+        raise RuntimeError(f"Lab 01 expected 4 equations, found {len(equations)}")
 
     figure = soup.select_one("figure.fig img")
     if figure is None:
