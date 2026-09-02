@@ -59,15 +59,9 @@ REQUIRED_VISIBLE = (
     "0.112940%",
     "0.795888%",
     "0.150920 / 0.150587 / 0.150878",
-    "0.081861",
-    "0.092425",
-    "0.108981",
-    "0.073079",
-    "0.087862",
-    "0.105033",
-    "0.071115",
-    "0.084517",
-    "0.101828",
+    "0.081861", "0.092425", "0.108981",
+    "0.073079", "0.087862", "0.105033",
+    "0.071115", "0.084517", "0.101828",
     "0.031953",
     "0.030 判据",
     "[0.029133, 0.034808]",
@@ -81,58 +75,26 @@ REQUIRED_VISIBLE = (
     "普适 ψ 与蠕变 μ 都不授权",
 )
 FORBIDDEN_VISIBLE = (
-    "Lesson 12",
-    "Paper2 Method Track",
-    "真实 simulation plot",
-    "thermal rounding ≠ creep",
-    "transport map",
-    "regime map",
-    "temperature window",
-    "activated motion",
-    "creep-law fit",
-    "full crop with original caption",
-    "panels",
-    "panel (b)",
-    "low-drive",
-    "thermally activated transport",
-    "threshold authority",
-    "sample-specific threshold authority",
-    "steady velocity",
-    "realization-level aggregation",
-    "lo / midpoint / hi",
-    "gold test",
-    "THERMAL-ROUNDING WINDOW GATE",
-    "UNIVERSAL PSI CLAIM",
-    "subthreshold run",
-    "finite-time activated velocity",
-    "creep-law μ fit",
-    "barrier picture",
-    "creep energetics",
-    "Resolved fraction",
-    "trajectory fraction",
-    "Stationarity diagnostic",
-    "median relative difference",
-    "LOW-T CREEP ASYMPTOTIC RESOLVED",
-    "CREEP-LAW / μ CLAIM",
-    "FINITE-T ROUNDING OBSERVED",
-    "ASYMPTOTIC EXPONENTS REMAIN OPEN",
-    "synthetic ψ pipeline",
-    "subthreshold trajectories",
-    "run receipt",
-    "rounding raw",
-    "subthreshold raw",
-    "论文截图 receipt",
-    "thermal rounding（热圆整）（热圆整）",
-    "creep（蠕变）（蠕变）",
+    "Lesson 12", "Paper2 Method Track", "真实 simulation plot",
+    "thermal rounding ≠ creep", "transport map", "regime map",
+    "temperature window", "activated motion", "creep-law fit",
+    "full crop with original caption", "panels", "panel (b)",
+    "low-drive", "thermally activated transport", "threshold authority",
+    "sample-specific threshold authority", "steady velocity", "realization-level aggregation",
+    "lo / midpoint / hi", "gold test", "THERMAL-ROUNDING WINDOW GATE",
+    "UNIVERSAL PSI CLAIM", "subthreshold run", "finite-time activated velocity",
+    "creep-law μ fit", "barrier picture", "creep energetics", "Resolved fraction",
+    "trajectory fraction", "Stationarity diagnostic", "median relative difference",
+    "LOW-T CREEP ASYMPTOTIC RESOLVED", "CREEP-LAW / μ CLAIM",
+    "FINITE-T ROUNDING OBSERVED", "ASYMPTOTIC EXPONENTS REMAIN OPEN",
+    "synthetic ψ pipeline", "subthreshold trajectories", "run receipt",
+    "rounding raw", "subthreshold raw", "论文截图 receipt",
+    "thermal rounding（热圆整）（热圆整）", "creep（蠕变）（蠕变）",
 )
 PYTHON_LOCKS = (
-    "PSI_SYNTH=0.15",
-    "PSI_WINDOW_GATE=0.03",
-    "BOOTSTRAPS=5000",
-    "ROUND_SEEDS=8",
+    "PSI_SYNTH=0.15", "PSI_WINDOW_GATE=0.03", "BOOTSTRAPS=5000", "ROUND_SEEDS=8",
     "def brownian_gold(seed=20261201,ntraj=10000,dt=.02,steps=500,f=.17,T=.08):",
-    "sig=math.sqrt(2*T*dt)",
-    "assert bm_err<.01 and bv_err<.03",
+    "sig=math.sqrt(2*T*dt)", "assert bm_err<.01 and bv_err<.03",
     "def synthetic_psi_gold(Ts,seed=20261202,psi=PSI_SYNTH,n=512):",
     "assert max(abs(x-PSI_SYNTH) for x in synth_fits)<.005",
     "assert len(rounding)==144 and len(sub)==40",
@@ -148,21 +110,17 @@ PYTHON_LOCKS = (
     "'CREEP-LAW / MU CLAIM             = NOT AUTHORIZED'",
     "'FINITE-T ROUNDING OBSERVED; ASYMPTOTIC THERMAL AND CREEP EXPONENTS REMAIN OPEN'",
     "(out/'lesson12_thermal_rounding.txt').write_text",
-    "finish(fig,'lesson12_rounding_vT.png')",
-    "finish(fig,'lesson12_psi_vs_window.png')",
-    "finish(fig,'lesson12_subthreshold_vT.png')",
-    "finish(fig,'lesson12_resolved_fraction.png')",
+    "finish(fig,'lesson12_rounding_vT.png')", "finish(fig,'lesson12_psi_vs_window.png')",
+    "finish(fig,'lesson12_subthreshold_vT.png')", "finish(fig,'lesson12_resolved_fraction.png')",
     "finish(fig,'lesson12_halfwindow_stability.png')",
 )
 RECEIPT_LOCKS = (
     "paper relation                  = v(fc,T) ~ T^psi",
     "rounding statistical unit       = quenched disorder realization",
-    "rounding disorder realizations  = 8",
-    "rounding thermal repeats/sample = 3",
+    "rounding disorder realizations  = 8", "rounding thermal repeats/sample = 3",
     "rounding T ladder               = 0.0025, 0.005, 0.01, 0.02, 0.04, 0.08",
     "fc authority audit              = lo, midpoint, hi of each sample bracket",
-    "Brownian gold mean rel error    = 0.112940%",
-    "Brownian gold variance rel err  = 0.795888%",
+    "Brownian gold mean rel error    = 0.112940%", "Brownian gold variance rel err  = 0.795888%",
     "BROWNIAN NOISE-NORMALIZATION GOLD TEST = PASS",
     "synthetic target psi            = 0.150000",
     "synthetic psi low4/low5/all6    = 0.150920 / 0.150587 / 0.150878",
@@ -170,24 +128,20 @@ RECEIPT_LOCKS = (
     "lo psi low4/low5/all6          = 0.081861 / 0.092425 / 0.108981",
     "mid psi low4/low5/all6          = 0.073079 / 0.087862 / 0.105033",
     "hi psi low4/low5/all6          = 0.071115 / 0.084517 / 0.101828",
-    "midpoint psi window drift      = 0.031953",
-    "psi window drift gate          = < 0.030",
+    "midpoint psi window drift      = 0.031953", "psi window drift gate          = < 0.030",
     "threshold-authority all6 span  = 0.007152",
     "midpoint psi low4 bootstrap95  = [0.052590, 0.094732]",
     "midpoint psi all6 bootstrap95  = [0.084945, 0.127145]",
     "window-drift bootstrap95       = [0.029133, 0.034808]",
-    "THERMAL-ROUNDING WINDOW GATE    = NOT PASSED",
-    "UNIVERSAL PSI CLAIM             = NOT AUTHORIZED",
-    "subthreshold drive              = f = fc_lo - 0.08",
-    "subthreshold thermal repeats    = 2 per disorder sample",
+    "THERMAL-ROUNDING WINDOW GATE    = NOT PASSED", "UNIVERSAL PSI CLAIM             = NOT AUTHORIZED",
+    "subthreshold drive              = f = fc_lo - 0.08", "subthreshold thermal repeats    = 2 per disorder sample",
     "sub T=0.020 mean v / resolved / half-diff = 0.020971 / 0.5625 / 3.102542",
     "sub T=0.040 mean v / resolved / half-diff = 0.110550 / 0.9375 / 0.237538",
     "sub T=0.060 mean v / resolved / half-diff = 0.162843 / 1.0000 / 0.117292",
     "sub T=0.080 mean v / resolved / half-diff = 0.198881 / 1.0000 / 0.081750",
     "sub T=0.120 mean v / resolved / half-diff = 0.237164 / 1.0000 / 0.046381",
     "resolved activated-motion rule  = trajectory fraction 1.0 AND median half-diff < 0.2",
-    "LOW-T CREEP ASYMPTOTIC RESOLVED = NO",
-    "CREEP-LAW / MU CLAIM             = NOT AUTHORIZED",
+    "LOW-T CREEP ASYMPTOTIC RESOLVED = NO", "CREEP-LAW / MU CLAIM             = NOT AUTHORIZED",
     "FINITE-T ROUNDING OBSERVED; ASYMPTOTIC THERMAL AND CREEP EXPONENTS REMAIN OPEN",
 )
 ROUND_TS = (0.0025, 0.005, 0.01, 0.02, 0.04, 0.08)
@@ -197,10 +151,8 @@ EXPECTED_PSIS = {
     "hi": (0.071115, 0.084517, 0.101828),
 }
 SUB_EXPECTED = {
-    0.020: (0.020971, 0.5625, 3.102542),
-    0.040: (0.110550, 0.9375, 0.237538),
-    0.060: (0.162843, 1.0000, 0.117292),
-    0.080: (0.198881, 1.0000, 0.081750),
+    0.020: (0.020971, 0.5625, 3.102542), 0.040: (0.110550, 0.9375, 0.237538),
+    0.060: (0.162843, 1.0000, 0.117292), 0.080: (0.198881, 1.0000, 0.081750),
     0.120: (0.237164, 1.0000, 0.046381),
 }
 
@@ -237,10 +189,8 @@ def verify_local_links(soup: BeautifulSoup) -> None:
 
 
 def log_slope(xs: list[float], ys: list[float]) -> float:
-    lx = [math.log(x) for x in xs]
-    ly = [math.log(y) for y in ys]
-    xm = statistics.fmean(lx)
-    ym = statistics.fmean(ly)
+    lx = [math.log(x) for x in xs]; ly = [math.log(y) for y in ys]
+    xm = statistics.fmean(lx); ym = statistics.fmean(ly)
     den = sum((x - xm) ** 2 for x in lx)
     return sum((x - xm) * (y - ym) for x, y in zip(lx, ly)) / den
 
@@ -256,14 +206,13 @@ def verify_rounding_csv() -> None:
     seeds = sorted({int(r["seed"]) for r in rows})
     if len(seeds) != 8:
         raise RuntimeError("Lab 12 rounding data must contain 8 independent disorder seeds")
-    authorities = {r["authority"] for r in rows}
-    if authorities != {"lo", "mid", "hi"}:
-        raise RuntimeError(f"Lab 12 threshold authority set drifted: {authorities}")
+    if {r["authority"] for r in rows} != {"lo", "mid", "hi"}:
+        raise RuntimeError("Lab 12 threshold authority set drifted")
     temps = tuple(sorted({float(r["T"]) for r in rows}))
     if temps != ROUND_TS:
         raise RuntimeError(f"Lab 12 rounding temperature ladder drifted: {temps}")
 
-    agg = {}
+    computed_psis = {}
     for authority in ("lo", "mid", "hi"):
         means = []
         for T in ROUND_TS:
@@ -278,21 +227,23 @@ def verify_rounding_csv() -> None:
                     raise RuntimeError(f"Lab 12 within-disorder thermal-repeat mean drifted for seed={row['seed']}, authority={authority}, T={T}")
                 vals.append(row_mean)
             means.append(statistics.fmean(vals))
-        agg[authority] = means
         got = tuple(log_slope(list(ROUND_TS[:n]), means[:n]) for n in (4, 5, 6))
+        computed_psis[authority] = got
         for value, expected in zip(got, EXPECTED_PSIS[authority]):
-            if abs(value - expected) > 8e-7:
-                raise RuntimeError(f"Lab 12 raw rounding data no longer reproduce psi for {authority}: {got}")
+            # Page/receipt print six decimals; raw-data contract is compared to the displayed value at that precision.
+            if abs(value - expected) > 5.1e-7:
+                raise RuntimeError(f"Lab 12 raw rounding data no longer reproduce displayed psi for {authority}: {got}")
 
-    mid = EXPECTED_PSIS["mid"]
+    # Drift/span are computed from unrounded slopes, matching the authoritative Python before formatting.
+    mid = computed_psis["mid"]
     drift = max(mid) - min(mid)
-    if abs(drift - 0.031953) > 8e-7:
-        raise RuntimeError(f"Lab 12 midpoint psi window drift changed: {drift:.6f}")
+    if abs(drift - 0.031953) > 5.1e-7:
+        raise RuntimeError(f"Lab 12 midpoint psi window drift changed: {drift:.9f}")
     if drift <= 0.030:
         raise RuntimeError("Lab 12 thermal-rounding failure boundary was weakened")
-    all6_span = max(EXPECTED_PSIS[a][2] for a in EXPECTED_PSIS) - min(EXPECTED_PSIS[a][2] for a in EXPECTED_PSIS)
-    if abs(all6_span - 0.007153) > 2e-6:
-        raise RuntimeError("Lab 12 threshold-authority all6 span unexpectedly changed")
+    all6_span = max(computed_psis[a][2] for a in computed_psis) - min(computed_psis[a][2] for a in computed_psis)
+    if abs(all6_span - 0.007152) > 5.1e-7:
+        raise RuntimeError(f"Lab 12 threshold-authority all6 span changed: {all6_span:.9f}")
 
 
 def verify_subthreshold_csv() -> None:
@@ -308,28 +259,25 @@ def verify_subthreshold_csv() -> None:
     if any(abs(float(r["delta_f"]) + 0.08) > 1e-12 for r in rows):
         raise RuntimeError("Lab 12 subthreshold drive offset drifted from -0.08")
 
+    recomputed = {}
     for T, expected in SUB_EXPECTED.items():
         group = [r for r in rows if abs(float(r["T"]) - T) < 1e-12]
         if len(group) != 8 or len({int(r["seed"]) for r in group}) != 8:
             raise RuntimeError(f"Lab 12 subthreshold T={T} must contain 8 independent disorder rows")
-        means = []
-        resolved = []
-        halfdiff = []
+        means, resolved, halfdiff = [], [], []
         for row in group:
             rep_mean = statistics.fmean([float(row["v_rep1"]), float(row["v_rep2"])])
             mean_v = float(row["mean_v"])
             if abs(rep_mean - mean_v) > 2e-12:
                 raise RuntimeError(f"Lab 12 subthreshold thermal-repeat mean drifted for seed={row['seed']}, T={T}")
-            means.append(mean_v)
-            resolved.append(float(row["resolved_fraction"]))
-            halfdiff.append(float(row["max_half_rel_diff"]))
+            means.append(mean_v); resolved.append(float(row["resolved_fraction"])); halfdiff.append(float(row["max_half_rel_diff"]))
         got = (statistics.fmean(means), statistics.fmean(resolved), statistics.median(halfdiff))
-        tolerances = (8e-7, 8e-7, 8e-7)
-        for value, target, tol in zip(got, expected, tolerances):
-            if abs(value - target) > tol:
+        recomputed[T] = got
+        for value, target in zip(got, expected):
+            if abs(value - target) > 5.1e-7:
                 raise RuntimeError(f"Lab 12 subthreshold aggregate drifted at T={T}: {got} vs {expected}")
 
-    low = SUB_EXPECTED[0.020]
+    low = recomputed[0.020]
     if low[1] == 1.0 and low[2] < 0.2:
         raise RuntimeError("Lab 12 low-T creep failure boundary was weakened")
 
@@ -363,7 +311,6 @@ def main() -> None:
     title = soup.title.get_text(strip=True) if soup.title else ""
     if title != "Reproduction Lab（复现实验室）12 · 热圆整与蠕变边界":
         raise RuntimeError(f"Lab 12 title drifted: {title!r}")
-
     visible = visible_text(soup)
     for token in REQUIRED_VISIBLE:
         if token not in visible:
@@ -383,16 +330,12 @@ def main() -> None:
     for token in PYTHON_LOCKS:
         if token not in py:
             raise RuntimeError(f"Lab 12 Python contract drifted: {token}")
-
     receipt = RECEIPT.read_text(encoding="utf-8")
     for token in RECEIPT_LOCKS:
         if token not in receipt:
             raise RuntimeError(f"Lab 12 receipt/result/failure boundary drifted: {token}")
 
-    verify_rounding_csv()
-    verify_subthreshold_csv()
-    verify_source_provenance()
-
+    verify_rounding_csv(); verify_subthreshold_csv(); verify_source_provenance()
     for plot in PLOT_FILES:
         w, h = png_size(plot)
         if w < 900 or h < 500:
