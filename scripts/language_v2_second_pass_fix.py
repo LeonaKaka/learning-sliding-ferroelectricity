@@ -1,9 +1,16 @@
 from __future__ import annotations
 
-from bs4 import BeautifulSoup, NavigableString
+from pathlib import Path
+from urllib.parse import urlsplit
+
+from bs4 import BeautifulSoup
 from language_v2_second_pass import ROOT
 
-TARGET = ROOT / "modules/reproduction-lab-03.html"
+PAGE = ROOT / "modules/reproduction-lab-03.html"
+PAPER_FIGURE = ROOT / "assets/reproduction-lab/caballero2020-fig2-time-roughness.webp"
+SVG = ROOT / "assets/reproduction-lab/lesson03_ew_roughness_thumbnail.svg"
+PYTHON = ROOT / "examples/reproduction-lab/lesson03_ew_roughness.py"
+
 LOCKED_RESULTS = (
     "0.91%", "1.36%", "3.04%",
     "1.39%", "1.86%", "3.40%",
@@ -11,73 +18,176 @@ LOCKED_RESULTS = (
     "0.9592",
 )
 
-TEXT_REPLACEMENTS = {
-    "最干净的 一维 Edwards–Wilkinson 层": "最干净的一维 Edwards–Wilkinson 层",
-    "1D Edwards–Wilkinson Eq. (15)": "一维 Edwards–Wilkinson Eq. (15)",
-    "8 · 为什么还没跑 2D GL？": "8 · 为什么还没跑二维 GL？",
-    "放回 2D GL": "放回二维 GL",
-}
+FORBIDDEN_VISIBLE = (
+    "Lesson 03",
+    "Gold Test",
+    "gold test",
+    "paper protocol",
+    "analytic benchmark",
+    "relative error",
+    "realization",
+    "Hard gate",
+    "hard gate",
+    "CPU-fast",
+    "time horizon",
+    "comparison window",
+    "thumbnail reproduction",
+    " interface ",
+    " estimator",
+    " implementation",
+    " prediction",
+    "1D ",
+    "2D ",
+    "最干净的 一维",
+    " gate ",
+    " window ",
+    " authority ",
+    " pipeline ",
+    " checkpoint ",
+    " benchmark ",
+    " raw data",
+    " steady velocity",
+    " sample-specific threshold",
+    " effective exponent",
+)
+
+REQUIRED_VISIBLE = (
+    "Reproduction Lab（复现实验室）03",
+    "thermal roughness（热粗糙度）",
+    "thermal noise（热噪声）",
+    "bulk-to-line projection（体场到界面线投影）",
+    "quenched disorder（冻结无序）",
+    "thermal white noise（热白噪声）",
+    "finite-time crossover（有限时间交叉）",
+    "periodic Laplacian（周期拉普拉斯算子）",
+    "FDT noise（涨落耗散噪声）",
+    "Monte Carlo（蒙特卡洛）",
+    "correlation function（相关函数）",
+    "一维 Edwards–Wilkinson Eq. (15)",
+    "为什么还没跑二维 GL？",
+)
 
 
-def blocked(node: NavigableString) -> bool:
-    parent = node.parent
-    if parent is None or parent.name in {"script", "style", "pre", "code", "math"}:
-        return True
-    if parent.find_parent(class_="eq") or "eq" in parent.get("class", []):
-        return True
-    if parent.find_parent(class_="source-text") or "source-text" in parent.get("class", []):
-        return True
-    return False
+def visible_teaching_text(soup: BeautifulSoup) -> str:
+    clone = BeautifulSoup(str(soup), "html.parser")
+    for selector in (".eq", ".source-text", "pre", "code", "script", "style", "math"):
+        for node in clone.select(selector):
+            node.decompose()
+    return " ".join(clone.stripped_strings)
+
+
+def resolve_local(base: Path, href: str) -> Path | None:
+    if not href or href.startswith(("http://", "https://", "mailto:", "#")):
+        return None
+    parsed = urlsplit(href)
+    if not parsed.path:
+        return None
+    return (base.parent / parsed.path).resolve()
 
 
 def main() -> None:
-    raw = TARGET.read_text(encoding="utf-8")
+    raw = PAGE.read_text(encoding="utf-8")
     soup = BeautifulSoup(raw, "html.parser")
-    before_eq = [eq.get_text(" ", strip=False) for eq in soup.select(".eq")]
-    before_pre = [pre.get_text() for pre in soup.select("pre")]
-    before_code = [code.get_text() for code in soup.select("code")]
-    before_hrefs = [a.get("href") for a in soup.find_all("a")]
-    before_src = [img.get("src") for img in soup.find_all("img")]
-    before_sources = [node.get_text() for node in soup.select(".source-text")]
-    before_results = {token: raw.count(token) for token in LOCKED_RESULTS}
+    text = visible_teaching_text(soup)
 
-    for node in list(soup.find_all(string=True)):
-        if not isinstance(node, NavigableString) or blocked(node):
-            continue
-        old = str(node)
-        new = old
-        for src, dst in TEXT_REPLACEMENTS.items():
-            new = new.replace(src, dst)
-        if new != old:
-            node.replace_with(new)
+    for token in FORBIDDEN_VISIBLE:
+        if token in text:
+            raise RuntimeError(f"Lab 03 visible Language V2 residue: {token!r}")
+    for token in REQUIRED_VISIBLE:
+        if token not in text:
+            raise RuntimeError(f"Lab 03 required Language V2 form missing: {token!r}")
 
-    if soup.title:
-        soup.title.string = "Reproduction Lab（复现实验室）03 · EW 热粗糙化缩略复现"
+    if soup.title is None or soup.title.get_text(strip=True) != "Reproduction Lab（复现实验室）03 · EW 热粗糙化缩略复现":
+        raise RuntimeError("Lab 03 title regressed")
+
+    for token in LOCKED_RESULTS:
+        if token not in raw:
+            raise RuntimeError(f"Lab 03 locked numerical result missing: {token}")
+
+    equations = soup.select(".eq")
+    if len(equations) != 8:
+        raise RuntimeError(f"Lab 03 expected 8 equation/workflow boxes, found {len(equations)}")
+    if "比较区间：4 ≤ r ≤ 64" not in [eq.get_text(" ", strip=True) for eq in equations]:
+        raise RuntimeError("Lab 03 predeclared comparison interval changed")
 
     figures = soup.select("figure.fig img")
     if len(figures) != 2:
         raise RuntimeError(f"Lab 03 expected 2 Figures, found {len(figures)}")
-    figures[0]["alt"] = "Caballero 2020 图 2：界面粗糙度随时间演化"
-    figures[1]["alt"] = "本课 EW 数值模拟与 Caballero Eq.19 的粗糙度对照"
-
-    if [eq.get_text(" ", strip=False) for eq in soup.select(".eq")] != before_eq:
-        raise RuntimeError("Lab 03 equation body changed")
-    if [pre.get_text() for pre in soup.select("pre")] != before_pre:
-        raise RuntimeError("Lab 03 code/output block changed")
-    if [code.get_text() for code in soup.select("code")] != before_code:
-        raise RuntimeError("Lab 03 inline code changed")
-    if [a.get("href") for a in soup.find_all("a")] != before_hrefs:
-        raise RuntimeError("Lab 03 links changed")
-    if [img.get("src") for img in soup.find_all("img")] != before_src:
+    expected_srcs = [
+        "../assets/reproduction-lab/caballero2020-fig2-time-roughness.webp",
+        "../assets/reproduction-lab/lesson03_ew_roughness_thumbnail.svg",
+    ]
+    expected_alts = [
+        "Caballero 2020 图 2：界面粗糙度随时间演化",
+        "本课 EW 数值模拟与 Caballero Eq.19 的粗糙度对照",
+    ]
+    if [img.get("src") for img in figures] != expected_srcs:
         raise RuntimeError("Lab 03 Figure wiring changed")
-    if [node.get_text() for node in soup.select(".source-text")] != before_sources:
-        raise RuntimeError("Lab 03 paper source text changed")
+    if [img.get("alt") for img in figures] != expected_alts:
+        raise RuntimeError("Lab 03 Figure alt text regressed")
 
-    rendered = str(soup)
-    after_results = {token: rendered.count(token) for token in LOCKED_RESULTS}
-    if after_results != before_results:
-        raise RuntimeError(f"Lab 03 locked results changed: {before_results} -> {after_results}")
-    TARGET.write_text(rendered, encoding="utf-8")
+    checked = set()
+    for a in soup.find_all("a"):
+        path = resolve_local(PAGE, a.get("href"))
+        if path is None or path in checked:
+            continue
+        checked.add(path)
+        try:
+            path.relative_to(ROOT.resolve())
+        except ValueError as exc:
+            raise RuntimeError(f"Lab 03 local link escapes repository: {a.get('href')}") from exc
+        if not path.is_file():
+            raise RuntimeError(f"Lab 03 local link target missing: {a.get('href')}")
+    if PYTHON.resolve() not in checked:
+        raise RuntimeError("Lab 03 full Python source link missing")
+
+    for path in (PAPER_FIGURE, SVG, PYTHON):
+        if not path.is_file():
+            raise RuntimeError(f"Lab 03 required asset/source missing: {path.relative_to(ROOT)}")
+
+    svg = SVG.read_text(encoding="utf-8")
+    if "NotoSansCJKsc" not in svg:
+        raise RuntimeError("Lab 03 SVG no longer contains CJK plot glyphs")
+    for token in (
+        "EW roughness: simulation vs Caballero Eq. (19)",
+        "Declared comparison window",
+        "One thermal realization",
+        "Reproduction Lab · Lesson 03",
+        "simulation t=",
+        "|sim-theory| / theory (%)",
+        "u(y) + offset",
+    ):
+        if token in svg:
+            raise RuntimeError(f"Lab 03 SVG English label residue: {token!r}")
+
+    py = PYTHON.read_text(encoding="utf-8")
+    for token in (
+        'plt.rcParams["font.sans-serif"] = ["Noto Sans CJK SC", "DejaVu Sans"]',
+        "N = 256",
+        "dy = 1.0",
+        "dt = 0.1",
+        "n_realizations = 64",
+        "target_times = (10.0, 100.0, 1000.0)",
+        "np.random.default_rng(12345)",
+        "fit = (r >= 4.0) & (r <= 64.0)",
+        'assert results[t]["median_rel"] < 0.03',
+        'assert results[t]["rms_rel"] < 0.04',
+        "assert 0.88 < late_ratio < 1.08",
+        'label=f"数值模拟 t={t:g}"',
+        'ax.set_title("EW 粗糙度：数值模拟与 Caballero Eq. (19) 对照")',
+        'ax.set_ylabel("|数值-理论| / 理论 (%)")',
+        'ax.set_title("预先声明的比较区间：4 ≤ r ≤ 64")',
+        'ax.set_ylabel("u(y) + 纵向偏移")',
+        'ax.set_title("单个热噪声样本：粗糙度随时间增长")',
+        'fig.suptitle("复现实验室 · 第 03 课 · EW 热粗糙化缩略复现", fontsize=14)',
+    ):
+        if token not in py:
+            raise RuntimeError(f"Lab 03 Python scientific/plot contract changed: {token!r}")
+
+    print(
+        f"Lab 03 seal PASS: {len(equations)} equation/workflow boxes, "
+        f"{len(figures)} Figures, {len(checked)} local links; HTML/SVG/Python contracts intact."
+    )
 
 
 if __name__ == "__main__":
