@@ -120,8 +120,8 @@ RECEIPT_LOCKS = (
     "UNIVERSAL BETA CLAIM          = NOT AUTHORIZED",
     "WINDOW-STABILITY GATE         = NOT PASSED",
 )
-EXPECTED_CSV_ROWS = (
-    ("20260902", "0.777636719", "0.777783203", "0.250404439", "0.268473880", "0.294751204", "0.333295069", "0.392643257", "0.482420250"),
+EXPECTED_THRESHOLDS = (
+    ("20260902", "0.777636719", "0.777783203"),
     ("20260903", "0.811035156", "0.811181641"),
     ("20260904", "0.755371094", "0.755517578"),
     ("20260905", "0.800488281", "0.800634766"),
@@ -129,6 +129,14 @@ EXPECTED_CSV_ROWS = (
     ("20260907", "0.777343750", "0.777490234"),
     ("20260908", "0.709521484", "0.709667969"),
     ("20260909", "0.799902344", "0.800048828"),
+)
+EXPECTED_MEAN_V = (
+    0.250404439,
+    0.268473880,
+    0.294751204,
+    0.333295069,
+    0.392643257,
+    0.482420250,
 )
 
 
@@ -182,21 +190,22 @@ def verify_source_provenance() -> None:
 def verify_csv() -> None:
     with CSV.open(newline="", encoding="utf-8") as handle:
         rows = list(csv.DictReader(handle))
-    expected_header = ["seed", "fc_lo", "fc_hi", "v_df_0.015", "v_df_0.025", "v_df_0.040", "v_df_0.065", "v_df_0.105", "v_df_0.170"]
+    velocity_keys = ["v_df_0.015", "v_df_0.025", "v_df_0.040", "v_df_0.065", "v_df_0.105", "v_df_0.170"]
+    expected_header = ["seed", "fc_lo", "fc_hi", *velocity_keys]
     if not rows or list(rows[0].keys()) != expected_header:
         raise RuntimeError("Lab 09 CSV header drifted")
     if len(rows) != 8:
         raise RuntimeError(f"Lab 09 CSV must contain 8 independent disorder rows, found {len(rows)}")
-    if [row["seed"] for row in rows] != [str(x) for x in range(20260902, 20260910)]:
-        raise RuntimeError("Lab 09 CSV seed identities/order drifted")
-    for idx, expected in enumerate(EXPECTED_CSV_ROWS):
-        row = rows[idx]
-        if (row["seed"], row["fc_lo"], row["fc_hi"]) != expected[:3]:
-            raise RuntimeError(f"Lab 09 CSV threshold row drifted for seed {row['seed']}")
-        if idx == 0:
-            actual = tuple(row[key] for key in expected_header)
-            if actual != expected:
-                raise RuntimeError("Lab 09 first CSV science row drifted")
+    for row, expected in zip(rows, EXPECTED_THRESHOLDS):
+        if (row["seed"], row["fc_lo"], row["fc_hi"]) != expected:
+            raise RuntimeError(f"Lab 09 CSV threshold row drifted for expected seed {expected[0]}")
+        for key in velocity_keys:
+            if float(row[key]) <= 0:
+                raise RuntimeError(f"Lab 09 non-positive velocity in CSV: seed={row['seed']} {key}")
+    means = tuple(sum(float(row[key]) for row in rows) / len(rows) for key in velocity_keys)
+    for got, expected in zip(means, EXPECTED_MEAN_V):
+        if abs(got - expected) > 5e-10:
+            raise RuntimeError(f"Lab 09 CSV ensemble mean drifted: {got:.9f} vs {expected:.9f}")
 
 
 def main() -> None:
