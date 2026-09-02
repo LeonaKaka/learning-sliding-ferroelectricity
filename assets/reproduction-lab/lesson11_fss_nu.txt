@@ -1,0 +1,33 @@
+Lesson 11 finite-size threshold scaling
+paper relation                 = Var(fc_sample) ~ L^(-2/nu_dep)
+paper aspect protocol          = M_phys ~ L^zeta_dep with zeta_dep=1.25
+raw statistical unit           = disorder realization
+realizations per L            = 48
+L ladder                       = 32, 64, 128, 256
+M grid ladder                  = 320, 736, 1728, 4096
+moving certificate             = 1 u-period
+fc bracket width               = 0.001953125
+synthetic target nu           = 1.333333
+synthetic recovered nu        = 1.318867
+SYNTHETIC FSS GOLD TEST         = PASS
+L= 32 M= 320 mean fc             = 0.819978841
+L= 32 M= 320 std(fc)             = 0.064453427
+L= 64 M= 736 mean fc             = 0.823315430
+L= 64 M= 736 std(fc)             = 0.033881635
+L=128 M=1728 mean fc             = 0.823396810
+L=128 M=1728 std(fc)             = 0.026465858
+L=256 M=4096 mean fc             = 0.821850586
+L=256 M=4096 std(fc)             = 0.015059779
+nu all four sizes             = 1.503976
+nu smallest three             = 1.557481
+nu largest three              = 1.709690
+size-window nu drift          = 0.205713
+size-window drift gate        = < 0.150
+realization-bootstrap 95% nu  = [1.241478, 1.903499]
+quantile-collapse best nu      = 1.405000
+collapse score best            = 0.117003
+collapse score nu=4/3          = 0.120858
+collapse score variance-fit nu = 0.123243
+SIZE-WINDOW STABILITY GATE     = NOT PASSED
+UNIVERSAL NU CLAIM              = NOT AUTHORIZED
+FINITE-SIZE TREND EXISTS; THERMODYNAMIC CLOSURE REQUIRES LARGER-SCALE EVIDENCE
