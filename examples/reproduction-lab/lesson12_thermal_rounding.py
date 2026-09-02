@@ -17,6 +17,9 @@ from pathlib import Path
 import math
 import numpy as np
 import pandas as pd
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 
 PSI_SYNTH=0.15
 PSI_WINDOW_GATE=0.03
@@ -132,16 +135,65 @@ print('\n'.join(receipt))
 out.mkdir(parents=True,exist_ok=True)
 (out/'lesson12_thermal_rounding.txt').write_text('\n'.join(receipt)+'\n',encoding='utf-8')
 
-def poly(xs,ys,x0,y0,w,h,xmin=None,xmax=None,ymin=None,ymax=None):
-    xs=np.asarray(xs,float); ys=np.asarray(ys,float)
-    xmin=float(xs.min() if xmin is None else xmin); xmax=float(xs.max() if xmax is None else xmax)
-    ymin=float(ys.min() if ymin is None else ymin); ymax=float(ys.max() if ymax is None else ymax)
-    if ymax==ymin:ymax+=1
-    return ' '.join(f'{x0+(x-xmin)/(xmax-xmin)*w:.1f},{y0+h-(y-ymin)/(ymax-ymin)*h:.1f}' for x,y in zip(xs,ys))
-lT=np.log10(Ts); lv=np.log10(agg['mid']); p_round=poly(lT,lv,55,80,400,155)
-p_auth=[]; ymin=min(np.log10(agg[a]).min() for a in agg); ymax=max(np.log10(agg[a]).max() for a in agg)
-for a in ('lo','mid','hi'): p_auth.append(poly(lT,np.log10(agg[a]),555,80,400,155,lT.min(),lT.max(),ymin,ymax))
-p_sub=poly(subTs,[x[1] for x in subagg],55,355,400,135)
-p_res=poly(subTs,[x[2] for x in subagg],555,355,400,135,subTs.min(),subTs.max(),0,1)
-svg=f'''<svg xmlns="http://www.w3.org/2000/svg" width="1050" height="590" viewBox="0 0 1050 590" role="img" aria-label="Lesson 12 thermal rounding and creep boundary"><style>text{{font-family:system-ui,-apple-system,sans-serif;fill:#20211f}}.box{{fill:#fffdf8;stroke:#d8d1c3}}.ax{{stroke:#444}}.a{{fill:none;stroke:#222;stroke-width:2}}.b{{fill:none;stroke:#777;stroke-width:1.5;stroke-dasharray:6 4}}.c{{fill:none;stroke:#aaa;stroke-width:1.5}}.ttl{{font-size:18px;font-weight:650}}.small{{font-size:12px;fill:#716d66}}.big{{font-size:23px;font-weight:700}}</style><rect width="1050" height="590" fill="#fff"/><text x="525" y="28" text-anchor="middle" font-size="22">Reproduction Lab · Lesson 12 · finite-T rounding / creep boundary</text><rect class="box" x="35" y="48" width="450" height="225" rx="8"/><text class="ttl" x="55" y="72">1 · v(fc,T) rises with T, but psi drifts</text><line class="ax" x1="55" y1="235" x2="455" y2="235"/><line class="ax" x1="55" y1="80" x2="55" y2="235"/><polyline class="a" points="{p_round}"/><text class="small" x="55" y="255">midpoint psi: low4={psis['mid'][0]:.3f} · low5={psis['mid'][1]:.3f} · all6={psis['mid'][2]:.3f}</text><rect class="box" x="535" y="48" width="480" height="225" rx="8"/><text class="ttl" x="555" y="72">2 · Threshold bracket is not the main drift</text><line class="ax" x1="555" y1="235" x2="955" y2="235"/><line class="ax" x1="555" y1="80" x2="555" y2="235"/><polyline class="c" points="{p_auth[0]}"/><polyline class="a" points="{p_auth[1]}"/><polyline class="b" points="{p_auth[2]}"/><text class="small" x="555" y="255">all6 psi span across fc lo/mid/hi = {authority_span:.4f}; T-window drift = {mid_drift:.4f}</text><rect class="box" x="35" y="320" width="450" height="215" rx="8"/><text class="ttl" x="55" y="345">3 · Subthreshold activated velocity exists</text><line class="ax" x1="55" y1="490" x2="455" y2="490"/><polyline class="a" points="{p_sub}"/><text class="small" x="55" y="515">f = fc_lo - 0.08 · direct finite-time Langevin</text><rect class="box" x="535" y="320" width="480" height="215" rx="8"/><text class="ttl" x="555" y="345">4 · But low-T creep is unresolved</text><line class="ax" x1="555" y1="490" x2="955" y2="490"/><polyline class="a" points="{p_res}"/><text class="big" x="585" y="415">T=.02 resolved = {subagg[0][2]*100:.1f}%</text><text class="small" x="555" y="515">Low-T half-window velocity instability is large → no creep μ claim.</text></svg>'''
-(out/'lesson12_thermal_rounding.svg').write_text(svg,encoding='utf-8')
+def finish(fig,name):
+    fig.tight_layout(); fig.savefig(out/name,dpi=220,bbox_inches='tight'); plt.close(fig)
+
+# 1) Thermal rounding observable itself: v(fc,T) on log-log axes.
+fig,ax=plt.subplots(figsize=(7.2,4.6))
+for a,ls in zip(('lo','mid','hi'),('-', '--', ':')):
+    ax.loglog(Ts,agg[a],ls,marker='o',label=f'fc authority: {a}')
+# show the registered midpoint fits over low4 and all6 to make window drift visible
+for nw,ls in ((4,'-.'),(6,(0,(3,1,1,1)))):
+    coef=np.polyfit(np.log(Ts[:nw]),np.log(agg['mid'][:nw]),1)
+    y=np.exp(coef[1])*Ts[:nw]**coef[0]
+    ax.loglog(Ts[:nw],y,linestyle=ls,linewidth=2,label=f'midpoint fit first {nw}: psi={coef[0]:.3f}')
+ax.set_xlabel('temperature T')
+ax.set_ylabel(r'$v(f_c,T)$')
+ax.set_title('Thermal rounding: the fitted psi changes with the temperature window')
+ax.legend(fontsize=8)
+finish(fig,'lesson12_rounding_vT.png')
+
+# 2) psi versus registered temperature window.
+fig,ax=plt.subplots(figsize=(7.0,4.4))
+windows=np.array([4,5,6])
+for a in ('lo','mid','hi'):
+    ax.plot(windows,psis[a],marker='o',label=f'fc authority: {a}')
+ax.axhline(PSI_SYNTH,linestyle='--',label='synthetic-gold target 0.15 (not a QEW benchmark)')
+ax.set_xticks(windows,labels=['low 4 T','low 5 T','all 6 T'])
+ax.set_ylabel('effective psi')
+ax.set_title('Window drift dominates threshold-bracket uncertainty')
+ax.legend(fontsize=8)
+finish(fig,'lesson12_psi_vs_window.png')
+
+# 3) Subthreshold finite-time activated motion.
+fig,ax=plt.subplots(figsize=(7.0,4.4))
+sv=np.array([x[1] for x in subagg])
+ax.plot(subTs,sv,marker='o')
+ax.set_xlabel('temperature T')
+ax.set_ylabel('mean subthreshold velocity')
+ax.set_title('Below threshold, finite-time activated velocity increases with T')
+finish(fig,'lesson12_subthreshold_vT.png')
+
+# 4) Why low-T creep asymptotics are not resolved.
+fig,ax=plt.subplots(figsize=(7.0,4.4))
+rf=np.array([x[2] for x in subagg]); hd=np.array([x[3] for x in subagg])
+ax.plot(subTs,rf,marker='o',label='resolved trajectory fraction')
+ax.axhline(1.0,linestyle='--',label='required resolved fraction = 1')
+ax.set_xlabel('temperature T')
+ax.set_ylabel('resolved trajectory fraction')
+ax.set_ylim(0,1.05)
+ax.set_title('The lowest-T ensemble is not fully resolved in the observation window')
+ax.legend()
+finish(fig,'lesson12_resolved_fraction.png')
+
+fig,ax=plt.subplots(figsize=(7.0,4.4))
+ax.semilogy(subTs,hd,marker='o')
+ax.axhline(.2,linestyle='--',label='registered half-window stability gate = 0.2')
+ax.set_xlabel('temperature T')
+ax.set_ylabel('median relative difference: first half vs second half')
+ax.set_title('Low-T velocity is strongly nonstationary, so a creep exponent is not fit')
+ax.legend()
+finish(fig,'lesson12_halfwindow_stability.png')
+
+print('saved matplotlib plots:', ', '.join(['lesson12_rounding_vT.png','lesson12_psi_vs_window.png','lesson12_subthreshold_vT.png','lesson12_resolved_fraction.png','lesson12_halfwindow_stability.png']))
+

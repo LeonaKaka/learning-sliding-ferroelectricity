@@ -1,42 +1,20 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Reproduction Lab 08 · Steady Velocity</title><style>
-:root{--bg:#f3f0e8;--paper:#fffdf8;--ink:#191a18;--muted:#6f6a62;--line:#d6cfc2;--accent:#69483c;--soft:#eee7dc;--ok:#edf5ee;--hold:#fff0ed}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.76 system-ui,-apple-system,"PingFang SC",sans-serif}
-.top{position:sticky;top:0;z-index:3;background:#f3f0e8ee;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-.bar,main{width:min(1080px,calc(100% - 32px));margin:auto}.bar{height:62px;display:flex;align-items:center;justify-content:space-between;gap:18px}
-.bar b,h1,h2,h3,.lead,.bridge,.eq{font-family:Georgia,"Times New Roman","Songti SC",serif}.bar a,a{color:#4f4b45}.bar small,.muted,.cap,.crumb{color:var(--muted)}
-main{padding:46px 0 90px}h1{font-size:clamp(38px,6vw,62px);line-height:1.05;margin:13px 0 17px;letter-spacing:-.035em}h2{font-size:29px;line-height:1.3;margin:64px 0 15px}h3{font-size:18px;margin:0 0 6px}
-.lead{font-size:19px;line-height:1.62;color:#4f4b45;max-width:920px}.tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.04em;padding:5px 9px;border-radius:999px;background:#e9ddd2;color:#68483c;margin:0 6px 8px 0}
-.bridge{font-size:18px;padding:18px 20px;margin:26px 0;border-left:4px solid var(--accent);background:var(--soft)}.eq{font-size:18px;text-align:center;padding:14px;margin:16px 0;background:#faf7f0;border:1px solid var(--line);border-radius:10px;overflow-x:auto}
-.figure{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:24px auto;max-width:940px}.figure img{display:block;width:100%;height:auto;background:#fff}.figure.narrow{max-width:790px}.cap{display:block;padding:11px 14px;background:#f0ece3;border-top:1px solid var(--line);font-size:12px}
-.map{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:22px 0}.map .card,.card{background:var(--paper);border:1px solid var(--line);border-radius:11px;padding:15px}.map b{display:block;margin-bottom:4px}.map p,.card p{font-size:13px;margin:4px 0}
-.compare{width:100%;border-collapse:collapse;background:#fff;margin:20px 0;border:1px solid var(--line)}.compare th,.compare td{padding:11px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.compare th{background:#f0ece3;font:13px Georgia,serif}.compare td{font-size:13px}.compare tr:last-child td{border-bottom:0}
-.ok,.hold,.warn{border-radius:11px;padding:14px 16px;margin:18px 0}.ok{background:var(--ok);border:1px solid #bfd2c4}.hold{background:var(--hold);border:1px solid #d7b7b0}.warn{background:#fff7e8;border:1px solid #e4d3ad}
-.codebox{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:24px 0}.codebox .head{padding:10px 14px;background:#f0ece3}pre{margin:0;padding:18px;overflow:auto;background:#1e201f;color:#f2eee6;font:12.5px/1.58 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
-.next{margin-top:46px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:16px}
-.source-note{font-size:13px;color:#5f5a53;border-left:3px solid #b9aa98;padding:8px 12px;margin:12px 0}
-@media(max-width:760px){.map{grid-template-columns:1fr}.bar span{display:none}.next{flex-direction:column}h2{margin-top:52px}.figure{border-radius:10px}}
-</style></head>
-<body><header class="top"><div class="bar"><b>Reproduction Lab <small>· Lesson 08 · Paper2 Method Track</small></b><span><a href="reproduction-lab-07.html">上一课</a> · <a href="../index.html">首页</a> · <a href="#result">Result</a> · <a href="#code">Code</a></span></div></header>
-<main><div class="crumb"><a href="../index.html">Learning Sliding Ferroelectricity</a> / Reproduction Lab / Lesson 08</div>
-<div><span class="tag">Paper2-oriented</span><span class="tag">source ↔ estimator mapping</span></div>
-<h1>论文画的是 v–f，我们这一课也只测 v–f</h1><p class="lead">旧版把一张模糊的“velocity–force”图和四宫格结果摆在一起，却没有说明同轴关系。现在先用论文 regime map 定义 observable，再把我们自己的 steady v(f) 单独画成同样的横纵变量，最后才放 estimator QA。</p>
-
-<div class="bridge"><b>本课和论文第一次用的是同一个 transport observable：</b>纵轴都是 wall/interface 的 center-of-mass velocity v，横轴都是 drive f。论文图给出整个 regime map；我们的图只验证一个有限 disorder sample 在 f&gt;f<sub>c</sub> 时能否可靠测到 steady v(f)。</div>
-<h2>0 · 论文总地图：v–f 轴上到底有哪些 regime？</h2>
-<figure class="figure"><img src="../assets/reproduction-lab/ferrero2013-review-fig1b-velocity-force.png" alt="Ferrero 2013 Numerical Approaches Figure 1b velocity-force regimes"><figcaption class="cap"><b>Ferrero et al., Numerical Approaches on Driven Elastic Interfaces in Random Media (2013), Fig.1(b)，高分辨率精确裁图。</b> 这是一张 regime schematic：T=0 depinning、T&gt;0 thermal rounding、低驱动 creep 和高驱动 fast flow 都在同一 v–f 坐标系上。</figcaption></figure>
-<div class="map"><div class="card"><b>论文量</b><p>steady velocity v versus drive f。</p></div><div class="card"><b>本课量</b><p>同样是 steady COM velocity v versus f。</p></div><div class="card"><b>差别</b><p>论文是普适 regime map；本课只是 L=32、单 realization 的 estimator validation。</p></div></div>
-<h2>1 · 先把自己的 v(f) 单独画出来</h2>
-<figure class="figure narrow"><img src="../assets/reproduction-lab/lesson08-bridge-steady-vf.png" alt="Lesson 08 steady velocity versus drive"><figcaption class="cap"><b>直接桥接图。</b> 横纵轴现在和论文总图一致。虚线是 L07 bracket midpoint；四个点全部在它上方。这里不画幂律 fit，因为 L08 的权限只有 steady-velocity estimator。</figcaption></figure>
-<p>center-of-mass velocity 定义为：</p><div class="eq">v(t)=L^{-1}\sum_x \partial_t u(x,t)</div>
-<p>从 last-pinned configuration 启动后，第一个 disorder-period traversal 仍包含解钉与形状重排，不能混入 steady average。我们的 measurement window 固定为后续三个完整 period。</p>
-<figure class="figure"><img src="../assets/reproduction-lab/lesson08_steady_velocity.svg" alt="Lesson 08 estimator and dt convergence"><figcaption class="cap"><b>完整数值验收图。</b> 它回答的是“怎么相信上面的四个 v 点”：analytic moving gold test、transient removal、period-to-period stationarity 和 dt convergence。</figcaption></figure>
-<table class="compare"><thead><tr><th>诊断</th><th>结果</th><th>结论</th></tr></thead><tbody><tr><td>analytic v benchmark</td><td>max rel. error 0.001387%</td><td>PASS</td></tr><tr><td>period 1 bias</td><td>低 3.47%–4.93%</td><td>必须丢弃 transient</td></tr><tr><td>period 2–4 spread</td><td>max 0.0010%</td><td>steady traversal</td></tr><tr><td>dt=.025 vs .0125</td><td>max error 0.147%</td><td>production dt PASS</td></tr></tbody></table>
-<div class="ok"><b>STEADY VELOCITY ESTIMATOR + DT CONVERGENCE PASS。</b></div>
-<div class="warn"><b>不能比较：</b>这四个点不能和 schematic 的曲线高度、f<sub>c</sub> 位置或 fast-flow 斜率做数值匹配。可比较的是 observable 与 regime ordering。</div>
-<h2 id="result">2 · 为什么 L08 仍然禁止 β？</h2>
-<p>因为“有四个稳态 v(f) 点”只解决测量问题，不解决 asymptotic critical window。β 是否稳定必须另做 fit-window audit，这正是 L09。</p>
-<h2 id="code">3 · 脚本与 receipt</h2><p><a href="../examples/reproduction-lab/lesson08_steady_velocity.py"><b>lesson08_steady_velocity.py</b></a> · <a href="../assets/reproduction-lab/lesson08_steady_velocity.txt"><b>run receipt</b></a></p>
-
-<div class="next"><a href="reproduction-lab-07.html">← 上一课</a><a href="reproduction-lab-09.html">下一课 →</a></div>
-<!-- legacy deployment-contract filenames; no longer rendered as scientific evidence: ferrero2013-fig1b-velocity-force.svg -->
-</main></body></html>
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Reproduction Lab 08 · Steady velocity</title><link rel="stylesheet" href="../reproduction-lab-paper2.css"></head><body>
+<header class="top"><div class="bar"><b>Reproduction Lab <small>· Lesson 08 · Paper2 Method Track</small></b><span><a href="reproduction-lab-07.html">上一课</a> · <a href="../index.html">首页</a> · <a href="#result">结论</a></span></div></header><main>
+<div class="crumb"><a href="../index.html">Learning Sliding Ferroelectricity</a> / Reproduction Lab / Lesson 08</div><div><span class="tag">steady v(f)</span><span class="tag">transient removal</span><span class="tag">dt convergence</span></div>
+<h1>论文画 v–f，我们这一课也只测 v–f</h1>
+<p class="lead">L07 只找 threshold。L08 的任务是把 <b>center-of-mass steady velocity v</b> 测准。页面先给论文完整 transport map，再给我们的真实 v(f) 数据；transient 与 dt 检查只是用来回答“这些 v 点能不能信”。</p>
+<div class="read-order"><div><b>1 · 论文 panel b</b><span>velocity–force regime map。</span></div><div><b>2 · 我们的 v(f)</b><span>同样横轴 f、纵轴 steady v。</span></div><div><b>3 · 去 transient</b><span>第 1 个 traversal 不能算 steady。</span></div><div><b>4 · dt 收敛</b><span>production dt 必须过 gate。</span></div></div>
+<h2>0 · 论文总图：v–f 上有哪些 regime？</h2>
+<figure class="figure source"><img src="../assets/reproduction-lab/source-ferrero2013-review-fig1-full.png" alt="Ferrero 2013 review Figure 1 full"><figcaption class="caption"><b>Ferrero et al., Numerical Approaches on Driven Elastic Interfaces in Random Media (2013), Fig.1。</b> 完整保留四个 panels 和原始 caption。本课只读 panel (b)：T=0 depinning、T&gt;0 thermal rounding、creep 与 fast flow 都放在 velocity–force 坐标系。</figcaption></figure>
+<h2>1 · 我们实际测到的 steady v(f)</h2>
+<figure class="figure"><img src="../assets/reproduction-lab/lesson08_vf.png" alt="Steady velocity versus force from simulation"><figcaption class="caption"><b>Our simulation output。</b> 横轴和论文 panel (b) 一样是 drive f，纵轴一样是 center-of-mass velocity v。四个点全部在 L07 sample threshold 上方；production dt=.025 与更细 reference dt=.0125 几乎重合。</figcaption></figure>
+<div class="grid3"><div class="card"><b>同一个 observable</b><p>steady COM velocity v versus drive f。</p></div><div class="card"><b>不同 normalization</b><p>所以不能比较曲线绝对高度或 fc 数值。</p></div><div class="card"><b>L08 不拟 β</b><p>先保证 v estimator 稳定，critical window 留给 L09。</p></div></div>
+<h2>2 · 为什么第一个 traversal 必须丢掉？</h2>
+<figure class="figure"><img src="../assets/reproduction-lab/lesson08_transient_periods.png" alt="Period averaged velocity by traversal"><figcaption class="caption"><b>Our simulation output。</b> 每条线对应一个 Δf。第 1 个 disorder-period traversal 从 last-pinned state 解锁，速度系统性偏低；第 2–4 个 traversal 才形成稳定 measurement window。</figcaption></figure>
+<p>第 1 period 相比 steady mean 低约 <b>3.47%–4.93%</b>，而后 3 period 的内部 spread 最大只有 <b>0.0010%</b>。所以“从 t=0 总位移 / 总时间”会把 depinning transient 混进 steady v。</p>
+<h2>3 · dt convergence 是实际数据，不是口头保证</h2>
+<figure class="figure"><img src="../assets/reproduction-lab/lesson08_dt_error.png" alt="Velocity relative error versus time step"><figcaption class="caption"><b>Our simulation output。</b> y 轴是相对 dt=.0125 reference 的真实 velocity error。注册 gate 是 0.5%；dt=.1 失败，dt=.025 通过，因此 production 选择 .025，而不是事后放宽 gate。</figcaption></figure>
+<figure class="figure medium"><img src="../assets/reproduction-lab/lesson08_particle_velocity_gold.png" alt="Analytic velocity estimator gold test"><figcaption class="caption"><b>Code gold test。</b> 在 tilted washboard moving regime，numerical mean velocity 与解析 √(f²−1) 重合，最大 relative error 0.001387%。</figcaption></figure>
+<h2 id="result">4 · 本课结论</h2><div class="ok"><b>STEADY VELOCITY ESTIMATOR + DT CONVERGENCE PASS。</b> 可以把这些 v(f) measurement 交给下一课做 critical-window audit。</div><div class="warn"><b>NO BETA FIT IN LESSON 08。</b> 单 sample、L=32、四个 Δf 点只够验证 estimator，不够证明 critical scaling。</div>
+<h2>5 · 可复查</h2><div class="code-links"><a href="../examples/reproduction-lab/lesson08_steady_velocity.py">Python 脚本</a><a href="../assets/reproduction-lab/lesson08_steady_velocity.txt">run receipt</a><a href="../assets/reproduction-lab/source-figure-receipt.json">论文截图 receipt</a></div>
+<div class="next"><a href="reproduction-lab-07.html">← L07</a><a href="reproduction-lab-09.html">L09 →</a></div></main><script src="../terms.js"></script></body></html>

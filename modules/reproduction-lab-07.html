@@ -1,42 +1,23 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Reproduction Lab 07 · Depinning Threshold Search</title><style>
-:root{--bg:#f3f0e8;--paper:#fffdf8;--ink:#191a18;--muted:#6f6a62;--line:#d6cfc2;--accent:#69483c;--soft:#eee7dc;--ok:#edf5ee;--hold:#fff0ed}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.76 system-ui,-apple-system,"PingFang SC",sans-serif}
-.top{position:sticky;top:0;z-index:3;background:#f3f0e8ee;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-.bar,main{width:min(1080px,calc(100% - 32px));margin:auto}.bar{height:62px;display:flex;align-items:center;justify-content:space-between;gap:18px}
-.bar b,h1,h2,h3,.lead,.bridge,.eq{font-family:Georgia,"Times New Roman","Songti SC",serif}.bar a,a{color:#4f4b45}.bar small,.muted,.cap,.crumb{color:var(--muted)}
-main{padding:46px 0 90px}h1{font-size:clamp(38px,6vw,62px);line-height:1.05;margin:13px 0 17px;letter-spacing:-.035em}h2{font-size:29px;line-height:1.3;margin:64px 0 15px}h3{font-size:18px;margin:0 0 6px}
-.lead{font-size:19px;line-height:1.62;color:#4f4b45;max-width:920px}.tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.04em;padding:5px 9px;border-radius:999px;background:#e9ddd2;color:#68483c;margin:0 6px 8px 0}
-.bridge{font-size:18px;padding:18px 20px;margin:26px 0;border-left:4px solid var(--accent);background:var(--soft)}.eq{font-size:18px;text-align:center;padding:14px;margin:16px 0;background:#faf7f0;border:1px solid var(--line);border-radius:10px;overflow-x:auto}
-.figure{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:24px auto;max-width:940px}.figure img{display:block;width:100%;height:auto;background:#fff}.figure.narrow{max-width:790px}.cap{display:block;padding:11px 14px;background:#f0ece3;border-top:1px solid var(--line);font-size:12px}
-.map{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:22px 0}.map .card,.card{background:var(--paper);border:1px solid var(--line);border-radius:11px;padding:15px}.map b{display:block;margin-bottom:4px}.map p,.card p{font-size:13px;margin:4px 0}
-.compare{width:100%;border-collapse:collapse;background:#fff;margin:20px 0;border:1px solid var(--line)}.compare th,.compare td{padding:11px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.compare th{background:#f0ece3;font:13px Georgia,serif}.compare td{font-size:13px}.compare tr:last-child td{border-bottom:0}
-.ok,.hold,.warn{border-radius:11px;padding:14px 16px;margin:18px 0}.ok{background:var(--ok);border:1px solid #bfd2c4}.hold{background:var(--hold);border:1px solid #d7b7b0}.warn{background:#fff7e8;border:1px solid #e4d3ad}
-.codebox{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:24px 0}.codebox .head{padding:10px 14px;background:#f0ece3}pre{margin:0;padding:18px;overflow:auto;background:#1e201f;color:#f2eee6;font:12.5px/1.58 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
-.next{margin-top:46px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:16px}
-.source-note{font-size:13px;color:#5f5a53;border-left:3px solid #b9aa98;padding:8px 12px;margin:12px 0}
-@media(max-width:760px){.map{grid-template-columns:1fr}.bar span{display:none}.next{flex-direction:column}h2{margin-top:52px}.figure{border-radius:10px}}
-</style></head>
-<body><header class="top"><div class="bar"><b>Reproduction Lab <small>· Lesson 07 · Paper2 Method Track</small></b><span><a href="reproduction-lab-06.html">上一课</a> · <a href="../index.html">首页</a> · <a href="#result">Result</a> · <a href="#code">Code</a></span></div></header>
-<main><div class="crumb"><a href="../index.html">Learning Sliding Ferroelectricity</a> / Reproduction Lab / Lesson 07</div>
-<div><span class="tag">Paper2-oriented</span><span class="tag">source ↔ estimator mapping</span></div>
-<h1>先看清论文里的 pinned / moving 分叉，再谈 threshold bracket</h1><p class="lead">这一课以前的问题是把多张“看起来像 depinning”的论文图并排放上去，却没有告诉你它们和 threshold classifier 到底是什么关系。现在只保留最直接的一条证据链：论文的 v(t) 长时间命运 → 我们的 pinned/moving certificate → sample-specific bracket。</p>
-
-<div class="bridge"><b>先把关系说清：</b>论文图不是我们的“答案模板”。L07 真正借用的是 Ferrero PRE 2013 Fig.3(a) 对 pinned / moving 的动力学定义：低于阈值，长时间速度衰减到 0；高于阈值，速度趋向有限平台。我们的任务是把这条物理分界变成一个可重复的 threshold classifier，再二分得到 sample-specific bracket。</div>
-<h2>0 · 论文图先回答：什么叫阈值两侧？</h2>
-<figure class="figure"><img src="../assets/reproduction-lab/ferrero2013-pre-fig3a-velocity-relaxation.png" alt="Ferrero 2013 PRE Figure 3a, non-stationary velocity near depinning"><figcaption class="cap"><b>Ferrero, Bustingorry & Kolton, PRE 87, 032122 (2013), Fig.3(a)，高分辨率精确裁图。</b> 横轴是时间 t，纵轴是 ensemble-averaged string velocity v。不同 force 的曲线在长时间表现出两种命运：阈值下最终向 0 掉落，阈值上趋于有限 steady velocity。</figcaption></figure>
-<div class="map"><div class="card"><b>论文量</b><p>v(t) at fixed f</p><p>看 long-time fate：0 还是 finite plateau。</p></div><div class="card"><b>本课量</b><p>固定 disorder sample 的 relaxation / traversal certificate。</p><p>只输出 pinned / moving。</p></div><div class="card"><b>可比较的只有</b><p>阈值两侧的动力学分类逻辑。</p><p>不能比较 fc 数值大小。</p></div></div>
-<h2>1 · 我们如何把它变成 threshold search？</h2>
-<p>先在解析 tilted-washboard 系统上校验分类器：</p><div class="eq">du/dt=f-\sin u，\qquad f_c=1</div>
-<p>随后才进入长度 L=32 的 smooth quenched elastic line。每次二分永远保留两侧证据：最后一个能收敛到 force-balance fixed point 的 <i>f<sub>−</sub></i>，以及第一个持续穿越 disorder period 的 <i>f<sub>+</sub></i>。</p>
-<figure class="figure"><img src="../assets/reproduction-lab/lesson07_threshold_search.svg" alt="Lesson 07 threshold search validation"><figcaption class="cap"><b>本课结果图。</b> 重点不是和论文曲线长得一样，而是把论文 Fig.3(a) 的“长时间 pinned / moving 分叉”操作化成二分 bracket，并先用 exact f<sub>c</sub>=1 的 gold test 验证。</figcaption></figure>
-<table class="compare"><thead><tr><th>检查</th><th>结果</th><th>意义</th></tr></thead><tbody><tr><td>analytic classifier</td><td>max |f<sub>c,num</sub>−1| = 7.63×10⁻⁶</td><td>分类器先恢复已知答案</td></tr><tr><td>quenched line</td><td>[0.777636719, 0.777783203]</td><td>sample-specific bracket</td></tr><tr><td>bracket width</td><td>1.465×10⁻⁴</td><td>通过预注册 gate</td></tr><tr><td>dt=0.1→0.025</td><td>midpoint 无可见漂移</td><td>数值稳定</td></tr></tbody></table>
-<div class="ok"><b>THRESHOLD GOLD TEST + SMALL-LINE BRACKET PASS。</b> L07 只授权 threshold-search protocol，不授权 thermodynamic f<sub>c</sub>、β 或 universality。</div>
-<h2 id="result">2 · 那 Ferrero 的 finite-size f<sub>c</sub> 图去哪了？</h2>
-<p>它没有消失，而是被放回真正对应的位置：<b>L11</b>。PRE 2013 的 finite-size critical-force 图实际是 <b>Fig.2</b>，不是旧页面写的 Fig.4(b)。L07 不再同时塞“critical structure + finite-size threshold”两张与当前 classifier 不同量的图。</p>
-<div class="warn"><b>不能比较：</b>论文的 f<sub>c</sub>≈1.916、我们的 0.7777、材料实验里的电场阈值，使用不同 disorder normalization / geometry / algorithm / physical units，绝不能横向比数字。</div>
-<h2 id="code">3 · 脚本与 receipt</h2>
-<p><a href="../examples/reproduction-lab/lesson07_threshold_search.py"><b>lesson07_threshold_search.py</b></a> · <a href="../assets/reproduction-lab/lesson07_threshold_search.txt"><b>run receipt</b></a></p>
-
-<div class="next"><a href="reproduction-lab-06.html">← 上一课</a><a href="reproduction-lab-08.html">下一课 →</a></div>
-<!-- legacy deployment-contract filenames; no longer rendered as scientific evidence: ferrero2013-fig4a-critical-structure.svg ferrero2013-fig4b-finite-size-threshold.svg -->
-</main></body></html>
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Reproduction Lab 07 · Threshold search</title><link rel="stylesheet" href="../reproduction-lab-paper2.css"></head><body>
+<header class="top"><div class="bar"><b>Reproduction Lab <small>· Lesson 07 · Paper2 Method Track</small></b><span><a href="reproduction-lab-06.html">上一课</a> · <a href="../index.html">首页</a> · <a href="#result">结论</a></span></div></header><main>
+<div class="crumb"><a href="../index.html">Learning Sliding Ferroelectricity</a> / Reproduction Lab / Lesson 07</div><div><span class="tag">T=0</span><span class="tag">threshold classifier</span><span class="tag">真实 code plot</span></div>
+<h1>先判断 pinned 还是 moving，再二分 f<sub>c</sub></h1>
+<p class="lead">L07 不再用“critical structure + finite-size threshold”两张无关图凑在一起。这里只回答一个问题：<b>固定 disorder sample、固定 drive 后，长时间是停住还是持续运动？</b> 把这个二分类做稳，才能谈 sample-specific threshold bracket。</p>
+<div class="read-order"><div><b>1 · 论文原图</b><span>Fig.3 展示 threshold 两侧 v(t) 的不同命运。</span></div><div><b>2 · 我们的算法</b><span>last pinned / first moving 两侧做二分。</span></div><div><b>3 · 数值稳定性</b><span>dt 降低后 bracket 不移动。</span></div><div><b>4 · 权限边界</b><span>这里只得到 finite-sample bracket。</span></div></div>
+<h2>0 · 论文原图：阈值两侧真正不同的是 long-time fate</h2>
+<figure class="figure source"><img src="../assets/reproduction-lab/source-ferrero2013-pre-fig3-full.png" alt="Ferrero PRE 2013 Figure 3 full crop"><figcaption class="caption"><b>Ferrero, Bustingorry & Kolton, PRE 87, 032122 (2013), Fig.3。</b> 完整保留 (a) raw v(t)、(b) rescaled data、legend 和原始 caption。我们这里只借用 panel (a) 的物理判据：f&lt;f<sub>c</sub> 的曲线最终 blocked、v→0；f&gt;f<sub>c</sub> 的曲线长时间趋向 finite velocity。</figcaption></figure>
+<div class="bridge"><b>注意：</b>Ferrero 用的是 thermodynamic critical force 附近的 disorder-averaged non-steady relaxation；我们用 direct relaxation 去分类一个有限 periodic disorder sample。两者不是同一个算法，但“pinned ↔ moving”的物理分界是同一件事。</div>
+<h2>1 · 我们如何把它变成 bracket？</h2>
+<figure class="figure"><img src="../assets/reproduction-lab/lesson07_bisection.png" alt="Threshold bisection history"><figcaption class="caption"><b>Our simulation output。</b> 每一步都保留两个有证据的端点：last pinned f<sub>−</sub> 和 first moving f<sub>+</sub>。灰带不是画出来的“误差条”，而是二分尚未消除的 threshold bracket。</figcaption></figure>
+<figure class="figure"><img src="../assets/reproduction-lab/lesson07_last_pinned_profile.png" alt="Last pinned QEW profile"><figcaption class="caption"><b>Our simulation output。</b> 这是最终 bracket 下沿的 last-pinned wall profile。它说明 classifier 面对的不是一个单自由度，而是一条在 quenched landscape 中变形的 elastic line。</figcaption></figure>
+<table class="table"><thead><tr><th>sample</th><th>final bracket</th><th>width</th></tr></thead><tbody><tr><td>L=32, seed=20260902</td><td>[0.777636719, 0.777783203]</td><td>1.465×10<sup>−4</sup></td></tr></tbody></table>
+<h2>2 · 先在答案已知的问题上验 classifier</h2>
+<div class="eq">du/dt = f − sin u &nbsp;&nbsp;→&nbsp;&nbsp; f<sub>c</sub> = 1</div>
+<figure class="figure medium"><img src="../assets/reproduction-lab/lesson07_particle_gold.png" alt="Analytic threshold gold test"><figcaption class="caption"><b>Code gold test。</b> 同一套二分逻辑在 tilted washboard 上恢复 exact f<sub>c</sub>=1；不同 dt 的 bracket 都落在解析答案上。</figcaption></figure>
+<h2>3 · 再看 dt：不是积分步长制造出来的 threshold</h2>
+<figure class="figure medium"><img src="../assets/reproduction-lab/lesson07_dt_threshold.png" alt="Threshold bracket versus time step"><figcaption class="caption"><b>Our simulation output。</b> dt=0.10、0.05、0.025 的 midpoint 在打印精度内不变，error bar 是各自 bracket 的 half-width。</figcaption></figure>
+<h2 id="result">4 · 本课结论</h2>
+<div class="ok"><b>THRESHOLD GOLD TEST + SMALL-LINE BRACKET PASS。</b> threshold classifier 和 bisection contract 可以交给 L08 使用。</div>
+<div class="warn"><b>没有证明：</b>这不是 Ferrero exact metastable-state algorithm；没有 thermodynamic f<sub>c</sub>；0.7777 也不能和论文约 1.916 或材料电场阈值比较绝对数值。</div>
+<h2>5 · 可复查</h2><div class="code-links"><a href="../examples/reproduction-lab/lesson07_threshold_search.py">Python 脚本</a><a href="../assets/reproduction-lab/lesson07_threshold_search.txt">run receipt</a><a href="../assets/reproduction-lab/source-figure-receipt.json">论文截图 receipt</a></div>
+<div class="next"><a href="reproduction-lab-06.html">← L06</a><a href="reproduction-lab-08.html">L08 →</a></div></main><script src="../terms.js"></script></body></html>

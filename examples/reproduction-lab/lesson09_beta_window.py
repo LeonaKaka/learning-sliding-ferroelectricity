@@ -26,6 +26,9 @@ from pathlib import Path
 import math
 import numpy as np
 from numba import njit
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 
 SEEDS=np.arange(20260902,20260910,dtype=np.int64)
 L,M,DU,RF=32,256,0.25,1.0
@@ -236,16 +239,53 @@ for i,seed in enumerate(SEEDS):
 (out/'lesson09_beta_window.csv').write_text(','.join(header)+'\n'+'\n'.join(','.join(r) for r in rows)+'\n',encoding='utf-8')
 (out/'lesson09_beta_window.txt').write_text('\n'.join(receipt)+'\n',encoding='utf-8')
 
-def poly(xs,ys,x0,y0,w,h,xmin,xmax,ymin,ymax):
-    return ' '.join(f'{x0+(x-xmin)/(xmax-xmin)*w:.1f},{y0+h-(y-ymin)/(ymax-ymin)*h:.1f}' for x,y in zip(xs,ys))
+def finish(fig,name):
+    fig.tight_layout(); fig.savefig(out/name,dpi=220,bbox_inches='tight'); plt.close(fig)
 
-p1=poly(np.array([.048,.024,.012]),particle_beta,55,75,400,145,.010,.050,.498,.506)
-p2=poly(DFS,mean_v,555,75,400,145,.015,.170,.22,.51)
-p3=poly(WINDOW_MAX[::-1],window_beta[::-1],55,350,400,145,.04,.17,.15,.28)
-allb=window_beta[0]
-svg=f'''<svg xmlns="http://www.w3.org/2000/svg" width="1050" height="590" viewBox="0 0 1050 590" role="img" aria-label="Lesson 09 beta critical-window validation"><style>text{{font-family:system-ui,-apple-system,sans-serif;fill:#20211f}}.box{{fill:#fffdf8;stroke:#d8d1c3}}.ax{{stroke:#444;stroke-width:1}}.a{{fill:none;stroke:#222;stroke-width:2}}.b{{fill:none;stroke:#777;stroke-width:1.5;stroke-dasharray:6 4}}.ttl{{font-size:18px;font-weight:650}}.s{{font-size:12px;fill:#716d66}}</style><rect width="1050" height="590" fill="#fff"/><text x="525" y="28" text-anchor="middle" font-size="22">Reproduction Lab · Lesson 09 · beta needs a stable critical window</text>
-<rect class="box" x="35" y="45" width="450" height="225" rx="8"/><text class="ttl" x="55" y="68">1 · Regression gold test: beta = 1/2</text><line class="ax" x1="55" y1="220" x2="455" y2="220"/><line class="ax" x1="55" y1="75" x2="55" y2="220"/><polyline class="a" points="{p1}"/><line class="b" x1="55" y1="183.8" x2="455" y2="183.8"/><text class="s" x="55" y="245">tilted washboard: max |beta−0.5| = {particle_beta_err:.4f}</text>
-<rect class="box" x="535" y="45" width="480" height="225" rx="8"/><text class="ttl" x="555" y="68">2 · Eight independent disorder samples</text><line class="ax" x1="555" y1="220" x2="955" y2="220"/><line class="ax" x1="555" y1="75" x2="555" y2="220"/><polyline class="a" points="{p2}"/><text class="s" x="555" y="245">arithmetic disorder mean v(Δf); each sample uses its own fc bracket</text>
-<rect class="box" x="35" y="320" width="450" height="225" rx="8"/><text class="ttl" x="55" y="343">3 · Critical-window stability gate</text><line class="ax" x1="55" y1="495" x2="455" y2="495"/><line class="ax" x1="55" y1="350" x2="55" y2="495"/><polyline class="a" points="{p3}"/><text class="s" x="55" y="520">max Δf: .170 → .105 → .065 → .040; drift = {window_drift:.3f} &gt; {WINDOW_DRIFT_GATE:.3f} gate</text>
-<rect class="box" x="535" y="320" width="480" height="225" rx="8"/><text class="ttl" x="555" y="343">4 · Precision is not the same as asymptotics</text><line x1="740" y1="408" x2="780" y2="408" stroke="#333" stroke-width="3"/><line x1="760" y1="380" x2="760" y2="436" stroke="#333" stroke-width="3"/><text x="800" y="414" font-size="17">all-six beta = {allb:.3f}</text><text class="s" x="555" y="470">sample bootstrap 95% CI = [{ci[0]:.3f}, {ci[2]:.3f}]</text><text class="s" x="555" y="495">threshold-edge beta span = {threshold_edge_span:.4f}</text><text class="s" x="555" y="520">window drift dominates → universal beta NOT claimed</text></svg>'''
-(out/'lesson09_beta_window.svg').write_text(svg,encoding='utf-8')
+# 1) The actual disorder-averaged velocity data on log-log axes.
+fig,ax=plt.subplots(figsize=(7.2,4.6))
+ax.loglog(DFS,mean_v,marker='o',label='8-realization arithmetic mean')
+for mx,beta,ls in zip((0.170,0.040),(window_beta[0],window_beta[-1]),('--',':')):
+    m=DFS<=mx+1e-15
+    coef=np.polyfit(np.log(DFS[m]),np.log(mean_v[m]),1)
+    y=np.exp(coef[1])*DFS[m]**coef[0]
+    ax.loglog(DFS[m],y,ls,linewidth=2,label=f'fit max delta f={mx:.3f}; beta={beta:.3f}')
+ax.set_xlabel('delta f = f - fc(sample)')
+ax.set_ylabel('disorder-mean steady velocity')
+ax.set_title('Same data, different registered critical windows give different slopes')
+ax.legend(fontsize=8)
+finish(fig,'lesson09_mean_v_loglog.png')
+
+# 2) Central result: effective beta versus the chosen upper window edge.
+fig,ax=plt.subplots(figsize=(7.0,4.4))
+ax.plot(WINDOW_MAX,window_beta,marker='o')
+ax.axhline(0.245,linestyle='--',label='Ferrero QEW benchmark beta≈0.245')
+ax.invert_xaxis()
+ax.set_xlabel('registered max delta f (smaller = closer to threshold)')
+ax.set_ylabel('effective beta')
+ax.set_title('No beta plateau: the exponent drifts as the fit window narrows')
+ax.legend()
+finish(fig,'lesson09_beta_vs_window.png')
+
+# 3) Threshold-bracket uncertainty is tiny compared with window drift.
+fig,ax=plt.subplots(figsize=(6.8,4.3))
+vals=np.array([beta_if_lo,window_beta[0],beta_if_hi])
+ax.plot(['fc at low edge','fc midpoint','fc at high edge'],vals,marker='o')
+ax.set_ylabel('all-six effective beta')
+ax.set_title('Moving fc across each sample bracket barely changes beta')
+ax.tick_params(axis='x',rotation=12)
+finish(fig,'lesson09_threshold_sensitivity.png')
+
+# 4) Bootstrap distribution: precision does not imply asymptotic validity.
+fig,ax=plt.subplots(figsize=(7.0,4.3))
+ax.hist(boot,bins=35)
+ax.axvline(window_beta[0],linestyle='-',label=f'all-six beta={window_beta[0]:.3f}')
+ax.axvline(0.245,linestyle='--',label='QEW benchmark 0.245')
+ax.set_xlabel('bootstrap all-six beta')
+ax.set_ylabel('count')
+ax.set_title('Sample bootstrap is fairly narrow, but the window test still fails')
+ax.legend()
+finish(fig,'lesson09_bootstrap_beta.png')
+
+print('saved matplotlib plots:', ', '.join(['lesson09_mean_v_loglog.png','lesson09_beta_vs_window.png','lesson09_threshold_sensitivity.png','lesson09_bootstrap_beta.png']))
+

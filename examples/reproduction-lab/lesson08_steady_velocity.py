@@ -3,6 +3,9 @@
 from pathlib import Path
 import math
 import numpy as np
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 
 SEED=20260902
 FC_LO,FC_HI=0.77763671875,0.777783203125
@@ -97,17 +100,60 @@ for j,(df,f) in enumerate(zip(dfs,fs)):
     R.append(f"df={df:.3f} f={f:.9f} v(dt=.025)={runs[.025][j][1]:.9f} v(dt=.0125)={runs[.0125][j][1]:.9f}")
 R+=['NO BETA FIT IN LESSON 08','STEADY VELOCITY ESTIMATOR + DT CONVERGENCE PASS']; print('\n'.join(R))
 
-def poly(xs,ys,x0,y0,w,h,xmin,xmax,ymin,ymax):
-    return ' '.join(f'{x0+(x-xmin)/(xmax-xmin)*w:.1f},{y0+h-(y-ymin)/(ymax-ymin)*h:.1f}' for x,y in zip(xs,ys))
+out=Path(__file__).resolve().parents[2]/'assets'/'reproduction-lab'
+out.mkdir(parents=True,exist_ok=True)
+(out/'lesson08_steady_velocity.txt').write_text('\n'.join(R)+'\n')
+
+def finish(fig,name):
+    fig.tight_layout(); fig.savefig(out/name,dpi=220,bbox_inches='tight'); plt.close(fig)
+
+# 1) Direct observable bridge: steady center-of-mass velocity versus drive.
+fig,ax=plt.subplots(figsize=(7.2,4.5))
+vprod=np.array([r[1] for r in runs[.025]])
+vref=np.array([r[1] for r in runs[.0125]])
+ax.plot(fs,vprod,marker='o',label='production dt=0.025')
+ax.plot(fs,vref,marker='s',linestyle='--',label='reference dt=0.0125')
+ax.axvline(fc,linestyle=':',label='L07 bracket midpoint')
+ax.set_xlabel('drive f')
+ax.set_ylabel('steady center-of-mass velocity v')
+ax.set_title('Steady v(f) measured only above the sample threshold')
+ax.legend()
+finish(fig,'lesson08_vf.png')
+
+# 2) Why the first traversal is discarded.
+fig,ax=plt.subplots(figsize=(7.2,4.5))
+for j,df in enumerate(dfs):
+    vv=np.r_[runs[.025][j][0],runs[.025][j][3]]
+    ax.plot(np.arange(1,5),vv,marker='o',label=f'delta f={df:.3f}')
+ax.axvline(1.5,linestyle=':',label='measurement begins after traversal 1')
+ax.set_xticks([1,2,3,4])
+ax.set_xlabel('disorder-period traversal')
+ax.set_ylabel('period-averaged velocity')
+ax.set_title('The first traversal still contains depinning transient')
+ax.legend(fontsize=8)
+finish(fig,'lesson08_transient_periods.png')
+
+# 3) Time-step convergence as an actual error plot.
+fig,ax=plt.subplots(figsize=(7.2,4.5))
+for dt in (.1,.05,.025):
+    ax.plot(dfs,100*np.array(errs(dt)),marker='o',label=f'dt={dt:g}')
+ax.axhline(100*DT_GATE,linestyle='--',label='registered 0.5% gate')
+ax.set_xlabel('delta f = f - fc(midpoint)')
+ax.set_ylabel('relative error vs dt=0.0125 (%)')
+ax.set_title('Velocity estimator time-step convergence')
+ax.legend()
+finish(fig,'lesson08_dt_error.png')
+
+# 4) Analytic moving-state gold test.
+fig,ax=plt.subplots(figsize=(6.8,4.3))
 px=np.array([x[0] for x in particle]); ex=np.array([x[1] for x in particle]); nu=np.array([x[2] for x in particle])
-p1,p1n=poly(px,ex,55,75,400,155,1.04,1.51,.25,1.2),poly(px,nu,55,75,400,155,1.04,1.51,.25,1.2)
-trav=[poly(np.arange(1,5),np.r_[runs[.025][j][0],runs[.025][j][3]],555,75,400,155,1,4,.25,.52) for j in range(4)]
-p3=[poly(dfs,100*np.array(errs(dt)),55,345,400,155,.02,.16,0,1.1) for dt in (.1,.05,.025)]
-v=np.array([x[1] for x in runs[.025]]); p4=poly(dfs,v,555,345,400,155,.02,.16,.28,.52)
-svg=f'''<svg xmlns="http://www.w3.org/2000/svg" width="1050" height="590" viewBox="0 0 1050 590"><style>text{{font-family:system-ui,sans-serif;fill:#20211f}}.box{{fill:#fffdf8;stroke:#d8d1c3}}.ax{{stroke:#444}}.a{{fill:none;stroke:#222;stroke-width:2}}.b{{fill:none;stroke:#666;stroke-width:1.5;stroke-dasharray:6 4}}.c{{fill:none;stroke:#999;stroke-width:1.5}}.t{{font-size:18px;font-weight:650}}.s{{font-size:12px;fill:#716d66}}</style><rect width="1050" height="590" fill="#fff"/><text x="525" y="28" text-anchor="middle" font-size="22">Reproduction Lab · Lesson 08 · steady velocity before beta</text>
-<rect class="box" x="35" y="45" width="450" height="225" rx="8"/><text class="t" x="55" y="68">1 · Analytic velocity gold test</text><line class="ax" x1="55" y1="230" x2="455" y2="230"/><line class="ax" x1="55" y1="75" x2="55" y2="230"/><polyline class="a" points="{p1}"/><polyline class="b" points="{p1n}"/><text class="s" x="55" y="252">v̄ = √(f²−1); numerical max rel error {100*p_err:.4f}%</text>
-<rect class="box" x="535" y="45" width="480" height="225" rx="8"/><text class="t" x="555" y="68">2 · First disorder period is transient</text><line class="ax" x1="555" y1="230" x2="955" y2="230"/><line class="ax" x1="555" y1="75" x2="555" y2="230"/>{''.join(f'<polyline class="a" opacity=".72" points="{z}"/>' for z in trav)}<line class="b" x1="688" y1="75" x2="688" y2="230"/><text class="s" x="555" y="252">period 1 discarded; transient shift {100*min(trans):.1f}–{100*max(trans):.1f}%</text>
-<rect class="box" x="35" y="315" width="450" height="225" rx="8"/><text class="t" x="55" y="338">3 · Preserve the 0.5% dt gate</text><line class="ax" x1="55" y1="500" x2="455" y2="500"/><line class="ax" x1="55" y1="345" x2="55" y2="500"/><line class="b" x1="55" y1="429.5" x2="455" y2="429.5"/><polyline class="a" points="{p3[0]}"/><polyline class="b" points="{p3[1]}"/><polyline class="c" points="{p3[2]}"/><text class="s" x="55" y="522">dt=.100 max {100*coarse:.3f}% FAIL · dt=.025 max {100*prod:.3f}% PASS vs .0125</text>
-<rect class="box" x="535" y="315" width="480" height="225" rx="8"/><text class="t" x="555" y="338">4 · Production v(f) values — no exponent fit</text><line class="ax" x1="555" y1="500" x2="955" y2="500"/><line class="ax" x1="555" y1="345" x2="555" y2="500"/><polyline class="a" points="{p4}"/><text class="s" x="555" y="522">Δf = f − midpoint([f−,f+]); β fitting is explicitly forbidden here.</text></svg>'''
-out=Path(__file__).resolve().parents[2]/'assets'/'reproduction-lab'; out.mkdir(parents=True,exist_ok=True)
-(out/'lesson08_steady_velocity.txt').write_text('\n'.join(R)+'\n'); (out/'lesson08_steady_velocity.svg').write_text(svg)
+ax.plot(px,ex,marker='o',label=r'exact $\sqrt{f^2-1}$')
+ax.plot(px,nu,marker='s',linestyle='--',label='numerical estimator')
+ax.set_xlabel('drive f')
+ax.set_ylabel('mean velocity')
+ax.set_title('Gold test for the moving-state velocity estimator')
+ax.legend()
+finish(fig,'lesson08_particle_velocity_gold.png')
+
+print('saved matplotlib plots:', ', '.join(['lesson08_vf.png','lesson08_transient_periods.png','lesson08_dt_error.png','lesson08_particle_velocity_gold.png']))
+

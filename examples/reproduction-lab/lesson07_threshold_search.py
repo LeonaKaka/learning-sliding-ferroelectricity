@@ -20,6 +20,9 @@ Validation ladder:
 from pathlib import Path
 import math
 import numpy as np
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 
 SEED = 20260902
 
@@ -192,44 +195,70 @@ receipt_lines += [
 ]
 print("\n".join(receipt_lines))
 
-# ---------------- Compact SVG figure ----------------
-def map_points(xs, ys, x0, y0, width, height, xmin, xmax, ymin, ymax):
-    pts = []
-    for xv, yv in zip(xs, ys):
-        X = x0 + (xv - xmin) / (xmax - xmin) * width
-        Y = y0 + height - (yv - ymin) / (ymax - ymin) * height
-        pts.append(f"{X:.1f},{Y:.1f}")
-    return " ".join(pts)
-
+# ---------------- Real matplotlib evidence plots ----------------
 here = Path(__file__).resolve()
 repo_root = here.parents[2] if here.parent.name == "reproduction-lab" else here.parent
 out_dir = repo_root / "assets" / "reproduction-lab"
 out_dir.mkdir(parents=True, exist_ok=True)
-out = out_dir / "lesson07_threshold_search.svg"
 
-sine_x = np.linspace(0.0, 2.0*np.pi, 61)
-sine_y = np.sin(sine_x)
-pinned_centered = pinned_u - pinned_u.mean()
-iterations = np.arange(1, len(hist) + 1)
-los = np.array([h[0] for h in hist])
-his = np.array([h[1] for h in hist])
-mids = 0.5 * (los + his)
+def finish(fig, name):
+    fig.tight_layout()
+    fig.savefig(out_dir/name, dpi=220, bbox_inches='tight')
+    plt.close(fig)
 
-sine_pts = map_points(sine_x, sine_y, 55,70,410,180,0,2*np.pi,-1.1,1.1)
-prof_pts = map_points(np.arange(L), pinned_centered, 560,70,410,180,0,L-1,-4,5.5)
-low_pts = map_points(iterations, los, 55,340,410,180,1,len(hist),0.69,1.01)
-hi_pts = map_points(iterations, his, 55,340,410,180,1,len(hist),0.69,1.01)
-mid_pts = map_points(iterations, mids, 55,340,410,180,1,len(hist),0.69,1.01)
+# 1) What a pinned sample looks like at the upper edge of the bracket.
+fig,ax=plt.subplots(figsize=(7.2,4.2))
+x=np.arange(L)
+ax.plot(x,pinned_u-pinned_u.mean(),marker='o',markersize=3)
+ax.set_xlabel('x (lattice site)')
+ax.set_ylabel(r'$u(x)-\langle u\rangle$')
+ax.set_title(f'Last-pinned configuration at f={lo_line:.6f} (one disorder realization)')
+finish(fig,'lesson07_last_pinned_profile.png')
 
-svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="1050" height="600" viewBox="0 0 1050 600" role="img" aria-label="Lesson 07 threshold validation">
-<style>text{{font-family:system-ui,-apple-system,sans-serif;fill:#20211f}} .ax{{stroke:#444;stroke-width:1}} .curve{{fill:none;stroke:#333;stroke-width:2}} .dash{{stroke-dasharray:7 5}} .muted{{fill:#716d66;font-size:12px}} .ttl{{font-size:18px;font-weight:650}} .lab{{font-size:13px}} .box{{fill:#fffdf8;stroke:#d8d1c3}}</style>
-<rect width="1050" height="600" fill="#fff"/><text x="525" y="30" text-anchor="middle" font-size="22">Reproduction Lab · Lesson 07 · finite-sample depinning threshold</text>
-<rect class="box" x="35" y="45" width="450" height="235" rx="8"/><text class="ttl" x="55" y="65">Gold test: exact saddle-node threshold</text><line class="ax" x1="55" y1="250" x2="465" y2="250"/><line class="ax" x1="55" y1="70" x2="55" y2="250"/><polyline class="curve" points="{sine_pts}"/><line class="curve dash" x1="55" y1="78.2" x2="465" y2="78.2"/><text class="lab" x="62" y="92">exact f_c = 1</text><text class="muted" x="55" y="272">numerical midpoint error = {particle_err:.2e}</text>
-<rect class="box" x="540" y="45" width="475" height="235" rx="8"/><text class="ttl" x="560" y="65">Last pinned configuration, same quenched sample</text><line class="ax" x1="560" y1="250" x2="970" y2="250"/><line class="ax" x1="560" y1="70" x2="560" y2="250"/><polyline class="curve" points="{prof_pts}"/><text class="muted" x="560" y="272">L={L} · random-bond-like smooth potential · f−={lo_line:.9f}</text>
-<rect class="box" x="35" y="315" width="450" height="235" rx="8"/><text class="ttl" x="55" y="335">Pinned / moving bracket contracts monotonically</text><line class="ax" x1="55" y1="520" x2="465" y2="520"/><line class="ax" x1="55" y1="340" x2="55" y2="520"/><polyline points="{low_pts}" fill="none" stroke="#777" stroke-width="1.3"/><polyline points="{hi_pts}" fill="none" stroke="#777" stroke-width="1.3"/><polyline class="curve" points="{mid_pts}"/><text class="muted" x="55" y="542">{len(hist)} bisections → width {line_width:.3e}</text>
-<rect class="box" x="540" y="315" width="475" height="235" rx="8"/><text class="ttl" x="560" y="335">Time-step invariance gate</text><text x="580" y="390" font-size="17">dt = 0.100</text><text x="770" y="390" font-size="17">{line_mid[0.10]:.9f}</text><text x="580" y="430" font-size="17">dt = 0.050</text><text x="770" y="430" font-size="17">{line_mid[0.05]:.9f}</text><text x="580" y="470" font-size="17">dt = 0.025</text><text x="770" y="470" font-size="17">{line_mid[0.025]:.9f}</text><line x1="755" y1="505" x2="955" y2="505" stroke="#333" stroke-width="2"/><text class="muted" x="560" y="532">midpoint spread = {line_spread:.3e}</text></svg>'''
-out.write_text(svg, encoding="utf-8")
-receipt_out = out_dir / "lesson07_threshold_search.txt"
-receipt_out.write_text("\n".join(receipt_lines) + "\n", encoding="utf-8")
-print(f"saved figure:  {out}")
-print(f"saved receipt: {receipt_out}")
+# 2) Bisection history: the two certified sides close onto each other.
+it=np.arange(1,len(hist)+1)
+los=np.array([h[0] for h in hist]); his=np.array([h[1] for h in hist])
+fig,ax=plt.subplots(figsize=(7.2,4.3))
+ax.plot(it,los,marker='o',label='last pinned f_minus')
+ax.plot(it,his,marker='s',label='first moving f_plus')
+ax.fill_between(it,los,his,alpha=.15,label='uncertainty bracket')
+ax.set_xlabel('bisection iteration')
+ax.set_ylabel('drive f')
+ax.set_title('Threshold search on one quenched elastic-line sample')
+ax.legend()
+finish(fig,'lesson07_bisection.png')
+
+# 3) Time-step audit of the final bracket.  Use categorical x labels so the
+# reader sees the actual dt values instead of log-axis powers of two.
+dt_vals=np.array([0.10,0.05,0.025])
+mid_vals=np.array([line_mid[d] for d in dt_vals])
+half_width=np.array([(line_runs[d][1]-line_runs[d][0])/2 for d in dt_vals])
+xpos=np.arange(len(dt_vals))
+fig,ax=plt.subplots(figsize=(6.6,4.2))
+ax.errorbar(xpos,mid_vals,yerr=half_width,marker='o',capsize=5)
+ax.set_xticks(xpos,[f'{d:.3f}' for d in dt_vals])
+ax.set_xlabel('time step dt (smaller to the right)')
+ax.set_ylabel('sample threshold midpoint')
+ax.set_title('The sample-specific threshold bracket is unchanged when dt is reduced')
+finish(fig,'lesson07_dt_threshold.png')
+
+# 4) Analytic gold test: plot the tiny error from the exact fc=1 rather than
+# a y axis near 1 with a confusing scientific-notation offset.
+pdt=np.array([0.04,0.02,0.01])
+pmid=np.array([particle_mid[d] for d in pdt])
+phalf=np.array([(particle_runs[d][1]-particle_runs[d][0])/2 for d in pdt])
+err_micro=(pmid-1.0)*1e6
+half_micro=phalf*1e6
+xpos=np.arange(len(pdt))
+fig,ax=plt.subplots(figsize=(6.6,4.2))
+ax.errorbar(xpos,err_micro,yerr=half_micro,marker='o',capsize=5,label='numerical bracket')
+ax.axhline(0.0,linestyle='--',label='exact fc=1')
+ax.set_xticks(xpos,[f'{d:.3f}' for d in pdt])
+ax.set_xlabel('time step dt (smaller to the right)')
+ax.set_ylabel(r'$10^6\,(f_{c,\mathrm{num}}-1)$')
+ax.set_title('Gold test: threshold-search error around the exact fc=1')
+ax.legend()
+finish(fig,'lesson07_particle_gold.png')
+
+print('saved figures:', ', '.join(['lesson07_last_pinned_profile.png','lesson07_bisection.png','lesson07_dt_threshold.png','lesson07_particle_gold.png']))
+

@@ -1,42 +1,22 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Reproduction Lab 09 · Beta Window Stability</title><style>
-:root{--bg:#f3f0e8;--paper:#fffdf8;--ink:#191a18;--muted:#6f6a62;--line:#d6cfc2;--accent:#69483c;--soft:#eee7dc;--ok:#edf5ee;--hold:#fff0ed}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.76 system-ui,-apple-system,"PingFang SC",sans-serif}
-.top{position:sticky;top:0;z-index:3;background:#f3f0e8ee;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-.bar,main{width:min(1080px,calc(100% - 32px));margin:auto}.bar{height:62px;display:flex;align-items:center;justify-content:space-between;gap:18px}
-.bar b,h1,h2,h3,.lead,.bridge,.eq{font-family:Georgia,"Times New Roman","Songti SC",serif}.bar a,a{color:#4f4b45}.bar small,.muted,.cap,.crumb{color:var(--muted)}
-main{padding:46px 0 90px}h1{font-size:clamp(38px,6vw,62px);line-height:1.05;margin:13px 0 17px;letter-spacing:-.035em}h2{font-size:29px;line-height:1.3;margin:64px 0 15px}h3{font-size:18px;margin:0 0 6px}
-.lead{font-size:19px;line-height:1.62;color:#4f4b45;max-width:920px}.tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.04em;padding:5px 9px;border-radius:999px;background:#e9ddd2;color:#68483c;margin:0 6px 8px 0}
-.bridge{font-size:18px;padding:18px 20px;margin:26px 0;border-left:4px solid var(--accent);background:var(--soft)}.eq{font-size:18px;text-align:center;padding:14px;margin:16px 0;background:#faf7f0;border:1px solid var(--line);border-radius:10px;overflow-x:auto}
-.figure{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:24px auto;max-width:940px}.figure img{display:block;width:100%;height:auto;background:#fff}.figure.narrow{max-width:790px}.cap{display:block;padding:11px 14px;background:#f0ece3;border-top:1px solid var(--line);font-size:12px}
-.map{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:22px 0}.map .card,.card{background:var(--paper);border:1px solid var(--line);border-radius:11px;padding:15px}.map b{display:block;margin-bottom:4px}.map p,.card p{font-size:13px;margin:4px 0}
-.compare{width:100%;border-collapse:collapse;background:#fff;margin:20px 0;border:1px solid var(--line)}.compare th,.compare td{padding:11px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.compare th{background:#f0ece3;font:13px Georgia,serif}.compare td{font-size:13px}.compare tr:last-child td{border-bottom:0}
-.ok,.hold,.warn{border-radius:11px;padding:14px 16px;margin:18px 0}.ok{background:var(--ok);border:1px solid #bfd2c4}.hold{background:var(--hold);border:1px solid #d7b7b0}.warn{background:#fff7e8;border:1px solid #e4d3ad}
-.codebox{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:24px 0}.codebox .head{padding:10px 14px;background:#f0ece3}pre{margin:0;padding:18px;overflow:auto;background:#1e201f;color:#f2eee6;font:12.5px/1.58 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
-.next{margin-top:46px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:16px}
-.source-note{font-size:13px;color:#5f5a53;border-left:3px solid #b9aa98;padding:8px 12px;margin:12px 0}
-@media(max-width:760px){.map{grid-template-columns:1fr}.bar span{display:none}.next{flex-direction:column}h2{margin-top:52px}.figure{border-radius:10px}}
-</style></head>
-<body><header class="top"><div class="bar"><b>Reproduction Lab <small>· Lesson 09 · Paper2 Method Track</small></b><span><a href="reproduction-lab-08.html">上一课</a> · <a href="../index.html">首页</a> · <a href="#result">Result</a> · <a href="#code">Code</a></span></div></header>
-<main><div class="crumb"><a href="../index.html">Learning Sliding Ferroelectricity</a> / Reproduction Lab / Lesson 09</div>
-<div><span class="tag">Paper2-oriented</span><span class="tag">source ↔ estimator mapping</span></div>
-<h1>β 的文献图不是用来“对答案”，而是告诉你为什么必须做 window audit</h1><p class="lead">这一课现在把两件事分开：transport schematic 定义 β 的稳态关系；PRE 的 non-steady crossover 图提供“effective slope 会漂”的证据。我们的 window ladder正是在有限系统里检查这件事。</p>
-
-<div class="bridge"><b>L09 有两个不同层次的文献锚点：</b>Fig.1(b) 告诉我们目标 scaling law 是 v∼(f−f<sub>c</sub>)<sup>β</sup>；PRE Fig.5(a) 告诉我们临界动力学存在明显 crossover / corrections-to-scaling。后者正是为什么不能挑一个“最像 0.245”的窗口就宣布 β。</div>
-<h2>0 · 目标关系：β 在哪里出现？</h2>
-<figure class="figure"><img src="../assets/reproduction-lab/ferrero2013-review-fig1b-velocity-force.png" alt="Depinning velocity-force beta scaling schematic"><figcaption class="cap"><b>Ferrero et al. 2013 review, Fig.1(b)。</b> T=0、f&gt;f<sub>c</sub> 一侧的绿色关系明确标出 v∼(f−f<sub>c</sub>)<sup>β</sup>。这定义了我们要拟合的量，但没有替我们决定有限系统的 fit window。</figcaption></figure>
-<h2>1 · 为什么要扫 window，而不是盯住一个漂亮斜率？</h2>
-<figure class="figure"><img src="../assets/reproduction-lab/ferrero2013-pre-fig5a-velocity-crossover.png" alt="Ferrero 2013 PRE Figure 5a velocity crossover"><figcaption class="cap"><b>Ferrero, Bustingorry & Kolton, PRE 2013, Fig.5(a)，高分辨率精确裁图。</b> 同一临界 relaxation 数据在不同时间区间显示不同 effective slope（图中约 t<sup>−0.16</sup> 与 t<sup>−0.13</sup>）。它是 corrections-to-scaling 的直接提醒：有限窗口的“幂律很好看”不等于已经到渐近区。</figcaption></figure>
-<div class="map"><div class="card"><b>文献给的警告</b><p>effective exponent 会随 scale / time window 漂。</p></div><div class="card"><b>本课的对应测试</b><p>固定规则逐步缩小 max Δf，重算 β。</p></div><div class="card"><b>通过条件</b><p>不是接近 0.245，而是 window drift 足够小。</p></div></div>
-<h2>2 · 我们的 window ladder 一眼看懂</h2>
-<figure class="figure narrow"><img src="../assets/reproduction-lab/lesson09-bridge-beta-window.png" alt="Lesson 09 beta versus fit window"><figcaption class="cap"><b>桥接图。</b> 横轴越向右越接近 threshold（max Δf 越小），纵轴是同一 pipeline 得到的 effective β。虚线 0.245 只是 QEW benchmark，不是拟合目标。曲线持续下滑，所以不存在稳定 plateau。</figcaption></figure>
-<figure class="figure"><img src="../assets/reproduction-lab/lesson09_beta_window.svg" alt="Lesson 09 full beta-window validation"><figcaption class="cap"><b>完整验收图。</b> 包含 β=1/2 synthetic/analytic gold test、8-realization mean v、window gate 以及 threshold-bracket sensitivity。</figcaption></figure>
-<table class="compare"><thead><tr><th>max Δf</th><th>β<sub>eff</sub></th></tr></thead><tbody><tr><td>0.170</td><td>0.267993</td></tr><tr><td>0.105</td><td>0.229890</td></tr><tr><td>0.065</td><td>0.195041</td></tr><tr><td>0.040</td><td>0.165810</td></tr></tbody></table>
-<div class="hold"><b>WINDOW-STABILITY GATE NOT PASSED。</b> β drift = 0.102183 &gt; 0.030。即使 all-six bootstrap CI 覆盖 0.245 附近，也不能覆盖掉系统性的 window drift。</div>
-<p>threshold-edge β span 只有 0.001004，因此主要问题也不是 L07 bracket 太宽，而是 finite-size / periodic-u geometry / crossover。</p>
-<h2 id="result">3 · 本课真正结论</h2>
-<p><b>可以说：</b>β regression pipeline 在已知答案上工作，真实小系统给出一个随 window 漂移的 effective exponent。<br><b>不能说：</b>测到了 universal β，或“因为某个窗口接近 0.245 所以属于 QEW”。</p>
-<h2 id="code">4 · 脚本、receipt 与 table</h2><p><a href="../examples/reproduction-lab/lesson09_beta_window.py"><b>lesson09_beta_window.py</b></a> · <a href="../assets/reproduction-lab/lesson09_beta_window.txt"><b>receipt</b></a> · <a href="../assets/reproduction-lab/lesson09_beta_window.csv"><b>CSV</b></a></p>
-
-<div class="next"><a href="reproduction-lab-08.html">← 上一课</a><a href="reproduction-lab-10.html">下一课 →</a></div>
-<!-- legacy deployment-contract filenames; no longer rendered as scientific evidence: ferrero2013-fig5-critical-relaxation.svg -->
-</main></body></html>
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Reproduction Lab 09 · Beta window stability</title><link rel="stylesheet" href="../reproduction-lab-paper2.css"></head><body>
+<header class="top"><div class="bar"><b>Reproduction Lab <small>· Lesson 09 · Paper2 Method Track</small></b><span><a href="reproduction-lab-08.html">上一课</a> · <a href="../index.html">首页</a> · <a href="#result">结论</a></span></div></header><main>
+<div class="crumb"><a href="../index.html">Learning Sliding Ferroelectricity</a> / Reproduction Lab / Lesson 09</div><div><span class="tag">β window audit</span><span class="tag">8 disorder realizations</span><span class="tag">no post-hoc tuning</span></div>
+<h1>一条漂亮的 log–log 直线，不等于 universal β</h1>
+<p class="lead">Ferrero 的关键提醒不是“正确答案等于 0.245”，而是 <b>mesoscopic corrections 会制造 biased effective exponents</b>。因此 L09 只问：当我们按预注册规则逐步缩小 Δf window，β 有没有形成稳定 plateau？</p>
+<div class="read-order"><div><b>1 · 论文 Fig.5</b><span>同一 critical relaxation 出现不同 effective slopes。</span></div><div><b>2 · 我们的 v(Δf)</b><span>8 个 realization 的 mean velocity。</span></div><div><b>3 · β vs window</b><span>真正的授权 gate。</span></div><div><b>4 · 排除替代解释</b><span>fc bracket 与 bootstrap 都不能救 window drift。</span></div></div>
+<h2>0 · 论文原图：corrections-to-scaling 是看得见的</h2>
+<figure class="figure source"><img src="../assets/reproduction-lab/source-ferrero2013-pre-fig5-full.png" alt="Ferrero PRE 2013 Figure 5 full crop"><figcaption class="caption"><b>Ferrero, Bustingorry & Kolton, PRE 87, 032122 (2013), Fig.5。</b> 完整保留 velocity panel (a)、width panel (b)、两段 power-law guide 与原始 caption。panel (a) 在不同时间区间给出约 0.16 与 0.13 的 effective decay slope，正是“一个局部 power law 不代表 asymptotic exponent”的直观例子。</figcaption></figure>
+<div class="bridge"><b>我们不是拿 Fig.5 的 time slope 去直接比较 β。</b> 它提供的是方法论证据：临界附近存在 crossover / corrections-to-scaling，所以 steady v(f) 的 β 也必须做 scale-window stability，而不能只挑一个最像 benchmark 的窗口。</div>
+<h2>1 · 我们真正拟合的数据</h2>
+<figure class="figure"><img src="../assets/reproduction-lab/lesson09_mean_v_loglog.png" alt="Disorder mean velocity versus delta f on log log axes"><figcaption class="caption"><b>Our simulation output。</b> 六个 Δf 点是 8 个独立 quenched realizations 的 arithmetic mean；每个 realization 先自己找 fc。图上只示范最宽和最窄两个 registered window 的 fit：同一批数据的 slope 明显不同。</figcaption></figure>
+<h2>2 · 核心结果：β 没有 plateau</h2>
+<figure class="figure"><img src="../assets/reproduction-lab/lesson09_beta_vs_window.png" alt="Effective beta versus fit window"><figcaption class="caption"><b>Our simulation output · central gate。</b> 横轴越往右表示 max Δf 越小、越靠近 sample threshold；β 从 0.268 持续滑到 0.166。虚线 0.245 只作为 Ferrero QEW benchmark，不是拟合目标。</figcaption></figure>
+<table class="table"><thead><tr><th>max Δf</th><th>β<sub>eff</sub></th></tr></thead><tbody><tr><td>0.170</td><td>0.267993</td></tr><tr><td>0.105</td><td>0.229890</td></tr><tr><td>0.065</td><td>0.195041</td></tr><tr><td>0.040</td><td>0.165810</td></tr></tbody></table>
+<div class="hold"><b>WINDOW-STABILITY GATE NOT PASSED。</b> drift=0.102183，远高于预注册 0.030。</div>
+<h2>3 · 是不是 L07 的 fc 不够准？不是主要问题</h2>
+<figure class="figure medium"><img src="../assets/reproduction-lab/lesson09_threshold_sensitivity.png" alt="Beta sensitivity to threshold bracket edge"><figcaption class="caption"><b>Our simulation output。</b> 把每个 sample 的 fc 从 bracket midpoint 推到 low/high edge，all-six β 只变化约 0.001004；这比 0.102 的 window drift 小两个数量级。</figcaption></figure>
+<h2>4 · bootstrap CI 为什么也不能救？</h2>
+<figure class="figure medium"><img src="../assets/reproduction-lab/lesson09_bootstrap_beta.png" alt="Bootstrap distribution of beta"><figcaption class="caption"><b>Our simulation output。</b> sample bootstrap 回答“换一批 disorder realization，当前 estimator 会抖多少”；它不回答“是否已经进入 asymptotic critical window”。所以 CI 覆盖 0.245 不能覆盖掉系统性 window drift。</figcaption></figure>
+<h2 id="result">5 · 本课结论</h2><div class="ok"><b>Regression pipeline gold test PASS。</b> tilted washboard 的 β=1/2 被同一套 log-fit pipeline 正确恢复。</div><div class="hold"><b>UNIVERSAL BETA CLAIM = NOT AUTHORIZED。</b> 当前 L=32 / periodic-u geometry 只给出 window-dependent effective β。</div>
+<h2>6 · 可复查</h2><div class="code-links"><a href="../examples/reproduction-lab/lesson09_beta_window.py">Python 脚本</a><a href="../assets/reproduction-lab/lesson09_beta_window.txt">run receipt</a><a href="../assets/reproduction-lab/lesson09_beta_window.csv">8-realization CSV</a><a href="../assets/reproduction-lab/source-figure-receipt.json">论文截图 receipt</a></div>
+<div class="next"><a href="reproduction-lab-08.html">← L08</a><a href="reproduction-lab-10.html">L10 →</a></div></main><script src="../terms.js"></script></body></html>

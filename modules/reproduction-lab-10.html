@@ -1,41 +1,40 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Reproduction Lab 10 · Super-rough ζ</title><style>
-:root{--bg:#f3f0e8;--paper:#fffdf8;--ink:#191a18;--muted:#6f6a62;--line:#d6cfc2;--accent:#69483c;--soft:#eee7dc;--ok:#edf5ee;--hold:#fff0ed}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.76 system-ui,-apple-system,"PingFang SC",sans-serif}
-.top{position:sticky;top:0;z-index:3;background:#f3f0e8ee;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-.bar,main{width:min(1080px,calc(100% - 32px));margin:auto}.bar{height:62px;display:flex;align-items:center;justify-content:space-between;gap:18px}
-.bar b,h1,h2,h3,.lead,.bridge,.eq{font-family:Georgia,"Times New Roman","Songti SC",serif}.bar a,a{color:#4f4b45}.bar small,.muted,.cap,.crumb{color:var(--muted)}
-main{padding:46px 0 90px}h1{font-size:clamp(38px,6vw,62px);line-height:1.05;margin:13px 0 17px;letter-spacing:-.035em}h2{font-size:29px;line-height:1.3;margin:64px 0 15px}h3{font-size:18px;margin:0 0 6px}
-.lead{font-size:19px;line-height:1.62;color:#4f4b45;max-width:920px}.tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.04em;padding:5px 9px;border-radius:999px;background:#e9ddd2;color:#68483c;margin:0 6px 8px 0}
-.bridge{font-size:18px;padding:18px 20px;margin:26px 0;border-left:4px solid var(--accent);background:var(--soft)}.eq{font-size:18px;text-align:center;padding:14px;margin:16px 0;background:#faf7f0;border:1px solid var(--line);border-radius:10px;overflow-x:auto}
-.figure{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:24px auto;max-width:940px}.figure img{display:block;width:100%;height:auto;background:#fff}.figure.narrow{max-width:790px}.cap{display:block;padding:11px 14px;background:#f0ece3;border-top:1px solid var(--line);font-size:12px}
-.map{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:22px 0}.map .card,.card{background:var(--paper);border:1px solid var(--line);border-radius:11px;padding:15px}.map b{display:block;margin-bottom:4px}.map p,.card p{font-size:13px;margin:4px 0}
-.compare{width:100%;border-collapse:collapse;background:#fff;margin:20px 0;border:1px solid var(--line)}.compare th,.compare td{padding:11px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.compare th{background:#f0ece3;font:13px Georgia,serif}.compare td{font-size:13px}.compare tr:last-child td{border-bottom:0}
-.ok,.hold,.warn{border-radius:11px;padding:14px 16px;margin:18px 0}.ok{background:var(--ok);border:1px solid #bfd2c4}.hold{background:var(--hold);border:1px solid #d7b7b0}.warn{background:#fff7e8;border:1px solid #e4d3ad}
-.codebox{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:24px 0}.codebox .head{padding:10px 14px;background:#f0ece3}pre{margin:0;padding:18px;overflow:auto;background:#1e201f;color:#f2eee6;font:12.5px/1.58 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
-.next{margin-top:46px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:16px}
-.source-note{font-size:13px;color:#5f5a53;border-left:3px solid #b9aa98;padding:8px 12px;margin:12px 0}
-@media(max-width:760px){.map{grid-template-columns:1fr}.bar span{display:none}.next{flex-direction:column}h2{margin-top:52px}.figure{border-radius:10px}}
-</style></head>
-<body><header class="top"><div class="bar"><b>Reproduction Lab <small>· Lesson 10 · Paper2 Method Track</small></b><span><a href="reproduction-lab-09.html">上一课</a> · <a href="../index.html">首页</a> · <a href="#result">Result</a> · <a href="#code">Code</a></span></div></header>
-<main><div class="crumb"><a href="../index.html">Learning Sliding Ferroelectricity</a> / Reproduction Lab / Lesson 10</div>
-<div><span class="tag">Paper2-oriented</span><span class="tag">source ↔ estimator mapping</span></div>
-<h1>论文 Fig.1 测 S(q)，我们也测 S(q)：这一次是直接 observable 对齐</h1><p class="lead">旧页面把 critical structure factor 错标成 Ferrero Fig.4(a)，导致你根本无法从论文反查。现在恢复真实 Figure 身份，并把 S(q) 这一条直接可比关系放在页面最前面；B(r) 只作为额外 local diagnostic。</p>
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Reproduction Lab 10 · Super-rough geometry</title><link rel="stylesheet" href="../reproduction-lab-paper2.css"></head><body>
+<header class="top"><div class="bar"><b>Reproduction Lab <small>· Lesson 10 · Paper2 Method Track</small></b><span><a href="reproduction-lab-09.html">上一课</a> · <a href="../index.html">首页</a> · <a href="#result">结论</a></span></div></header>
+<main>
+<div class="crumb"><a href="../index.html">Learning Sliding Ferroelectricity</a> / Reproduction Lab / Lesson 10</div>
+<div><span class="tag">真实 simulation plot</span><span class="tag">论文原图完整裁切</span><span class="tag">S(q) ↔ S(q)</span></div>
+<h1>别先看 ζ 数字：先看一条墙，再看它的 S(q)</h1>
+<p class="lead">这一课重做后不再放四宫格“结论卡”。所有数值图都由 <code>lesson10_superrough_zeta.py</code> 实际运行生成。读图顺序只有一条：<b>last-pinned wall profile → 论文的 structure factor → 我们的 structure factor → local B(r) → size dependence</b>。</p>
+<div class="read-order"><div><b>1 · 墙长什么样</b><span>u(x) 是真正被分析的对象。</span></div><div><b>2 · 论文测什么</b><span>Ferrero PRE Fig.1 用 S(q) 读 global ζ。</span></div><div><b>3 · 我们测同一个量</b><span>同样画 S(q)–q，并标出实际 fit window。</span></div><div><b>4 · 再看 B(r)</b><span>super-rough 时 local exponent 不必等于 global ζ。</span></div></div>
 
-<div class="bridge"><b>L10 是 L07–L12 里最应该“图对图”的一课：</b>论文真正的 critical-configuration structure factor 是 PRE 2013 <b>Fig.1</b>，不是旧页面写的 Fig.4(a)。论文和我们都在测 S(q)，并从低 q 斜率读取 global roughness ζ。</div>
-<h2>0 · 论文原图：critical configuration 的 S(q)</h2>
-<figure class="figure"><img src="../assets/reproduction-lab/ferrero2013-pre-fig1-structure-factor.png" alt="Ferrero 2013 PRE Figure 1 critical structure factor"><figcaption class="cap"><b>Ferrero, Bustingorry & Kolton, PRE 2013, Fig.1，高分辨率精确裁图。</b> 论文直接使用 S(q)∼q<sup>−(1+2ζ)</sup>，低 q 区拟合得到 ζ=1.250±0.005；右上 inset 用 q<sup>1+2ζ</sup>S(q) 检查拟合与高 q 离散化偏离。</figcaption></figure>
-<div class="eq">S(q)\sim q^{-(1+2\zeta)}</div>
-<table class="compare"><thead><tr><th></th><th>论文 Fig.1</th><th>本课</th></tr></thead><tbody><tr><td>横轴</td><td>q</td><td>q</td></tr><tr><td>纵轴</td><td>S(q)</td><td>S(q)</td></tr><tr><td>读出的量</td><td>global ζ</td><td>global ζ<sub>S</sub></td></tr><tr><td>额外诊断</td><td>rescaled inset / lattice crossover</td><td>B(r) local exponent + cross-size drift</td></tr></tbody></table>
-<h2>1 · 为什么我们的 B(r)≈1 和 S(q)&gt;1 不矛盾？</h2>
-<p>super-rough interface 的 global ζ&gt;1 时，local height-difference exponent 会饱和到约 1，而 structure factor 仍携带 global ζ。因此本课首先用 synthetic ζ<sub>global</sub>=1.25 interface 验证 estimator 应该“分裂”，不是强迫二者相等。</p>
-<figure class="figure"><img src="../assets/reproduction-lab/lesson10_superrough_zeta.svg" alt="Lesson 10 full super-rough geometry analysis"><figcaption class="cap"><b>本课结果图，放大为整页宽度。</b> 请先看右上 panel“Structure factor carries global zeta”：它和论文 Fig.1 是同一个 observable；左上 B(r) 是额外的 local diagnostic。下排才是 synthetic gold test 与 size-stability gate。</figcaption></figure>
-<table class="compare"><thead><tr><th>L</th><th>ζ<sub>B,local</sub></th><th>ζ<sub>S,global</sub></th></tr></thead><tbody><tr><td>128</td><td>0.928961</td><td>1.315621</td></tr><tr><td>256</td><td>0.949576</td><td>1.201060</td></tr></tbody></table>
-<div class="ok"><b>SMALL-QEW SUPER-ROUGH SIGNATURE PASS。</b> local≈1、global&gt;1 的 estimator structure 与 super-rough depinning 相容。</div>
-<div class="hold"><b>THERMODYNAMIC ζ CLOSURE NOT PASSED。</b> |ζ<sub>S</sub>(128)−ζ<sub>S</sub>(256)|=0.114561 &gt; 0.10。不能只挑 1.316 或 1.201 说“接近 1.25”。</div>
-<h2 id="result">2 · 这里和论文到底相关到什么程度？</h2>
-<p><b>强相关：</b>同一 observable、同一 scaling form、同样关注低 q 的 global geometry。<br><b>仍不能直接复现：</b>论文用更大系统和 exact critical configurations；我们的 small-QEW disorder generator、尺寸与 sample 数不同，因此不比较点的绝对位置，也不把当前 ζ 当作 thermodynamic benchmark reproduction。</p>
-<h2 id="code">3 · 脚本、receipt 与 realization table</h2><p><a href="../examples/reproduction-lab/lesson10_superrough_zeta.py"><b>lesson10_superrough_zeta.py</b></a> · <a href="../assets/reproduction-lab/lesson10_superrough_zeta.txt"><b>receipt</b></a> · <a href="../assets/reproduction-lab/lesson10_superrough_zeta.csv"><b>CSV</b></a></p>
+<h2>0 · 先看 simulation 里真正的 wall</h2>
+<p>下面不是示意线。它是脚本在 L=128 和 L=256 两个独立 quenched-disorder samples 中找到的 <b>last-pinned configuration</b>，把 center of mass 减掉以后直接画出的 u(x)。</p>
+<figure class="figure"><img src="../assets/reproduction-lab/lesson10_profiles.png" alt="Representative last-pinned QEW interface profiles"><figcaption class="caption"><b>Our simulation output。</b> 这两条曲线来自本课 threshold search 的真实输出。后面的 B(r) 和 S(q) 都是从这些同类 near-threshold profiles 的 disorder ensemble 计算出来的，不是手画。</figcaption></figure>
+<div class="figure-note"><b>先建立直觉：</b>ζ 不是“墙看起来多弯”的一个肉眼数字。它描述的是粗糙度随观察尺度怎样增长，所以必须进入 B(r) 或 Fourier-space S(q)。</div>
 
-<div class="next"><a href="reproduction-lab-09.html">← 上一课</a><a href="reproduction-lab-11.html">下一课 →</a></div>
-<!-- legacy deployment-contract filenames; no longer rendered as scientific evidence: ferrero2013-fig4a-critical-structure.svg -->
-</main></body></html>
+<h2>1 · 论文到底怎么测 global roughness？</h2>
+<figure class="figure source"><img src="../assets/reproduction-lab/source-ferrero2013-pre-fig1-full.png" alt="Ferrero PRE 2013 Figure 1 full crop with original caption"><figcaption class="caption"><b>Ferrero, Bustingorry & Kolton, PRE 87, 032122 (2013), Fig.1。</b> 这里保留了完整坐标、inset 和论文原始 caption。原文用 N=1000 个 L=2048、M=13777 的 critical configurations，按 S(q)∼q<sup>−(1+2ζ)</sup> 得到 ζ=1.250±0.005；inset 用重标度后的 S(q) 检查 fit 与高-q discretization effects。</figcaption></figure>
+<div class="eq">S(q) ∼ q<sup>−(1+2ζ)</sup> &nbsp;&nbsp;→&nbsp;&nbsp; log–log slope = −(1+2ζ)</div>
+<p>所以这一课和论文最强的对应关系不是“都在谈 roughness”，而是：<b>横轴都是 q，纵轴都是 S(q)，ζ 都从 log–log slope 读出。</b></p>
+
+<h2>2 · 我们的 S(q)：现在可以和论文做 observable-level 对照</h2>
+<figure class="figure"><img src="../assets/reproduction-lab/lesson10_Sq.png" alt="Simulation structure factor S(q) for L128 and L256"><figcaption class="caption"><b>Our simulation output · S(q)。</b> 圆点/虚线是两个尺寸的 disorder-averaged structure factor；短的 dotted fit 只画在实际使用的相同 fractional-q window；dash-dot 参考线只是论文 ζ=1.25 对应的 slope −3.5，不参与拟合。</figcaption></figure>
+<div class="grid3"><div class="card"><b>论文</b><p>exact critical configuration；L=2048；N=1000。</p></div><div class="card"><b>我们</b><p>direct-relaxation last-pinned sample；L=128/256；R=6。</p></div><div class="card"><b>能比较什么</b><p>observable、scaling form、effective slope；不能比较 S(q) 的绝对高度。</p></div></div>
+<table class="table"><thead><tr><th>L</th><th>global ζ from S(q)</th><th>realization-bootstrap 95%</th></tr></thead><tbody><tr><td>128</td><td><b>1.315621</b></td><td>[1.060960, 1.480197]</td></tr><tr><td>256</td><td><b>1.201060</b></td><td>[1.016524, 1.431058]</td></tr></tbody></table>
+
+<h2>3 · 那 B(r) 为什么只有约 1？</h2>
+<p>real-space height-difference correlation 是另一种 estimator：</p>
+<div class="eq">B(r) = ⟨[u(x+r) − u(x)]²⟩</div>
+<figure class="figure"><img src="../assets/reproduction-lab/lesson10_Br.png" alt="Simulation local roughness B(r) for L128 and L256"><figcaption class="caption"><b>Our simulation output · B(r)。</b> 数据点是真实 ensemble mean；dotted segment 是脚本实际使用的 r=2…8 fit。两个尺寸的 local ζ 都在 1 附近。</figcaption></figure>
+<div class="bridge"><b>这里“不相等”恰恰是本课要验证的物理。</b> 对 super-rough interface，global ζ&gt;1 时 local height-difference exponent 会饱和在约 1；因此 B(r)≈1 与 S(q)≈1.2–1.3 不是两个算法互相打架。</div>
+<p>为防止把 estimator bug 误叫 super-rough，脚本还先生成目标 ζ<sub>global</sub>=1.25 的 synthetic Fourier interface：同一 pipeline 得到 ζ<sub>B,local</sub>=0.951442、ζ<sub>S,global</sub>=1.223335，gold test PASS。这个 synthetic test 只是<b>代码校验</b>，不是物理数据。</p>
+
+<h2 id="result">4 · 最后看 size dependence：为什么仍不能宣布 ζ=1.25？</h2>
+<figure class="figure"><img src="../assets/reproduction-lab/lesson10_zeta_vs_size.png" alt="Effective roughness exponents versus size with bootstrap intervals"><figcaption class="caption"><b>Our simulation output · size audit。</b> 蓝色 local estimator 很稳定地靠近 1；global S(q) estimator 在两个尺寸都 &gt;1，但 bootstrap 很宽，而且 L=128→256 的 central estimate 漂移 0.114561。</figcaption></figure>
+<div class="ok"><b>SMALL-QEW SUPER-ROUGH SIGNATURE = PASS。</b> 我们确实看到 local≈1、global&gt;1 的 estimator structure。</div>
+<div class="hold"><b>THERMODYNAMIC ZETA CLOSURE = NOT PASSED。</b> |ζ<sub>S</sub>(128)−ζ<sub>S</sub>(256)|=0.114561，高于预注册 0.10 gate；只有两个尺寸、R=6，也远小于论文计算规模。因此不能把某一个 1.316 或 1.201 挑出来说“复现 ζ=1.25”。</div>
+
+<h2>5 · 可复查数据</h2>
+<div class="code-links"><a href="../examples/reproduction-lab/lesson10_superrough_zeta.py">完整 Python 脚本</a><a href="../assets/reproduction-lab/lesson10_superrough_zeta.txt">run receipt</a><a href="../assets/reproduction-lab/lesson10_superrough_zeta.csv">realization table</a><a href="../assets/reproduction-lab/lesson10_geometry_curves.csv">B(r)/S(q) plotted curves CSV</a><a href="../assets/reproduction-lab/source-figure-receipt.json">论文截图 receipt</a></div>
+<div class="next"><a href="reproduction-lab-09.html">← L09</a><a href="reproduction-lab-11.html">L11 →</a></div>
+</main><script src="../terms.js"></script></body></html>

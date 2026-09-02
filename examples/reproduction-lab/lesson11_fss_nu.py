@@ -10,6 +10,9 @@ resulting small-system effective exponent is thermodynamic.
 from pathlib import Path
 import csv, math
 import numpy as np
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 
 TARGET_NU=4/3
 WINDOW_DRIFT_GATE=0.15
@@ -116,12 +119,53 @@ print('\n'.join(receipt))
 out=root/'assets'/'reproduction-lab'; out.mkdir(parents=True,exist_ok=True)
 (out/'lesson11_fss_nu.txt').write_text('\n'.join(receipt)+'\n',encoding='utf-8')
 
-lx=np.log10(Ls); sy=np.log10(stds); syny=np.log10(syn_stds)
-def poly(xs,ys,x0,y0,w,h):
-    xmin,xmax=min(xs),max(xs); ymin,ymax=min(ys),max(ys); pad=.08*(ymax-ymin or 1); ymin-=pad; ymax+=pad
-    return ' '.join(f'{x0+(x-xmin)/(xmax-xmin)*w:.1f},{y0+h-(y-ymin)/(ymax-ymin)*h:.1f}' for x,y in zip(xs,ys))
-p_real=poly(lx,sy,55,80,400,155); p_syn=poly(lx,syny,555,80,400,155)
-wn=np.array([nu_small,nu_all,nu_large]); wx=np.arange(3)
-p_win=poly(wx,wn,55,350,400,140); p_col=poly(grid,scores,555,350,400,140)
-svg=f'''<svg xmlns="http://www.w3.org/2000/svg" width="1050" height="590" viewBox="0 0 1050 590" role="img" aria-label="Lesson 11 finite-size scaling validation"><style>text{{font-family:system-ui,-apple-system,sans-serif;fill:#20211f}}.box{{fill:#fffdf8;stroke:#d8d1c3}}.ax{{stroke:#444}}.a{{fill:none;stroke:#222;stroke-width:2}}.b{{fill:none;stroke:#777;stroke-width:1.6;stroke-dasharray:6 4}}.ttl{{font-size:18px;font-weight:650}}.small{{font-size:12px;fill:#716d66}}.big{{font-size:24px;font-weight:700}}</style><rect width="1050" height="590" fill="#fff"/><text x="525" y="28" text-anchor="middle" font-size="22">Reproduction Lab · Lesson 11 · finite-size threshold fluctuations</text><rect class="box" x="35" y="48" width="450" height="225" rx="8"/><text class="ttl" x="55" y="72">1 · Real QEW: std(fc) decreases with L</text><line class="ax" x1="55" y1="235" x2="455" y2="235"/><line class="ax" x1="55" y1="80" x2="55" y2="235"/><polyline class="a" points="{p_real}"/><text class="small" x="55" y="255">48 independent disorder samples per L · variance-fit nu={nu_all:.3f}</text><rect class="box" x="535" y="48" width="480" height="225" rx="8"/><text class="ttl" x="555" y="72">2 · Synthetic nu=4/3 gold test</text><line class="ax" x1="555" y1="235" x2="955" y2="235"/><line class="ax" x1="555" y1="80" x2="555" y2="235"/><polyline class="a" points="{p_syn}"/><text class="big" x="585" y="150">recovered nu = {syn_nu:.3f}</text><text class="small" x="555" y="255">Same log-std vs log-L regression pipeline.</text><rect class="box" x="35" y="315" width="450" height="220" rx="8"/><text class="ttl" x="55" y="340">3 · Size-window stability is not closed</text><line class="ax" x1="55" y1="490" x2="455" y2="490"/><polyline class="a" points="{p_win}"/><text class="small" x="55" y="515">small3={nu_small:.3f} · all4={nu_all:.3f} · large3={nu_large:.3f} · drift={window_drift:.3f}</text><rect class="box" x="535" y="315" width="480" height="220" rx="8"/><text class="ttl" x="555" y="340">4 · Quantile collapse is shallow, not decisive</text><line class="ax" x1="555" y1="490" x2="955" y2="490"/><polyline class="a" points="{p_col}"/><text class="small" x="555" y="515">best nu={best_nu:.3f} · score(best)={best_score:.3f} · score(4/3)={score_sts:.3f}</text></svg>'''
-(out/'lesson11_fss_nu.svg').write_text(svg,encoding='utf-8')
+def finish(fig,name):
+    fig.tight_layout(); fig.savefig(out/name,dpi=220,bbox_inches='tight'); plt.close(fig)
+
+# 1) Same finite-size threshold observable as the source figure: mean fc versus L.
+fig,ax=plt.subplots(figsize=(7.0,4.4))
+ax.errorbar(Ls,means,yerr=stds,marker='o',capsize=4,label='mean ± sample std')
+ax.set_xscale('log',base=2); ax.set_xticks(Ls,labels=[str(int(x)) for x in Ls])
+ax.set_xlabel('system size L')
+ax.set_ylabel('sample threshold fc')
+ax.set_title('Finite-size sample thresholds in our normalization')
+ax.legend()
+finish(fig,'lesson11_mean_fc.png')
+
+# 2) The nu-sensitive statistic: width of the sample-threshold distribution.
+fig,ax=plt.subplots(figsize=(7.0,4.5))
+ax.loglog(Ls,stds,marker='o',label='measured std(fc)')
+coef=np.polyfit(np.log(Ls),np.log(stds),1)
+yfit=np.exp(coef[1])*Ls**coef[0]
+ax.loglog(Ls,yfit,'--',label=f'all-four fit: nu={nu_all:.3f}')
+ax.set_xlabel('system size L')
+ax.set_ylabel('std(fc across disorder realizations)')
+ax.set_title('Threshold fluctuations shrink with L')
+ax.legend()
+finish(fig,'lesson11_std_fc.png')
+
+# 3) Window dependence of the effective nu.
+fig,ax=plt.subplots(figsize=(7.0,4.4))
+labels=['32-128','32-256','64-256']; vals=[nu_small,nu_all,nu_large]
+ax.plot(labels,vals,marker='o')
+ax.axhline(TARGET_NU,linestyle='--',label='QEW benchmark 4/3')
+ax.set_xlabel('size window used in fit')
+ax.set_ylabel('effective nu')
+ax.set_title('The inferred nu changes too much when the size window changes')
+ax.legend()
+finish(fig,'lesson11_nu_vs_window.png')
+
+# 4) Collapse score scan: the optimum is shallow, not an independent proof.
+fig,ax=plt.subplots(figsize=(7.0,4.4))
+ax.plot(grid,scores)
+ax.axvline(best_nu,linestyle='-',label=f'best score at nu={best_nu:.3f}')
+ax.axvline(TARGET_NU,linestyle='--',label='nu=4/3')
+ax.axvline(nu_all,linestyle=':',label=f'variance-fit nu={nu_all:.3f}')
+ax.set_xlabel('trial nu')
+ax.set_ylabel('quantile-collapse score (lower is better)')
+ax.set_title('Distribution-collapse score has a broad shallow minimum')
+ax.legend(fontsize=8)
+finish(fig,'lesson11_collapse_score.png')
+
+print('saved matplotlib plots:', ', '.join(['lesson11_mean_fc.png','lesson11_std_fc.png','lesson11_nu_vs_window.png','lesson11_collapse_score.png']))
+

@@ -1,43 +1,43 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Reproduction Lab 11 · Finite-size scaling / ν</title><style>
-:root{--bg:#f3f0e8;--paper:#fffdf8;--ink:#191a18;--muted:#6f6a62;--line:#d6cfc2;--accent:#69483c;--soft:#eee7dc;--ok:#edf5ee;--hold:#fff0ed}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.76 system-ui,-apple-system,"PingFang SC",sans-serif}
-.top{position:sticky;top:0;z-index:3;background:#f3f0e8ee;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-.bar,main{width:min(1080px,calc(100% - 32px));margin:auto}.bar{height:62px;display:flex;align-items:center;justify-content:space-between;gap:18px}
-.bar b,h1,h2,h3,.lead,.bridge,.eq{font-family:Georgia,"Times New Roman","Songti SC",serif}.bar a,a{color:#4f4b45}.bar small,.muted,.cap,.crumb{color:var(--muted)}
-main{padding:46px 0 90px}h1{font-size:clamp(38px,6vw,62px);line-height:1.05;margin:13px 0 17px;letter-spacing:-.035em}h2{font-size:29px;line-height:1.3;margin:64px 0 15px}h3{font-size:18px;margin:0 0 6px}
-.lead{font-size:19px;line-height:1.62;color:#4f4b45;max-width:920px}.tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.04em;padding:5px 9px;border-radius:999px;background:#e9ddd2;color:#68483c;margin:0 6px 8px 0}
-.bridge{font-size:18px;padding:18px 20px;margin:26px 0;border-left:4px solid var(--accent);background:var(--soft)}.eq{font-size:18px;text-align:center;padding:14px;margin:16px 0;background:#faf7f0;border:1px solid var(--line);border-radius:10px;overflow-x:auto}
-.figure{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:24px auto;max-width:940px}.figure img{display:block;width:100%;height:auto;background:#fff}.figure.narrow{max-width:790px}.cap{display:block;padding:11px 14px;background:#f0ece3;border-top:1px solid var(--line);font-size:12px}
-.map{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:22px 0}.map .card,.card{background:var(--paper);border:1px solid var(--line);border-radius:11px;padding:15px}.map b{display:block;margin-bottom:4px}.map p,.card p{font-size:13px;margin:4px 0}
-.compare{width:100%;border-collapse:collapse;background:#fff;margin:20px 0;border:1px solid var(--line)}.compare th,.compare td{padding:11px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.compare th{background:#f0ece3;font:13px Georgia,serif}.compare td{font-size:13px}.compare tr:last-child td{border-bottom:0}
-.ok,.hold,.warn{border-radius:11px;padding:14px 16px;margin:18px 0}.ok{background:var(--ok);border:1px solid #bfd2c4}.hold{background:var(--hold);border:1px solid #d7b7b0}.warn{background:#fff7e8;border:1px solid #e4d3ad}
-.codebox{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:24px 0}.codebox .head{padding:10px 14px;background:#f0ece3}pre{margin:0;padding:18px;overflow:auto;background:#1e201f;color:#f2eee6;font:12.5px/1.58 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
-.next{margin-top:46px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:16px}
-.source-note{font-size:13px;color:#5f5a53;border-left:3px solid #b9aa98;padding:8px 12px;margin:12px 0}
-@media(max-width:760px){.map{grid-template-columns:1fr}.bar span{display:none}.next{flex-direction:column}h2{margin-top:52px}.figure{border-radius:10px}}
-</style></head>
-<body><header class="top"><div class="bar"><b>Reproduction Lab <small>· Lesson 11 · Paper2 Method Track</small></b><span><a href="reproduction-lab-10.html">上一课</a> · <a href="../index.html">首页</a> · <a href="#result">Result</a> · <a href="#code">Code</a></span></div></header>
-<main><div class="crumb"><a href="../index.html">Learning Sliding Ferroelectricity</a> / Reproduction Lab / Lesson 11</div>
-<div><span class="tag">Paper2-oriented</span><span class="tag">source ↔ estimator mapping</span></div>
-<h1>论文 Fig.2 和我们的 ν 图不是同一 y 轴：先对齐，再区分</h1><p class="lead">旧版最大的误导是把一张 finite-size critical-force 图直接贴到 ν 分析旁边，却没有告诉你论文画的是 mean threshold，而我们拟合的是 threshold distribution width。现在用一张同轴桥接图把这两个层次拆开。</p>
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Reproduction Lab 11 · Finite-size scaling / ν</title><link rel="stylesheet" href="../reproduction-lab-paper2.css"></head><body>
+<header class="top"><div class="bar"><b>Reproduction Lab <small>· Lesson 11 · Paper2 Method Track</small></b><span><a href="reproduction-lab-10.html">上一课</a> · <a href="../index.html">首页</a> · <a href="#result">结论</a></span></div></header>
+<main>
+<div class="crumb"><a href="../index.html">Learning Sliding Ferroelectricity</a> / Reproduction Lab / Lesson 11</div>
+<div><span class="tag">真实 simulation plot</span><span class="tag">论文原图完整裁切</span><span class="tag">finite-size threshold</span></div>
+<h1>先看 f<sub>c</sub>(L)，再看它的 sample-to-sample 波动</h1>
+<p class="lead">旧版把论文的 finite-size critical-force 图和我们的 ν 拟合图并排放，却没讲清两张图的 y 轴其实不同。现在按数据层级读：<b>论文先告诉我们 finite-size threshold 会受 L 和 aspect ratio 影响 → 我们先画同样的 mean f<sub>c</sub>(L) → 再用同一批 sample 的 std(f<sub>c</sub>) 去估 ν → 最后检查 ν 对 size window 是否稳定。</b></p>
+<div class="read-order"><div><b>1 · 论文 Fig.2</b><span>mean finite-size threshold 随 L / aspect protocol 改变。</span></div><div><b>2 · 我们的 mean f<sub>c</sub></b><span>同样画 L→threshold，但不比绝对数值。</span></div><div><b>3 · ν-sensitive observable</b><span>std(f<sub>c</sub><sup>sample</sup>) 随 L 收缩。</span></div><div><b>4 · size-window gate</b><span>一个 slope 不够，必须换尺寸窗口仍稳定。</span></div></div>
 
-<div class="bridge"><b>先纠正 Figure 身份：</b>Ferrero PRE 2013 的 finite-size critical-force 图是 <b>Fig.2</b>，不是旧页写的 Fig.4(b)。更重要的是：论文 Fig.2 的 y 轴是 finite-size mean critical force；我们用来估 ν 的 y 轴是 sample-to-sample std(f<sub>c</sub>)。它们属于同一 finite-size threshold 数据族，但不是同一个 observable，页面不能再假装“图对图复现”。</div>
-<h2>0 · 论文 Fig.2：先看有限尺寸 threshold 本身</h2>
-<figure class="figure"><img src="../assets/reproduction-lab/ferrero2013-pre-fig2-fc-vs-L.png" alt="Ferrero 2013 PRE Figure 2 finite-size critical force"><figcaption class="cap"><b>Ferrero, Bustingorry & Kolton, PRE 2013, Fig.2，高分辨率精确裁图。</b> 横轴 L，纵轴 finite-size critical force；不同 k 对应 M=kL<sup>ζ</sup> 的 aspect protocol，虚线标出 thermodynamic f<sub>c</sub>≈1.916。它告诉我们 finite-size geometry 会系统影响 threshold。</figcaption></figure>
-<h2>1 · 先用同样的 L → threshold 视角看我们的数据</h2>
-<figure class="figure narrow"><img src="../assets/reproduction-lab/lesson11-bridge-mean-fc.png" alt="Lesson 11 mean threshold versus size"><figcaption class="cap"><b>直接轴对应。</b> 横轴同样是 L，纵轴同样是 sample threshold 的 ensemble mean。我们的 normalization 下 mean≈0.82，不能和论文 1.916 比绝对值；这里要看的只是 finite-size behavior。</figcaption></figure>
-<div class="map"><div class="card"><b>论文 Fig.2</b><p>mean finite-size f<sub>c</sub> vs L / aspect k。</p></div><div class="card"><b>本课 ν observable</b><p>std(f<sub>c</sub><sup>sample</sup>) vs L。</p></div><div class="card"><b>为什么换 y 轴</b><p>sample-to-sample fluctuation 的收缩给出 ν-sensitive scaling。</p></div></div>
-<h2>2 · 真正用于 ν 的是 threshold distribution 宽度</h2>
-<figure class="figure narrow"><img src="../assets/reproduction-lab/lesson11-bridge-std-fc.png" alt="Lesson 11 threshold standard deviation versus size"><figcaption class="cap"><b>本课真正的 ν 图。</b> std(f<sub>c</sub>) 随 L 收缩。虚线只是四尺寸 log–log effective fit；后面必须再做 size-window stability，不能把一个整体 slope 直接叫 thermodynamic ν。</figcaption></figure>
-<div class="eq">\mathrm{std}(f_c^{sample})\sim L^{-1/\nu}</div>
-<table class="compare"><thead><tr><th>L</th><th>mean f<sub>c</sub></th><th>std(f<sub>c</sub>)</th><th>independent realizations</th></tr></thead><tbody><tr><td>32</td><td>0.819979</td><td>0.064453</td><td>48</td></tr><tr><td>64</td><td>0.823315</td><td>0.033882</td><td>48</td></tr><tr><td>128</td><td>0.823397</td><td>0.026466</td><td>48</td></tr><tr><td>256</td><td>0.821851</td><td>0.015060</td><td>48</td></tr></tbody></table>
-<figure class="figure"><img src="../assets/reproduction-lab/lesson11_fss_nu.svg" alt="Lesson 11 full finite-size scaling analysis"><figcaption class="cap"><b>完整验收图。</b> 包含 synthetic ν=4/3 gold test、四尺寸 scaling、size-window drift 与 distribution-collapse sensitivity。它负责判断“有没有资格升级成 ν claim”，不是拿来和论文 Fig.2 长得一样。</figcaption></figure>
-<div class="ok"><b>SYNTHETIC FSS GOLD TEST PASS。</b> ν=4/3 synthetic data recovered 1.318867。</div>
-<div class="hold"><b>SIZE-WINDOW STABILITY GATE NOT PASSED。</b> ν<sub>small3</sub>=1.557481、ν<sub>all4</sub>=1.503976、ν<sub>large3</sub>=1.709690，span=0.205713 &gt; 0.15。因此 UNIVERSAL NU CLAIM = NOT AUTHORIZED。</div>
-<h2 id="result">3 · 这页现在应该怎么读？</h2>
-<p>先用论文 Fig.2 建立“threshold 是 finite-size quantity”的心智模型；再看我们的 mean f<sub>c</sub>(L) 作为同轴桥接；最后切换到 std(f<sub>c</sub>)，理解为什么这是另一个 ν-sensitive statistic。这样就不会再误以为两张不同 y 轴的图是在做直接 reproduction。</p>
-<h2 id="code">4 · 脚本、receipt 与 192-row raw table</h2><p><a href="../examples/reproduction-lab/lesson11_fss_nu.py"><b>lesson11_fss_nu.py</b></a> · <a href="../assets/reproduction-lab/lesson11_fss_nu.txt"><b>receipt</b></a> · <a href="../assets/reproduction-lab/lesson11_fc_raw.csv"><b>lesson11_fc_raw.csv</b></a></p>
+<h2>0 · 论文原图：finite-size critical force 到底在画什么？</h2>
+<figure class="figure source"><img src="../assets/reproduction-lab/source-ferrero2013-pre-fig2-full.png" alt="Ferrero PRE 2013 Figure 2 full crop with original caption"><figcaption class="caption"><b>Ferrero, Bustingorry & Kolton, PRE 87, 032122 (2013), Fig.2。</b> 保留完整坐标、legend、不同 aspect-ratio 数据和论文原始 caption。横轴是 L，纵轴是 finite-size critical force；不同 k 对应 M=kL<sup>ζ</sup>。虚线是他们模型的 thermodynamic critical force。</figcaption></figure>
+<div class="figure-note"><b>先别找 ν。</b> 这张论文图最直接说明的是：有限系统里的 f<sub>c</sub> 本身不是一个“尺寸无关常数”；L 和 transverse geometry 都会留下 finite-size correction。</div>
 
-<div class="next"><a href="reproduction-lab-10.html">← 上一课</a><a href="reproduction-lab-12.html">下一课 →</a></div>
-<!-- legacy deployment-contract filenames; no longer rendered as scientific evidence: ferrero2013-fig4b-finite-size-threshold.svg -->
-</main></body></html>
+<h2>1 · 先把我们的 mean f<sub>c</sub>(L) 画在同一种坐标上</h2>
+<figure class="figure medium"><img src="../assets/reproduction-lab/lesson11_mean_fc.png" alt="Mean sample critical force versus system size"><figcaption class="caption"><b>Our simulation output · mean f<sub>c</sub>(L)。</b> 每个点来自该尺寸 48 个独立 quenched-disorder realizations 的 sample threshold。横轴和论文 Fig.2 一样是 L，纵轴也同样是 threshold，所以这一步是最直接的 observable-level bridge。</figcaption></figure>
+<table class="table"><thead><tr><th>L</th><th>M grid</th><th>mean f<sub>c</sub></th><th>independent realizations</th></tr></thead><tbody><tr><td>32</td><td>320</td><td>0.819978841</td><td>48</td></tr><tr><td>64</td><td>736</td><td>0.823315430</td><td>48</td></tr><tr><td>128</td><td>1728</td><td>0.823396810</td><td>48</td></tr><tr><td>256</td><td>4096</td><td>0.821850586</td><td>48</td></tr></tbody></table>
+<div class="warn"><b>这里不能和论文的 f<sub>c</sub>≈1.916 比大小。</b> disorder normalization、force units、critical-state algorithm 和 finite geometry 都不同。可比较的是“finite-size threshold 是需要控制的量”，不是横轴上某个具体数值。</div>
+
+<h2>2 · ν 不是从 mean f<sub>c</sub> 读出来的：看 distribution width</h2>
+<p>对每个 L，我们其实有 48 个 sample-specific thresholds。ν-sensitive 的量是它们的 sample-to-sample fluctuation：</p>
+<div class="eq">std(f<sub>c</sub><sup>sample</sup>) ∼ L<sup>−1/ν</sup></div>
+<figure class="figure"><img src="../assets/reproduction-lab/lesson11_std_fc.png" alt="Threshold standard deviation versus size with finite-size fit"><figcaption class="caption"><b>Our simulation output · std(f<sub>c</sub>) vs L。</b> 这是本课真正用于 ν 的图。数据点是 48-realization distribution width；直线是四尺寸 log–log effective fit。它和上面的 mean f<sub>c</sub>(L) 来自同一批 threshold table，但 y 轴和物理问题已经换了。</figcaption></figure>
+<table class="table"><thead><tr><th>L</th><th>std(f<sub>c</sub>)</th></tr></thead><tbody><tr><td>32</td><td>0.064453427</td></tr><tr><td>64</td><td>0.033881635</td></tr><tr><td>128</td><td>0.026465858</td></tr><tr><td>256</td><td>0.015059779</td></tr></tbody></table>
+<p>同一 regression 在 synthetic data 上先恢复 ν<sub>target</sub>=4/3：得到 ν=1.318867，gold test PASS。也就是说，如果输入真的遵守指定 finite-size power law，分析代码能把它读出来。</p>
+
+<h2>3 · 为什么 all-four ν=1.50 仍然不能当结果？</h2>
+<figure class="figure medium"><img src="../assets/reproduction-lab/lesson11_nu_vs_window.png" alt="Effective nu for different finite-size windows"><figcaption class="caption"><b>Our simulation output · size-window audit。</b> 同一 raw threshold table，只改变纳入 slope 的 L window。横向虚线 4/3 是 QEW benchmark，不是拟合目标。真正的 gate 是不同预注册 size window 给出的 ν 是否彼此稳定。</figcaption></figure>
+<table class="table"><thead><tr><th>size window</th><th>ν<sub>eff</sub></th></tr></thead><tbody><tr><td>L=32,64,128</td><td>1.557481</td></tr><tr><td>L=32,64,128,256</td><td>1.503976</td></tr><tr><td>L=64,128,256</td><td>1.709690</td></tr></tbody></table>
+<div class="hold"><b>SIZE-WINDOW STABILITY GATE = NOT PASSED。</b> ν span=0.205713，高于预注册 0.15 gate。也就是说，当前 slope 仍然明显受 finite-size correction 控制，不能把 1.503976 升级成 thermodynamic ν。</div>
+
+<h2>4 · distribution collapse 为什么也不能单独救场？</h2>
+<figure class="figure medium"><img src="../assets/reproduction-lab/lesson11_collapse_score.png" alt="Quantile collapse score versus assumed nu"><figcaption class="caption"><b>Our simulation output · collapse sensitivity。</b> 横轴是假设 ν，纵轴是四尺寸 centered threshold distributions 的 quantile-collapse score（越低越好）。最低点很浅：ν=1.405、4/3 和 variance-fit 1.504 的 score 很接近。</figcaption></figure>
+<div class="grid3"><div class="card"><b>best scan</b><p>ν=1.405<br>score=0.117003</p></div><div class="card"><b>QEW 4/3</b><p>score=0.120858</p></div><div class="card"><b>variance fit 1.504</b><p>score=0.123243</p></div></div>
+<p>而且 collapse 和 variance fit 用的是<b>同一批 48×4 thresholds</b>，不是新的独立证据。一个宽而浅的 optimum 不能覆盖掉 size-window drift。</p>
+
+<h2 id="result">5 · 这一课最后到底能说什么？</h2>
+<div class="ok"><b>FINITE-SIZE TREND EXISTS。</b> sample-to-sample threshold fluctuations 从 L=32 到 256 明显收缩；synthetic FSS gold test 也通过。</div>
+<div class="hold"><b>UNIVERSAL NU CLAIM = NOT AUTHORIZED。</b> 当前尺寸下 ν 对 size window 仍不稳定；bootstrap 95% 区间 [1.241478, 1.903499] 也很宽。下一步需要更大 L / 更强 finite-size evidence，而不是继续挑一个最接近 4/3 的窗口。</div>
+
+<h2>6 · 可复查数据</h2>
+<div class="code-links"><a href="../examples/reproduction-lab/lesson11_fss_nu.py">完整 Python 脚本</a><a href="../assets/reproduction-lab/lesson11_fss_nu.txt">run receipt</a><a href="../assets/reproduction-lab/lesson11_fc_raw.csv">192-row threshold table</a><a href="../assets/reproduction-lab/source-figure-receipt.json">论文截图 receipt</a></div>
+<div class="next"><a href="reproduction-lab-10.html">← L10</a><a href="reproduction-lab-12.html">L12 →</a></div>
+</main><script src="../terms.js"></script></body></html>

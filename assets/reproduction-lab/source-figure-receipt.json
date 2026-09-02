@@ -1,0 +1,118 @@
+{
+  "render_dpi": 500,
+  "policy": "full original figure region including all panels, axes, legends, panel labels, and original caption; no scientific annotation added",
+  "figures": [
+    {
+      "file": "source-ferrero2013-pre-fig1-full.png",
+      "source_page": 5,
+      "crop_box_px_at_500dpi": [
+        300,
+        283,
+        2100,
+        1967
+      ],
+      "pixel_size": [
+        1800,
+        1684
+      ],
+      "sha256": "7481d90a272fcf2469a6590db1d176a02551e9f85fb17ad5e0b451781ae16b57",
+      "citation": "Ferrero et al., PRE 87, 032122 (2013), Fig. 1"
+    },
+    {
+      "file": "source-ferrero2013-pre-fig2-full.png",
+      "source_page": 5,
+      "crop_box_px_at_500dpi": [
+        2150,
+        283,
+        3933,
+        1833
+      ],
+      "pixel_size": [
+        1783,
+        1550
+      ],
+      "sha256": "b34b0baafc64b5d59a28afa8e258ed9e42dd2948f7a5e2ce4d2c189d2180b0b6",
+      "citation": "Ferrero et al., PRE 87, 032122 (2013), Fig. 2"
+    },
+    {
+      "file": "source-ferrero2013-pre-fig3-full.png",
+      "source_page": 6,
+      "crop_box_px_at_500dpi": [
+        2183,
+        267,
+        3967,
+        2933
+      ],
+      "pixel_size": [
+        1784,
+        2666
+      ],
+      "sha256": "2d265c6eb594b3fc1e4ce4441c5457f49205c26f87a93891e1c66dfe6fd8234e",
+      "citation": "Ferrero et al., PRE 87, 032122 (2013), Fig. 3"
+    },
+    {
+      "file": "source-ferrero2013-pre-fig5-full.png",
+      "source_page": 7,
+      "crop_box_px_at_500dpi": [
+        233,
+        3017,
+        2100,
+        4983
+      ],
+      "pixel_size": [
+        1867,
+        1966
+      ],
+      "sha256": "97cef698006e37f956ac3483b4b54dd320e197986aa4da5781596df8a67e3cda",
+      "citation": "Ferrero et al., PRE 87, 032122 (2013), Fig. 5"
+    },
+    {
+      "file": "source-ferrero2013-review-fig1-full.png",
+      "source_page": 3,
+      "crop_box_px_at_500dpi": [
+        450,
+        350,
+        3700,
+        2900
+      ],
+      "pixel_size": [
+        3250,
+        2550
+      ],
+      "sha256": "587705c03aff139ffd1fff1bcb22cc2f2d5855a74d2d5710f0172d39ee18b562",
+      "citation": "Ferrero et al., Numerical Approaches on Driven Elastic Interfaces in Random Media (2013), Fig. 1"
+    },
+    {
+      "file": "source-ferrero2021-fig3-full.png",
+      "source_page": 8,
+      "crop_box_px_at_500dpi": [
+        500,
+        200,
+        3383,
+        1750
+      ],
+      "pixel_size": [
+        2883,
+        1550
+      ],
+      "sha256": "666483f71fb9917122549e1b5d74004e283d804dd6fa1ddb0bc0e98dc4295c26",
+      "citation": "Ferrero et al., Annu. Rev. Condens. Matter Phys. 12, 111 (2021), Fig. 3"
+    },
+    {
+      "file": "source-ferrero2021-fig4-full.png",
+      "source_page": 8,
+      "crop_box_px_at_500dpi": [
+        167,
+        2583,
+        3417,
+        4283
+      ],
+      "pixel_size": [
+        3250,
+        1700
+      ],
+      "sha256": "1c5e03eea65c9179c32a04790b8e102d7ab6cb6f0c81468483b3d2f09cc93379",
+      "citation": "Ferrero et al., Annu. Rev. Condens. Matter Phys. 12, 111 (2021), Fig. 4"
+    }
+  ]
+}
