@@ -21,7 +21,7 @@
 <div class="claims"><div class="claim"><h3>作者真正证明了什么</h3><p>在明确的哈密顿量弹性流形模型中，作者直接求临界流形，并用 W²(L) ∼ L<sup>2ζ</sup> 做有限尺寸标度；不同弹性能得到显著不同的 ζ，说明有效弹性本身会影响临界类别。</p></div><div class="claim"><h3>作者没有证明什么</h3><p>这不是对真实铁电 DW 的普适性测量；ζ 也不能脱离模型的维数、弹性和无序直接搬到滑移铁电。单独一个粗糙度指数仍不足以闭合退钉扎结论。</p></div></div>
 <div class="bridge">静态临界几何给了 ζ；但数值或实验通常不知道 f<sub>c</sub> 的精确值。怎么在有限时间里找临界点，并避免把瞬态当成指数？Ferrero 直接处理这个问题。</div>
 <h2 id="relaxation">3 · Ferrero 2013：用非稳态松弛定位 f<sub>c</sub>，同时警惕标度修正</h2><p>从平界面开始施加不同驱动力，<i>f&gt;f</i><sub>c</sub> 时速度最终饱和到有限值，<i>f&lt;f</i><sub>c</sub> 时最终掉到零，恰在临界点才期望 <span class="eq">v(t) ∼ t<sup>−β/νz</sup></span>。这给出一种不必先跑到稳态的临界点定位方法，但作者同样强调：越靠近 f<sub>c</sub>，需要的时间和平均越长。</p>
-<div class="src"><div class="head"><b>原文 · Ferrero et al. 2013</b>　<span class="rule">Physical Review E 87 · Short-time-dynamics 标度 · 正式发表 PDF p.6 · 原文未改</span></div><blockquote class="source-text"><p>In Fig. 3 we observe the averaged string velocity behavior against time. When the applied force f is greater than the thermodynamic critical force f<sub>c</sub>, v(t) saturates to a finite value at a time which increases as we approach f<sub>c</sub> from above. On the other hand, for forces smaller than f<sub>c</sub>, v(t) goes to 0 after a transient, which is longer as we approach f<sub>c</sub> from below. Exactly at f = f<sub>c</sub> we expect v(t) ∼ t<sup>−β/νz</sup> after a microscopic time regime.</p><p>Of course, it is very difficult to hit exactly f<sub>c</sub>, but what we can do is to bound it from above and below. As we approach f<sub>c</sub> it takes longer and longer times (and requires better averages) to determine if a velocity curve for a given force is saturating or vanishing.</p></blockquote><div class="translation"><b>中文导读</b><p>Ferrero 从平直界面出发观察速度随时间的松弛：驱动力高于 f_c 时速度最终饱和，低于 f_c 时最终衰减到零，临界附近则出现幂律式非稳态松弛。作者同时强调，介观交叉和标度修正会让有限时间内测到的“有效指数”产生系统偏差。</p></div><div class="note">这正是数值工作最容易犯错的位置：在有限时间窗口里，一条暂时很直的双对数线并不自动是渐近临界标度。先把 f<sub>c</sub> 夹住，再谈指数。</div></div>
+<div class="src"><div class="head"><b>原文 · Ferrero et al. 2013</b>　<span class="rule">Physical Review E 87 · 短时动力学标度 · 正式发表 PDF p.6 · 原文未改</span></div><blockquote class="source-text"><p>In Fig. 3 we observe the averaged string velocity behavior against time. When the applied force f is greater than the thermodynamic critical force f<sub>c</sub>, v(t) saturates to a finite value at a time which increases as we approach f<sub>c</sub> from above. On the other hand, for forces smaller than f<sub>c</sub>, v(t) goes to 0 after a transient, which is longer as we approach f<sub>c</sub> from below. Exactly at f = f<sub>c</sub> we expect v(t) ∼ t<sup>−β/νz</sup> after a microscopic time regime.</p><p>Of course, it is very difficult to hit exactly f<sub>c</sub>, but what we can do is to bound it from above and below. As we approach f<sub>c</sub> it takes longer and longer times (and requires better averages) to determine if a velocity curve for a given force is saturating or vanishing.</p></blockquote><div class="translation"><b>中文导读</b><p>Ferrero 从平直界面出发观察速度随时间的松弛：驱动力高于 f_c 时速度最终饱和，低于 f_c 时最终衰减到零，临界附近则出现幂律式非稳态松弛。作者同时强调，介观交叉和标度修正会让有限时间内测到的“有效指数”产生系统偏差。</p></div><div class="note">这正是数值工作最容易犯错的位置：在有限时间窗口里，一条暂时很直的双对数线并不自动是渐近临界标度。先把 f<sub>c</sub> 夹住，再谈指数。</div></div>
 <figure class="fig"><a href="../assets/depinning/ferrero2013-fig3-nonsteady-velocity.png" rel="noopener" target="_blank"><img alt="Ferrero 2013 nonstationary velocity relaxation and scaling collapse" src="../assets/depinning/ferrero2013-fig3-nonsteady-velocity.png"/></a><figcaption class="cap"><b>Fig. 3 · 非稳态 v(t) 与标度坍缩.</b><span class="zoom">点击图片查看 600 DPI 原尺寸</span><br/>(a) 不同驱动力的原始松弛曲线在临界点两侧分别走向有限速度与 0；(b) 用 β、ν、z 和 f<sub>c</sub> 做联合缩放。单一幂律拟合被升级成多曲线一致性检查。</figcaption></figure>
 <div class="claims"><div class="claim"><h3>作者真正证明了什么</h3><p>作者在连续 QEW 弹性线中系统研究从平界面出发的非稳态松弛，利用 f&lt;f<sub>c</sub>、f≈f<sub>c</sub>、f&gt;f<sub>c</sub> 的时间演化夹逼临界力，并展示介观标度修正会显著偏置有效指数。</p></div><div class="claim"><h3>作者没有证明什么</h3><p>一张漂亮的坍缩不是普适性证明；这些指数属于其研究的 QEW 退钉扎类别。若滑移铁电模型含长程弹性、塑性、强各向异性或不同动力学，必须重新检验。</p></div></div>
 <div class="warn"><b>“坍缩好看”仍不是终点。</b> 临界点、指数、有限尺寸和有限时间彼此耦合；如果只调整很多自由参数把曲线压在一起，仍可能得到假阳性。需要独立测量/关系约束来减少自由度。</div>
@@ -74,9 +74,9 @@
 <h3>6.6.5 · 标度修正是诊断，不是无限自由度</h3>
 <p>若残差随 L 呈系统趋势，可以测试最小标度修正，例如</p>
 <div class="eq">O(L,f) = L<sup>−x</sup>[G(y) + L<sup>−ω</sup>G<sub>1</sub>(y) + …]，y=(f−f<sub>c</sub>)L<sup>1/ν</sup></div>
-<p>但加入 ω / G<sub>1</sub> 后必须看到<b>可复现的系统改善</b>，并报告主指数对修正模型的敏感性。若每加一个修正参数指数都大幅移动，合理结论是“当前 sizes 仍在交叉区”，不是“终于拟合出了精确普适类”。</p>
+<p>但加入 ω / G<sub>1</sub> 后必须看到<b>可复现的系统改善</b>，并报告主指数对修正模型的敏感性。若每加一个修正参数指数都大幅移动，合理结论是“当前尺寸仍在交叉区”，不是“终于拟合出了精确普适类”。</p>
 <h3>6.6.6 · 两张图共享数据，就不是两次独立确认</h3>
-<p>f<sub>c</sub>(L) shift、临界速度标度、full 坍缩往往使用同一批尺寸 / 无序样本。它们可以形成很强的<b>内部一致性</b>，但不能因为画成三张分图就当成三份统计独立证据。真正更独立的交叉核验来自不同可观测量：例如粗糙度 / 结构因子、nonsteady 动力学或热圆滑。</p>
+<p>f<sub>c</sub>(L) shift、临界速度标度、完整坍缩往往使用同一批尺寸 / 无序样本。它们可以形成很强的<b>内部一致性</b>，但不能因为画成三张分图就当成三份统计独立证据。真正更独立的交叉核验来自不同可观测量：例如粗糙度 / 结构因子、非稳态动力学或热圆滑。</p>
 <table style="width:100%;border-collapse:collapse;margin:22px 0;background:#fff;border:1px solid var(--l)"><thead><tr><th style="padding:10px;text-align:left;background:#f0ece3">证据等级</th><th style="padding:10px;text-align:left;background:#f0ece3">最低要求</th><th style="padding:10px;text-align:left;background:#f0ece3">允许的措辞</th></tr></thead><tbody>
 <tr><td style="padding:10px;border-top:1px solid var(--l)">C0 · 目视</td><td style="padding:10px;border-top:1px solid var(--l)">手工重标度后看似重合</td><td style="padding:10px;border-top:1px solid var(--l)">仅为示意性坍缩</td></tr>
 <tr><td style="padding:10px;border-top:1px solid var(--l)">C1 · 目标函数</td><td style="padding:10px;border-top:1px solid var(--l)">冻结目标函数 + 不确定性传播</td><td style="padding:10px;border-top:1px solid var(--l)">定量标度候选</td></tr>
@@ -86,23 +86,23 @@
 <div class="q"><b>坍缩验收一句话：</b>如果删掉一个尺寸、换一个预注册区间、传播 f<sub>c</sub> 不确定性或打开留出尺寸后就需要重新“调漂亮”，那张图暂时是标度示意，不是普适性闭合。</div>
 <h2 id="threshold-ladder">6.8 · 阈值推断阶梯：先证明运行有资格，再给 f<sub>c</sub></h2>
 <p>在一般相场 / 弥散界面模型里，阈值不是“找一个让曲线最直的数”。它是一条逐级建立的证据链：<b>零场初态稳定 → 每个受驱运行的数值状态有效 → 钉扎态 / 运动态 / 未解析判读有注册标准 → 单个淬火无序样本得到阈值区间或边界 → 跨独立来源做总体推断 → 最后才把阈值依据交给 β。</b></p>
-<div class="bridge"><b>先区分两类问题：</b>对满足特殊数学条件的凸弹性流形哈密顿量，可以有直接定位有限样本临界流形的专门算法；一般相场伴随 diffuse 畴壁、可能的成核 / 悬垂 / 拓扑变化时，不应借用这种“精确阈值”口吻。这里讨论的是后一类更常见的数值证据链。</div>
+<div class="bridge"><b>先区分两类问题：</b>对满足特殊数学条件的凸弹性流形哈密顿量，可以有直接定位有限样本临界流形的专门算法；一般相场伴随弥散畴壁、可能的成核 / 悬垂 / 拓扑变化时，不应借用这种“精确阈值”口吻。这里讨论的是后一类更常见的数值证据链。</div>
 <h3>6.8.1 · 判据 0：E=0 自己都站不住，就不要开始阈值搜索</h3>
-<div class="checks"><div class="check"><b>初态稳定性</b><p>预先构造的畴壁在零场弛豫后不能继续发生系统性漂移、湮灭或额外成核。否则后面的“低场运动”可能只是初态制备松弛。</p></div><div class="check"><b>数值有效性</b><p>残差、NaN / 发散、能量或求解器特定的收敛指标必须满足预注册 QC。数值上没站稳不能解释成“物理上钉扎态”。</p></div><div class="check"><b>拓扑合理性</b><p>如果目标可观测量假设一堵单值畴壁，零场时就先检查畴壁数量、交点数量与脱离主体的畴。</p></div><div class="check"><b>观测时长基准</b><p>零场基线本身要跑到足够长，使后面加场初期的瞬态区间有可比较的时间尺度。</p></div></div>
+<div class="checks"><div class="check"><b>初态稳定性</b><p>预先构造的畴壁在零场弛豫后不能继续发生系统性漂移、湮灭或额外成核。否则后面的“低场运动”可能只是初态制备松弛。</p></div><div class="check"><b>数值有效性</b><p>残差、NaN / 发散、能量或求解器特定的收敛指标必须满足预注册质检标准。数值上没站稳不能解释成“物理上钉扎态”。</p></div><div class="check"><b>拓扑合理性</b><p>如果目标可观测量假设一堵单值畴壁，零场时就先检查畴壁数量、交点数量与脱离主体的畴。</p></div><div class="check"><b>观测时长基准</b><p>零场基线本身要跑到足够长，使后面加场初期的瞬态区间有可比较的时间尺度。</p></div></div>
 <div class="warn"><b>通过 / 不通过：</b>判据 0 不过时，最短路线是先修初态、求解器或畴壁定义，而不是加密场网格。否则二分搜索只会更快地把一个无效问题“收敛”到错误答案。</div>
 <h3>6.8.2 · 每个场运行先分类，再参与搜索</h3>
 <table class="matrix"><thead><tr><th>运行状态</th><th>最低证据</th><th>阈值搜索中怎么用</th></tr></thead><tbody>
-<tr><td><b>已解析运动态</b></td><td>排除瞬态后仍有持续推进；速度 / displacement 判据对合理区间改动稳定</td><td>可作为运动态阈值上界</td></tr>
-<tr><td><b>给定观测时长内的已解析钉扎态</b></td><td>在注册观测区间内无持续推进，且数值与拓扑 QC 均通过</td><td>可作为钉扎态阈值下界；措辞仍应带方案 / 观测时长条件</td></tr>
-<tr><td><b>未解析 / 观测时长-limited</b></td><td>late 运动与真正长期静止无法区分</td><td>不能替代钉扎态；延长观测时长或保留删失</td></tr>
-<tr><td><b>数值无效</b></td><td>求解器 / 数值证明 / 数据-integrity QC 失败</td><td>不提供物理方向信息；不能据此缩阈值区间</td></tr>
-<tr><td><b>拓扑-失效</b></td><td>single-畴壁映射失效，但二维动力学本身可能有效</td><td>不能继续作为弹性线阈值样本；转入失效证据</td></tr>
+<tr><td><b>已解析运动态</b></td><td>排除瞬态后仍有持续推进；速度 / 位移判据对合理区间改动稳定</td><td>可作为运动态阈值上界</td></tr>
+<tr><td><b>给定观测时长内的已解析钉扎态</b></td><td>在注册观测区间内无持续推进，且数值与拓扑质检均通过</td><td>可作为钉扎态阈值下界；措辞仍应带方案 / 观测时长条件</td></tr>
+<tr><td><b>未解析 / 受观测时长限制</b></td><td>晚时运动与真正长期静止无法区分</td><td>不能替代钉扎态；延长观测时长或保留删失</td></tr>
+<tr><td><b>数值无效</b></td><td>求解器 / 数值证明 / 数据完整性质检失败</td><td>不提供物理方向信息；不能据此缩阈值区间</td></tr>
+<tr><td><b>拓扑-失效</b></td><td>单畴壁映射失效，但二维动力学本身可能有效</td><td>不能继续作为弹性线阈值样本；转入失效证据</td></tr>
 </tbody></table>
-<div class="q"><b>关键措辞：</b>有限时间模拟通常只能支持“在注册观测时长下 resolved-钉扎态”，而不是数学意义上的“永远不会动”。越接近临界点，相关时间越长，这个区别越重要。</div>
+<div class="q"><b>关键措辞：</b>有限时间模拟通常只能支持“在注册观测时长下已解析钉扎态”，而不是数学意义上的“永远不会动”。越接近临界点，相关时间越长，这个区别越重要。</div>
 <h3>6.8.3 · 阈值区间是区间证据，不是一个神奇小数</h3>
 <div class="eq">f<sub>−,i</sub> : valid pinned　&lt;　f<sub>c</sub><sup>(i)</sup>　≤　f<sub>+,i</sub> : valid moving</div>
 <p>对独立淬火无序样本 <b>i</b>，最诚实的第一产物通常是一个阈值区间。自适应 / 二分搜索只是决定下一次把算力放在哪里；它不会把中间试过的场点变成新的独立样本。</p>
-<div class="checks"><div class="check"><b>Bracket invariant</b><p>只有有效钉扎态才能更新下界，只有有效运动态才能更新上界。未解析 / invalid 不改变阈值区间方向。</p></div><div class="check"><b>Registered tolerance</b><p>搜索停止条件应由预先定义的阈值区间 width、相对容差或资源上限决定，而不是“看到一个顺眼的 f<sub>c</sub> 就停”。</p></div><div class="check"><b>E<sub>max</sub> still 钉扎态</b><p>若最高注册驱动仍是有效钉扎态，只得到 f<sub>c</sub><sup>(i)</sup> &gt; E<sub>max</sub> 的下界；这是右删失，不是 infinite 阈值。</p></div><div class="check"><b>Invalid in the middle</b><p>中间场数值失败时，不应用“更高场应该更容易动”的直觉替代实际运行数值证明；先修 numerical validity。</p></div></div>
+<div class="checks"><div class="check"><b>阈值区间不变量</b><p>只有有效钉扎态才能更新下界，只有有效运动态才能更新上界。未解析 / invalid 不改变阈值区间方向。</p></div><div class="check"><b>预注册容差</b><p>搜索停止条件应由预先定义的阈值区间宽度、相对容差或资源上限决定，而不是“看到一个顺眼的 f<sub>c</sub> 就停”。</p></div><div class="check"><b>E<sub>max</sub> still 钉扎态</b><p>若最高注册驱动仍是有效钉扎态，只得到 f<sub>c</sub><sup>(i)</sup> &gt; E<sub>max</sub> 的下界；这是右删失，不是无限大阈值。</p></div><div class="check"><b>中间点无效</b><p>中间场数值失败时，不应用“更高场应该更容易动”的直觉替代实际运行数值证明；先修数值有效性。</p></div></div>
 <h3>6.8.4 · 单样本阈值与总体阈值不是一回事</h3>
 <p>淬火无序下，每个无序样本都可以有自己的 f<sub>c</sub><sup>(i)</sup> 或阈值区间。论文里的总体推断应来自跨独立无序样本的分布，而不是把一个来源内的几十个场探针点当成 n。</p>
 <table class="matrix"><thead><tr><th>对象</th><th>它是什么</th><th>不是什么</th></tr></thead><tbody>
@@ -118,13 +118,13 @@
 <div class="warn"><b>最短科学路线：</b>先让阈值分类器可审计，再增加阈值无序样本；只有总体阈值稳定后，才值得把算力投入更密的近临界速度网格。反过来先跑大矩阵，往往只是把分类器 / 观测时长的系统误差复制很多遍。</div>
 <h2 id="fit-discipline">7 · 指数提取纪律：漂亮直线最容易骗人</h2>
 <p>Ferrero 2013 最值得继承的不是某组 QEW 指数，而是一个负面教训：在微观区间之后仍可能存在很长的 <b>介观交叉区</b>。在这个区间里，双对数图可以非常直，却给出系统偏置的有效指数。作者通过显式标度修正与更长时间/更大尺度才逼近渐近临界区间。</p>
-<div class="src"><div class="head"><b>方法警告 · Ferrero et al. 2013</b>　<span class="rule">项目 Drive PDF · Non-steady relaxation and critical exponents at the depinning transition</span></div><div class="note">论文摘要直接指出：长交叉区可被幂律修正描述；若忽略，会拟合出带带系统偏置的有效指数，文献中 β 的差异可大到约 30%。因此“局部斜率稳定几格”不是验收标准。</div></div>
+<div class="src"><div class="head"><b>方法警告 · Ferrero et al. 2013</b>　<span class="rule">项目 Drive PDF · Non-steady relaxation and critical exponents at the depinning transition</span></div><div class="note">论文摘要直接指出：长交叉区可被幂律修正描述；若忽略，会拟合出带系统偏置的有效指数，文献中 β 的差异可大到约 30%。因此“局部斜率稳定几格”不是验收标准。</div></div>
 <h3>7.1 · 阈值先于 β：不要让 f<sub>c</sub> 成为隐藏拟合参数</h3>
-<div class="checks"><div class="check"><b>样本阈值</b><p>对每个 quenched 无序样本，先用独立钉扎态/运动态或非稳态判据得到阈值区间 / f<sub>c</sub><sup>(i)</sup>。未收敛的样本保留为删失或未解析，不用一个方便的全局 f<sub>c</sub> 覆盖。</p></div><div class="check"><b>总体阈值</b><p>不同 L 的 f<sub>c</sub><sup>(i)</sup> 分布先分别汇总。样本、随机种子、场点不是同一级 n；不要把一个无序样本的多个场点当成独立阈值样本。</p></div></div>
+<div class="checks"><div class="check"><b>样本阈值</b><p>对每个淬火无序样本，先用独立钉扎态/运动态或非稳态判据得到阈值区间 / f<sub>c</sub><sup>(i)</sup>。未收敛的样本保留为删失或未解析，不用一个方便的全局 f<sub>c</sub> 覆盖。</p></div><div class="check"><b>总体阈值</b><p>不同 L 的 f<sub>c</sub><sup>(i)</sup> 分布先分别汇总。样本、随机种子、场点不是同一级 n；不要把一个无序样本的多个场点当成独立阈值样本。</p></div></div>
 <div class="eq">δf = (f−f<sub>c</sub>)/f<sub>c</sub>；　v ∼ δf<sup>β</sup></div>
 <p>β 拟合的敏感性至少要同时扫 <b>δf 下限、δf 上限、f<sub>c</sub> 不确定性、瞬态截断</b>。一个实用诊断是局部有效斜率</p>
 <div class="eq">β<sub>eff</sub>(δf) = d ln v / d ln δf</div>
-<div class="warn"><b>没有平台区，就先叫有效指数。</b> β<sub>eff</sub> 随拟合区间或 δf 系统漂移时，更可能看到交叉区 / correction，而不是已经进入渐近区间。</div>
+<div class="warn"><b>没有平台区，就先叫有效指数。</b> β<sub>eff</sub> 随拟合区间或 δf 系统漂移时，更可能看到交叉区 / 标度修正，而不是已经进入渐近区间。</div>
 <h3>7.2 · ζ 不应该只从一张粗糙畴壁图里出来</h3>
 <div class="checks"><div class="check"><b>全局宽度</b><p>W(L) ∼ L<sup>ζ</sup>：需要多个系统尺寸，最直接检查全局粗糙度。</p></div><div class="check"><b>实空间关联</b><p>B(r)=⟨[u(y+r)−u(y)]²⟩ ∼ r<sup>2ζ<sub>loc</sub></sup>：最容易暴露可用尺度窗过窄、局域异常标度或等值线噪声。</p></div><div class="check"><b>结构因子</b><p>S(q) ∼ q<sup>−(1+2ζ<sub>s</sub>)</sup>：检查谱标度与 UV / 网格截止；标准自仿射情形才期待 ζ<sub>s</sub> 与全局 ζ 相容。</p></div><div class="check"><b>三者不一致时</b><p>先检查有限尺寸、去趋势、畴壁提取、悬垂与异常标度；不要平均成一个“最终 ζ”。</p></div></div>
 <div class="src"><div class="head"><b>失效对照 · Zhou, Zheng &amp; He 2009</b>　<span class="rule">Phys. Rev. B 80, 134425 · APS 官方记录；项目 Drive 另存同组相关 RFIM 悬垂研究（非该正式版 PDF）</span></div><div class="note">二维受驱 RFIM 在退钉扎附近出现显著悬垂；论文报告本征异常标度与空间多重标度，并指出其界面不属于通常的 Edwards–Wilkinson 普适类。这里的价值是方法论：<b>一旦畴壁不再是可靠单值函数，ζ 的定义本身就需要重审。</b></div></div>
@@ -135,14 +135,14 @@
 <p>但这两式应该是<b>待检验的标度假设</b>，不是自动成立的作图模板。至少做一次逐一留出尺寸：每次删掉一个 L，重新估计 f<sub>c</sub>、β/ν、1/ν 与坍缩 quality。若删掉最大或最小尺寸后结论明显跳变，就说明结果仍被交叉区 / 有限尺寸 endpoint 控制。</p>
 <table style="width:100%;border-collapse:collapse;margin:22px 0;background:#fff;border:1px solid var(--l)"><thead><tr><th style="padding:10px;text-align:left;background:#f0ece3">结果层级</th><th style="padding:10px;text-align:left;background:#f0ece3">最少应通过</th><th style="padding:10px;text-align:left;background:#f0ece3">失败后怎么降级措辞</th></tr></thead><tbody>
 <tr><td style="padding:10px;border-top:1px solid var(--l)">候选 β</td><td style="padding:10px;border-top:1px solid var(--l)">拟合-区间 + f<sub>c</sub> 扰动</td><td style="padding:10px;border-top:1px solid var(--l)">有效非线性起始指数</td></tr>
-<tr><td style="padding:10px;border-top:1px solid var(--l)">候选 ζ</td><td style="padding:10px;border-top:1px solid var(--l)">W / B / S(q) 尺度窗与 extraction 敏感性</td><td style="padding:10px;border-top:1px solid var(--l)">尺度-dependent / anomalous 粗糙度</td></tr>
-<tr><td style="padding:10px;border-top:1px solid var(--l)">候选 ν / 坍缩</td><td style="padding:10px;border-top:1px solid var(--l)">多 L + 逐一留出尺寸 + fixed analysis rule</td><td style="padding:10px;border-top:1px solid var(--l)">有限尺寸交叉区, no 普适性结论</td></tr>
-<tr><td style="padding:10px;border-top:1px solid var(--l)">普适性结论</td><td style="padding:10px;border-top:1px solid var(--l)">β, ζ, ν, z / 标度关系 + 拓扑判据</td><td style="padding:10px;border-top:1px solid var(--l)">退钉扎-like / 有效界面区间 only</td></tr>
+<tr><td style="padding:10px;border-top:1px solid var(--l)">候选 ζ</td><td style="padding:10px;border-top:1px solid var(--l)">W / B / S(q) 尺度区间与提取敏感性</td><td style="padding:10px;border-top:1px solid var(--l)">尺度依赖 / 异常粗糙度</td></tr>
+<tr><td style="padding:10px;border-top:1px solid var(--l)">候选 ν / 坍缩</td><td style="padding:10px;border-top:1px solid var(--l)">多 L + 逐一留出尺寸 + 固定分析规则</td><td style="padding:10px;border-top:1px solid var(--l)">有限尺寸交叉区，不支持普适性结论</td></tr>
+<tr><td style="padding:10px;border-top:1px solid var(--l)">普适性结论</td><td style="padding:10px;border-top:1px solid var(--l)">β, ζ, ν, z / 标度关系 + 拓扑判据</td><td style="padding:10px;border-top:1px solid var(--l)">类退钉扎 / 仅限有效界面区间</td></tr>
 </tbody></table>
-<div class="q"><b>验收标准：</b>最好的结果不是“所有图都能拟合”，而是同一组预先定义的阈值、区间、size 与畴壁-extraction rules 在多个可观测量上给出相互兼容的答案。</div>
-<div class="bridge" id="data-claim-bridge"><b>在拟合指数之前先冻结数据层级：</b>场点 / 帧不是新的无序样本，热随机种子要嵌套在 quenched 无序样本下，未阈值区间的阈值要保留为删失或未解析，数值无效不能冒充钉扎态。<a href="research-track.html#data-claim-contract">看完整 Data → Estimator → Evidence → Claim contract →</a></div>
-<h2>把它变成一个靠谱的数值实验</h2><div class="checks"><div class="check"><b>① 先定义并收敛 f<sub>c</sub></b><p>用钉扎态/运动态判据、非稳态松弛或样本阈值分布，检查时间窗口与系统尺寸。</p></div><div class="check"><b>② 测 v(f)，但不要只拟合 β</b><p>明确拟合窗口、离临界的距离、有限温度/有限时间交叉区，并报告不确定度。</p></div><div class="check"><b>③ 独立测临界几何 ζ</b><p>从界面 height / 结构因子 / B(r) 提取，并检查拟合尺度区间与系统尺寸。</p></div><div class="check"><b>④ 测 ξ 或有限尺寸标度</b><p>至少证明相关尺度在靠近阈值时增长；理想情况下用多 L 数据做坍缩。</p></div><div class="check"><b>⑤ 用标度关系交叉检查</b><p>不要把 β、ζ、ν、z 当四个互不相干的“漂亮数字”。</p></div><div class="check"><b>⑥ 最后才谈普适性</b><p>先说明有效界面、elastic kernel、无序类别和温度区间，再与文献指数比较。</p></div></div>
+<div class="q"><b>验收标准：</b>最好的结果不是“所有图都能拟合”，而是同一组预先定义的阈值、区间、尺寸与畴壁提取规则在多个可观测量上给出相互兼容的答案。</div>
+<div class="bridge" id="data-claim-bridge"><b>在拟合指数之前先冻结数据层级：</b>场点 / 帧不是新的无序样本，热随机种子要嵌套在淬火无序样本下，未阈值区间的阈值要保留为删失或未解析，数值无效不能冒充钉扎态。<a href="research-track.html#data-claim-contract">看完整数据 → 估计量 → 证据 → 结论契约 →</a></div>
+<h2>把它变成一个靠谱的数值实验</h2><div class="checks"><div class="check"><b>① 先定义并收敛 f<sub>c</sub></b><p>用钉扎态/运动态判据、非稳态松弛或样本阈值分布，检查时间窗口与系统尺寸。</p></div><div class="check"><b>② 测 v(f)，但不要只拟合 β</b><p>明确拟合窗口、离临界的距离、有限温度/有限时间交叉区，并报告不确定度。</p></div><div class="check"><b>③ 独立测临界几何 ζ</b><p>从界面高度 / 结构因子 / B(r) 提取，并检查拟合尺度区间与系统尺寸。</p></div><div class="check"><b>④ 测 ξ 或有限尺寸标度</b><p>至少证明相关尺度在靠近阈值时增长；理想情况下用多 L 数据做坍缩。</p></div><div class="check"><b>⑤ 用标度关系交叉检查</b><p>不要把 β、ζ、ν、z 当四个互不相干的“漂亮数字”。</p></div><div class="check"><b>⑥ 最后才谈普适性</b><p>先说明有效界面、elastic kernel（弹性核）、无序类别和温度区间，再与文献指数比较。</p></div></div>
 <div class="q">这一章的底线：<b>“有阈值 + 一条幂律”不等于退钉扎普适性。</b> 越接近 PRL 级别的普适性结论，越需要多可观测量、多尺寸和相互约束的标度证据。</div>
-<div class="bridge"><b>Research Track：</b>如果你的现有数据来自完整 P–E / triangle-回线翻转，而下一步想测 β、ζ、ν，先不要把回线中的 coercive 阈值直接当作这里的 f<sub>c</sub>。<a href="research-track.html#protocol">看完整的 full-switching vs isolated-wall protocol 对照 →</a></div>
-<div class="next"><a href="pinning-creep.html">← 04 Pinning, Creep &amp; Roughness</a><a href="disorder-rfim.html">06 Disorder &amp; RFIM →</a></div>
+<div class="bridge"><b>Research Track：</b>如果你的现有数据来自完整 P–E / 三角波回线翻转，而下一步想测 β、ζ、ν，先不要把回线中的矫顽阈值直接当作这里的 f<sub>c</sub>。<a href="research-track.html#protocol">看完整的完整翻转 vs 孤立畴壁流程对照 →</a></div>
+<div class="next"><a href="pinning-creep.html">← 04 Pinning（钉扎）、Creep（蠕变）与 Roughness（粗糙度）</a><a href="disorder-rfim.html">06 Disorder（无序）与 RFIM →</a></div>
 </main><script src="../terms.js"></script></body></html>
