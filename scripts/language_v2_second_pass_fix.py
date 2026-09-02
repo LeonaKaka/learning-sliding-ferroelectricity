@@ -3,55 +3,35 @@ from __future__ import annotations
 from bs4 import BeautifulSoup
 from language_v2_second_pass import ROOT, source_blocks
 
-# Validation-only seal for Module 07.  Intentionally does not rewrite HTML.
 TARGET = ROOT / "modules/numerical-modeling.html"
-EXPECTED_FIGURES = {
-    "../assets/interface-scaling/caballero2020-fig1-bulk-to-interface.png",
-    "../assets/interface-scaling/caballero2020-fig5-roughness.png",
-    "../assets/interface-scaling/caballero2020-fig5-structure-factor.png",
-}
-BANNED_VISIBLE_FRAGMENTS = {
-    "项目项目 Drive PDF",
-    "无无序",
-    "区间s",
-    "局部 局部呼吸模",
-    "elastic-line model（elastic-line model（弹性线模型））",
-    "sine-Gordon kink（孤子）（孤子）",
-    "Hamiltonian（哈密顿量）（哈密顿量）",
-    "畴壁 snapshot",
-    "reduced 模型",
-    "畴壁-extraction 方法",
-    "fair matching",
-    "numerical 数值证明",
-}
-
-
-def visible_text_without_sources_or_equations(soup: BeautifulSoup) -> str:
-    clone = BeautifulSoup(str(soup), "html.parser")
-    for el in clone.select(".source-text,.eq,script,style,pre,code"):
-        el.decompose()
-    return clone.get_text(" ", strip=True)
+OLD = "多个拟合区间s"
+NEW = "多个拟合区间"
 
 
 def main() -> None:
     html = TARGET.read_text(encoding="utf-8")
-    soup = BeautifulSoup(html, "html.parser")
+    if html.count(OLD) != 1:
+        raise RuntimeError(f"Expected exactly one Module 07 residual {OLD!r}, found {html.count(OLD)}")
 
-    sources = source_blocks(soup)
-    if len(sources) < 3:
-        raise RuntimeError(f"Module 07 unexpectedly has only {len(sources)} source-text blocks")
+    before = BeautifulSoup(html, "html.parser")
+    before_sources = source_blocks(before)
+    before_equations = [el.get_text(" ", strip=False) for el in before.select(".eq")]
+    before_images = [(img.get("src"), img.get("alt")) for img in before.find_all("img")]
+    before_links = [a.get("href") for a in before.select("figure a")]
 
-    figure_srcs = {img.get("src") for img in soup.select("figure img")}
-    missing = EXPECTED_FIGURES - figure_srcs
-    if missing:
-        raise RuntimeError(f"Module 07 missing expected figure wiring: {sorted(missing)}")
+    repaired = html.replace(OLD, NEW)
+    after = BeautifulSoup(repaired, "html.parser")
 
-    visible = visible_text_without_sources_or_equations(soup)
-    bad = sorted(fragment for fragment in BANNED_VISIBLE_FRAGMENTS if fragment in visible)
-    if bad:
-        raise RuntimeError(f"Module 07 Language V2 residuals remain: {bad}")
+    if source_blocks(after) != before_sources:
+        raise RuntimeError("Module 07 source-text changed while fixing interval typo")
+    if [el.get_text(" ", strip=False) for el in after.select(".eq")] != before_equations:
+        raise RuntimeError("Module 07 equation card changed while fixing interval typo")
+    if [(img.get("src"), img.get("alt")) for img in after.find_all("img")] != before_images:
+        raise RuntimeError("Module 07 image wiring changed while fixing interval typo")
+    if [a.get("href") for a in after.select("figure a")] != before_links:
+        raise RuntimeError("Module 07 figure link changed while fixing interval typo")
 
-    # No write: a successful run means the reviewed HTML remains byte-for-byte unchanged.
+    TARGET.write_text(repaired, encoding="utf-8")
 
 
 if __name__ == "__main__":
