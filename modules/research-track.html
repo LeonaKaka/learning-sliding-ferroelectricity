@@ -49,11 +49,11 @@
 <p>普通 φ⁴ 相场 能教 界面 动力学，却容易把 滑移铁电 最重要的“周期性 堆垛 坐标”藏掉。一个更贴近本项目问题、但仍保持 最小 的教学模型，是把 局域 registry 压成周期变量 φ(r,t)，再把 极化 写成 φ 的周期函数。</p>
 <div class="eq">P(φ)=P<sub>0</sub> sinφ</div>
 <div class="eq">F[φ]=∫d²r { κ/2 |∇φ|² + V<sub>0</sub>[1−cos(nφ)] − E P<sub>0</sub>sinφ + F<sub>dis</sub>[φ,r] }</div>
-<table class="matrix"><thead><tr><th>项</th><th>保留的物理</th><th>它没有自动包含什么</th></tr></thead><tbody><tr><td>φ(r,t)</td><td>局域 有效 堆垛 phase / registry 坐标</td><td>完整原子坐标、多层所有 堆垛 labels</td></tr><tr><td>V₀[1−cos(nφ)]</td><td>periodic 堆垛 景观 / multiple equivalent minima</td><td>材料真实 DFT energy surface 的所有 anisotropy</td></tr><tr><td>κ|∇φ|²/2</td><td>spatial smoothness、畴壁 tension、finite 畴壁 width</td><td>所有 nonlocal 弹性 / electrostatics</td></tr><tr><td>−EP₀sinφ</td><td>electric drive 对 有效 极化 的耦合</td><td>微观 off-diagonal BEC tensor 本身</td></tr><tr><td>F<sub>dis</sub></td><td>可控地测试 耦合形式 / 关联 / 强度</td><td>一个唯一、已知的真实 缺陷 微观 identity</td></tr></tbody></table>
+<table class="matrix"><thead><tr><th>项</th><th>保留的物理</th><th>它没有自动包含什么</th></tr></thead><tbody><tr><td>φ(r,t)</td><td>局域 有效 堆垛 phase / registry 坐标</td><td>完整原子坐标、多层所有 堆垛 labels</td></tr><tr><td>V₀[1−cos(nφ)]</td><td>periodic 堆垛 景观 / multiple 等价极小值</td><td>材料真实 DFT energy surface 的所有 anisotropy</td></tr><tr><td>κ|∇φ|²/2</td><td>spatial smoothness、畴壁 tension、finite 畴壁 width</td><td>所有 nonlocal 弹性 / electrostatics</td></tr><tr><td>−EP₀sinφ</td><td>electric drive 对 有效 极化 的耦合</td><td>微观 非对角 BEC 张量 本身</td></tr><tr><td>F<sub>dis</sub></td><td>可控地测试 耦合形式 / 关联 / 强度</td><td>一个唯一、已知的真实 缺陷 微观 identity</td></tr></tbody></table>
 <div class="warn"><b>建模边界：</b>这个模型的价值是把 “periodic 堆垛 + diffuse 畴壁 + 淬火无序 + drive” 放在同一最小框架里，用于比较机制与 普适性。若结论依赖特定 3R 晶格方向、层间 剪切张量、非对角 Born 有效电荷、多层 界面 耦合，就必须回到更细的自由度。</div>
 <div class="bridge" id="identifiability-bridge"><b>参数不是越多越真实：</b>这个 periodic 模型 写出 κ、V<sub>0</sub>、P<sub>0</sub>、Γ 与 无序 后，下一步不是一起拟合，而是先问哪些 可观测量 能独立约束哪些参数组合。<a href="numerical-modeling.html#identifiability">去 Module 07 看 nondimensionalization / identifiability →</a></div>
 <h3>3.1 · 离散化 不是纯数值细节</h3>
-<div class="eq">⟨h(r)h(r′)⟩=Δδ<sup>(d)</sup>(r−r′) ⇒ std(h<sub>cell</sub>)∝dx<sup>−d/2</sup><small>二维 cell-average white 无序：std ∝ 1/dx。该缩放只针对明确的 δ-correlated continuum-field convention。</small></div>
+<div class="eq">⟨h(r)h(r′)⟩=Δδ<sup>(d)</sup>(r−r′) ⇒ std(h<sub>cell</sub>)∝dx<sup>−d/2</sup><small>二维 网格单元平均 white 无序：std ∝ 1/dx。该缩放只针对明确的 δ 相关连续场约定。</small></div>
 <p>因此 dx 收敛 要固定的是 <b>物理 无序 定义</b>，不是数组每个 像素 的 标准差。有限相关长度 缺陷、固定位置 缺陷、网格单元积分 random energy 都必须重新从 协方差 / 离散能量 定义推导。</p>
 <h2 id="observables">4 · 可观测量 结构：一个量只回答一个层次的问题</h2>
 <p>真正容易过度 结论 的地方不是模型，而是把一个 可观测量 直接命名成某个 机制。下面这张表是整条 Research Track 的“证据尺子”。</p>
@@ -70,17 +70,17 @@
 <tr><td>z</td><td>明确 初态 / 瞬态 可观测量</td><td>时间区间、initial-态 制备</td><td>介观 交叉区 被当 渐近</td></tr>
 </tbody></table>
 <div class="bridge"><b>预注册不等于僵化。</b>发现新 交叉区 后可以升级模型或新增 次要分析，但要把它标成 事后，并保留原 主 result。这样“失效”才不会被分析自由度悄悄洗掉。</div>
-<h3 id="event-contract">4.6 · 事件统计约定：突发事件 ≠ 雪崩 by naming</h3>
-<div class="three"><div class="card"><b>Freeze 事件检测器</b><p>主 阈值、死时间 / 合并规则、带宽 / 采样率 在看 指数 前固定；另外做一组 事件检测器-敏感性 sweep。</p></div><div class="card"><b>Freeze size 定义</b><p>明确 S 是 翻转面积、integrated 畴壁 advance、integrated 活动度 还是 electrical pulse area；不同定义不能混在同一 τ 里。</p></div><div class="card"><b>Preserve hierarchy</b><p>无序样本 → 事件 → 帧/bin/像素。自助法 draws 只是计算工具，永远不是新的物理样本。</p></div></div>
+<h3 id="event-contract">4.6 · 事件统计约定：不能因为把突发事件叫作 avalanche 就把它当成雪崩</h3>
+<div class="three"><div class="card"><b>Freeze 事件检测器</b><p>主 阈值、死时间 / 合并规则、带宽 / 采样率 在看 指数 前固定；另外做一组 事件检测器-敏感性 sweep。</p></div><div class="card"><b>Freeze size 定义</b><p>明确 S 是 翻转面积、畴壁累计前进量、累计活动度 还是 electrical pulse area；不同定义不能混在同一 τ 里。</p></div><div class="card"><b>Preserve hierarchy</b><p>无序样本 → 事件 → 帧/bin/像素。自助法 draws 只是计算工具，永远不是新的物理样本。</p></div></div>
 <table class="matrix"><thead><tr><th>看到的现象</th><th>允许的最低措辞</th><th>升级前还缺什么</th></tr></thead><tbody>
 <tr><td>间歇 peaks</td><td>突发 / 间歇 翻转</td><td>固定 事件 定义 + 事件检测器 稳健性</td></tr>
 <tr><td>broad 事件-size distribution</td><td>broad / 重尾 事件</td><td>幂律 goodness-of-拟合 + 替代分布</td></tr>
 <tr><td>候选 幂律</td><td>幂律-consistent 区间</td><td>截止 / 尺寸依赖 + duration relation + 无序样本 稳健性</td></tr>
-<tr><td>multiple scaling 可观测量</td><td>候选 雪崩 临界性</td><td>临界 control 参数 / 标度关系 / 普适 形状 or 函数 where applicable</td></tr>
+<tr><td>multiple scaling 可观测量</td><td>候选 雪崩 临界性</td><td>临界 control 参数 / 标度关系 / 适用时还要检查普适形状或标度函数</td></tr>
 </tbody></table>
 <div class="warn"><b>论文写作规则：</b>“突发集中度” 或 “multiple resistance jumps” 可以是很有价值的 现象学；在没有 事件-层级 临界 analysis 前，不把它们改名成 RFIM 雪崩。<a href="disorder-rfim.html#avalanche-statistics">去 Module 06 看完整统计边界 →</a></div>
 <h3 id="data-claim-contract">4.7 · 数据 → 估计量 → 证据 → 结论：先知道 n 在哪一层</h3>
-<p>一条研究结论不是从 原始文件 直接跳到 论文表述。中间至少有四层：<b>数据对象</b> 是记录到的东西；<b>估计量</b> 把它压成一个可比较的量；<b>证据单元</b> 决定不确定度和独立样本数；最后才是 <b>结论</b>。最常见的伪精确，来自把这四层混在一起。</p>
+<p>一条研究结论不是从原始文件 直接跳到 论文表述。中间至少有四层：<b>数据对象</b> 是记录到的东西；<b>估计量</b> 把它压成一个可比较的量；<b>证据单元</b> 决定不确定度和独立样本数；最后才是 <b>结论</b>。最常见的伪精确，来自把这四层混在一起。</p>
 <div class="flow"><div><b>数据</b><p>轨迹、场 row、帧、endpoint、事件、运行 状态。</p></div><div><b>估计量</b><p>f<sub>c</sub><sup>(i)</sup>、v、β<sub>eff</sub>、ζ、work、事件-size statistics。</p></div><div><b>证据</b><p>哪些 无序样本 / device / size 真正提供独立信息。</p></div><div><b>敏感性</b><p>区间、阈值、事件检测器、拓扑、观测时长 改动后是否 通过。</p></div><div><b>结论</b><p>从 现象学 到 候选 临界性，再到 普适性。</p></div></div>
 <h3>4.7.1 · 同一个文件里有很多 rows，不代表 n 很大</h3>
 <table class="matrix"><thead><tr><th>数据对象</th><th>它适合估计什么</th><th>通常的独立层级</th><th>不能偷换成</th></tr></thead><tbody>
@@ -104,15 +104,15 @@
 <h3>4.7.3 · 估计量 的 依据 要单向传递</h3>
 <table class="matrix"><thead><tr><th>目标</th><th>上游 依据</th><th>当前层只允许调什么</th><th>红灯</th></tr></thead><tbody>
 <tr><td>β</td><td>独立 T=0 阈值依据</td><td>预注册的 reduced-force / 瞬态 区间 族</td><td>为了让 β 更直而回调 f<sub>c</sub></td></tr>
-<tr><td>ζ</td><td>通过 拓扑 / single-valuedness 判据 的 畴壁 extraction</td><td>预注册 尺度 masks + 等值线 敏感性</td><td>只挑 W、B、S(q) 中最漂亮的一种</td></tr>
+<tr><td>ζ</td><td>通过 拓扑 / 单值性 判据 的 畴壁 extraction</td><td>预注册 尺度 masks + 等值线 敏感性</td><td>只挑 W、B、S(q) 中最漂亮的一种</td></tr>
 <tr><td>ν / 坍缩</td><td>多 L 阈值 / velocity estimates</td><td>fixed 目标函数 + 逐一留出尺寸 敏感性</td><td>每次 坍缩 都重新自由挑 L 和 f<sub>c</sub></td></tr>
 <tr><td>热圆滑</td><td>冻结的 T=0 f<sub>c</sub> / f<sub>c</sub><sup>(i)</sup></td><td>热 随机种子、T 区间、rounding 可观测量</td><td>用 有限温 曲线事后重定 阈值</td></tr>
-<tr><td>雪崩统计</td><td>冻结的 事件 事件检测器 / size 定义</td><td>截止、alternative-distribution 检验、形状 checks</td><td>看到 指数 后再改 merge/死时间 rule</td></tr>
+<tr><td>雪崩统计</td><td>冻结的 事件检测器 / size 定义</td><td>截止、alternative-distribution 检验、形状 checks</td><td>看到 指数 后再改 merge/死时间 rule</td></tr>
 </tbody></table>
 <div class="bridge"><b>这叫 依据 链：</b>下游分析可以对上游 uncertainty 做 敏感性 传播，但不能把上游 估计量 当成隐藏自由参数重新优化。否则同一批数据会被多次“用来证明自己”。</div>
 <h3>4.7.4 · 结论 ladder：失败时知道该退到哪一级</h3>
 <table class="matrix"><thead><tr><th>证据层级</th><th>最低要求</th><th>允许的写法</th></tr></thead><tbody>
-<tr><td>E0 · 原始数据完整性</td><td>来源追踪、配置、状态、单位、重复/别名检查</td><td>数据集 / 运行 set is 可审计</td></tr>
+<tr><td>E0 · 原始数据完整性</td><td>来源追踪、配置、状态、单位、重复/别名检查</td><td>数据集 / 运行集合可审计</td></tr>
 <tr><td>E1 · 估计量 stability</td><td>判据 / 区间 / 事件检测器 / extraction 敏感性</td><td>稳健 阈值-like / morphology / dynamic 可观测量</td></tr>
 <tr><td>E2 · 总体 / size 证据</td><td>正确 独立单元、删失 accounting、多 无序样本 / L</td><td>总体 separation / 有限尺寸 trend / 有效指数</td></tr>
 <tr><td>E3 · cross-可观测量 临界证据</td><td>f<sub>c</sub>、β、ζ、ν/z 中多个独立 可观测量 相互兼容</td><td>候选 退钉扎 临界区间</td></tr>
@@ -130,9 +130,9 @@
 <h3>4.8.2 · 外层 样本 与 内层 重复 要分开</h3>
 <table class="matrix"><thead><tr><th>层级</th><th>典型对象</th><th>主要用途</th><th>不确定度怎么处理</th></tr></thead><tbody>
 <tr><td><b>外层 独立单元</b></td><td>独立 无序样本 / independent device</td><td>总体推断</td><td>CI / 自助法 / 模型 的最外层 重采样单元</td></tr>
-<tr><td><b>配对条件</b></td><td>同一 来源 下 A vs B 耦合 / 方案</td><td>within-来源 差值</td><td>先在 来源 内形成 Δ<sub>i</sub>，再跨 i 汇总</td></tr>
+<tr><td><b>配对条件</b></td><td>同一 来源 下 A 与 B 耦合 / 方案</td><td>within-来源 差值</td><td>先在 来源 内形成 Δ<sub>i</sub>，再跨 i 汇总</td></tr>
 <tr><td><b>内层 stochastic 重复</b></td><td>固定 quenched 景观 下的 热 随机种子</td><td>估计 条件 热 expectation / 随机波动</td><td>先在 i 内平均或做 nested 模型；不能冒充新 无序 样本</td></tr>
-<tr><td><b>重复观测</b></td><td>time rows、cycles、帧、事件</td><td>估计 轨迹 / 事件 distribution / morphology</td><td>保留 clustering；不能用 row count 放大 总体 n</td></tr>
+<tr><td><b>重复观测</b></td><td>time rows、cycles、帧、事件</td><td>估计 轨迹 / 事件 distribution / morphology</td><td>保留 聚类结构；不能用 数据行数 放大 总体 n</td></tr>
 <tr><td><b>自助法 draw</b></td><td>resampled index sets</td><td>传播 估计量 uncertainty</td><td>draw 数量只控制 蒙特卡洛精度，不增加物理样本</td></tr>
 </tbody></table>
 <h3>4.8.3 · 有限温：先在 淬火无序样本 内平均，再跨 来源 推断</h3>

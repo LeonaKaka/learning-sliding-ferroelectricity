@@ -24,8 +24,8 @@
 <h2 id="reduction">3 · Caballero 2020：什么时候 φ(x,y) 真能约化成 u(y)？</h2>
 <p>这篇就是 06 → 07 的关键桥。体相 GL 不对 界面 形状做先验假设；弹性线 模型则把墙压成单值函数 u(y,t)。作者做的不是“说它们差不多”，而是从 GL 的 孤子剖面 出发，把 畴壁 位置 当 集体坐标，并比较两种模型的 粗糙度 与 结构因子。</p>
 <div class="src"><div class="head"><b>原文 · Caballero et al. 2020</b>　<span class="rule">arXiv:2006.15130 · Drive PDF</span></div><blockquote class="source-text"><p>For a bulk description, we consider a two-dimensional Ginzburg–Landau model evolving with a Langevin equation, and boundary conditions imposing the formation of a rectilinear domain wall. At this level of description no assumptions need to be done over the interface.</p><p>On a different level of description, we consider a one-dimensional elastic line model evolving according to the Edwards–Wilkinson equation, which only allows one to study continuous and univalued interfaces.</p></blockquote><div class="translation"><b>中文导读</b><p>Caballero 明确比较两个描述层级：二维 Ginzburg–Landau 体场模型并不预先限定界面形状；一维 Edwards–Wilkinson 弹性线模型则只允许连续、单值的界面。因此，从相场约化到弹性线之前，必须先确认真实畴壁没有在目标尺度上出现持续的悬垂、封闭小畴等非单值结构。</p></div><div class="note">“only allows continuous and univalued 界面” 正是上一章 悬垂 / 封闭小畴 警告的数学版本：一旦 畴壁 不能写成 u(y)，弹性线 可观测量 就需要重新定义。</div></div>
-<figure class="fig compact"><a href="../assets/interface-scaling/caballero2020-fig1-bulk-to-interface.png" rel="noopener" target="_blank"><img alt="Caballero 2020 Figure 1 bulk Ginzburg Landau field and extracted interface" src="../assets/interface-scaling/caballero2020-fig1-bulk-to-interface.png"/></a><figcaption class="cap"><b>Caballero Fig. 1 · 体相 场 → 弥散畴壁 → extracted 界面。</b><span class="zoom">原 Figure 精裁 · 保留原配色</span><br/>彩色 surface 是 φ(x,y)，黑线是从 体相 场 中抽出的 界面；右上角 tanh-like profile 展示了有限 畴壁 width。这个图最值得记：<b>u(y) 是从 φ(r) 涌现出来的低维坐标，不是另一套互不相干的模型。</b></figcaption></figure>
-<div class="eq">φ*(x) = −φ₀ tanh(x/w),　w = √(2γ/α)<small>Caballero Eq. (7–8) 的 孤子剖面 与 wall width。只有当 wall profile 与几何假设受控时，把 bulk field 投影到 u(y,t) 才有物理意义。</small></div>
+<figure class="fig compact"><a href="../assets/interface-scaling/caballero2020-fig1-bulk-to-interface.png" rel="noopener" target="_blank"><img alt="Caballero 2020 Figure 1 bulk Ginzburg Landau field and extracted interface" src="../assets/interface-scaling/caballero2020-fig1-bulk-to-interface.png"/></a><figcaption class="cap"><b>Caballero Fig. 1 · 体相 场 → 弥散畴壁 → 提取出的界面。</b><span class="zoom">原 Figure 精裁 · 保留原配色</span><br/>彩色曲面 是 φ(x,y)，黑线是从 体相 场 中抽出的 界面；右上角 类 tanh 剖面 展示了有限 畴壁 width。这个图最值得记：<b>u(y) 是从 φ(r) 涌现出来的低维坐标，不是另一套互不相干的模型。</b></figcaption></figure>
+<div class="eq">φ*(x) = −φ₀ tanh(x/w),　w = √(2γ/α)<small>Caballero Eq. (7–8) 的 孤子剖面 与 畴壁宽度。只有当 畴壁剖面 与几何假设受控时，把 体场 投影到 u(y,t) 才有物理意义。</small></div>
 <figure class="fig narrow"><a href="../assets/interface-scaling/caballero2020-fig5-roughness.png" rel="noopener" target="_blank"><img alt="Caballero 2020 Figure 5 roughness comparison between Ginzburg Landau and Edwards Wilkinson models" src="../assets/interface-scaling/caballero2020-fig5-roughness.png"/></a><figcaption class="cap"><b>Caballero Fig. 5 · 粗糙度 B(r,t) 面板。</b><span class="zoom">原 Figure 面板精裁 · 保留原配色</span><br/>作者不是只比较 畴壁 snapshot，而是比较从 体相 场 抽出的界面统计量。这里保留 B(r,t) 的坐标、时间色标和理论/数值曲线，用来判断 模型 reduction 是否在目标尺度成立。</figcaption></figure>
 <figure class="fig narrow"><a href="../assets/interface-scaling/caballero2020-fig5-structure-factor.png" rel="noopener" target="_blank"><img alt="Caballero 2020 Figure 5 structure factor comparison between Ginzburg Landau and Edwards Wilkinson models" src="../assets/interface-scaling/caballero2020-fig5-structure-factor.png"/></a><figcaption class="cap"><b>Caballero Fig. 5 · 结构因子 S(q,t) 面板。</b><span class="zoom">原 Figure 面板精裁 · 保留原配色</span><br/>与 B(r,t) 一起看，S(q,t) 检查的是同一界面在 Fourier 空间的尺度结构。两种描述在作者建立的参数映射与适用条件下给出相容结果，才支持把 弥散畴壁 约化成 弹性线。</figcaption></figure>
 <div class="claims"><div class="claim"><h3>真正能拿来用的判据</h3><p>壁宽相对观察尺度足够小、界面 大体 单值、低温/弱 体相 涨落，并且抽出的 u(y) 的 粗糙度 / 结构因子 与 reduced 模型 在目标尺度上相容。</p></div><div class="claim"><h3>失效信号</h3><p>强 成核、孤立小畴、持续 悬垂/封闭小畴、壁宽与相关长度同阶、强局域变形，或不同 畴壁-extraction 方法给出显著不同 ζ。此时不要强行拟合 弹性线 指数。</p></div></div>
@@ -37,24 +37,24 @@
 <h2 id="identifiability">4.5 · 无量纲化 &amp; 可辨识性：参数多，不等于信息多</h2>
 <p>一套 连续体 模型 可以同时写 κ、V<sub>0</sub>、P<sub>0</sub>、Γ、无序 amplitude、关联长度 和 温度；但一条实验曲线通常不能把它们全部独立决定。真正应该先问的是：<b>某个 可观测量 约束的是哪个参数，还是只约束某个参数组合？</b> 如果这个问题没回答，所谓“参数拟合得很好”可能只是 non-可辨识性。</p>
 <div class="q">最重要的校准顺序：<b>先定自由度与 对称性 → 再定 无无序 静态性质 → 再定 无无序 动力学 → 再加 无序 → 最后才拿没参与校准的 可观测量 做验证。</b></div>
-<h3>4.5.1 · 先用 无无序 single-harmonic sector 看清“参数组合”</h3>
+<h3>4.5.1 · 先用 无无序 单谐波扇区 看清“参数组合”</h3>
 <p>对 Research Track 里采用的 periodic 堆垛 模型，先暂时关掉 drive 与 无序，并只保留一维、单谐波 无无序 sector：</p>
 <div class="eq">F = ∫ dx [ κ/2 (∂<sub>x</sub>φ)² + V<sub>0</sub>(1 − cos(nφ)) ]</div>
-<p>在<b>这个明确 normalization</b> 下，相邻 minima 之间的 sine-Gordon kink 有特征宽度与壁张力：</p>
+<p>在<b>这个明确 normalization</b> 下，相邻 极小值 之间的 sine-Gordon kink（孤子） 有特征宽度与壁张力：</p>
 <div class="eq">ℓ<sub>w</sub> = √[ κ / (n²V<sub>0</sub>) ]　；　γ<sub>w</sub> = 8√(κV<sub>0</sub>) / n</div>
 <div class="warn"><b>公式边界：</b>这两式只属于这里写出的 无无序、单谐波、局域-gradient 模型。真实 滑移铁电 堆垛 景观 若有方向各向异性、多谐波、非局域 弹性 或多个 coupled 界面，应重新对实际 energy 景观 做数值 畴壁 校准，不能把这两个 prefactor 当材料定律。</div>
 <p>这两式立刻暴露 可辨识性：只知道 畴壁 width 时，只约束 <b>κ/V<sub>0</sub></b> 的组合；如果还能独立知道 畴壁 tension / 畴壁 energy，才有机会在这个简化模型里拆开：</p>
 <div class="eq">V<sub>0</sub> = γ<sub>w</sub> / (8ℓ<sub>w</sub>)　；　κ = n²ℓ<sub>w</sub>γ<sub>w</sub> / 8</div>
 <h3>4.5.2 · 哪个 可观测量 能约束什么？</h3>
 <table class="matrix"><thead><tr><th>可观测量 / prior</th><th>主要约束</th><th>单独做不到什么</th></tr></thead><tbody>
-<tr><td>堆垛 对称性 / minima 数</td><td>periodicity、允许的 n、order-参数 拓扑</td><td>不能靠 滞回 拟合 把 对称性 当自由参数随便调</td></tr>
+<tr><td>堆垛 对称性 / 极小值 数</td><td>periodicity、允许的 n、order-参数 拓扑</td><td>不能靠 滞回 拟合 把 对称性 当自由参数随便调</td></tr>
 <tr><td>无无序 畴壁 width ℓ<sub>w</sub></td><td>gradient 刚度 / 局域势垒 的长度组合</td><td>通常不能单独拆出 κ 与 V<sub>0</sub></td></tr>
 <tr><td>无无序 畴壁 energy / tension γ<sub>w</sub></td><td>√(κV<sub>0</sub>) 类型的能量组合</td><td>没有宽度信息时仍不能唯一决定 κ、V<sub>0</sub></td></tr>
-<tr><td>堆垛 energy 景观 / 势垒</td><td>局域 势 的能量尺度与 harmonic content</td><td>不决定 gradient 刚度 κ</td></tr>
+<tr><td>堆垛 energy 景观 / 势垒</td><td>局域 势 的能量尺度与 谐波成分</td><td>不决定 gradient 刚度 κ</td></tr>
 <tr><td>极化 amplitude / 静电 耦合 convention</td><td>P<sub>0</sub> 与 electric-drive energy 尺度</td><td>不能从 矫顽场 单独反推出 P<sub>0</sub></td></tr>
 <tr><td>无无序-畴壁 迁移率 / relaxation time</td><td>在 静态性质 已冻结后的 Γ / kinetic 尺度</td><td>若 κ、V<sub>0</sub> 还漂着，Γ 会与能量尺度互相补偿</td></tr>
 <tr><td>P–E 回线 / coercive 尺度</td><td>方案 下多个机制的综合 response</td><td>不能唯一同时识别 κ、V<sub>0</sub>、Γ、σ、ξ<sub>d</sub></td></tr>
-<tr><td>无序 morphology + 阈值 statistics</td><td>在 无无序 baseline 冻结后的 耦合形式、强度、关联 effects</td><td>不能用来补偿一个本来就错误的 无无序 畴壁</td></tr>
+<tr><td>无序 morphology + 阈值 statistics</td><td>在 无无序 基准 冻结后的 耦合形式、强度、关联 effects</td><td>不能用来补偿一个本来就错误的 无无序 畴壁</td></tr>
 </tbody></table>
 <h3>4.5.3 · 无量纲化的价值，是看见真正控制问题的 ratios</h3>
 <p>在上面的单谐波 无无序 模型 中，可以用 ℓ<sub>w</sub> 作为自然长度。于是很多“参数扫描”其实更应该写成 dimensionless ratio：</p>
@@ -72,17 +72,17 @@
 <p>这里的重点不是把这个 prefactor 当普适常数，而是说明 <b>Γ 只有在能量尺度冻结后才有独立动力学意义</b>。实际 校准 更稳妥的做法，是先用 静态性质 决定 畴壁 profile / energy，再用 无无序-畴壁 迁移率 或独立 relaxation 可观测量 约束 kinetic 尺度。</p>
 <h3>4.5.5 · 校准 与 验证 必须分开</h3>
 <div class="steps"><div class="step"><b>① Structural prior</b><p>由 堆垛 对称性 / 微观 景观 决定 序参量 与 periodicity。</p></div><div class="step"><b>② Clean 静态性质</b><p>用 畴壁 width、畴壁 energy、堆垛 势垒 等冻结 κ / V<sub>0</sub> 相关组合。</p></div><div class="step"><b>③ Clean 动力学</b><p>再用 迁移率 / relaxation 约束 Γ，不让 kinetic 参数替 静态性质 擦屁股。</p></div></div>
-<div class="steps"><div class="step"><b>④ 无序</b><p>在 无无序 baseline 不动以后，定义 RF/RB 耦合、物理 amplitude 与 ξ<sub>d</sub>。</p></div><div class="step"><b>⑤ Calibration set</b><p>明确哪些 可观测量 被用来定参数。</p></div><div class="step"><b>⑥ Holdout 验证</b><p>用没参与校准的 morphology、阈值、size/温度 response 检查 模型 是否真的预测到新东西。</p></div></div>
+<div class="steps"><div class="step"><b>④ 无序</b><p>在 无无序 基准 不动以后，定义 RF/RB 耦合、物理 amplitude 与 ξ<sub>d</sub>。</p></div><div class="step"><b>⑤ Calibration set</b><p>明确哪些 可观测量 被用来定参数。</p></div><div class="step"><b>⑥ Holdout 验证</b><p>用没参与校准的 morphology、阈值、size/温度 response 检查 模型 是否真的预测到新东西。</p></div></div>
 <div class="warn"><b>一个常见自欺路径：</b>同时调 κ、V<sub>0</sub>、Γ、σ 让同一条 P–E 回线 很像实验，然后再把“回线 拟合得好”当成模型验证。那只是 校准 closure，不是 independent 验证。</div>
 <div class="q"><b>模型声明至少要补一句：</b>“哪些参数由外部 structural / static / dynamic 可观测量 约束；哪些只在 dimensionless ratio 中可识别；哪些仍是 phenomenological control 参数；最后用什么 holdout 可观测量 验证。”</div>
 <h2>5 · Fedeli 2019：无序 要进入“物理项”，而不是只给结果图加噪声</h2>
 <div class="src"><div class="head"><b>原文 · Fedeli, Kamlah &amp; Frangi 2019</b>　<span class="rule">Smart Mater. Struct. 28, 035021 · Drive PDF</span></div><blockquote class="source-text"><p>Different kinds of defects were considered: holes, point charges and polarization pinning in single crystals, as well as grain boundaries in polycrystals, without and with additional dielectric interphase.</p><p>It can be seen that defects lead to nucleation of new domains. Compared to the energy barrier for switching in an ideal single crystal, the overall coercive field strength is significantly reduced towards realistic values.</p></blockquote><div class="translation"><b>中文导读</b><p>Fedeli 等直接比较多类实际缺陷，包括孔洞、点电荷、极化钉扎以及多晶中的晶界。它们都可能促进新畴成核，并把相对于理想单晶的翻转势垒和矫顽场降低到更接近真实器件的范围。这里最重要的提醒是：不同缺陷对应的耦合机制并不相同。</p></div><div class="note">这一篇的价值是提醒你：不同 缺陷 类型对应不同物理耦合，不能全部塞进一个“噪声 强度 σ”后还声称微观机制相同。</div></div>
 <table class="matrix"><thead><tr><th>连续场里的做法</th><th>物理含义</th><th>与 06 的关系</th></tr></thead><tbody><tr><td>V(φ,r) 或 α(r)、势垒(r) 随位置变</td><td>局域 翻转 cost / 畴壁 energy 随位置变；若 ±φ 对称仍保留，常可看成 随机键型</td><td>随机的是 景观，不直接偏爱 + 或 −</td></tr><tr><td>−h(r)φ</td><td>局域 偏置 直接偏爱 order-参数 的某个符号</td><td>连续体 随机场 耦合；但<b>不等同于“已经用了 RFIM”</b></td></tr><tr><td>固定区域 φ 或极大局域 势垒</td><td>钉扎中心 / frozen region</td><td>更接近强、局域、非高斯 缺陷，而不是白噪声</td></tr><tr><td>有限相关长度 h<sub>ℓ</sub>(r)</td><td>缺陷 景观 有真实尺寸 ℓ</td><td>dx 改变时必须保持 ℓ 的物理长度不变</td></tr></tbody></table>
-<h2 id="disorder-axes">研究桥接 · 无序 至少有三条独立轴：耦合 × 强度 × 关联长度</h2>
+<h2 id="disorder-axes">研究桥接 · 无序至少有三条独立轴：耦合方式 × 强度 × 关联长度</h2>
 <p>只写“RF 强度 = σ”仍然少了一维信息。即使 耦合形式 与 RMS 强度 相同，只要空间相关长度不同，畴壁 看到的 energy 景观 就可以完全不同。最小写法是：</p>
-<div class="eq">⟨h(r)h(r′)⟩ = Δ · C(|r−r′|/ξ<sub>d</sub>)<small>coupling type 决定 h 怎样进入自由能；Δ/σ 决定幅度；ξ<sub>d</sub> 决定 disorder 在空间上是近似白噪声、有限尺寸 defect，还是 extended/clustered landscape。</small></div>
-<div class="twocol"><div class="card"><h3>δ-correlated limit</h3><p>理想 连续体 white 噪声 没有有限 微观 ξ<sub>d</sub>。离散成 网格单元平均 局域 场 时，网格方差必须随 cell volume 重标度；二维对应标准差 ∝ dx<sup>−1</sup>。</p></div><div class="card"><h3>finite-关联 无序</h3><p>若先定义一个物理 ξ<sub>d</sub> 并生成连续 correlated 场，dx refinement 的任务是更好地解析同一个 ξ<sub>d</sub>；不能再机械把“每格 σ”按 white-噪声 公式解释。</p></div></div>
-<div class="warn"><b>因此 correlated-RF 稳健性 不是“换一种随机数”。</b>它是在问：当 无序 本身带有一个新的物理长度 ξ<sub>d</sub> 时，阈值、粗糙度 和 apparent 指数 是否只发生 nonuniversal shift，还是出现新的 交叉区 尺度 / 映射 失效。</div>
+<div class="eq">⟨h(r)h(r′)⟩ = Δ · C(|r−r′|/ξ<sub>d</sub>)<small>耦合方式决定 h 怎样进入自由能；Δ/σ 决定幅度；ξ<sub>d</sub> 决定 disorder 在空间上是近似白噪声、有限尺寸 defect，还是 延展/成簇的无序景观。</small></div>
+<div class="twocol"><div class="card"><h3>δ-correlated limit</h3><p>理想 连续体 white 噪声 没有有限 微观 ξ<sub>d</sub>。离散成 网格单元平均 局域 场 时，网格方差必须随 cell volume 重标度；二维对应标准差 ∝ dx<sup>−1</sup>。</p></div><div class="card"><h3>finite-关联 无序</h3><p>若先定义一个物理 ξ<sub>d</sub> 并生成连续 correlated 场，dx 加密 的任务是更好地解析同一个 ξ<sub>d</sub>；不能再机械把“每格 σ”按 white-噪声 公式解释。</p></div></div>
+<div class="warn"><b>因此 correlated-RF 稳健性 不是“换一种随机数”。</b>它是在问：当 无序 本身带有一个新的物理长度 ξ<sub>d</sub> 时，阈值、粗糙度 和 apparent 指数 是否只发生 非普适偏移，还是出现新的 交叉区 尺度 / 映射 失效。</div>
 <div class="bridge"><a href="research-track.html#fair">Research Track 的 fair matching</a> 控制的是不同 耦合 的比较尺度；本节补上第三轴 ξ<sub>d</sub>。二者一起才能把“same 无序 强度”说完整。</div>
 <h2 id="grid">6 · 最容易把数值结果做假的地方：dx 改了，无序 也跟着变</h2>
 <p>下面不是某篇论文的直接原句，而是本站对 连续体 白噪声无序 的离散化推导。它是做 收敛 检验 前必须固定的量。</p>
@@ -91,14 +91,14 @@
 <div class="warn"><b>适用范围：</b>上面的 <b>σ<sub>grid</sub> ∝ dx<sup>−d/2</sup></b> 针对的是把 δ-correlated 连续体 场 离散成每个网格单元的 网格单元平均 / 等价局域场这一约定。若 无序 有有限相关长度、是固定位置/固定强度的 缺陷，或代码中的随机量代表对一个 cell 已积分的能量/力而不是局域 场 value，就不能机械套用同一缩放；应从实际使用的 协方差 或离散能量项重新推导 dx dependence。</div>
 <div class="twocol"><div class="card"><h3>白噪声 无序</h3><p>固定的是 Δ，而不是数组里每个 像素 的标准差。一般 d 维下，标准差 ∝ dx<sup>−d/2</sup>。</p></div><div class="card"><h3>有限相关长度 无序</h3><p>先定义物理 关联长度 ℓ 和 协方差，再离散。只要 dx 足够解析 ℓ，就不应把它继续当 δ-correlated 噪声 用同一缩放规则硬套。</p></div></div>
 <h2 id="thermal-noise">6.2 · 热噪声 / FDT：温度不是再加一张随机场</h2>
-<p>淬火无序 与 热噪声 都会在代码里出现 random numbers，但物理角色完全不同：<b>quenched 场 在一次 运行 内固定；热噪声 随时间刷新，并且其幅度必须与 迁移率、温度、空间 cell measure 和 timestep 一起满足 涨落–耗散 convention。</b></p>
-<div class="twocol"><div class="card"><h3>淬火无序</h3><p>描述 frozen 景观。一个 无序样本 生成后整条 轨迹 都使用同一 h(r) / δV(r)。白噪声空间归一化涉及 cell measure，但没有 temporal δ-函数。</p></div><div class="card"><h3>热噪声</h3><p>描述与 heat bath 相连的快速随机力。white-噪声 idealization 同时在 space 与 time 上 δ-correlated；改变 dx 或 dt 都会改变离散采样幅度。</p></div></div>
+<p>淬火无序与热噪声都会在代码里出现随机数，但物理角色完全不同：<b>quenched 场 在一次 运行 内固定；热噪声 随时间刷新，并且其幅度必须与 迁移率、温度、空间 cell measure 和 timestep 一起满足 涨落–耗散 convention。</b></p>
+<div class="twocol"><div class="card"><h3>淬火无序</h3><p>描述 frozen 景观。一个 无序样本 生成后整条 轨迹 都使用同一 h(r) / δV(r)。白噪声空间归一化涉及 cell measure，但没有 temporal δ-函数。</p></div><div class="card"><h3>热噪声</h3><p>描述与 热浴 相连的快速随机力。白噪声理想化 同时在 space 与 time 上 δ-correlated；改变 dx 或 dt 都会改变离散采样幅度。</p></div></div>
 <h3>6.2.1 · 先声明连续方程，再写离散随机数</h3>
-<p>对 constant-迁移率、additive-噪声 的 overdamped TDGL / 模型-A convention：</p>
+<p>对 constant-迁移率、加性噪声 的 overdamped TDGL / 模型-A convention：</p>
 <div class="eq">∂<sub>t</sub>φ(r,t) = −Γ δF/δφ + ξ(r,t)</div>
 <div class="eq">⟨ξ(r,t)⟩ = 0　；　⟨ξ(r,t)ξ(r′,t′)⟩ = 2Γ k<sub>B</sub>T δ<sup>(d)</sup>(r−r′) δ(t−t′)</div>
 <p>这一定义把 热 bath 的噪声强度和 dissipative 迁移率 Γ 绑在一起。若模型使用 dimensionless energy / 温度，或 Γ 的定义放在方程另一侧，prefactor 必须跟着该 normalization 重新推导；不要从别人的代码里抄一个 <code>sqrt(T)</code>。</p>
-<div class="warn"><b>适用边界：</b>这里讨论 constant Γ + additive Gaussian white 噪声。若 迁移率 依赖 φ、噪声是 multiplicative / colored，或使用不同 stochastic calculus，漂移项与 FDT 关系会改变，不能机械套下面的离散式。</div>
+<div class="warn"><b>适用边界：</b>这里讨论 constant Γ + additive Gaussian white 噪声。若 迁移率 依赖 φ、噪声是 乘性 / 有色，或使用不同 stochastic calculus，漂移项与 FDT 关系会改变，不能机械套下面的离散式。</div>
 <h3>6.2.2 · derivative 噪声 与 update 噪声 的 dt 标度正好相反</h3>
 <p>设一个离散 cell 的 measure 为 ΔV（二维有效模型可对应 ΔA，但必须和 F 的积分单位一致），时间步为 Δt。若代码每一步先生成“方程右端的 噪声 rate” ξ<sub>i</sub><sup>m</sup>：</p>
 <div class="eq">Var(ξ<sub>i</sub><sup>m</sup>) = 2Γ k<sub>B</sub>T / (ΔV Δt)</div>
@@ -111,17 +111,17 @@
 <tr><td>二维 网格单元平均</td><td>ΔV → ΔA = dx²（按你的 2D energy convention）</td><td>把 quenched RF 的 1/dx 规则直接当完整 热-噪声 rule</td></tr>
 </tbody></table>
 <h3>6.2.3 · dx 收敛 与 dt 收敛 都要保持同一个 T convention</h3>
-<div class="check"><div><b>dx 检验：</b>若 物理 粗粒化 free energy 与 温度 convention 固定，cell 变小后 热噪声 rate 的方差会随 1/ΔV 增大；不能固定每格 random amplitude。</div><div><b>dt 检验：</b>减小 dt 时，噪声 rate 标准差 应按 dt<sup>−1/2</sup> 调整，或 update 标准差 按 dt<sup>+1/2</sup> 调整；两种实现只选一种。</div><div><b>equilibrium 合理性：</b>在 E=0、无 淬火无序 的简单可控 case 下，先检查 稳态 涨落 / distribution 是否随 dt refinement 稳定，再进入 受驱 problem。</div><div><b>受驱 合理性：</b>有外场时系统不是 equilibrium，但 thermostat 的 噪声–耗散 convention 仍要固定；不能为拟合 蠕变 / rounding 曲线事后改 噪声 amplitude。</div></div>
+<div class="check"><div><b>dx 检验：</b>若 物理 粗粒化 free energy 与 温度 convention 固定，cell 变小后 热噪声 rate 的方差会随 1/ΔV 增大；不能固定每格 random amplitude。</div><div><b>dt 检验：</b>减小 dt 时，噪声 rate 标准差 应按 dt<sup>−1/2</sup> 调整，或 update 标准差 按 dt<sup>+1/2</sup> 调整；两种实现只选一种。</div><div><b>equilibrium 合理性：</b>在 E=0、无 淬火无序 的简单可控情形 下，先检查 稳态 涨落 / distribution 是否随 dt 加密 稳定，再进入 受驱 problem。</div><div><b>受驱 合理性：</b>有外场时系统不是 equilibrium，但 thermostat 的 噪声–耗散 convention 仍要固定；不能为拟合 蠕变 / rounding 曲线事后改 噪声 amplitude。</div></div>
 <div class="warn"><b>更深一层：</b>连续体 white 热噪声 本身含有任意短波 涨落，相场 又是 粗粒化 theory。因此极端 dx→0 不一定意味着所有 bare 参数 都能原封不动保持；网格 截止 与 粗粒化 convention 要写清。这里的首要目标不是追求“随机场逐点收敛”，而是保证目标 可观测量 在声明的 粗粒化 模型 下稳定。</div>
 <h3>6.2.4 · 热 随机种子 仍然只是 内层 重复</h3>
 <p>同一个 quenched 景观 下换 20 个 Langevin 随机种子，可以更精确估计该 景观 的 有限温 条件 response；它不会自动变成 20 个新的 无序 无序样本。统计层级继续沿用 Research Track：</p>
 <div class="eq">独立淬火无序样本 i → thermal seeds j → 轨迹 frames t</div>
 <div class="bridge"><a href="research-track.html#temperature">Research Track：finite-T protocol / outer-vs-inner statistics</a>　·　<a href="depinning.html#thermal-rounding">Module 05：thermal rounding measurement logic</a></div>
 <div class="q"><b>代码验收一句话：</b>改 dx 或 dt 后，如果你不能明确说明“为了保持同一个 物理 T，随机项到底按什么公式重标了”，有限温 指数 暂时没有解释资格。</div>
-<div class="bridge" id="reproduction-lab-bridge"><b>想把这些规则真正写成代码，而不是只读 checklist？</b> 新的 <a href="reproduction-lab.html">Reproduction Lab</a> 正按 Caballero 2020 一步步复现：L01 解析 kink → L02 2D 场→u(y) → L03 EW 粗糙度 vs Eq.19 → L04 2D GL→EW validity boundary → L05 体相 RB→有效 钉扎 correlator → L06 disordered B/S cross-模型 阶段验证。每课都有可运行脚本和 hard 判据，再把同一 估计量 迁回 滑移铁电。</div>
+<div class="bridge" id="reproduction-lab-bridge"><b>想把这些规则真正写成代码，而不是只读 checklist？</b> 新的 <a href="reproduction-lab.html">Reproduction Lab</a> 正按 Caballero 2020 一步步复现：L01 解析 kink → L02 2D 场→u(y) → L03 EW 粗糙度 vs Eq.19 → L04 2D GL→EW validity boundary → L05 体相 RB→有效 钉扎 correlator → L06 disordered B/S cross-模型 阶段验证。每课都有可运行脚本和 硬判据，再把同一 估计量 迁回 滑移铁电。</div>
 <h2 id="velocity-estimator">6.3 · 稳态-畴壁 velocity contract：一个 v(E) 点到底怎样才算“测到了”？</h2>
 <p>退钉扎 最常见的下一步是画 <i>v</i>(E)，但“轨迹 最后动了一点”并不等于得到 稳态速度。尤其靠近 E<sub>c</sub> 时，长 瞬态、间歇 突发事件、有限 观测 time 与 畴壁-拓扑变化 都会把一个单点速度变成分析自由度。这里把 <b>运行 是否有效、畴壁 怎样位移、什么时候进入 稳态 区间、单条 轨迹 的误差和跨 无序 来源 的误差</b> 分开。</p>
-<div class="bridge"><b>为什么要这么严格：</b>Module 05 的 Ferrero 2013 已经显示，退钉扎 附近可以存在很长的 nonsteady 交叉区；过早把 瞬态 当 渐近 区间，会系统性偏置 有效指数。稳态-v route 与 nonsteady-relaxation route 都可以研究 临界性，但不能把两套 估计量 混在同一条 β 拟合 里。</div>
+<div class="bridge"><b>为什么要这么严格：</b>Module 05 的 Ferrero 2013 已经显示，退钉扎 附近可以存在很长的 非稳态交叉区；过早把 瞬态 当 渐近 区间，会系统性偏置 有效指数。稳态速度路线 与 nonsteady-relaxation route 都可以研究 临界性，但不能把两套 估计量 混在同一条 β 拟合 里。</div>
 <h3>6.3.1 · 先定义一个可 unwarp 的 畴壁 坐标</h3>
 <p>如果 畴壁 extraction 判据 已经通过，可以先把单值 畴壁 写成 u(y,t)，再定义 center-of-mass 坐标：</p>
 <div class="eq">X(t) = ⟨u(y,t)⟩<sub>y</sub>　；　v = dX/dt</div>
@@ -140,11 +140,11 @@
 <h3>6.3.3 · 用 slope，还是用总位移 / 总时间？两者要互相复核</h3>
 <p>在真正 稳态 的长期窗口里，线性回归 slope 与 endpoint 估计量</p>
 <div class="eq">v<sub>end</sub> = [X(t<sub>2</sub>) − X(t<sub>1</sub>)] / (t<sub>2</sub> − t<sub>1</sub>)</div>
-<p>应给出相容结果。二者明显分裂时，通常意味着窗口内仍有 曲率、长停滞或单次 突发事件 主导。此时不要把 regression 的很小标准误当成“v 很精确”：time 样本 强相关，ordinary least-squares pointwise error 不是 无序 uncertainty。</p>
+<p>应给出相容结果。二者明显分裂时，通常意味着窗口内仍有 曲率、长停滞或单次 突发事件 主导。此时不要把 回归 的很小标准误当成“v 很精确”：time 样本 强相关，ordinary least-squares pointwise error 不是 无序 uncertainty。</p>
 <h3>6.3.4 · 一个 场 point 的统计层级</h3>
 <div class="eq">独立淬火无序样本 i → 恒定外场 E → 轨迹 X<sub>i,E</sub>(t) → 样本层级 v<sub>i</sub>(E)</div>
 <p>如果同一个 淬火无序样本 在多个 E 上重复，得到的是一条 <b>来源-对应的速度曲线</b>，这些 场 points 在统计上相关。真正做 总体-层级 v(E) 或 β inference 时，外层 独立单元 仍然是 淬火无序样本；轨迹帧、多个 拟合 区间s、同一 来源 的多个 E 都不能各自冒充新的 n。</p>
-<div class="twocol"><div class="card"><h3>推荐保存</h3><p>raw/unwrapped X(t)、畴壁-valid mask、瞬态 截断、候选-区间 slopes、final 区间、endpoint velocity、拓扑/QC 状态 与 观测时长。</p></div><div class="card"><h3>推荐报告</h3><p>每个 来源 的 v<sub>i</sub>(E)，再跨 来源 给 summary/CI；β 拟合 继承冻结的 E<sub>c</sub> 依据 与预注册 reduced-force 区间。</p></div></div>
+<div class="twocol"><div class="card"><h3>推荐保存</h3><p>raw/unwrapped X(t)、畴壁-valid mask、瞬态 截断、候选区间斜率、最终区间、endpoint velocity、拓扑/QC 状态 与 观测时长。</p></div><div class="card"><h3>推荐报告</h3><p>每个 来源 的 v<sub>i</sub>(E)，再跨 来源 给 summary/CI；β 拟合 继承冻结的 E<sub>c</sub> 依据 与预注册 reduced-force 区间。</p></div></div>
 <h3>6.3.5 · 钉扎态、运动态、未解析 与“v≈0”不是同义词</h3>
 <table class="matrix"><thead><tr><th>运行 outcome</th><th>velocity 估计量</th><th>能否进入 β 拟合</th></tr></thead><tbody>
 <tr><td>resolved-运动态 + 稳态-区间 pass</td><td>有资格给 来源层级 稳态 v</td><td>满足冻结 拟合区间 时可以</td></tr>
@@ -157,20 +157,20 @@
 <div class="q"><b>稳态-v 验收一句话：</b>如果一个 v 点不能回答“畴壁 坐标 怎么定义、是否 unwrap、丢了多少 瞬态、换 late 区间 后 slope 是否稳定、畴壁 拓扑 是否仍有效、外层 独立单元 是谁”，它暂时不该进入 普适性 拟合。</div>
 <h2 id="wall-extraction">6.5 · 从 diffuse 相场 提取 u(y)：先证明“这是一堵线”</h2>
 <p>相场 原始自由度是二维 φ(r,t)，弹性线 可观测量 却假设一维单值 u(y,t)。这一步是一次 <b>模型 reduction</b>，不能只写一句“取 φ=0 等值线”。对周期 堆垛 坐标，零点甚至未必总是两个目标 basin 的物理中点；应先定义要分开的两个 态，再指定 separator。</p>
-<div class="check"><div><b>① 层级-set 敏感性：</b>在 畴壁 core 内选一组相邻 等值线 thresholds；u(y)、均值 velocity 与 粗糙度 scaling 若对小幅阈值变化明显漂移，说明提取仍受 diffuse-core / 离散化 控制。</div><div><b>② intersection count：</b>逐个 y 统计 等值线 与横截线交点数。0、1、&gt;1 分别对应缺失、单值、悬垂/multiple-畴壁 候选；报告非 1 的比例，而不是静默选其中一个交点。</div><div><b>③ 拓扑 cross-check：</b>同时监测 封闭小畴 / detached island / extra-畴壁 分量。projected u(y) 可以在图上很平滑，却把真实二维拓扑丢掉。</div><div><b>④ area-based cross-check：</b>用 畴-area change 得到一个不依赖单值 等值线 的平均推进量，与 u(y) 质心速度 比较；两者明显分叉时先查 拓扑，而不是继续拟合 β。</div><div><b>⑤ 粗糙度 triple：</b>在通过 拓扑 判据 的数据上同时检查 W(L)、B(r)、S(q)，并标出 grid-尺度、畴壁-width 与 体系-size 截止。</div></div>
-<div class="warn"><b>Zhou 2009 给出的反例很具体：</b>受驱 RFIM 在 退钉扎 附近因为 悬垂 出现 本征 异常标度 / 多重标度；也就是说“墙还能画出来”不等于“墙仍属于单值 elastic 流形”。<a href="depinning.html#fit-discipline">去 Module 05 看 exponent robustness →</a></div>
+<div class="check"><div><b>① 层级-set 敏感性：</b>在 畴壁 core 内选一组相邻 等值线 thresholds；u(y)、均值 velocity 与 粗糙度 scaling 若对小幅阈值变化明显漂移，说明提取仍受 diffuse-core / 离散化 控制。</div><div><b>② 交点数量：</b>逐个 y 统计 等值线 与横截线交点数。0、1、&gt;1 分别对应缺失、单值、悬垂/multiple-畴壁 候选；报告非 1 的比例，而不是静默选其中一个交点。</div><div><b>③ 拓扑 交叉核验：</b>同时监测 封闭小畴 / 脱离小畴 / 额外畴壁 分量。投影得到的 u(y) 可以在图上很平滑，却把真实二维拓扑丢掉。</div><div><b>④ area-based 交叉核验：</b>用 畴-area change 得到一个不依赖单值 等值线 的平均推进量，与 u(y) 质心速度 比较；两者明显分叉时先查 拓扑，而不是继续拟合 β。</div><div><b>⑤ 粗糙度 triple：</b>在通过 拓扑 判据 的数据上同时检查 W(L)、B(r)、S(q)，并标出 grid-尺度、畴壁-width 与 体系-size 截止。</div></div>
+<div class="warn"><b>Zhou 2009 给出的反例很具体：</b>受驱 RFIM 在 退钉扎 附近因为 悬垂 出现 本征异常标度 / 多重标度；也就是说“墙还能画出来”不等于“墙仍属于单值 elastic 流形”。<a href="depinning.html#fit-discipline">去 Module 05 看 exponent robustness →</a></div>
 <div class="bridge" id="threshold-authority-bridge"><b>阈值 不从一张 v(E) 图里“读出来”：</b>先做 E=0 stability / numerical 数值证明，再把每个 场 运行 分类为 resolved-运动态、resolved-钉扎态-under-观测时长、未解析、数值无效 或 拓扑-失效；只有有效 钉扎态 / 运动态 才能缩 bracket。<a href="depinning.html#threshold-ladder">去 Module 05 看完整 threshold inference ladder →</a></div>
 <h2 id="run-receipt">6.6 · 运行 记录 / 来源追踪：一张图能不能成为证据，先看它能不能追到 运行</h2>
 <p>只保存一个 <code>.npz</code>、一张 PNG 或最终 CSV，并不等于结果可复现。真正可审计的链条应该能从 figure / 估计量 一路反查到：<b>哪版代码、哪份实际生效的配置、哪组随机源、怎样结束、保存了什么 raw output、又由哪版分析规则压成当前数字。</b> 这份绑定记录就是 运行 记录。</p>
 <div class="q">最小原则：<b>raw bytes 可恢复 ≠ 运行 可重算；运行 可重算 ≠ 估计量 可复核；全部可复核 ≠ 它自动拥有当前 结论 依据。</b></div>
 <h3>6.6.1 · 一个 simulation 运行 至少要冻结七层信息</h3>
 <div class="check">
-<div><b>Code 依据</b>：repository / commit 或 来源-tree hash；明确 无无序 / dirty。若运行来自 dirty working tree，应保存 patch / tree hash，并把它标成 dated snapshot，而不是假装属于某个干净 commit。</div>
-<div><b>Resolved configuration</b>：保存 defaults、include、CLI override 全部展开后的最终配置。至少包含 几何、boundary 条件、L / N、dx、dt、T、驱动方案、无序 关系 / 强度 / 关联、初态 与 单位。</div>
+<div><b>Code 依据</b>：repository / commit 或 来源-tree hash；明确 无无序 / dirty。若运行来自 有未提交改动的工作树，应保存 patch / tree hash，并把它标成 带日期的快照，而不是假装属于某个干净 commit。</div>
+<div><b>Resolved configuration</b>：保存 默认值、include、命令行覆盖参数 全部展开后的最终配置。至少包含 几何、boundary 条件、L / N、dx、dt、T、驱动方案、无序 关系 / 强度 / 关联、初态 与 单位。</div>
 <div><b>Random identity</b>：把 quenched-无序 随机种子 与 热 / stochastic 随机种子 分开记录；需要时同时保存 RNG 族 / stream convention。一个整数 随机种子 只有在随机流定义也固定时才真正可复现。</div>
-<div><b>Execution environment</b>：求解器 / integrator、precision、backend、关键 dependency / environment identity。硬件型号通常不是 物理 参数，但 precision、backend 或 library change 若会改变数值路径，就必须可追踪。</div>
-<div><b>Stop &amp; QC 记录</b>：为什么停止——converged、hit 观测时长 limit、max steps、数值失败、manual abort？同时保存 NaN/divergence、residual、畴壁-拓扑 等与物理判读直接相关的 QC。</div>
-<div><b>Raw-output 记录</b>：原始数组 / 轨迹 / 阶段验证 的路径或 object id、sampling cadence、形状、dtype、单位 与 checksum。derived CSV / PNG 应指回 raw parent，而不是成为孤儿证据。</div>
+<div><b>Execution environment</b>：求解器 / integrator、数值精度、计算后端、关键 依赖项 / 环境标识。硬件型号通常不是 物理 参数，但 数值精度、计算后端 或 程序库变化 若会改变数值路径，就必须可追踪。</div>
+<div><b>Stop &amp; QC 记录</b>：为什么停止——已收敛、达到观测时长上限、max steps、数值失败、人工终止？同时保存 NaN/divergence、残差、畴壁-拓扑 等与物理判读直接相关的 QC。</div>
+<div><b>Raw-output 记录</b>：原始数组 / 轨迹 / 阶段验证 的路径或 object id、采样间隔、形状、dtype、单位 与 校验和。派生 CSV / PNG 应指回 raw parent，而不是成为孤儿证据。</div>
 <div><b>估计量记录</b>：analysis code/version、输入 运行 IDs、瞬态 截断、拟合区间、畴壁-extraction rule、阈值 判据、删失 rule、自助法 / 重采样单元。最终一个 β 或 ζ 必须能反查这些选择。</div>
 </div>
 <h3>6.6.2 · 不要用一个 状态 字段装下三种完全不同的问题</h3>
@@ -183,19 +183,19 @@
 <h3>6.6.3 · 最终生效配置 比“我记得当时参数是这些”更重要</h3>
 <table class="matrix"><thead><tr><th>只保存输入模板</th><th>还不够的原因</th><th>记录 应保存</th></tr></thead><tbody>
 <tr><td><code>base.yaml</code></td><td>可能又 include 其他文件</td><td>fully 最终生效配置 + 来源 配置 lineage</td></tr>
-<tr><td>CLI command</td><td>defaults / environment variable 可能隐式改变参数</td><td>resolved values + exact command</td></tr>
-<tr><td>随机种子=17</td><td>不同 RNG / stream split 可产生不同 场</td><td>随机种子 role + RNG convention；必要时保存 无序-array hash</td></tr>
-<tr><td>commit SHA</td><td>运行时可能有未提交修改</td><td>commit + dirty flag + patch/tree hash</td></tr>
+<tr><td>CLI command</td><td>默认值 / 环境变量 可能隐式改变参数</td><td>resolved values + 完整命令</td></tr>
+<tr><td>随机种子=17</td><td>不同 随机数生成器 / 随机流拆分 可产生不同 场</td><td>随机种子 role + RNG convention；必要时保存 无序-array hash</td></tr>
+<tr><td>commit SHA</td><td>运行时可能有未提交修改</td><td>commit + 未提交改动标记 + patch/tree hash</td></tr>
 <tr><td>“运行 completed”</td><td>无法知道是 收敛 还是 hit max-time</td><td>stop_reason + registered stopping thresholds + final diagnostics</td></tr>
 </tbody></table>
 <h3>6.6.4 · 记录 应该沿着分析链继续传递，而不是在 raw 运行 处断掉</h3>
 <div class="steps"><div class="step"><b>运行 记录</b><p>代码、最终生效配置、RNG、状态、raw hashes。</p></div><div class="step"><b>估计量记录</b><p>从哪些 运行、用什么 rule / 区间 得到一个 可观测量。</p></div><div class="step"><b>Figure / 结论 map</b><p>panel 指向 估计量 与 independent 证据单元；正文 结论 再指向 panel。</p></div></div>
 <div class="eq">数据依据 → 已判定运行记录 → 原始数据 → 估计量记录 → 图源映射 → 结论</div>
-<p>这条链有一个重要但常被忽略的结论：<b>可复现 不等于 可作为当前依据。</b> 历史 运行、探索性脚本 或 候选 figure 可以保存得非常完整，但如果它没有通过当前 分析约定，就应该被保留用于 recovery / context，而不是悄悄升级成当前主结论。</p>
+<p>这条链有一个重要但常被忽略的结论：<b>可复现 不等于 可作为当前依据。</b> 历史 运行、探索性脚本 或 候选 figure 可以保存得非常完整，但如果它没有通过当前 分析约定，就应该被保留用于 恢复 / 上下文，而不是悄悄升级成当前主结论。</p>
 <div class="bridge">这和 Research Track 的 <a href="research-track.html#data-claim-contract">Data → Estimator → Evidence → Claim contract</a> 正好闭合：那里规定“什么能支持什么 结论”，这里规定“每一级证据怎样留下可追溯 记录”。</div>
 <h2>7 · 一套不会自欺的 退钉扎 数值实验</h2>
-<div class="steps"><div class="step"><b>① 先造一堵墙</b><p>用两畴初态或边界条件得到单一 弥散畴壁；先在无 无序、无 drive 下检查 畴壁 width 与静态稳定性。</p></div><div class="step"><b>② 再加 淬火无序</b><p>明确 RB / RF / strong 缺陷 的物理定义；固定 物理 强度 与 关联长度，而不是固定 像素 amplitude。</p></div><div class="step"><b>③ 最后扫 constant drive</b><p>为了 退钉扎，优先恒定 E 的单壁实验；P–E triangular 回线 可以保留给 翻转 现象学，但不拿它替代 v(E) 阈值 实验。</p></div></div>
-<div class="check"><div><b>dx 收敛：</b>至少保证 畴壁 width 被多个 grid points 解析；同时按物理定义重标 无序。</div><div><b>dt 收敛：</b>减小 dt 后 Ec、v(E)、粗糙度 不能系统漂移。</div><div><b>size 收敛：</b>测多个 L；临界附近 ξ 会增长，单一尺寸的 β 拟合不够。</div><div><b>随机种子 statistics：</b>报告 无序 无序样本，而不是只挑一张“漂亮的 畴壁”。</div><div><b>畴壁 extraction：</b>先定义两个目标 basin 之间有物理意义的 层级 set / separator，再检查 等值线-阈值 敏感性；只有通过 single-valuedness 判据 后才压成 u(y)。</div><div><b>可观测量 链：</b>Ec → v∼(E−Ec)<sup>β</sup> → B(r)/S(q) → 有限尺寸标度；每一步都有独立 合理性检查。</div></div>
+<div class="steps"><div class="step"><b>① 先造一堵墙</b><p>用两畴初态或边界条件得到单一 弥散畴壁；先在无 无序、无 drive 下检查 畴壁 width 与静态稳定性。</p></div><div class="step"><b>② 再加 淬火无序</b><p>明确 RB / RF / strong 缺陷 的物理定义；固定 物理 强度 与 关联长度，而不是固定 像素 amplitude。</p></div><div class="step"><b>③ 最后扫 constant drive</b><p>为了 退钉扎，优先恒定 E 的单壁实验；P–E 三角波回线 可以保留给 翻转 现象学，但不拿它替代 v(E) 阈值 实验。</p></div></div>
+<div class="check"><div><b>dx 收敛：</b>至少保证 畴壁 width 被多个 grid points 解析；同时按物理定义重标 无序。</div><div><b>dt 收敛：</b>减小 dt 后 Ec、v(E)、粗糙度 不能系统漂移。</div><div><b>size 收敛：</b>测多个 L；临界附近 ξ 会增长，单一尺寸的 β 拟合不够。</div><div><b>随机种子 statistics：</b>报告 无序 无序样本，而不是只挑一张“漂亮的 畴壁”。</div><div><b>畴壁 extraction：</b>先定义两个目标 basin 之间有物理意义的 层级 set / separator，再检查 等值线-阈值 敏感性；只有通过 单值性 判据 后才压成 u(y)。</div><div><b>可观测量 链：</b>Ec → v∼(E−Ec)<sup>β</sup> → B(r)/S(q) → 有限尺寸标度；每一步都有独立 合理性检查。</div></div>
 <div class="q">最终要能说出一句完整的模型声明：<b>“我模拟的是哪一级自由度；无序 的 连续体 定义是什么；dx 改变时哪些输入随之重标；在哪些尺度 畴壁 可以约化成 弹性界面；一旦出现哪些几何结构，这个约化就停止可信。”</b></div>
 <div class="bridge">到这里，01–07 的基础链已经闭合：堆垛 → 翻转路径 → 畴壁 → 钉扎/蠕变 → 退钉扎 → 无序/RFIM → numerical 模型。Module 08 不再补基础课，而是拿这套检查表重新审 2025–2026 的 滑移铁电 最新工作：它们到底已经测到了什么，还缺哪些 普适性 证据。</div>
 <div class="bridge"><b>Research Track：</b>下一层把 generic 相场 真正接回 滑移铁电 研究：periodic 堆垛 坐标、RF/RB 耦合形式、fair 匹配、可观测量 结构 与 机制证伪。<a href="research-track.html">进入 Research Track →</a></div>
