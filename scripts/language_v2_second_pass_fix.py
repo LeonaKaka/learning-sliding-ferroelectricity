@@ -8,6 +8,7 @@ REPLACEMENTS.update({
     "无序ed 弹性界面": "无序弹性界面",
     "energy-势垒 函数": "能垒函数",
     "wandering/粗糙度 信息": "游走与粗糙度信息",
+    "exact command": "完整命令",
 })
 
 WHOLE_REPLACEMENTS.update({
