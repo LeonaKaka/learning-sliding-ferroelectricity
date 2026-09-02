@@ -1,0 +1,112 @@
+name: Asset ingest from Drive relay
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/asset-ingest.json'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: asset-ingest
+  cancel-in-progress: false
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Read manifest
+        id: manifest
+        shell: bash
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          from pathlib import Path
+          m=json.loads(Path('.github/asset-ingest.json').read_text())
+          required=('drive_file_id','archive_name','destination','sha256','mode')
+          missing=[k for k in required if not m.get(k)]
+          if missing: raise SystemExit(f'manifest missing: {missing}')
+          if m['mode']!='merge': raise SystemExit('only merge mode is allowed')
+          for k in required: print(f'{k}={m[k]}')
+          PY
+
+      - name: Download ZIP from Google Drive relay
+        env:
+          DRIVE_FILE_ID: ${{ steps.manifest.outputs.drive_file_id }}
+          GDRIVE_BEARER_TOKEN: ${{ secrets.GDRIVE_BEARER_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -n "${GDRIVE_BEARER_TOKEN:-}" ]; then
+            echo 'Using authenticated Drive API download.'
+            curl --fail --location --retry 3 \
+              -H "Authorization: Bearer ${GDRIVE_BEARER_TOKEN}" \
+              "https://www.googleapis.com/drive/v3/files/${DRIVE_FILE_ID}?alt=media" \
+              -o /tmp/asset-batch.zip
+          else
+            echo 'No GDRIVE_BEARER_TOKEN secret found; trying link-download mode.'
+            curl --fail --location --retry 3 \
+              "https://drive.usercontent.google.com/download?id=${DRIVE_FILE_ID}&export=download&confirm=t" \
+              -o /tmp/asset-batch.zip
+          fi
+          file /tmp/asset-batch.zip
+
+      - name: Verify SHA-256
+        env:
+          EXPECTED_SHA: ${{ steps.manifest.outputs.sha256 }}
+        run: |
+          set -euo pipefail
+          ACTUAL_SHA="$(sha256sum /tmp/asset-batch.zip | awk '{print $1}')"
+          echo "expected=${EXPECTED_SHA}"
+          echo "actual=${ACTUAL_SHA}"
+          test "$ACTUAL_SHA" = "$EXPECTED_SHA"
+
+      - name: Safe merge extract
+        env:
+          DESTINATION: ${{ steps.manifest.outputs.destination }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os, zipfile
+          from pathlib import Path
+          archive=Path('/tmp/asset-batch.zip')
+          root=Path(os.environ['DESTINATION']).resolve()
+          root.mkdir(parents=True,exist_ok=True)
+          with zipfile.ZipFile(archive) as z:
+              infos=z.infolist()
+              if not infos: raise SystemExit('empty archive')
+              for info in infos:
+                  name=info.filename.replace('\\','/')
+                  p=Path(name)
+                  if p.is_absolute() or '..' in p.parts:
+                      raise SystemExit(f'unsafe ZIP member: {name}')
+                  target=(root/p).resolve()
+                  if root != target and root not in target.parents:
+                      raise SystemExit(f'ZIP-slip member: {name}')
+              print(f'validated {len(infos)} ZIP members')
+              z.extractall(root)
+          PY
+
+      - name: Show changes
+        run: |
+          set -euo pipefail
+          git status --short
+          COUNT="$(git status --porcelain | wc -l | tr -d ' ')"
+          echo "changed_file_count=${COUNT}"
+          test "$COUNT" -gt 0
+
+      - name: Commit ingested assets
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add --all
+          git commit -m "Ingest Drive relay asset batch"
+          git push
