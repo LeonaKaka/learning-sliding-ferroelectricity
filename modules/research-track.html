@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
-<meta content="Research bridge from sliding-ferroelectric switching to disorder coupling, isolated-wall depinning and universality tests." name="description"/>
+<meta content="从滑移铁电翻转、无序耦合到孤立畴壁退钉扎与普适性检验的研究路线。" name="description"/>
 <title>Research Track（研究路线） · 无序 → Depinning（退钉扎） · Learning Sliding Ferroelectricity</title>
 <style>
 :root{--b:#f3f0e8;--p:#fffdf8;--i:#191a18;--m:#716d66;--l:#d8d1c3;--a:#7b4035;--soft:#eee8dc;--dark:#20211f}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--b);color:var(--i);font:15px/1.78 system-ui,-apple-system,"PingFang SC",sans-serif}.top{position:sticky;top:0;z-index:4;background:#f3f0e8ee;backdrop-filter:blur(12px);border-bottom:1px solid var(--l)}.bar,main{width:min(1080px,calc(100% - 32px));margin:auto}.bar{min-height:62px;display:flex;align-items:center;justify-content:space-between;gap:20px}.bar b,h1,h2,h3,.q,.bridge,.eq,.step b{font-family:Georgia,"Times New Roman","Songti SC",serif}.bar a,a{color:#504c46}.bar small,.rule,.muted{color:var(--m)}main{padding:52px 0 90px}h1{font-size:clamp(42px,7vw,72px);line-height:1.01;margin:12px 0 18px;letter-spacing:-.045em}h2{font-size:30px;line-height:1.22;margin:76px 0 14px}h3{font-size:18px;margin:0 0 6px}.deck{font:19px/1.62 Georgia,"Songti SC",serif;color:#4f4b45;max-width:920px}.q{background:var(--dark);color:#f6f1e7;border-radius:14px;padding:20px 22px;font-size:18px;margin:30px 0}.rule{font-size:12px}.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:26px 0}.flow div,.card,.step{background:var(--p);border:1px solid var(--l);border-radius:11px;padding:14px}.flow b,.card b{font-family:Georgia,serif}.flow p,.card p,.step p{font-size:13px;margin:5px 0}.bridge{font-size:18px;padding:18px 20px;margin:30px 0;border-left:4px solid var(--a);background:var(--soft)}.eq{font-size:18px;text-align:center;padding:14px 12px;margin:16px 0;background:#faf7f0;border:1px solid var(--l);border-radius:10px;overflow-x:auto}.eq small{display:block;font:12px/1.5 system-ui;color:var(--m);margin-top:7px}.twocol{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}.three{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}.warn{background:#fff7e8;border:1px solid #e4d3ad;border-radius:11px;padding:14px 16px;margin:18px 0}.matrix{width:100%;border-collapse:collapse;margin:22px 0;background:#fff;border:1px solid var(--l)}.matrix th,.matrix td{padding:11px 12px;border-bottom:1px solid var(--l);vertical-align:top;text-align:left}.matrix th{background:#f0ece3;font:13px Georgia,serif}.matrix td{font-size:13px}.matrix tr:last-child td{border-bottom:0}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:20px 0}.step b{font-size:17px}.source{margin:18px 0;padding:15px 17px;border:1px solid var(--l);border-radius:11px;background:#fff}.source p{font-size:13px;margin:5px 0}.source a{word-break:break-word}.tag{display:inline-block;padding:2px 7px;border:1px solid #b9ad9c;border-radius:99px;font-size:11px;margin-right:5px;color:#645e56}.next{margin-top:50px;padding-top:20px;border-top:1px solid var(--l);display:flex;justify-content:space-between;gap:16px}.next a{text-decoration:none}@media(max-width:780px){.flow,.twocol,.three,.steps{grid-template-columns:1fr}.bar span{display:none}.matrix{display:block;overflow-x:auto}h2{margin-top:60px}.next{flex-direction:column}}
@@ -17,11 +17,11 @@
 <h1>从“会翻转”走到“为什么这样翻转”</h1>
 <p class="deck">这不是第 9 个基础模块，也不是未发表结果展示页。它把 03–07 已经学过的材料机制、钉扎、退钉扎、无序与相场压成一条真正可执行的研究链：<b>如何公平比较不同无序耦合？什么时候滞回问题必须换成孤立畴壁实验？每个可观测量到底允许你得出什么结论？</b></p>
 <div class="q">中心问题：<b>传统铁性材料的受驱界面框架在滑移铁电中能走多远？</b> 目标不是预设“必然普适”，而是同时设计让成立与失效两种结果都能被识别的实验。</div>
-<p class="rule">边界：本页只公开研究问题、有效模型与测量逻辑，不展示任何项目未发表数值。公式中的 periodic scalar model（周期标量模型） 是教学 / 研究用有效模型，不声称是某一种 3R-MoS₂ / hBN 的第一性原理 Hamiltonian（哈密顿量）。</p>
+<p class="rule">边界：本页只公开研究问题、有效模型与测量逻辑，不展示任何项目未发表数值。公式中的周期标量模型是教学 / 研究用有效模型，不声称是某一种 3R-MoS₂ / hBN 的第一性原理 Hamiltonian（哈密顿量）。</p>
 <div class="flow"><div><b>03 · 运动对象</b><p>先判断翻转是否由预存畴壁主导。</p></div><div><b>04 · 真实无序</b><p>畴壁为什么停、慢、变粗糙。</p></div><div><b>06 · 无序关系</b><p>随机的是偏置、势垒还是更复杂结构。</p></div><div><b>07 · 有效模型</b><p>把堆垛物理压成可控连续场。</p></div><div><b>05 · 临界性检验</b><p>隔离一堵畴壁，再谈 β、ζ、ν。</p></div></div>
 <h2 id="disorder">1 · 无序不是一个数：σ 之前先问“随机了什么”</h2>
 <p>传统铁电已经给出一个很强的提醒：无序不能只用一个幅度参数描述。Jesse et al. 2008 从正、负局域成核偏置中分别重建无序势的随机场与随机键分量；Ovchinnikov et al. 2009 又进一步说明滞回形状本身携带无序类型与强度的信息。对滑移铁电来说，更不能先把所有缺陷压成“一个 σ”，再讨论谁更强。</p>
-<div class="three"><div class="card"><b>耦合类型</b><p>无序是直接偏爱某个局域状态，还是改变势垒 / 刚度 / 迁移率 / 几何？</p></div><div class="card"><b>强度</b><p>RMS、能量方差、局域力 RMS 等不同定义并不自动等价。</p></div><div class="card"><b>关联长度</b><p>白噪声无序与有限尺寸缺陷即使 RMS 相同，也可能产生不同集体动力学。</p></div></div>
+<div class="three"><div class="card"><b>耦合类型</b><p>无序是直接偏爱某个局域状态，还是改变势垒 / 刚度 / 迁移率 / 几何？</p></div><div class="card"><b>强度</b><p>RMS（均方根）、能量方差、局域力 RMS 等不同定义并不自动等价。</p></div><div class="card"><b>关联长度</b><p>白噪声无序与有限尺寸缺陷即使 RMS 相同，也可能产生不同集体动力学。</p></div></div>
 <div class="source"><span class="tag">实验锚点</span><b>Jesse et al., Nature Materials 7, 209–215 (2008)</b><p>作者直接从局域成核偏置提取随机键与随机场无序分量。<a href="https://doi.org/10.1038/nmat2114" rel="noopener" target="_blank">DOI 10.1038/nmat2114</a></p></div>
 <div class="source"><span class="tag">推断锚点</span><b>Ovchinnikov et al., PRL 103, 157203 (2009)</b><p>在随机键–随机场 Ising（伊辛）框架中，用滞回回线形状识别无序类型 / 强度；它证明“回线形状含无序信息”，但不意味着真实滑移铁电自动服从同一伊辛模型。<a href="https://doi.org/10.1103/PhysRevLett.103.157203" rel="noopener" target="_blank">DOI 10.1103/PhysRevLett.103.157203</a></p></div>
 <div class="bridge">因此真正公平的问题不是“RF 的 σ 和 RB 的 σ 谁大”，而是：<b>在明确的匹配规则下，改变耦合形式本身是否仍改变翻转？</b></div>
@@ -41,10 +41,10 @@
 <div class="steps"><div class="step"><b>① E=0 弛豫</b><p>先确认初始畴壁自己不会因为准备方式继续漂移。</p></div><div class="step"><b>② 恒定 E</b><p>每个场独立测长期畴壁轨迹，而不是从扫场中截一段。</p></div><div class="step"><b>③ 稳态速度判据</b><p>排除明显瞬态；低于阈值要区分确实钉扎态与观测时长不足。</p></div><div class="step"><b>④ 拓扑判据</b><p>出现持续封闭小畴 / 悬垂 / 成核时，不再盲目把畴壁写成单值 u(y)。</p></div></div>
 <h2 id="temperature">2.5 · 温度是新的实验轴，不是把随机种子多跑几次</h2>
 <p>当孤立畴壁 T=0 方案稳定以后，有限温度自然分成两个不同的问题：</p>
-<div class="twocol"><div class="card"><b>远低于阈值 · 蠕变</b><p>f&lt;f<sub>c</sub> 且离阈值足够远：问热激活势垒是否产生可测的长期漂移，是否存在稳定蠕变区间与 μ 候选。</p></div><div class="card"><b>临近阈值 · 热圆滑</b><p>f≈f<sub>c</sub>：问 T=0 奇异性怎样被温度圆滑，是否存在 v(f<sub>c</sub>,T)∼T<sup>ψ</sup> 与联合场–温度标度。</p></div></div>
+<div class="twocol"><div class="card"><b>远低于阈值 · 蠕变</b><p>f&lt;f<sub>c</sub> 且离阈值足够远：问热激活势垒是否产生可测的长期漂移，是否存在稳定蠕变区间与 μ 候选。</p></div><div class="card"><b>临近阈值 · 热圆整</b><p>f≈f<sub>c</sub>：问 T=0 奇异性怎样被温度圆滑，是否存在 v(f<sub>c</sub>,T)∼T<sup>ψ</sup> 与联合场–温度标度。</p></div></div>
 <table class="matrix"><thead><tr><th>层次</th><th>应该固定什么</th><th>重复什么</th><th>独立统计单元</th></tr></thead><tbody><tr><td>淬火无序</td><td>一个景观 h(r)/δV(r)</td><td>换无序随机种子</td><td>用于无序总体推断的外层单元</td></tr><tr><td>热噪声</td><td>同一个淬火景观</td><td>换 Langevin（朗之万）/ 噪声随机种子</td><td>同一景观内的条件重复</td></tr><tr><td>轨迹帧</td><td>同一次运行</td><td>随时间采样</td><td>不是新的无序样本</td></tr></tbody></table>
-<div class="warn"><b>最重要的防过拟合规则：</b>热圆滑必须继承独立 T=0 阈值。若允许每个无序随机种子在同一批有限温数据里自由移动自己的 f<sub>c</sub>，再去优化 ψ / 坍缩，就可能人为抹掉样本间阈值差异。</div>
-<div class="bridge"><a href="pinning-creep.html#finite-temperature">模块 04：怎么找可测蠕变区间</a>　·　<a href="depinning.html#thermal-rounding">模块 05：怎么测热圆滑 / ψ</a>　·　<a href="numerical-modeling.html#thermal-noise">模块 07：热噪声 / FDT 怎样随 dx、dt 离散</a></div>
+<div class="warn"><b>最重要的防过拟合规则：</b>热圆整必须继承独立 T=0 阈值。若允许每个无序随机种子在同一批有限温数据里自由移动自己的 f<sub>c</sub>，再去优化 ψ / 坍缩，就可能人为抹掉样本间阈值差异。</div>
+<div class="bridge"><a href="pinning-creep.html#finite-temperature">模块 04：怎么找可测蠕变区间</a>　·　<a href="depinning.html#thermal-rounding">模块 05：怎么测热圆整 / ψ</a>　·　<a href="numerical-modeling.html#thermal-noise">模块 07：热噪声 / FDT 怎样随 dx、dt 离散</a></div>
 <h2 id="model">3 · 从堆垛构型到最小滑移铁电相场</h2>
 <p>普通 φ⁴ 相场能教界面动力学，却容易把滑移铁电最重要的“周期性堆垛坐标”藏掉。一个更贴近本项目问题、但仍保持最小的教学模型，是把局域 stacking registry（堆垛配位）压成周期变量 φ(r,t)，再把极化写成 φ 的周期函数。</p>
 <div class="eq">P(φ)=P<sub>0</sub> sinφ</div>
@@ -96,24 +96,24 @@
 <h3>4.7.2 · 阈值结果必须保留失败状态语义</h3>
 <table class="matrix"><thead><tr><th>运行 / 搜索状态</th><th>允许进入的估计量</th><th>正确解释</th></tr></thead><tbody>
 <tr><td>有效钉扎态 + 有效运动态上下界夹定</td><td>单样本 f<sub>c</sub><sup>(i)</sup> 区间 / 估计值</td><td>在注册判据与观测时长下定位了阈值</td></tr>
-<tr><td>有效钉扎态 up to E<sub>max</sub>，仍未见运动态</td><td>下界：f<sub>c</sub><sup>(i)</sup> &gt; E<sub>max</sub>（在该方案下）</td><td>右删失 / 受观测时长限制，不是无限阈值</td></tr>
-<tr><td>观测时间不足以区分 late 运动</td><td>未解析 / 删失状态</td><td>缺少观测时长，不应硬塞进钉扎态或运动态</td></tr>
+<tr><td>有效钉扎态直到 E<sub>max</sub>，仍未见运动态</td><td>下界：f<sub>c</sub><sup>(i)</sup> &gt; E<sub>max</sub>（在该方案下）</td><td>右删失 / 受观测时长限制，不是无限阈值</td></tr>
+<tr><td>观测时间不足以区分迟发运动</td><td>未解析 / 删失状态</td><td>缺少观测时长，不应硬塞进钉扎态或运动态</td></tr>
 <tr><td>求解器 / 数值证明 / 数值质量检查失败</td><td>不进入物理阈值估计量</td><td>数值无效 ≠ 物理钉扎态</td></tr>
 </tbody></table>
 <div class="q"><b>绝不做的事：</b>把未解析样本删掉直到图变漂亮；把未完成上下界夹定的样本随便赋成 E<sub>max</sub>；或者把数值失败解释成“墙被钉住”。这些都会直接偏置总体 f<sub>c</sub> 与后续 β。</div>
 <h3>4.7.3 · 估计量的依据要单向传递</h3>
 <table class="matrix"><thead><tr><th>目标</th><th>上游依据</th><th>当前层只允许调什么</th><th>红灯</th></tr></thead><tbody>
 <tr><td>β</td><td>独立 T=0 阈值依据</td><td>预注册的约化驱动力 / 瞬态区间族</td><td>为了让 β 更直而回调 f<sub>c</sub></td></tr>
-<tr><td>ζ</td><td>通过拓扑 / 单值性判据的畴壁 extraction</td><td>预注册尺度掩膜 + 等值线敏感性</td><td>只挑 W、B、S(q) 中最漂亮的一种</td></tr>
+<tr><td>ζ</td><td>通过拓扑 / 单值性判据的畴壁提取</td><td>预注册尺度掩膜 + 等值线敏感性</td><td>只挑 W、B、S(q) 中最漂亮的一种</td></tr>
 <tr><td>ν / 坍缩</td><td>多 L 阈值 / 速度估计值</td><td>固定目标函数 + 逐一留出尺寸敏感性</td><td>每次坍缩都重新自由挑 L 和 f<sub>c</sub></td></tr>
-<tr><td>热圆滑</td><td>冻结的 T=0 f<sub>c</sub> / f<sub>c</sub><sup>(i)</sup></td><td>热随机种子、T 区间、圆滑可观测量</td><td>用有限温曲线事后重定阈值</td></tr>
-<tr><td>雪崩统计</td><td>冻结的事件检测器 / size 定义</td><td>截止、替代分布检验、形状检验</td><td>看到指数后再改合并 / 死时间规则</td></tr>
+<tr><td>热圆整</td><td>冻结的 T=0 f<sub>c</sub> / f<sub>c</sub><sup>(i)</sup></td><td>热随机种子、T 区间、圆滑可观测量</td><td>用有限温曲线事后重定阈值</td></tr>
+<tr><td>雪崩统计</td><td>冻结的事件检测器 / 事件大小定义</td><td>截止、替代分布检验、形状检验</td><td>看到指数后再改合并 / 死时间规则</td></tr>
 </tbody></table>
 <div class="bridge"><b>这叫依据链：</b>下游分析可以对上游不确定度做敏感性传播，但不能把上游估计量当成隐藏自由参数重新优化。否则同一批数据会被多次“用来证明自己”。</div>
 <h3>4.7.4 · 结论阶梯：失败时知道该退到哪一级</h3>
 <table class="matrix"><thead><tr><th>证据层级</th><th>最低要求</th><th>允许的写法</th></tr></thead><tbody>
 <tr><td>E0 · 原始数据完整性</td><td>来源追踪、配置、状态、单位、重复/别名检查</td><td>数据集 / 运行集合可审计</td></tr>
-<tr><td>E1 · 估计量稳定性</td><td>判据 / 区间 / 事件检测器 / extraction 敏感性</td><td>稳健类阈值 / 形貌 / 动力学可观测量</td></tr>
+<tr><td>E1 · 估计量稳定性</td><td>判据 / 区间 / 事件检测器 / 提取敏感性</td><td>稳健类阈值 / 形貌 / 动力学可观测量</td></tr>
 <tr><td>E2 · 总体 / 尺寸证据</td><td>正确独立单元、删失处理、多无序样本 / L</td><td>总体区分 / 有限尺寸趋势 / 有效指数</td></tr>
 <tr><td>E3 · 跨可观测量临界证据</td><td>f<sub>c</sub>、β、ζ、ν/z 中多个独立可观测量相互兼容</td><td>候选退钉扎临界区间</td></tr>
 <tr><td>E4 · 普适性 / 失效</td><td>标度关系、坍缩、拓扑判据、修正与替代解释一起通过</td><td>候选普适类；或明确映射失效</td></tr>
@@ -129,7 +129,7 @@
 <div class="warn"><b>共同随机数是方差降低工具，不是物理等价证明。</b> 配对能让来源内差值更精确，但不能抹掉 A/B 耦合的不同数学结构，也不能替代公平的物理匹配。</div>
 <h3>4.8.2 · 外层样本与内层重复要分开</h3>
 <table class="matrix"><thead><tr><th>层级</th><th>典型对象</th><th>主要用途</th><th>不确定度怎么处理</th></tr></thead><tbody>
-<tr><td><b>外层独立单元</b></td><td>独立无序样本 / 独立器件</td><td>总体推断</td><td>CI / 自助法 / 模型的最外层重采样单元</td></tr>
+<tr><td><b>外层独立单元</b></td><td>独立无序样本 / 独立器件</td><td>总体推断</td><td>置信区间 / 自助法 / 模型的最外层重采样单元</td></tr>
 <tr><td><b>配对条件</b></td><td>同一来源下 A 与 B 耦合 / 方案</td><td>来源内差值</td><td>先在来源内形成 Δ<sub>i</sub>，再跨 i 汇总</td></tr>
 <tr><td><b>内层随机重复</b></td><td>固定淬火景观下的热随机种子</td><td>估计条件热平均 / 随机波动</td><td>先在 i 内平均或做分层模型；不能冒充新无序样本</td></tr>
 <tr><td><b>重复观测</b></td><td>时间序列行、循环、帧、事件</td><td>估计轨迹 / 事件分布 / 形貌</td><td>保留聚类结构；不能用数据行数放大总体 n</td></tr>
@@ -148,16 +148,16 @@
 </tbody></table>
 <h3>4.8.5 · 有限尺寸也有配对陷阱</h3>
 <p>为了降噪，有时会让不同 L 使用相关的无序构造，例如从同一个大场裁剪 / 限制出较小系统。这样做不是禁止的，但会让不同 L 的估计量相关；此时“每个 L 一点”不能被当成互相独立的样本。若目标是最简单透明的有限尺寸推断，优先让每个 L 有独立无序样本；若有意使用共同随机数 / 嵌套尺寸设计，就把相关结构写进记录和统计模型。</p>
-<div class="q"><b>最实用的统计顺序：</b>先决定独立单元 → 再决定哪些条件在单元内配对 → 再处理热/事件/cycle 等内层重复 → 最后才选择自助法 / 分层模型。反过来先把 CSV 全部堆进统计包，几乎一定会把 n 算错。</div>
+<div class="q"><b>最实用的统计顺序：</b>先决定独立单元 → 再决定哪些条件在单元内配对 → 再处理热噪声 / 事件 / 循环等内层重复 → 最后才选择自助法 / 分层模型。反过来先把 CSV 全部堆进统计包，几乎一定会把 n 算错。</div>
 <div class="bridge">这节与 <a href="#data-claim-contract">数据 → 估计量 → 证据 → 结论</a> 是同一件事的统计版本；而每个外层 / 内层身份怎样被保存，则回到 <a href="numerical-modeling.html#run-receipt">模块 07 的运行记录</a>。</div>
 <h2>5 · 机制证伪：先排掉简单解释，再谈“真正机制”</h2>
 <p>研究型阅读与普通教材最大的区别之一：数据往往更擅长<b>否定一个过于简单的机制</b>，而不是直接唯一确定微观机制。</p>
-<div class="twocol"><div class="card"><b>假说 A：无序只增加一个统一延迟</b><p>预期：不同强度下时间排序应保持同一方向，主要只是整体变慢/变快。</p><p><b>若排序随强度 / 翻转阶段改变：</b>可以排除一个与强度无关标量延迟图像；但还不能因此命名唯一新机制。</p></div><div class="card"><b>假说 B：某种耦合永远“更碎”</b><p>预期：分量数量、界面密度、最大分量比例应给出跨 stage 一致的碎裂排序。</p><p><b>若不同形貌指标不给统一排序：</b>应放弃单一碎裂图像，转向阶段依赖路径。</p></div></div>
+<div class="twocol"><div class="card"><b>假说 A：无序只增加一个统一延迟</b><p>预期：不同强度下时间排序应保持同一方向，主要只是整体变慢/变快。</p><p><b>若排序随强度 / 翻转阶段改变：</b>可以排除一个与强度无关标量延迟图像；但还不能因此命名唯一新机制。</p></div><div class="card"><b>假说 B：某种耦合永远“更碎”</b><p>预期：分量数量、界面密度、最大分量比例应给出跨翻转阶段一致的碎裂排序。</p><p><b>若不同形貌指标不给统一排序：</b>应放弃单一碎裂图像，转向阶段依赖路径。</p></div></div>
 <div class="bridge"><b>最重要的研究纪律：</b>“简单机制被证伪”本身就是结果。不要为了让故事看起来更完整，立即用另一个没有被独立测量的机制填空。</div>
 <h2>6 · 这条研究路线最终怎样接回 8 个模块？</h2>
 <div class="steps"><div class="step"><b>03</b><p>先判断真正运动对象：畴壁、协同滑移，还是条件依赖的多种路径。</p></div><div class="step"><b>04 / 06</b><p>把无序从缺陷名字转成可检验的耦合 / 强度 / 关联。</p></div><div class="step"><b>07</b><p>建立最小连续体模型，并对 dx / 畴壁提取做合理性检查。</p></div><div class="step"><b>05 / 08</b><p>只有孤立畴壁方案通过后，才升级到 β、ζ、ν 与普适性 / 失效检验。</p></div></div>
 <div class="q">最终不是问“能不能得到漂亮指数”，而是问：<b>在滑移铁电特有的微观物理存在的情况下，哪些粗粒化受驱界面预测通过，哪些可观测量系统性偏离，偏离发生在哪个尺度与哪个假设上？</b></div>
-<div class="next"><a href="numerical-modeling.html">← 回到 07 Numerical 模型ing（数值建模）</a><a href="depinning.html">去 05 Depinning（退钉扎）测量逻辑 →</a></div>
+<div class="next"><a href="numerical-modeling.html">← 回到 07 数值建模</a><a href="depinning.html">去 05 Depinning（退钉扎）测量逻辑 →</a></div>
 </main>
 <script src="../terms.js"></script>
 </body>
