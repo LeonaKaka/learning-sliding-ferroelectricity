@@ -152,41 +152,41 @@ im = ax.imshow(
     vmin=-1,
     vmax=1,
 )
-ax.plot(u_final, y + 0.5 * dy, linewidth=1.5, label=r"extracted $u(y)$")
+ax.plot(u_final, y + 0.5 * dy, linewidth=1.5, label=r"提取的 $u(y)$")
 ax.set_xlabel("x")
 ax.set_ylabel("y")
-ax.set_title("2D bulk field after relaxation")
+ax.set_title("弛豫后的二维体场")
 ax.legend(loc="upper right", fontsize=8)
 fig.colorbar(im, ax=ax, shrink=0.8, label=r"$\phi(x,y)$")
 
 ax = fig.add_subplot(gs[0, 1])
-ax.plot(y, u_initial, label="initial wavy wall")
-ax.plot(y, u_final, label="final extracted wall")
+ax.plot(y, u_initial, label="初始起伏畴壁")
+ax.plot(y, u_final, label="最终提取畴壁")
 ax.axhline(0.0, linewidth=1, linestyle="--")
 ax.set_xlabel("y")
 ax.set_ylabel("u(y)")
-ax.set_title("Diffuse field -> single-valued interface")
+ax.set_title("弥散场 → 单值界面")
 ax.legend(fontsize=8)
 
 ax = fig.add_subplot(gs[1, 0])
-ax.semilogy(r0, B0, marker="o", markersize=3, label="initial")
-ax.semilogy(r, B, marker="o", markersize=3, label="final")
+ax.semilogy(r0, B0, marker="o", markersize=3, label="初始")
+ax.semilogy(r, B, marker="o", markersize=3, label="最终")
 ax.set_xlabel("r")
 ax.set_ylabel(r"$B(r)$")
-ax.set_title(r"Flat-wall gold test: $B(r)\rightarrow0$")
+ax.set_title(r"平直畴壁已知答案测试：$B(r)\rightarrow0$")
 ax.legend(fontsize=8)
 
 ax = fig.add_subplot(gs[1, 1])
-ax.plot(x, mean_profile, label="mean numerical profile")
-ax.plot(x, analytic, linestyle="--", label="analytic tanh")
+ax.plot(x, mean_profile, label="数值平均剖面")
+ax.plot(x, analytic, linestyle="--", label="解析 tanh")
 ax.set_xlim(-6, 6)
 ax.set_xlabel("x")
 ax.set_ylabel(r"$\phi$")
-ax.set_title(f"Transverse profile RMSE = {profile_rmse:.2e}")
+ax.set_title(f"横向剖面 RMSE = {profile_rmse:.2e}")
 ax.legend(fontsize=8)
 
 fig.suptitle(
-    "Reproduction Lab · Lesson 02 · 2D GL field → u(y) → B(r)",
+    "复现实验室 · 第 02 课 · 二维 GL 场 → u(y) → B(r)",
     fontsize=14,
 )
 fig.savefig(out, dpi=170)
