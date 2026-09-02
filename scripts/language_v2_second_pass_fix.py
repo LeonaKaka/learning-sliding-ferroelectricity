@@ -27,6 +27,7 @@ FORBIDDEN_VISIBLE = (
     " rows",
     "work、事件",
     "幂律-consistent",
+    "white 无序",
     " gate ",
     " window ",
     " fit ",
@@ -40,6 +41,10 @@ FORBIDDEN_VISIBLE = (
     " steady velocity",
     " sample-specific threshold",
     " effective exponent",
+    " production",
+    " holdout",
+    " successor",
+    " legacy",
 )
 
 REQUIRED_VISIBLE = (
@@ -47,7 +52,10 @@ REQUIRED_VISIBLE = (
     "Depinning（退钉扎）",
     "periodic scalar model（周期标量模型）",
     "Hamiltonian（哈密顿量）",
+    "Ising（伊辛）",
     "Gaussian white random field（高斯白噪声随机场）",
+    "Langevin（朗之万）",
+    "stacking registry（堆垛配位）",
     "数据 → 估计量 → 证据 → 结论",
     "配对与分层不确定度",
     "失效不是“没做成”",
@@ -56,9 +64,18 @@ REQUIRED_VISIBLE = (
 
 def visible_teaching_text(soup: BeautifulSoup) -> str:
     clone = BeautifulSoup(str(soup), "html.parser")
-    for selector in (".eq", "script", "style", "pre", "math"):
+    for selector in ("script", "style", "pre", "math"):
         for node in clone.select(selector):
             node.decompose()
+
+    # Formula bodies may legitimately contain English/math tokens. Preserve only
+    # their human-readable <small> guides in the language scan.
+    for eq in clone.select(".eq"):
+        small_text = " ".join(small.get_text(" ", strip=True) for small in eq.select("small"))
+        eq.clear()
+        if small_text:
+            eq.append(small_text)
+
     return " ".join(clone.stripped_strings)
 
 
@@ -84,10 +101,29 @@ def main() -> None:
         if token not in text:
             raise RuntimeError(f"Research Track required Language V2 form missing: {token!r}")
 
+    # These genuine English term labels should occur only at their first-use
+    # bilingual introduction; later prose should use Chinese.
+    for term in (
+        "periodic scalar model",
+        "Hamiltonian",
+        "Ising",
+        "Gaussian white random field",
+        "Langevin",
+        "stacking registry",
+    ):
+        if text.count(term) != 1:
+            raise RuntimeError(
+                f"Research Track term reuse is not Language V2 clean: {term!r} count={text.count(term)}"
+            )
+
     for pattern in (
         r"无序\s*无序样本",
         r"（周期标量模型）（周期标量模型）",
         r"（哈密顿量）（哈密顿量）",
+        r"（伊辛）（伊辛）",
+        r"（高斯白噪声随机场）（高斯白噪声随机场）",
+        r"（朗之万）（朗之万）",
+        r"（堆垛配位）（堆垛配位）",
         r"““|””",
     ):
         if re.search(pattern, text):
@@ -96,6 +132,11 @@ def main() -> None:
     equations = soup.select(".eq")
     if len(equations) < 5:
         raise RuntimeError(f"Research Track unexpectedly has only {len(equations)} equations")
+
+    # Research Track is deliberately text/equation driven and currently has no
+    # paper Figure. Make that explicit instead of pretending to validate images.
+    if soup.select("figure") or soup.select("img"):
+        raise RuntimeError("Research Track unexpectedly gained figure/img content during Language V2 seal")
 
     checked = set()
     for a in soup.find_all("a"):
@@ -115,7 +156,7 @@ def main() -> None:
         raise RuntimeError(f"Research Track unexpectedly validates only {len(checked)} local link targets")
 
     print(
-        f"Research Track seal PASS: {len(equations)} equations, "
+        f"Research Track seal PASS: {len(equations)} equation cards, 0 figures/images, "
         f"{len(checked)} local link targets, no forbidden visible residues."
     )
 
