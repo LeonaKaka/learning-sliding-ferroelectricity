@@ -1,5 +1,6 @@
 name: Regenerate Lab 03 plot
 
+# One-shot workflow: regenerate the project-owned scientific Figure from authoritative code.
 on:
   push:
     paths:
