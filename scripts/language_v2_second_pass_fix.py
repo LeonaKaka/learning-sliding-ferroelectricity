@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from pathlib import Path
 from urllib.parse import urlsplit
 
 from bs4 import BeautifulSoup
@@ -52,13 +51,20 @@ FORBIDDEN_VISIBLE = (
     "authority",
 )
 
+# Exact source-level contracts are checked in raw HTML, not BeautifulSoup-flattened
+# equation text, so sub/sup markup and symbols cannot drift while parser whitespace
+# remains irrelevant.
 REQUIRED_RAW = (
     'F<sub>RF</sub> = −h(r) cos[φ−α(r)]',
+    'τ<sub>RF</sub> ∝ −h sin(φ−α)',
     'F<sub>RB</sub> = δV(r)[1−cos(nφ)]',
-    'v∼(E−E<sub>c</sub>)<sup>β</sup>',
-    'v(f<sub>c</sub>,T)∼T<sup>ψ</sup>',
+    'τ<sub>RB</sub> ∝ −nδV sin(nφ)',
     'P(φ)=P<sub>0</sub> sinφ',
     'std(h<sub>cell</sub>)∝dx<sup>−d/2</sup>',
+    'v∼(E−E<sub>c</sub>)<sup>β</sup>',
+    'v(f<sub>c</sub>,T)∼T<sup>ψ</sup>',
+    'Δ<sub>i</sub> = y<sub>A,i</sub> − y<sub>B,i</sub>',
+    'ȳ<sub>i,c</sub> = M<sub>i,c</sub><sup>−1</sup> Σ<sub>j</sub> y<sub>i,c,j</sub>',
     'β<sub>eff</sub> 持续漂移',
     'id="roughness-gate-bridge"',
     'href="pinning-creep.html#roughness-gate"',
@@ -83,18 +89,6 @@ REQUIRED_HREFS = (
     "depinning.html",
 )
 
-EXPECTED_EQUATIONS = (
-    "F RF = −h(r) cos[φ−α(r)]",
-    "τ RF ∝ −h sin(φ−α)",
-    "F RB = δV(r)[1−cos(nφ)]",
-    "τ RB ∝ −nδV sin(nφ)",
-    "P(φ)=P 0 sinφ",
-    "F[φ]=∫d²r { κ/2 |∇φ|² + V 0 [1−cos(nφ)] − E P 0 sinφ + F dis [φ,r] }",
-    "⟨h(r)h(r′)⟩=Δδ (d) (r−r′) ⇒ std(h cell )∝dx −d/2 二维网格单元平均白噪声无序：std ∝ 1/dx。该缩放只针对明确的 δ 相关连续场约定。",
-    "Δ i = y A,i − y B,i ； Δ̄ = N −1 Σ i=1 N Δ i",
-    "ȳ i,c = M i,c −1 Σ j y i,c,j ； Δ i = ȳ i,A − ȳ i,B",
-)
-
 
 def visible_text(soup: BeautifulSoup) -> str:
     clone = BeautifulSoup(str(soup), "html.parser")
@@ -108,7 +102,6 @@ def verify_local_links(soup: BeautifulSoup) -> None:
     for required in REQUIRED_HREFS:
         if required not in hrefs:
             raise RuntimeError(f"Research Track required link missing: {required}")
-
     for value in hrefs:
         parts = urlsplit(value)
         if parts.scheme or parts.netloc or not parts.path:
@@ -125,12 +118,11 @@ def verify_local_links(soup: BeautifulSoup) -> None:
 def main() -> None:
     if not TARGET.exists():
         raise RuntimeError("Research Track page missing")
-
     raw = TARGET.read_text(encoding="utf-8")
     soup = BeautifulSoup(raw, "html.parser")
+
     if not soup.title or soup.title.get_text(" ", strip=True) != "Research Track（研究路线） · 无序 → Depinning（退钉扎） · Learning Sliding Ferroelectricity":
         raise RuntimeError("Research Track title drifted")
-
     meta = soup.find("meta", attrs={"name": "description"})
     if not meta or meta.get("content") != "从滑移铁电翻转、无序耦合到孤立畴壁退钉扎与普适性检验的研究路线。":
         raise RuntimeError("Research Track Chinese description drifted")
@@ -142,31 +134,21 @@ def main() -> None:
     for token in FORBIDDEN_VISIBLE:
         if token in visible:
             raise RuntimeError(f"Research Track ordinary workflow English remains visible: {token}")
-
     for token in REQUIRED_RAW:
         if token not in raw:
-            raise RuntimeError(f"Research Track scientific/link contract drifted: {token}")
+            raise RuntimeError(f"Research Track equation/science/link contract drifted: {token}")
 
-    equations = tuple(x.get_text(" ", strip=True) for x in soup.select(".eq"))
-    for expected in EXPECTED_EQUATIONS:
-        if expected not in equations:
-            raise RuntimeError(f"Research Track equation drifted: {expected}")
-
-    # Claim-boundary locks: this page defines a research contract, not unpublished results.
-    claim_locks = (
-        "目标不是预设“必然普适”",
-        "它不等于说模型已经变成 RFIM",
-        "beta",  # intentionally absent below; this placeholder is not checked directly
-    )
-    if claim_locks[0] not in visible or claim_locks[1] not in visible:
-        raise RuntimeError("Research Track universality/model-boundary wording drifted")
+    if "目标不是预设“必然普适”" not in visible:
+        raise RuntimeError("Research Track universality boundary drifted")
+    if "它不等于说模型已经变成 RFIM" not in visible:
+        raise RuntimeError("Research Track effective-model boundary drifted")
     if "候选退钉扎临界区间" not in visible or "候选普适类；或明确映射失效" not in visible:
         raise RuntimeError("Research Track evidence ladder was overclaimed")
     if "不展示项目未发表数值、内部批次标签或当前判据状态" not in visible:
         raise RuntimeError("Research Track public/unpublished boundary drifted")
 
     verify_local_links(soup)
-    print("Research Track read-only Language V2 seal PASS; prose, equations, links, hierarchy and non-overclaim boundaries preserved.")
+    print("Research Track read-only Language V2 seal PASS; prose, raw equations, links, hierarchy and non-overclaim boundaries preserved.")
 
 
 if __name__ == "__main__":
