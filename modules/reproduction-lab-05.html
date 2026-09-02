@@ -1,52 +1,53 @@
 <!DOCTYPE html>
+
 <html lang="zh-CN"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Reproduction Lab（复现实验室）05 · 体场 RB → 钉扎力</title><style>
 :root{--b:#f3f0e8;--p:#fffdf8;--i:#191a18;--m:#716d66;--l:#d8d1c3;--a:#6d493b;--soft:#eee8dc}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--b);color:var(--i);font:15px/1.76 system-ui,-apple-system,"PingFang SC",sans-serif}.top{position:sticky;top:0;z-index:3;background:#f3f0e8ee;backdrop-filter:blur(12px);border-bottom:1px solid var(--l)}.bar,main{width:min(1100px,calc(100% - 32px));margin:auto}.bar{height:62px;display:flex;align-items:center;justify-content:space-between;gap:20px}.bar b,h1,h2,h3,.q,.bridge,.eq{font-family:Georgia,"Times New Roman","Songti SC",serif}.bar a,a{color:#504c46}.bar small,.rule,.cap{color:var(--m)}main{padding:52px 0 90px}h1{font-size:clamp(40px,6.8vw,66px);line-height:1.04;margin:12px 0 18px;letter-spacing:-.04em}h2{font-size:29px;line-height:1.25;margin:64px 0 15px}h3{font-size:18px;margin:0 0 6px}.deck{font:19px/1.62 Georgia,"Songti SC",serif;color:#4f4b45;max-width:930px}.q{background:#20211f;color:#f6f1e7;border-radius:14px;padding:20px 22px;font-size:18px;margin:30px 0}.rule,.cap{font-size:12px}.fig,.codebox{background:#fff;border:1px solid var(--l);border-radius:14px;overflow:hidden;margin:26px 0}.head,.cap{padding:10px 14px;background:#f0ece3}.fig img{display:block;width:100%;height:auto;background:#fff}.cap{display:block;border-top:1px solid var(--l)}.two,.three{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.three{grid-template-columns:repeat(3,1fr)}.card{background:var(--p);border:1px solid var(--l);border-radius:11px;padding:15px}.card p{font-size:13px;margin:5px 0}.bridge{font-size:18px;padding:18px 20px;margin:32px 0;border-left:4px solid var(--a);background:var(--soft)}.eq{font-size:18px;text-align:center;padding:14px 12px;margin:16px 0;background:#faf7f0;border:1px solid var(--l);border-radius:10px;overflow-x:auto}.warn{background:#fff7e8;border:1px solid #e4d3ad;border-radius:11px;padding:14px 16px;margin:18px 0}.pass{background:#eef6ef;border:1px solid #bfd2c4;border-radius:11px;padding:14px 16px;margin:18px 0}.matrix{width:100%;border-collapse:collapse;margin:22px 0;background:#fff;border:1px solid var(--l)}.matrix th,.matrix td{padding:11px 12px;border-bottom:1px solid var(--l);vertical-align:top;text-align:left}.matrix th{background:#f0ece3;font:13px Georgia,serif}.matrix td{font-size:13px}.matrix tr:last-child td{border-bottom:0}pre{margin:0;padding:20px;overflow:auto;background:#1e201f;color:#f2eee6;font:12.5px/1.58 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.verdict{font:16px/1.65 Georgia,"Songti SC",serif;background:#f7f1e7;border-left:4px solid #b27a2f;padding:16px 18px;margin:18px 0}.next{margin-top:44px;padding-top:20px;border-top:1px solid var(--l);display:flex;justify-content:space-between;gap:16px}@media(max-width:760px){.two,.three{grid-template-columns:1fr}.bar span{display:none}.matrix{display:block;overflow-x:auto}.next{flex-direction:column}h2{margin-top:54px}}
 </style></head><body><header class="top"><div class="bar"><b>Reproduction Lab（复现实验室） <small>· 第 05 课 · 无序投影</small></b><span><a href="reproduction-lab-04.html">L04</a> · <a href="../index.html">首页</a> · <a href="#compare">论文对照</a> · <a href="#code">代码</a></span></div></header><main>
 <div class="rule"><a href="../index.html">Learning Sliding Ferroelectricity</a> / 复现实验室 / 第 05 课</div>
 <h1>体场里是白噪声 RB，界面为什么看到有相关长度的钉扎力？</h1>
-<p class="deck">这一步和你的项目非常接近。Caballero 2020 在 体场 Ginzburg–Landau（GL）势垒高度里加入 delta-correlated random-bond disorder（δ 相关随机键无序），然后把它投影到 domain wall（畴壁）。关键结果不是“无序还叫 RB”，而是：经过有限宽度畴壁剖面的投影以后，界面实际感受到的 pinning force（钉扎力）在位移 u 方向变成短程相关，其 correlation length（相关长度）与畴壁宽度同量级。</p>
-<div class="q"><b>本课要验证三个东西：</b>第一，Eq.25 的投影核自相关函数 必须回到论文闭式解析 Eq.26；第二，Eq.23 从体场无序得到的 F<sub>p</sub>(u,y) 的 样本相关函数 必须回到同一个解析 Γ(u)；第三，continuum white noise（连续白噪声） 的离散幅度必须随 du<sup>−1/2</sup> 缩放。漏掉这一项，相关函数幅度会直接错一个网格因子。</div>
+<p class="deck">这一步和你的项目非常接近。Caballero 2020 在体场 Ginzburg–Landau（GL）势垒高度里加入 delta-correlated random-bond disorder（δ 相关随机键无序），然后把它投影到 domain wall（畴壁）。关键结果不是“无序还叫 RB”，而是：经过有限宽度畴壁剖面的投影以后，界面实际感受到的 pinning force（钉扎力）在位移 u 方向变成短程相关，其 correlation length（相关长度）与畴壁宽度同量级。</p>
+<div class="q"><b>本课要验证三个东西：</b>第一，Eq.25 的投影核自相关函数必须回到论文闭式解析 Eq.26；第二，Eq.23 从体场无序得到的 F<sub>p</sub>(u,y) 的样本相关函数必须回到同一个解析 Γ(u)；第三，continuum white noise（连续白噪声）的离散幅度必须随 du<sup>−1/2</sup> 缩放。漏掉这一项，相关函数幅度会直接错一个网格因子。</div>
 <h2 id="compare">0 · 原论文 Fig.4 与我们的体场投影复现</h2>
 <div class="two">
-<figure class="fig"><a href="../assets/reproduction-lab/caballero2020-fig4-pinning-correlator.webp" rel="noopener" target="_blank"><img alt="Caballero 2020 图 4：钉扎力相关函数" src="../assets/reproduction-lab/caballero2020-fig4-pinning-correlator.webp"/></a><figcaption class="cap"><b>Caballero et al. 2020 · Fig.4。</b><br/>256 个独立钉扎力样本的相关函数；平均值与解析 Γ(u), Eq.26 对照。插图展示 4 条 F<sub>p</sub>(u,y)。这是进入 disordered interface（无序界面）动力学 前的 相关函数已知答案测试。</figcaption></figure>
-<figure class="fig"><a href="../assets/reproduction-lab/lesson05_rb_projection_correlator.svg" rel="noopener" target="_blank"><img alt="本课体场随机键无序投影与钉扎力相关函数" src="../assets/reproduction-lab/lesson05_rb_projection_correlator.svg"/></a><figcaption class="cap"><b>本课复现。</b><br/>统计仍用 256 个独立无序样本、M=10000、du=0.1。不同点是我们不直接从 Eq.27 合成 F<sub>p</sub>，而是先生成 按连续极限归一化的体场 ζ(x,y)，再按 Eq.23 投影；因此更直接检查 体场→界面 这一步本身。</figcaption></figure>
+<figure class="fig"><a href="../assets/reproduction-lab/caballero2020-fig4-pinning-correlator.webp" rel="noopener" target="_blank"><img alt="Caballero 2020 图 4：钉扎力相关函数" src="../assets/reproduction-lab/caballero2020-fig4-pinning-correlator.webp"/></a><figcaption class="cap"><b>Caballero et al. 2020 · Fig.4。</b><br/>256 个独立钉扎力样本的相关函数；平均值与解析 Γ(u), Eq.26 对照。插图展示 4 条 F<sub>p</sub>(u,y)。这是进入 disordered interface（无序界面）动力学前的相关函数已知答案测试。</figcaption></figure>
+<figure class="fig"><a href="../assets/reproduction-lab/lesson05_rb_projection_correlator.svg" rel="noopener" target="_blank"><img alt="本课体场随机键无序投影与钉扎力相关函数" src="../assets/reproduction-lab/lesson05_rb_projection_correlator.svg"/></a><figcaption class="cap"><b>本课复现。</b><br/>统计仍用 256 个独立无序样本、M=10000、du=0.1。不同点是我们不直接从 Eq.27 合成 F<sub>p</sub>，而是先生成按连续极限归一化的体场 ζ(x,y)，再按 Eq.23 投影；因此更直接检查体场→界面 这一步本身。</figcaption></figure>
 </div>
 <div class="verdict"><b>这次比第 04 课还便宜，却非常“硬”。</b> 不需要时间积分，也不需要大二维网格；论文同规模的 256×10000 随机场可以在普通 CPU 上很快完成。所以没有“算力不够只能凭趋势判断”的借口。</div>
 <h2>1 · 体场 random-bond disorder（随机键无序）到底加在哪里？</h2>
-<p>论文不是直接给界面一个随机力，而是先改 体场 double-well barrier（双阱势垒）：</p>
+<p>论文不是直接给界面一个随机力，而是先改体场 double-well barrier（双阱势垒）：</p>
 <div class="eq">V<sub>ζ</sub>[φ(r)] = V[φ(r)] · [1 + ε ζ(r)]</div>
-<p>其中 ζ(r) 是 零均值、δ 相关 Gaussian field（高斯场）。这个选择属于 <b>barrier-幅度 coupling（势垒幅度耦合）/ 类随机键耦合</b>：它改变局域势垒，而不是给两个极化方向加一个直接的局域偏置。</p>
-<div class="bridge"><b>和你的滑移铁电项目怎么接？</b> 你的 势垒幅度无序 也是“改变周期势垒”的 耦合思路，但具体势函数从 φ⁴ double well 换成 periodic stacking potential（周期性堆垛势）。因此 Caballero 的公式不能整段照抄；真正可迁移的是 <b>耦合 → generalized force（广义力）→ 界面投影 → effective correlator（有效相关函数）</b> 这条方法流。</div>
+<p>其中 ζ(r) 是零均值、δ 相关 Gaussian field（高斯场）。这个选择属于 <b>barrier-amplitude coupling（势垒幅度耦合）/ 类随机键耦合</b>：它改变局域势垒，而不是给两个极化方向加一个直接的局域偏置。</p>
+<div class="bridge"><b>和你的滑移铁电项目怎么接？</b> 你的势垒幅度无序也是“改变周期势垒”的耦合思路，但具体势函数从 φ⁴ double well 换成 periodic stacking potential（周期性堆垛势）。因此 Caballero 的公式不能整段照抄；真正可迁移的是 <b>耦合 → generalized force（广义力）→ 界面投影 → effective correlator（有效相关函数）</b> 这条方法流。</div>
 <h2>2 · Eq.23：畴壁本身就是一个空间滤波器</h2>
-<p>把 无序为零的 soliton ansatz（孤子假设） φ*(x−u) 代入以后，论文得到：</p>
+<p>把无序为零的 soliton ansatz（孤子假设） φ*(x−u) 代入以后，论文得到：</p>
 <div class="eq">F<sub>p</sub>(u,y)=εγ ∫ dx ζ(x+u,y) φ*″(x) φ*′(x)</div>
-<p>所以一格一格独立的 体场 ζ 并不会原样传给 wall。它先被 kernel（核函数）</p>
+<p>所以一格一格独立的体场 ζ 并不会原样传给畴壁。它先被 kernel（核函数）</p>
 <div class="eq">k(x)=φ*′(x)φ*″(x)</div>
-<p>卷积。因为 k(x) 只在 畴壁附近显著，畴壁宽度 w 自然成为 effective disorder correlation length（有效无序相关长度）的来源。</p>
+<p>卷积。因为 k(x) 只在畴壁附近显著，畴壁宽度 w 自然成为 effective disorder correlation length（有效无序相关长度）的来源。</p>
 <div class="codebox"><div class="head"><b>代码里它就是一次 cross-correlation（互相关）</b></div><pre>K = np.fft.fft(phi_prime * phi_second)
 Fp = epsilon * gamma * du * np.fft.ifft(
     np.fft.fft(zeta, axis=1) * np.conj(K)[None, :], axis=1
 ).real</pre></div>
 <h2>3 · Eq.25 ↔ Eq.26：先让两条理论路线自行闭合</h2>
 <div class="eq">Γ(Δu)=γ² ∫ dx k(x) k(x−Δu)</div>
-<p>Eq.25 给出 投影核 的积分定义；论文随后把 孤子剖面 代入并得到闭式解析 Eq.26。现在脚本把两条理论路线完全分开实现：Eq.25 用离散核自相关函数，Eq.26 用解析双曲函数表达式；在 u≈0 的 0/0 数值消减区域用 Eq.26 的 Taylor（泰勒）展开稳定求值。<b>先要求 Eq.25 与 Eq.26 自己通过硬性验收条件，再看任何随机样本。</b></p>
-<div class="three"><div class="card"><h3>畴壁宽度</h3><p>α=δ=γ=1 时 w=√2≈1.414。</p></div><div class="card"><h3>Γ 首零点</h3><p>理论值约 1.0394，确实与 w 同量级。</p></div><div class="card"><h3>不是拟合参数</h3><p>correlation scale 与 Γ 幅度 都由 bulk coupling + 孤子剖面 决定。</p></div></div>
-<h2>4 · 一个特别容易错的地方：continuum white noise（连续白噪声） 不是“每格 std=1”</h2>
+<p>Eq.25 给出投影核的积分定义；论文随后把孤子剖面代入并得到闭式解析 Eq.26。现在脚本把两条理论路线完全分开实现：Eq.25 用离散核自相关函数，Eq.26 用解析双曲函数表达式；在 u≈0 的 0/0 数值消减区域用 Eq.26 的 Taylor（泰勒）展开稳定求值。<b>先要求 Eq.25 与 Eq.26 自己通过硬性验收条件，再看任何随机样本。</b></p>
+<div class="three"><div class="card"><h3>畴壁宽度</h3><p>α=δ=γ=1 时 w=√2≈1.414。</p></div><div class="card"><h3>Γ 首零点</h3><p>理论值约 1.0394，确实与 w 同量级。</p></div><div class="card"><h3>不是拟合参数</h3><p>相关尺度与 Γ 幅度都由体场耦合和孤子剖面决定。</p></div></div>
+<h2>4 · 一个特别容易错的地方：连续白噪声不是“每格 std=1”</h2>
 <p>连续定义是：</p>
 <div class="eq">⟨ζ(x)ζ(x′)⟩=δ(x−x′)</div>
-<p>离散成格距 du 后，Kronecker delta 与 Dirac delta 之间差一个 1/du，因此：</p>
+<p>离散成格距 du 后，Kronecker delta（克罗内克 δ）与 Dirac delta（狄拉克 δ） 之间差一个 1/du，因此：</p>
 <div class="eq">Var(ζ<sub>i</sub>) = 1/du　→　std(ζ<sub>i</sub>) = du<sup>−1/2</sup></div>
 <div class="codebox"><div class="head"><b>正确归一化与故意错误对照</b></div><pre>base = rng.standard_normal((R, M))
 zeta_correct = base / np.sqrt(du)
 zeta_wrong   = base</pre></div>
-<div class="warn"><b>为什么这对你尤其重要：</b>这里 du=0.1。若忘掉 du<sup>−1/2</sup>，同一批随机数得到的 C(0) 只剩正确的连续极限目标的约 <b>0.1 倍</b>。这就是“看似只是换网格，实际物理无序强度被偷偷改了”。二维 δ 相关场对应的幅度缩放 则是 dx<sup>−1</sup>。</div>
+<div class="warn"><b>为什么这对你尤其重要：</b>这里 du=0.1。若忘掉 du<sup>−1/2</sup>，同一批随机数得到的 C(0) 只剩正确的连续极限目标的约 <b>0.1 倍</b>。这就是“看似只是换网格，实际物理无序强度被偷偷改了”。二维 δ 相关场对应的幅度缩放则是 dx<sup>−1</sup>。</div>
 <h2>5 · 我们尽量贴近论文协议，但不伪装成完全相同</h2>
 <table class="matrix"><thead><tr><th>项目</th><th>Caballero Fig.4</th><th>本课</th></tr></thead><tbody>
 <tr><td>独立无序样本</td><td>256</td><td><b>256，相同</b></td></tr>
 <tr><td>M</td><td>10⁴</td><td><b>10⁴，相同</b></td></tr>
 <tr><td>网格间距</td><td>δl=0.1</td><td><b>du=0.1，相同</b></td></tr>
 <tr><td>ε</td><td>1</td><td><b>1，相同</b></td></tr>
-<tr><td>生成 Fp 的方式</td><td>Eq.27 Fourier synthesis（傅里叶合成）；文中 Fig.4 取 D=1</td><td>体场 ζ → Eq.23 projection，α=δ=γ=1</td></tr>
+<tr><td>生成 Fp 的方式</td><td>Eq.27 Fourier synthesis（傅里叶合成）；文中 Fig.4 取 D=1</td><td>体场 ζ → Eq.23 投影，α=δ=γ=1</td></tr>
 <tr><td>理论目标</td><td>Γ(u), Eq.26</td><td><b>Eq.25 数值投影 + 独立解析 Eq.26</b></td></tr>
 </tbody></table>
 <p>所以我们复现的是 <b>Fig.4 的物理/统计结构</b>，同时刻意选择更能检查 model reduction（模型约化） 的生成路线；不是逐行重写作者的随机数生成器。</p>
@@ -63,9 +64,9 @@ zeta_wrong   = base</pre></div>
 <tr><td>首零点：经验</td><td><b>1.039472</b></td></tr>
 <tr><td>故意错误 std=1</td><td><b>0.099555 × 理论幅度</b></td><td>应暴露 10× 归一化错误</td></tr>
 </tbody></table>
-<div class="pass"><b>无序投影全部验收条件：通过。</b> 这里的“复现正确”不是因为两条曲线肉眼重合，而是 解析 Eq.26、Eq.25 projection、sample 幅度/shape/zero crossing 和故意错误对照全部闭合。</div>
+<div class="pass"><b>无序投影全部验收条件：通过。</b> 这里的“复现正确”不是因为两条曲线肉眼重合，而是 解析 Eq.26、Eq.25 投影、样本幅度/形状/零点交叉 和故意错误对照全部闭合。</div>
 <h2 id="code">7 · 完整脚本</h2>
-<p><a href="../examples/reproduction-lab/lesson05_rb_projection.py"><b>打开第 05 课 Python 脚本 →</b></a>　依赖只有 NumPy + Matplotlib；没有 时间积分，所以 论文同规模的相关函数测试 很轻。<a href="../assets/reproduction-lab/lesson05_rb_projection_correlator.txt">查看本次运行回执 →</a></p>
+<p><a href="../examples/reproduction-lab/lesson05_rb_projection.py"><b>打开第 05 课 Python 脚本 →</b></a>　依赖只有 NumPy + Matplotlib；没有时间积分，所以 论文同规模的相关函数测试很轻。<a href="../assets/reproduction-lab/lesson05_rb_projection_correlator.txt">查看本次运行回执 →</a></p>
 <div class="codebox"><div class="head"><b>预期输出</b></div><pre>phi0, w                    = 1.000000, 1.414214
 M, du, realizations        = 10000, 0.100, 256
 Gamma(0) Eq.26             = 0.071833070
@@ -80,9 +81,9 @@ first zero empirical       = 1.039472
 WRONG std=1 amplitude      = 0.099555 x theory
 ALL DISORDER-PROJECTION GATES PASS</pre></div>
 <h2>8 · 这一步证明了什么？没证明什么？</h2>
-<div class="two"><div class="card"><h3>已经证明</h3><p>RB 体场耦合 经过有限宽度 孤子投影后产生短程相关钉扎力；Eq.25 numerical projection 与 解析 Eq.26 独立闭合；连续白噪声归一化 正确。</p></div><div class="card"><h3>还没证明</h3><p>没有证明 退钉扎指数、没有证明 RF 与 RB 属于同一 universality（普适类）、也没有证明 滑移铁电中的真实缺陷 必然等价于这个 φ⁴ RB 模型。</p></div></div>
-<div class="bridge"><b>对你自己的模型最重要的迁移问题：</b>你的 RF 项 与 势垒幅度项 具有不同的 φ 依赖，因此各自投影到畴壁 后得到的 effective force correlator（有效力相关函数） 未必只差一个 幅度。以后真正做 RF↔RB 孤立畴壁普适性比较 时，可以沿这节方法先算 <b>effective wall-level disorder statistics（有效畴壁层级无序统计）</b>，再谈 β/ζ 是否相同。</div>
-<h2>9 · Lesson 06：从 相关函数已知答案测试 进入真正的 disordered wall geometry</h2>
-<p>Caballero Fig.5 下一步同时比较 2D GL 与 1D EW 的 <b>B(r,t)</b> 和 <b>S(q,t)</b>。随着时间增长，大尺度粗糙度 离开 thermal regime（热涨落区间），并接近 random-bond roughness（随机键粗糙度） ζ<sub>RB</sub>=2/3。那一课才会开始真正验证：<b>正确的无序相关函数是否产生正确的界面几何。</b></p>
+<div class="two"><div class="card"><h3>已经证明</h3><p>RB 体场耦合经过有限宽度孤子投影后产生短程相关钉扎力；Eq.25 数值投影与解析 Eq.26 独立闭合；连续白噪声归一化正确。</p></div><div class="card"><h3>还没证明</h3><p>没有证明退钉扎指数、没有证明 RF 与 RB 属于同一 universality（普适类）、也没有证明滑移铁电中的真实缺陷 必然等价于这个 φ⁴ RB 模型。</p></div></div>
+<div class="bridge"><b>对你自己的模型最重要的迁移问题：</b>你的 RF 项与势垒幅度项具有不同的 φ 依赖，因此各自投影到畴壁后得到的 effective force correlator（有效力相关函数）未必只差一个幅度。以后真正做 RF↔RB 孤立畴壁普适性比较时，可以沿这节方法先算 <b>effective wall-level disorder statistics（有效畴壁层级无序统计）</b>，再谈 β/ζ 是否相同。</div>
+<h2>9 · 第 06 课：从相关函数已知答案测试进入真正的无序畴壁几何</h2>
+<p>Caballero Fig.5 下一步同时比较 二维 GL 与一维 EW 的 <b>B(r,t)</b> 和 <b>S(q,t)</b>。随着时间增长，大尺度粗糙度离开 thermal regime（热涨落区间），并接近 random-bond roughness（随机键粗糙度） ζ<sub>RB</sub>=2/3。那一课才会开始真正验证：<b>正确的无序相关函数是否产生正确的界面几何。</b></p>
 <div class="next"><a href="reproduction-lab-04.html">← 第 04 课 · GL→EW 适用边界</a><a href="reproduction-lab-06.html">第 06 课 · 无序 GL↔EW 几何 →</a></div>
 </main></body></html>
