@@ -7,9 +7,9 @@
 <h1>二维场里那条“墙”，到底怎么变成一条可测的 u(y)？</h1>
 <p class="deck">第 01 课只证明一维 TDGL 能回到正确的 tanh kink（双曲正切扭结）。现在进入 Caballero 2020 真正关键的 model reduction（模型约化）步骤：先跑二维 Ginzburg–Landau（GL）场，再从每一条 y 列中提取 φ=0 零点交叉，把 diffuse wall（弥散畴壁）压成单值界面 u(y)，最后验证无序为零的平直畴壁应满足 B(r)≈0。</p>
 <div class="q">这节的核心不是“画出一条黑线”。<b>只有当每个 y 都恰好有一个零点交叉、横截面仍符合 tanh、u(y) 真的变平、B(r) 真的降到接近 0，这个畴壁提取器才算通过。</b></div>
-<h2 id="compare">0 · 这次开始真的和论文图 并排比</h2>
+<h2 id="compare">0 · 这次开始真的和论文图并排比</h2>
 <div class="two">
-<figure class="fig"><a href="../assets/interface-scaling/caballero2020-fig1-bulk-to-interface.png" rel="noopener" target="_blank"><img alt="Caballero 2020 图 1：二维 GL 体场与提取界面" src="../assets/interface-scaling/caballero2020-fig1-bulk-to-interface.png"/></a><figcaption class="cap"><b>Caballero et al. 2020 · Fig. 1。</b><br/>论文展示 二维 GL 场 φ(x,y)、从体场抽出的界面，以及横穿畴壁的类 tanh 孤子剖面。论文图注的示例参数为 η=α=δ=γ=1、T=0.05、t=10<sup>5</sup>。</figcaption></figure>
+<figure class="fig"><a href="../assets/interface-scaling/caballero2020-fig1-bulk-to-interface.png" rel="noopener" target="_blank"><img alt="Caballero 2020 图 1：二维 GL 体场与提取界面" src="../assets/interface-scaling/caballero2020-fig1-bulk-to-interface.png"/></a><figcaption class="cap"><b>Caballero et al. 2020 · Fig. 1。</b><br/>论文展示二维 GL 场 φ(x,y)、从体场抽出的界面，以及横穿畴壁的类 tanh 孤子剖面。论文图注的示例参数为 η=α=δ=γ=1、T=0.05、t=10<sup>5</sup>。</figcaption></figure>
 <figure class="fig"><a href="../assets/reproduction-lab/lesson02_2d_wall_extract.svg" rel="noopener" target="_blank"><img alt="本课二维 GL 场、提取畴壁、B(r) 与解析剖面对照" src="../assets/reproduction-lab/lesson02_2d_wall_extract.svg"/></a><figcaption class="cap"><b>本课小系统已知答案测试。</b><br/>同一个 φ⁴ / Model A（A 型模型）无序为零框架，但取 T=0，并故意从一条正弦起伏畴壁出发，让二维 TDGL 自己把它拉平；然后用 φ=0 零点交叉提取 u(y)。</figcaption></figure>
 </div>
 <div class="verdict"><b>这次比较到什么程度？</b> 我们已经复现了 Caballero Fig.1 的<strong>方法结构</strong>：体场 φ(x,y) → 畴壁零点交叉 → u(y) → 横向 tanh 剖面。因为我们的 T、运行时间和初态与论文 Fig.1 不同，所以现在仍不叫“Fig.1 数值像素级复现”。第 03/04 课才会开始对论文的 roughness（粗糙度）/ structure factor（结构因子）曲线做定量缩略复现。</div>
@@ -20,7 +20,7 @@
 <p>在无序为零且 T=0、h=0 时，gradient energy（梯度能）会惩罚弯曲。正确的二维 TDGL 应该让这堵畴壁逐步变平，而不是凭边界条件把它瞬间钉死。</p>
 <div class="three"><div class="card"><h3>检查 x 方向</h3><p>每个横截面的畴壁剖面仍应接近解析 tanh。</p></div><div class="card"><h3>检查 y 方向</h3><p>正弦 u(y) 应因 line tension（线张力）衰减。</p></div><div class="card"><h3>检查整体</h3><p>自由能应单调下降，而不是靠畴壁提取器“伪造”平墙。</p></div></div>
 <h2>2 · 从弥散场提取 u(y)</h2>
-<p>对每个固定的 y<sub>j</sub> 列，寻找唯一一对相邻格点满足：</p>
+<p>对每个固定的 y<sub>j</sub>，在对应的 x 列中寻找唯一一对相邻格点满足：</p>
 <div class="eq">φ(x<sub>i</sub>,y<sub>j</sub>) ≥ 0，　φ(x<sub>i+1</sub>,y<sub>j</sub>) &lt; 0</div>
 <p>再做一次线性插值：</p>
 <div class="eq">u(y<sub>j</sub>) = x<sub>i</sub> − φ<sub>i,j</sub> Δx / [φ<sub>i+1,j</sub>−φ<sub>i,j</sub>]</div>
@@ -30,7 +30,7 @@ if len(ids) != 1:
 
 i = ids[0]
 u[j] = x[i] - col[i] * dx / (col[i+1] - col[i])</pre></div>
-<div class="warn"><b>这一句 <code>len(ids) != 1</code> 很重要。</b> 如果出现 bubble（气泡畴）、overhang（悬垂）或多重零点交叉，就不应该继续默默计算一个 u(y)。这正是网站前面一直强调的 拓扑判据：elastic line（弹性线）可观测量只有在 single-valued mapping（单值映射）成立时才合法。</div>
+<div class="warn"><b>这一句 <code>len(ids) != 1</code> 很重要。</b> 如果出现 bubble（气泡畴）、overhang（悬垂）或多重零点交叉，就不应该继续默默计算一个 u(y)。这正是网站前面一直强调的拓扑判据：elastic line（弹性线）可观测量只有在 single-valued mapping（单值映射）成立时才合法。</div>
 <h2>3 · 为什么平直畴壁的 B(r) 是另一个独立验收？</h2>
 <div class="eq">B(r)=⟨[u(y+r)−u(y)]²⟩<sub>y</sub></div>
 <p>如果最终畴壁真正变成平直单墙，那么所有 y 上的 u 都应该近似相同，因此 B(r) 应趋近 0。这里不是拟合 ζ，也不是追求幂律；它只是检验“畴壁提取 + y 方向动力学”是否自洽。</p>
@@ -43,7 +43,7 @@ u[j] = x[i] - col[i] * dx / (col[i+1] - col[i])</pre></div>
 <tr><td>tanh 剖面 RMSE</td><td>&lt; 8×10<sup>−4</sup></td><td>4.020×10<sup>−4</sup></td><td><b>通过</b></td></tr>
 <tr><td>自由能</td><td>采样的 F(t) 单调不增</td><td>总下降 0.870339</td><td><b>通过</b></td></tr>
 </tbody></table>
-<div class="pass"><b>这比“和论文图长得像”多了一层保护。</b> 原论文图 告诉我们应该复现怎样的模型结构；解析 tanh、单一零点交叉拓扑、B(r)≈0 和自由能下降则分别从不同方向检查代码。如果其中一项不过，就不能只靠视觉相似宣布复现成功。</div>
+<div class="pass"><b>这比“和论文图长得像”多了一层保护。</b> 原论文图告诉我们应该复现怎样的模型结构；解析 tanh、单一零点交叉拓扑、B(r)≈0 和自由能下降则分别从不同方向检查代码。如果其中一项不过，就不能只靠视觉相似宣布复现成功。</div>
 <h2>5 · 代码里新增了什么？</h2>
 <div class="steps"><div class="step"><b>① 二维 Laplacian（拉普拉斯算子）</b><p>x 用固定边界，y 用 周期边界。</p></div><div class="step"><b>② 起伏初始畴壁</b><p>让线张力真正参与弛豫。</p></div><div class="step"><b>③ 零点交叉</b><p>把弥散 φ(x,y) 压成 u(y)。</p></div><div class="step"><b>④ B(r)</b><p>从几何线计算最基础的粗糙度可观测量。</p></div></div>
 <div class="codebox"><div class="head"><b>二维 TDGL 核心</b></div><pre>lap_x = (phi[2:] - 2*phi[1:-1] + phi[:-2]) / dx**2
