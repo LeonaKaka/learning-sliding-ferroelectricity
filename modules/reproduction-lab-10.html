@@ -1,40 +1,40 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Reproduction Lab 10 · Super-rough geometry</title><link rel="stylesheet" href="../reproduction-lab-paper2.css"></head><body>
-<header class="top"><div class="bar"><b>Reproduction Lab <small>· Lesson 10 · Paper2 Method Track</small></b><span><a href="reproduction-lab-09.html">上一课</a> · <a href="../index.html">首页</a> · <a href="#result">结论</a></span></div></header>
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Reproduction Lab（复现实验室）10 · 超粗糙几何</title><link rel="stylesheet" href="../reproduction-lab-paper2.css"></head><body>
+<header class="top"><div class="bar"><b>Reproduction Lab（复现实验室） <small>· 第 10 课 · 第二篇工作方法线</small></b><span><a href="reproduction-lab-09.html">上一课</a> · <a href="../index.html">首页</a> · <a href="#result">结论</a></span></div></header>
 <main>
-<div class="crumb"><a href="../index.html">Learning Sliding Ferroelectricity</a> / Reproduction Lab / Lesson 10</div>
-<div><span class="tag">真实 simulation plot</span><span class="tag">论文原图完整裁切</span><span class="tag">S(q) ↔ S(q)</span></div>
+<div class="crumb"><a href="../index.html">Learning Sliding Ferroelectricity</a> / 复现实验室 / 第 10 课</div>
+<div><span class="tag">真实模拟图</span><span class="tag">论文原图完整裁切</span><span class="tag">S(q) 同量对照</span></div>
 <h1>别先看 ζ 数字：先看一条墙，再看它的 S(q)</h1>
-<p class="lead">这一课重做后不再放四宫格“结论卡”。所有数值图都由 <code>lesson10_superrough_zeta.py</code> 实际运行生成。读图顺序只有一条：<b>last-pinned wall profile → 论文的 structure factor → 我们的 structure factor → local B(r) → size dependence</b>。</p>
-<div class="read-order"><div><b>1 · 墙长什么样</b><span>u(x) 是真正被分析的对象。</span></div><div><b>2 · 论文测什么</b><span>Ferrero PRE Fig.1 用 S(q) 读 global ζ。</span></div><div><b>3 · 我们测同一个量</b><span>同样画 S(q)–q，并标出实际 fit window。</span></div><div><b>4 · 再看 B(r)</b><span>super-rough 时 local exponent 不必等于 global ζ。</span></div></div>
+<p class="lead">这一课不靠“结论卡”判断粗糙度。所有数值图都由 <code>lesson10_superrough_zeta.py</code> 实际运行生成。读图顺序只有一条：<b>最后钉扎壁形貌 → 论文的 structure factor（结构因子） → 我们的结构因子 → 局域 B(r) → 尺寸依赖</b>。</p>
+<div class="read-order"><div><b>1 · 墙长什么样</b><span>u(x) 是真正被分析的对象。</span></div><div><b>2 · 论文测什么</b><span>Ferrero PRE Fig.1 用 S(q) 读取全局粗糙度指数 ζ。</span></div><div><b>3 · 我们测同一个量</b><span>同样画 S(q)–q，并标出实际拟合区间。</span></div><div><b>4 · 再看 B(r)</b><span>super-rough（超粗糙）时，局域指数不必等于全局 ζ。</span></div></div>
 
-<h2>0 · 先看 simulation 里真正的 wall</h2>
-<p>下面不是示意线。它是脚本在 L=128 和 L=256 两个独立 quenched-disorder samples 中找到的 <b>last-pinned configuration</b>，把 center of mass 减掉以后直接画出的 u(x)。</p>
-<figure class="figure"><img src="../assets/reproduction-lab/lesson10_profiles.png" alt="Representative last-pinned QEW interface profiles"><figcaption class="caption"><b>Our simulation output。</b> 这两条曲线来自本课 threshold search 的真实输出。后面的 B(r) 和 S(q) 都是从这些同类 near-threshold profiles 的 disorder ensemble 计算出来的，不是手画。</figcaption></figure>
-<div class="figure-note"><b>先建立直觉：</b>ζ 不是“墙看起来多弯”的一个肉眼数字。它描述的是粗糙度随观察尺度怎样增长，所以必须进入 B(r) 或 Fourier-space S(q)。</div>
+<h2>0 · 先看模拟里真正的畴壁</h2>
+<p>下面不是示意线。它是脚本分别在 L=128 和 L=256 的两个独立 quenched disorder（淬火无序）样本中找到的<b>最后钉扎构型</b>，减去质心后直接画出的 u(x)。</p>
+<figure class="figure"><img src="../assets/reproduction-lab/lesson10_profiles.png" alt="L=128 与 L=256 的最后钉扎 QEW 界面形貌"><figcaption class="caption"><b>本课模拟输出。</b> 两条曲线来自本课阈值搜索的真实结果。后面的 B(r) 和 S(q) 都由同类近阈值壁形貌组成的无序样本集合计算得到，不是手画示意。</figcaption></figure>
+<div class="figure-note"><b>先建立直觉：</b>ζ 不是“墙看起来有多弯”的肉眼评分。它描述粗糙度如何随观察尺度增长，因此必须进入 B(r) 或 Fourier space（傅里叶空间）的 S(q)。</div>
 
-<h2>1 · 论文到底怎么测 global roughness？</h2>
-<figure class="figure source"><img src="../assets/reproduction-lab/source-ferrero2013-pre-fig1-full.png" alt="Ferrero PRE 2013 Figure 1 full crop with original caption"><figcaption class="caption"><b>Ferrero, Bustingorry & Kolton, PRE 87, 032122 (2013), Fig.1。</b> 这里保留了完整坐标、inset 和论文原始 caption。原文用 N=1000 个 L=2048、M=13777 的 critical configurations，按 S(q)∼q<sup>−(1+2ζ)</sup> 得到 ζ=1.250±0.005；inset 用重标度后的 S(q) 检查 fit 与高-q discretization effects。</figcaption></figure>
+<h2>1 · 论文到底怎么测全局粗糙度？</h2>
+<figure class="figure source"><img src="../assets/reproduction-lab/source-ferrero2013-pre-fig1-full.png" alt="Ferrero PRE 2013 图 1 完整原图区域"><figcaption class="caption"><b>Ferrero, Bustingorry & Kolton, PRE 87, 032122 (2013), Fig.1。</b> 这里保留完整坐标、插图和论文原始图注。原文使用 N=1000 个 L=2048、M=13777 的临界构型，按 S(q)∼q<sup>−(1+2ζ)</sup> 得到 ζ=1.250±0.005；插图进一步用重标度后的 S(q) 检查拟合以及高 q 离散化效应。</figcaption></figure>
 <div class="eq">S(q) ∼ q<sup>−(1+2ζ)</sup> &nbsp;&nbsp;→&nbsp;&nbsp; log–log slope = −(1+2ζ)</div>
-<p>所以这一课和论文最强的对应关系不是“都在谈 roughness”，而是：<b>横轴都是 q，纵轴都是 S(q)，ζ 都从 log–log slope 读出。</b></p>
+<p>所以这一课和论文最强的对应关系不是“都在谈粗糙度”，而是：<b>横轴都是 q，纵轴都是 S(q)，ζ 都从双对数斜率读出。</b></p>
 
-<h2>2 · 我们的 S(q)：现在可以和论文做 observable-level 对照</h2>
-<figure class="figure"><img src="../assets/reproduction-lab/lesson10_Sq.png" alt="Simulation structure factor S(q) for L128 and L256"><figcaption class="caption"><b>Our simulation output · S(q)。</b> 圆点/虚线是两个尺寸的 disorder-averaged structure factor；短的 dotted fit 只画在实际使用的相同 fractional-q window；dash-dot 参考线只是论文 ζ=1.25 对应的 slope −3.5，不参与拟合。</figcaption></figure>
-<div class="grid3"><div class="card"><b>论文</b><p>exact critical configuration；L=2048；N=1000。</p></div><div class="card"><b>我们</b><p>direct-relaxation last-pinned sample；L=128/256；R=6。</p></div><div class="card"><b>能比较什么</b><p>observable、scaling form、effective slope；不能比较 S(q) 的绝对高度。</p></div></div>
-<table class="table"><thead><tr><th>L</th><th>global ζ from S(q)</th><th>realization-bootstrap 95%</th></tr></thead><tbody><tr><td>128</td><td><b>1.315621</b></td><td>[1.060960, 1.480197]</td></tr><tr><td>256</td><td><b>1.201060</b></td><td>[1.016524, 1.431058]</td></tr></tbody></table>
+<h2>2 · 我们的 S(q)：现在可以和论文做同一可观测量对照</h2>
+<figure class="figure"><img src="../assets/reproduction-lab/lesson10_Sq.png" alt="L=128 与 L=256 的模拟结构因子 S(q)"><figcaption class="caption"><b>本课模拟输出 · S(q)。</b> 圆点/虚线是两个尺寸的无序平均结构因子；短点线只画在脚本实际使用的相同相对 q 拟合区间；点划参考线只是论文 ζ=1.25 对应的斜率 −3.5，不参与拟合。</figcaption></figure>
+<div class="grid3"><div class="card"><b>论文</b><p>精确临界构型；L=2048；N=1000。</p></div><div class="card"><b>我们</b><p>直接弛豫得到的最后钉扎样本；L=128/256；每个尺寸 6 个独立无序样本。</p></div><div class="card"><b>能比较什么</b><p>可观测量、标度形式和有效斜率；不能比较 S(q) 的绝对高度。</p></div></div>
+<table class="table"><thead><tr><th>L</th><th>S(q) 给出的全局 ζ</th><th>样本自助法 95% 区间</th></tr></thead><tbody><tr><td>128</td><td><b>1.315621</b></td><td>[1.060960, 1.480197]</td></tr><tr><td>256</td><td><b>1.201060</b></td><td>[1.016524, 1.431058]</td></tr></tbody></table>
 
 <h2>3 · 那 B(r) 为什么只有约 1？</h2>
-<p>real-space height-difference correlation 是另一种 estimator：</p>
+<p>实空间高度差关联 B(r) 是另一种粗糙度估计量：</p>
 <div class="eq">B(r) = ⟨[u(x+r) − u(x)]²⟩</div>
-<figure class="figure"><img src="../assets/reproduction-lab/lesson10_Br.png" alt="Simulation local roughness B(r) for L128 and L256"><figcaption class="caption"><b>Our simulation output · B(r)。</b> 数据点是真实 ensemble mean；dotted segment 是脚本实际使用的 r=2…8 fit。两个尺寸的 local ζ 都在 1 附近。</figcaption></figure>
-<div class="bridge"><b>这里“不相等”恰恰是本课要验证的物理。</b> 对 super-rough interface，global ζ&gt;1 时 local height-difference exponent 会饱和在约 1；因此 B(r)≈1 与 S(q)≈1.2–1.3 不是两个算法互相打架。</div>
-<p>为防止把 estimator bug 误叫 super-rough，脚本还先生成目标 ζ<sub>global</sub>=1.25 的 synthetic Fourier interface：同一 pipeline 得到 ζ<sub>B,local</sub>=0.951442、ζ<sub>S,global</sub>=1.223335，gold test PASS。这个 synthetic test 只是<b>代码校验</b>，不是物理数据。</p>
+<figure class="figure"><img src="../assets/reproduction-lab/lesson10_Br.png" alt="L=128 与 L=256 的局域粗糙度 B(r)"><figcaption class="caption"><b>本课模拟输出 · B(r)。</b> 数据点是真实样本集合平均；点线是脚本实际使用的 r=2…8 拟合区间。两个尺寸得到的局域 ζ 都在 1 附近。</figcaption></figure>
+<div class="bridge"><b>这里“不相等”恰恰是本课要验证的物理。</b> 对超粗糙界面，全局 ζ&gt;1 时，局域高度差指数会饱和在约 1；因此 B(r)≈1 与 S(q)≈1.2–1.3 不是两个算法互相打架。</div>
+<p>为防止把估计量错误误叫成超粗糙，脚本先生成目标 ζ<sub>global</sub>=1.25 的合成 Fourier 界面：同一分析流程得到 ζ<sub>B,local</sub>=0.951442、ζ<sub>S,global</sub>=1.223335，<b>已知答案测试通过</b>。这个合成测试只是代码校验，不是物理数据。</p>
 
-<h2 id="result">4 · 最后看 size dependence：为什么仍不能宣布 ζ=1.25？</h2>
-<figure class="figure"><img src="../assets/reproduction-lab/lesson10_zeta_vs_size.png" alt="Effective roughness exponents versus size with bootstrap intervals"><figcaption class="caption"><b>Our simulation output · size audit。</b> 蓝色 local estimator 很稳定地靠近 1；global S(q) estimator 在两个尺寸都 &gt;1，但 bootstrap 很宽，而且 L=128→256 的 central estimate 漂移 0.114561。</figcaption></figure>
-<div class="ok"><b>SMALL-QEW SUPER-ROUGH SIGNATURE = PASS。</b> 我们确实看到 local≈1、global&gt;1 的 estimator structure。</div>
-<div class="hold"><b>THERMODYNAMIC ZETA CLOSURE = NOT PASSED。</b> |ζ<sub>S</sub>(128)−ζ<sub>S</sub>(256)|=0.114561，高于预注册 0.10 gate；只有两个尺寸、R=6，也远小于论文计算规模。因此不能把某一个 1.316 或 1.201 挑出来说“复现 ζ=1.25”。</div>
+<h2 id="result">4 · 最后看尺寸依赖：为什么仍不能宣布 ζ=1.25？</h2>
+<figure class="figure"><img src="../assets/reproduction-lab/lesson10_zeta_vs_size.png" alt="有效粗糙度指数随系统尺寸变化及样本自助法区间"><figcaption class="caption"><b>本课模拟输出 · 尺寸审计。</b> 局域估计量稳定地靠近 1；全局 S(q) 估计量在两个尺寸都大于 1，但自助法区间很宽，而且 L=128→256 的中心估计漂移 0.114561。</figcaption></figure>
+<div class="ok"><b>小尺寸 QEW 超粗糙特征：通过。</b> 当前数据确实表现出“局域 ζ≈1、全局 ζ&gt;1”的估计量结构。</div>
+<div class="hold"><b>热力学 ζ 闭合：未通过。</b> |ζ<sub>S</sub>(128)−ζ<sub>S</sub>(256)|=0.114561，高于预先登记的 0.10 判据；目前只有两个尺寸、每个尺寸 6 个独立无序样本，也远小于论文计算规模。因此不能挑出 1.316 或 1.201 中的任何一个，声称已经复现普适 ζ=1.25。</div>
 
 <h2>5 · 可复查数据</h2>
-<div class="code-links"><a href="../examples/reproduction-lab/lesson10_superrough_zeta.py">完整 Python 脚本</a><a href="../assets/reproduction-lab/lesson10_superrough_zeta.txt">run receipt</a><a href="../assets/reproduction-lab/lesson10_superrough_zeta.csv">realization table</a><a href="../assets/reproduction-lab/lesson10_geometry_curves.csv">B(r)/S(q) plotted curves CSV</a><a href="../assets/reproduction-lab/source-figure-receipt.json">论文截图 receipt</a></div>
+<div class="code-links"><a href="../examples/reproduction-lab/lesson10_superrough_zeta.py">完整 Python 脚本</a><a href="../assets/reproduction-lab/lesson10_superrough_zeta.txt">运行回执</a><a href="../assets/reproduction-lab/lesson10_superrough_zeta.csv">独立无序样本表</a><a href="../assets/reproduction-lab/lesson10_geometry_curves.csv">B(r)/S(q) 绘图曲线 CSV</a><a href="../assets/reproduction-lab/source-figure-receipt.json">论文截图来源回执</a></div>
 <div class="next"><a href="reproduction-lab-09.html">← L09</a><a href="reproduction-lab-11.html">L11 →</a></div>
 </main><script src="../terms.js"></script></body></html>
