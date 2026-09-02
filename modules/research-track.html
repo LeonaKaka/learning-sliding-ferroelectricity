@@ -1,10 +1,11 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Research bridge from sliding-ferroelectric switching to disorder coupling, isolated-wall depinning and universality tests.">
-<title>Research Track · Disorder → Depinning · Learning Sliding Ferroelectricity</title>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="Research bridge from sliding-ferroelectric switching to disorder coupling, isolated-wall depinning and universality tests." name="description"/>
+<title>Research Track · 无序 → Depinning · Learning Sliding Ferroelectricity</title>
 <style>
 :root{--b:#f3f0e8;--p:#fffdf8;--i:#191a18;--m:#716d66;--l:#d8d1c3;--a:#7b4035;--soft:#eee8dc;--dark:#20211f}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--b);color:var(--i);font:15px/1.78 system-ui,-apple-system,"PingFang SC",sans-serif}.top{position:sticky;top:0;z-index:4;background:#f3f0e8ee;backdrop-filter:blur(12px);border-bottom:1px solid var(--l)}.bar,main{width:min(1080px,calc(100% - 32px));margin:auto}.bar{min-height:62px;display:flex;align-items:center;justify-content:space-between;gap:20px}.bar b,h1,h2,h3,.q,.bridge,.eq,.step b{font-family:Georgia,"Times New Roman","Songti SC",serif}.bar a,a{color:#504c46}.bar small,.rule,.muted{color:var(--m)}main{padding:52px 0 90px}h1{font-size:clamp(42px,7vw,72px);line-height:1.01;margin:12px 0 18px;letter-spacing:-.045em}h2{font-size:30px;line-height:1.22;margin:76px 0 14px}h3{font-size:18px;margin:0 0 6px}.deck{font:19px/1.62 Georgia,"Songti SC",serif;color:#4f4b45;max-width:920px}.q{background:var(--dark);color:#f6f1e7;border-radius:14px;padding:20px 22px;font-size:18px;margin:30px 0}.rule{font-size:12px}.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:26px 0}.flow div,.card,.step{background:var(--p);border:1px solid var(--l);border-radius:11px;padding:14px}.flow b,.card b{font-family:Georgia,serif}.flow p,.card p,.step p{font-size:13px;margin:5px 0}.bridge{font-size:18px;padding:18px 20px;margin:30px 0;border-left:4px solid var(--a);background:var(--soft)}.eq{font-size:18px;text-align:center;padding:14px 12px;margin:16px 0;background:#faf7f0;border:1px solid var(--l);border-radius:10px;overflow-x:auto}.eq small{display:block;font:12px/1.5 system-ui;color:var(--m);margin-top:7px}.twocol{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}.three{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}.warn{background:#fff7e8;border:1px solid #e4d3ad;border-radius:11px;padding:14px 16px;margin:18px 0}.matrix{width:100%;border-collapse:collapse;margin:22px 0;background:#fff;border:1px solid var(--l)}.matrix th,.matrix td{padding:11px 12px;border-bottom:1px solid var(--l);vertical-align:top;text-align:left}.matrix th{background:#f0ece3;font:13px Georgia,serif}.matrix td{font-size:13px}.matrix tr:last-child td{border-bottom:0}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:20px 0}.step b{font-size:17px}.source{margin:18px 0;padding:15px 17px;border:1px solid var(--l);border-radius:11px;background:#fff}.source p{font-size:13px;margin:5px 0}.source a{word-break:break-word}.tag{display:inline-block;padding:2px 7px;border:1px solid #b9ad9c;border-radius:99px;font-size:11px;margin-right:5px;color:#645e56}.next{margin-top:50px;padding-top:20px;border-top:1px solid var(--l);display:flex;justify-content:space-between;gap:16px}.next a{text-decoration:none}@media(max-width:780px){.flow,.twocol,.three,.steps{grid-template-columns:1fr}.bar span{display:none}.matrix{display:block;overflow-x:auto}h2{margin-top:60px}.next{flex-direction:column}}
 </style>
@@ -13,173 +14,149 @@
 <header class="top"><div class="bar"><b>Learning Sliding Ferroelectricity <small>· Research Track</small></b><span><a href="../index.html#map">8-module map</a> · <a href="#disorder">Disorder</a> · <a href="#protocol">Protocols</a> · <a href="#model">Model</a> · <a href="#observables">Observables</a> · <a href="#data-claim-contract">Evidence</a></span></div></header>
 <main>
 <div class="rule"><a href="../index.html">首页</a> / Research Track</div>
-<h1>从“会 switch”走到“为什么这样 switch”</h1>
-<p class="deck">这不是第 9 个基础模块，也不是未发表结果展示页。它把 03–07 已经学过的材料机制、pinning、depinning、disorder 与 phase-field 压成一条真正可执行的研究链：<b>如何公平比较不同 disorder coupling？什么时候 hysteresis 问题必须换成 isolated-wall experiment？每个 observable 到底允许你 claim 什么？</b></p>
-<div class="q">中心问题：<b>传统 ferroic driven-interface framework 在 sliding ferroelectricity 中能走多远？</b> 目标不是预设“必然 universal”，而是同时设计 survives 与 breaks down 两种结果都能被识别的实验。</div>
+<h1>从“会翻转”走到“为什么这样翻转”</h1>
+<p class="deck">这不是第 9 个基础模块，也不是未发表结果展示页。它把 03–07 已经学过的材料机制、钉扎、退钉扎、无序 与 相场 压成一条真正可执行的研究链：<b>如何公平比较不同 无序 耦合？什么时候 滞回 问题必须换成 孤立畴壁 实验？每个 可观测量 到底允许你 结论 什么？</b></p>
+<div class="q">中心问题：<b>传统 铁性材料 受驱界面 框架 在 滑移铁电 中能走多远？</b> 目标不是预设“必然 普适”，而是同时设计 成立 与 失效 两种结果都能被识别的实验。</div>
 <p class="rule">边界：本页只公开研究问题、有效模型与测量逻辑，不展示任何项目未发表数值。公式中的 periodic scalar model 是 teaching/research effective model，不声称是某一种 3R-MoS₂ / hBN 的第一性原理 Hamiltonian。</p>
-<div class="flow"><div><b>03 · moving object</b><p>先判断 switching 是否由 pre-existing wall 主导。</p></div><div><b>04 · real disorder</b><p>wall 为什么停、慢、变粗糙。</p></div><div><b>06 · disorder law</b><p>随机的是 bias、barrier 还是更复杂结构。</p></div><div><b>07 · effective model</b><p>把 stacking physics 压成可控连续场。</p></div><div><b>05 · critical test</b><p>隔离一堵 wall，再谈 β、ζ、ν。</p></div></div>
-
-<h2 id="disorder">1 · Disorder is not one number：σ 之前先问“随机了什么”</h2>
-<p>传统铁电已经给出一个很强的提醒：disorder 不是只用一个幅度参数描述。Jesse et al. 2008 从正、负 local nucleation bias 中分别重建 disorder potential 的 random-field 与 random-bond components；Ovchinnikov et al. 2009 又进一步说明 hysteresis shape 本身携带 disorder type 与 strength 的信息。对 sliding FE 来说，更不能先把所有 defect 压成“一个 σ”，再讨论谁更强。</p>
-<div class="three"><div class="card"><b>Coupling type</b><p>disorder 是直接偏爱某个 local state，还是改 barrier / stiffness / mobility / geometry？</p></div><div class="card"><b>Strength</b><p>RMS、energy variance、local force RMS 等不同定义并不自动等价。</p></div><div class="card"><b>Correlation length</b><p>white disorder 与 finite-size defects 即使 RMS 相同，也可能产生不同 collective dynamics。</p></div></div>
-<div class="source"><span class="tag">experimental anchor</span><b>Jesse et al., Nature Materials 7, 209–215 (2008)</b><p>作者直接从 local nucleation biases 提取 random-bond 与 random-field disorder components。<a href="https://doi.org/10.1038/nmat2114" target="_blank" rel="noopener">DOI 10.1038/nmat2114</a></p></div>
-<div class="source"><span class="tag">inference anchor</span><b>Ovchinnikov et al., PRL 103, 157203 (2009)</b><p>在 random-bond–random-field Ising framework 中，用 hysteresis loop shape 识别 disorder type / strength；它证明“loop shape 含 disorder 信息”，但不意味着真实 sliding FE 自动服从同一 Ising model。<a href="https://doi.org/10.1103/PhysRevLett.103.157203" target="_blank" rel="noopener">DOI 10.1103/PhysRevLett.103.157203</a></p></div>
-<div class="bridge">因此真正公平的问题不是“RF 的 σ 和 RB 的 σ 谁大”，而是：<b>在明确的 matching rule 下，改变 coupling law 本身是否仍改变 switching？</b></div>
-
-<h3 id="fair">1.1 · 一个适合 sliding-FE 的有效比较语言</h3>
-<div class="twocol"><div class="card"><b>Additive random-field-like coupling</b><div class="eq">F<sub>RF</sub> = −h(r) cos[φ−α(r)]</div><p>local generalized force / torque：<br><b>τ<sub>RF</sub> ∝ −h sin(φ−α)</b>。它可以直接偏置 local phase coordinate。</p></div><div class="card"><b>Barrier-amplitude / random-bond-like coupling</b><div class="eq">F<sub>RB</sub> = δV(r)[1−cos(nφ)]</div><p>local generalized force / torque：<br><b>τ<sub>RB</sub> ∝ −nδV sin(nφ)</b>。它主要修改 periodic landscape 的 barrier / curvature。</p></div></div>
-<div class="warn"><b>术语纪律：</b>这里的 “random-field-like / random-bond-like” 指 continuum effective coupling。它不等于说模型已经变成 RFIM，也不意味着真实 defect 只有这两种 microscopic origin。</div>
-<table class="matrix"><thead><tr><th>matching rule</th><th>优点</th><th>局限</th></tr></thead><tbody><tr><td>same parameter std</td><td>代码最简单</td><td>不同 coupling function 下通常没有明确“等强”物理意义</td></tr><tr><td>same energy variance</td><td>比较 energy landscape fluctuation</td><td>动力学由 derivative / force 决定时仍可能不公平</td></tr><tr><td>same phase-averaged local-force RMS</td><td>直接对齐 driving equation 里 disorder force scale</td><td>依赖选定 phase measure；不能抹掉 coupling form 的差异</td></tr></tbody></table>
-<p>最后一种尤其适合回答“<b>把局域 force scale 对齐以后，coupling law 还重要吗？</b>”——但 matching 是控制变量，不是理论上保证两个 disorder 动力学等价的变换。</p>
-
-<h3>1.2 · 为什么这在真实 sliding FE 里不是纯数学游戏</h3>
-<p>2026 年 CVD-grown 3R-WSe₂ 工作明确报告：growth-induced structural disorder 会显著影响 polarization switching，且 multi-domain kinetics 控制 FE response 的演化。这类实验告诉我们“disorder matters”，但从 structural disorder 到 RF / RB / mobility / geometry disorder 的 coarse-graining 仍需逐项论证。</p>
-<div class="source"><span class="tag">sliding-FE anchor</span><b>Paul et al., Nanoscale (2026), DOI 10.1039/D6NR01832G</b><p>适合作为“真实 sliding FE 为什么必须研究 disorder”的材料学锚点；它不直接替我们决定该用哪一种 effective disorder term。</p></div>
-<table class="matrix"><thead><tr><th>真实非均匀性</th><th>首先可能影响</th><th>不要自动等同于</th></tr></thead><tbody><tr><td>bubble / rough edge</td><td>local barrier、geometry、wall curvature</td><td>Gaussian white RF</td></tr><tr><td>trapped charge / electrostatic inhomogeneity</td><td>local polarization bias</td><td>pure RB</td></tr><tr><td>strain / stacking inhomogeneity</td><td>periodic landscape、wall energy、preferred registry</td><td>单一 scalar σ</td></tr><tr><td>growth defects / grains</td><td>barrier、mobility、initial domain network</td><td>只有一个 microscopic mechanism</td></tr></tbody></table>
-
-<h2 id="protocol">2 · Full switching 与 isolated-wall depinning：不是同一套实验换个名字</h2>
-<p>这是 Research Track 最重要的 protocol split。Triangle-wave hysteresis 很适合研究完整 switching system；但如果问题变成“一个预先存在的 wall 是否存在 critical depinning”，就必须尽量把 nucleation、multi-domain pathway 与 history 混合因素拿掉。</p>
-<table class="matrix"><thead><tr><th></th><th>Full switching / hysteresis</th><th>Isolated-wall depinning</th></tr></thead><tbody><tr><td>初态</td><td>single / mixed domains，可允许 switching topology 自己发展</td><td>明确构造并先 relax 一堵 pre-existing wall</td></tr><tr><td>drive</td><td>triangle / cyclic E(t)</td><td>constant E</td></tr><tr><td>主要输出</td><td>P(E)、coercive scale、loop work、switching activity、morphology</td><td>u(y,t)、steady v(E)、B(r)、S(q)、E<sub>c</sub>(L)</td></tr><tr><td>threshold 含义</td><td>protocol-dependent switching / coercive threshold</td><td>在定义的 T=0 wall problem 中 pinned→moving threshold</td></tr><tr><td>β</td><td>不能由 loop 的 E<sub>c</sub> 直接得到</td><td>在稳定 steady-v window 中测试 v∼(E−E<sub>c</sub>)<sup>β</sup></td></tr><tr><td>主要风险</td><td>nucleation、path history、多个 walls 混在一起</td><td>transient、finite size、wall topology breakdown</td></tr></tbody></table>
-<div class="q"><b>一句话：</b>coercive field 可以是非常有用的 switching observable，但不能因为数值上“像一个阈值”就重命名成 depinning critical field。</div>
-<div class="steps"><div class="step"><b>① E=0 relax</b><p>先确认 initial wall 自己不会因为准备方式继续漂移。</p></div><div class="step"><b>② constant E</b><p>每个 field 独立测长期 wall trajectory，而不是从 sweep 中截一段。</p></div><div class="step"><b>③ steady-v gate</b><p>排除明显 transient；低于 threshold 要区分 truly pinned 与 exposure 不足。</p></div><div class="step"><b>④ topology gate</b><p>出现 persistent bubbles / overhangs / nucleation 时，不再盲目把 wall 写成单值 u(y)。</p></div></div>
-
-<h2 id="temperature">2.5 · Temperature 是新的实验轴，不是把 random seed 多跑几次</h2>
-<p>当 isolated-wall T=0 protocol 稳定以后，有限温度自然分成两个不同的问题：</p>
-<div class="twocol"><div class="card"><b>Deep subcritical · creep</b><p>f&lt;f<sub>c</sub> 且离阈值足够远：问 thermally activated barriers 是否产生可测的长期 drift，是否存在稳定 creep window 与 μ candidate。</p></div><div class="card"><b>Near threshold · thermal rounding</b><p>f≈f<sub>c</sub>：问 T=0 singularity 怎样被温度圆滑，是否存在 v(f<sub>c</sub>,T)∼T<sup>ψ</sup> 与 joint field–temperature scaling。</p></div></div>
-<table class="matrix"><thead><tr><th>层次</th><th>应该固定什么</th><th>重复什么</th><th>独立统计单元</th></tr></thead><tbody><tr><td>quenched disorder</td><td>一个 landscape h(r)/δV(r)</td><td>换 disorder seed</td><td>用于 disorder population inference 的 outer block</td></tr><tr><td>thermal noise</td><td>同一个 quenched landscape</td><td>换 Langevin/noise seed</td><td>同一 landscape 内的 conditional repeat</td></tr><tr><td>trajectory frames</td><td>同一次 run</td><td>随时间采样</td><td>不是新的 disorder sample</td></tr></tbody></table>
-<div class="warn"><b>最重要的 anti-overfit rule：</b>thermal rounding 必须继承独立 T=0 threshold。若允许每个 disorder seed 在同一批 finite-T 数据里自由移动自己的 f<sub>c</sub>，再去优化 ψ / collapse，就可能人为抹掉 sample-to-sample threshold variation。</div>
+<div class="flow"><div><b>03 · 运动对象</b><p>先判断 翻转 是否由 预存畴壁 主导。</p></div><div><b>04 · real 无序</b><p>畴壁 为什么停、慢、变粗糙。</p></div><div><b>06 · 无序 关系</b><p>随机的是 偏置、势垒 还是更复杂结构。</p></div><div><b>07 · 有效模型</b><p>把 堆垛 物理 压成可控连续场。</p></div><div><b>05 · 临界性检验</b><p>隔离一堵 畴壁，再谈 β、ζ、ν。</p></div></div>
+<h2 id="disorder">1 · 无序 is not one number：σ 之前先问“随机了什么”</h2>
+<p>传统铁电已经给出一个很强的提醒：无序 不是只用一个幅度参数描述。Jesse et al. 2008 从正、负 局域 成核 偏置 中分别重建 无序 势 的 随机场 与 随机键 分量；Ovchinnikov et al. 2009 又进一步说明 滞回 形状 本身携带 无序类型 与 强度 的信息。对 滑移铁电 来说，更不能先把所有 缺陷 压成“一个 σ”，再讨论谁更强。</p>
+<div class="three"><div class="card"><b>耦合 type</b><p>无序 是直接偏爱某个 局域状态，还是改 势垒 / 刚度 / 迁移率 / 几何？</p></div><div class="card"><b>强度</b><p>RMS、energy 方差、局域力 RMS 等不同定义并不自动等价。</p></div><div class="card"><b>关联长度</b><p>白噪声无序 与 有限尺寸 缺陷 即使 RMS 相同，也可能产生不同 集体动力学。</p></div></div>
+<div class="source"><span class="tag">实验锚点</span><b>Jesse et al., Nature Materials 7, 209–215 (2008)</b><p>作者直接从 局域 成核 biases 提取 随机键 与 随机场 无序 分量。<a href="https://doi.org/10.1038/nmat2114" rel="noopener" target="_blank">DOI 10.1038/nmat2114</a></p></div>
+<div class="source"><span class="tag">inference anchor</span><b>Ovchinnikov et al., PRL 103, 157203 (2009)</b><p>在 随机键–随机场 Ising 框架 中，用 滞回回线 形状 识别 无序类型 / 强度；它证明“回线 形状 含 无序 信息”，但不意味着真实 滑移铁电 自动服从同一 Ising 模型。<a href="https://doi.org/10.1103/PhysRevLett.103.157203" rel="noopener" target="_blank">DOI 10.1103/PhysRevLett.103.157203</a></p></div>
+<div class="bridge">因此真正公平的问题不是“RF 的 σ 和 RB 的 σ 谁大”，而是：<b>在明确的 匹配规则 下，改变 耦合形式 本身是否仍改变 翻转？</b></div>
+<h3 id="fair">1.1 · 一个适合 滑移铁电 的有效比较语言</h3>
+<div class="twocol"><div class="card"><b>Additive 随机场型 耦合</b><div class="eq">F<sub>RF</sub> = −h(r) cos[φ−α(r)]</div><p>局域 广义力 / 力矩：<br/><b>τ<sub>RF</sub> ∝ −h sin(φ−α)</b>。它可以直接偏置 局域相位 坐标。</p></div><div class="card"><b>势垒-amplitude / 随机键型 耦合</b><div class="eq">F<sub>RB</sub> = δV(r)[1−cos(nφ)]</div><p>局域 广义力 / 力矩：<br/><b>τ<sub>RB</sub> ∝ −nδV sin(nφ)</b>。它主要修改 periodic 景观 的 势垒 / 曲率。</p></div></div>
+<div class="warn"><b>术语纪律：</b>这里的 “随机场型 / 随机键型” 指 连续体 有效 耦合。它不等于说模型已经变成 RFIM，也不意味着真实 缺陷 只有这两种 微观 来源。</div>
+<table class="matrix"><thead><tr><th>匹配规则</th><th>优点</th><th>局限</th></tr></thead><tbody><tr><td>same 参数 标准差</td><td>代码最简单</td><td>不同 耦合 函数 下通常没有明确“等强”物理意义</td></tr><tr><td>same energy 方差</td><td>比较 energy 景观 涨落</td><td>动力学由 derivative / force 决定时仍可能不公平</td></tr><tr><td>same phase-averaged 局域-force RMS</td><td>直接对齐 动力学方程 里 无序 force 尺度</td><td>依赖选定 相位测度；不能抹掉 耦合 形式 的差异</td></tr></tbody></table>
+<p>最后一种尤其适合回答“<b>把局域 force 尺度 对齐以后，耦合形式 还重要吗？</b>”——但 匹配 是控制变量，不是理论上保证两个 无序 动力学等价的变换。</p>
+<h3>1.2 · 为什么这在真实 滑移铁电 里不是纯数学游戏</h3>
+<p>2026 年 CVD 生长 3R-WSe₂ 工作明确报告：growth-induced structural 无序 会显著影响 极化 翻转，且 多畴 动力学 控制 铁电响应 的演化。这类实验告诉我们“无序 确实重要”，但从 structural 无序 到 RF / RB / 迁移率 / 几何 无序 的 粗粒化 仍需逐项论证。</p>
+<div class="source"><span class="tag">滑移铁电 anchor</span><b>Paul et al., Nanoscale (2026), DOI 10.1039/D6NR01832G</b><p>适合作为“真实 滑移铁电 为什么必须研究 无序”的材料学锚点；它不直接替我们决定该用哪一种 有效 无序 项。</p></div>
+<table class="matrix"><thead><tr><th>真实非均匀性</th><th>首先可能影响</th><th>不要自动等同于</th></tr></thead><tbody><tr><td>封闭小畴 / rough edge</td><td>局域势垒、几何、畴壁 曲率</td><td>Gaussian white RF</td></tr><tr><td>trapped charge / 静电 inhomogeneity</td><td>局域 极化 偏置</td><td>pure RB</td></tr><tr><td>strain / 堆垛 inhomogeneity</td><td>periodic 景观、畴壁 energy、preferred registry</td><td>单一 scalar σ</td></tr><tr><td>growth 缺陷 / grains</td><td>势垒、迁移率、initial 畴 网络</td><td>只有一个 微观 机制</td></tr></tbody></table>
+<h2 id="protocol">2 · 完整翻转 与 孤立畴壁 退钉扎：不是同一套实验换个名字</h2>
+<p>这是 Research Track 最重要的 方案 split。Triangle-wave 滞回 很适合研究完整 翻转 体系；但如果问题变成“一个预先存在的 畴壁 是否存在 临界退钉扎”，就必须尽量把 成核、多畴 路径 与 history 混合因素拿掉。</p>
+<table class="matrix"><thead><tr><th></th><th>完整翻转 / 滞回</th><th>孤立畴壁 退钉扎</th></tr></thead><tbody><tr><td>初态</td><td>single / mixed 畴，可允许 翻转 拓扑 自己发展</td><td>明确构造并先 relax 一堵 预存畴壁</td></tr><tr><td>drive</td><td>triangle / cyclic E(t)</td><td>constant E</td></tr><tr><td>主要输出</td><td>P(E)、coercive 尺度、回线功、翻转 活动度、morphology</td><td>u(y,t)、稳态 v(E)、B(r)、S(q)、E<sub>c</sub>(L)</td></tr><tr><td>阈值 含义</td><td>方案-dependent 翻转 / coercive 阈值</td><td>在定义的 T=0 畴壁 problem 中 钉扎态→运动态 阈值</td></tr><tr><td>β</td><td>不能由 回线 的 E<sub>c</sub> 直接得到</td><td>在稳定 稳态-v 区间 中测试 v∼(E−E<sub>c</sub>)<sup>β</sup></td></tr><tr><td>主要风险</td><td>成核、path history、多个 walls 混在一起</td><td>瞬态、finite size、畴壁 拓扑 失效</td></tr></tbody></table>
+<div class="q"><b>一句话：</b>矫顽场 可以是非常有用的 翻转 可观测量，但不能因为数值上“像一个阈值”就重命名成 退钉扎临界场。</div>
+<div class="steps"><div class="step"><b>① E=0 relax</b><p>先确认 initial 畴壁 自己不会因为准备方式继续漂移。</p></div><div class="step"><b>② constant E</b><p>每个 场 独立测长期 畴壁 轨迹，而不是从 sweep 中截一段。</p></div><div class="step"><b>③ 稳态-v 判据</b><p>排除明显 瞬态；低于 阈值 要区分 truly 钉扎态 与 观测时长 不足。</p></div><div class="step"><b>④ 拓扑 判据</b><p>出现 持续 封闭小畴 / 悬垂 / 成核 时，不再盲目把 畴壁 写成单值 u(y)。</p></div></div>
+<h2 id="temperature">2.5 · 温度 是新的实验轴，不是把 随机种子 多跑几次</h2>
+<p>当 孤立畴壁 T=0 方案 稳定以后，有限温度自然分成两个不同的问题：</p>
+<div class="twocol"><div class="card"><b>Deep 阈值以下 · 蠕变</b><p>f&lt;f<sub>c</sub> 且离阈值足够远：问 热激活 barriers 是否产生可测的长期 漂移，是否存在稳定 蠕变 区间 与 μ 候选。</p></div><div class="card"><b>Near 阈值 · 热圆滑</b><p>f≈f<sub>c</sub>：问 T=0 singularity 怎样被温度圆滑，是否存在 v(f<sub>c</sub>,T)∼T<sup>ψ</sup> 与 joint 场–温度 scaling。</p></div></div>
+<table class="matrix"><thead><tr><th>层次</th><th>应该固定什么</th><th>重复什么</th><th>独立统计单元</th></tr></thead><tbody><tr><td>淬火无序</td><td>一个 景观 h(r)/δV(r)</td><td>换 无序 随机种子</td><td>用于 无序 总体推断 的 外层 区块</td></tr><tr><td>热噪声</td><td>同一个 quenched 景观</td><td>换 Langevin/噪声 随机种子</td><td>同一 景观 内的 条件 重复</td></tr><tr><td>轨迹帧</td><td>同一次 运行</td><td>随时间采样</td><td>不是新的 无序 样本</td></tr></tbody></table>
+<div class="warn"><b>最重要的 anti-overfit rule：</b>热圆滑 必须继承独立 T=0 阈值。若允许每个 无序 随机种子 在同一批 有限温 数据里自由移动自己的 f<sub>c</sub>，再去优化 ψ / 坍缩，就可能人为抹掉 样本间 阈值 variation。</div>
 <div class="bridge"><a href="pinning-creep.html#finite-temperature">Module 04：怎么找可测 creep window</a>　·　<a href="depinning.html#thermal-rounding">Module 05：怎么测 thermal rounding / ψ</a>　·　<a href="numerical-modeling.html#thermal-noise">Module 07：thermal noise / FDT 怎样随 dx、dt 离散</a></div>
-
-<h2 id="model">3 · 从 stacking registry 到 minimal sliding-FE phase field</h2>
-<p>普通 φ⁴ phase field 能教 interface dynamics，却容易把 sliding FE 最重要的“周期性 stacking coordinate”藏掉。一个更贴近本项目问题、但仍保持 minimal 的教学模型，是把 local registry 压成周期变量 φ(r,t)，再把 polarization 写成 φ 的周期函数。</p>
+<h2 id="model">3 · 从 堆垛构型 到 最小 滑移铁电 相场</h2>
+<p>普通 φ⁴ 相场 能教 界面 动力学，却容易把 滑移铁电 最重要的“周期性 堆垛 坐标”藏掉。一个更贴近本项目问题、但仍保持 最小 的教学模型，是把 局域 registry 压成周期变量 φ(r,t)，再把 极化 写成 φ 的周期函数。</p>
 <div class="eq">P(φ)=P<sub>0</sub> sinφ</div>
 <div class="eq">F[φ]=∫d²r { κ/2 |∇φ|² + V<sub>0</sub>[1−cos(nφ)] − E P<sub>0</sub>sinφ + F<sub>dis</sub>[φ,r] }</div>
-<table class="matrix"><thead><tr><th>term</th><th>保留的物理</th><th>它没有自动包含什么</th></tr></thead><tbody><tr><td>φ(r,t)</td><td>local effective stacking phase / registry coordinate</td><td>完整原子坐标、多层所有 stacking labels</td></tr><tr><td>V₀[1−cos(nφ)]</td><td>periodic stacking landscape / multiple equivalent minima</td><td>材料真实 DFT energy surface 的所有 anisotropy</td></tr><tr><td>κ|∇φ|²/2</td><td>spatial smoothness、wall tension、finite wall width</td><td>所有 nonlocal elasticity / electrostatics</td></tr><tr><td>−EP₀sinφ</td><td>electric drive 对 effective polarization 的耦合</td><td>microscopic off-diagonal BEC tensor 本身</td></tr><tr><td>F<sub>dis</sub></td><td>可控地测试 coupling law / correlation / strength</td><td>一个唯一、已知的真实 defect microscopic identity</td></tr></tbody></table>
-<div class="warn"><b>建模边界：</b>这个模型的价值是把 “periodic stacking + diffuse wall + quenched disorder + drive” 放在同一最小框架里，用于比较机制与 universality。若结论依赖特定 3R lattice direction、层间 shear tensor、off-diagonal Born effective charge、multilayer interface coupling，就必须回到更细的自由度。</div>
-<div id="identifiability-bridge" class="bridge"><b>参数不是越多越真实：</b>这个 periodic model 写出 κ、V<sub>0</sub>、P<sub>0</sub>、Γ 与 disorder 后，下一步不是一起拟合，而是先问哪些 observable 能独立约束哪些参数组合。<a href="numerical-modeling.html#identifiability">去 Module 07 看 nondimensionalization / identifiability →</a></div>
-
-<h3>3.1 · discretization 不是纯数值细节</h3>
-<div class="eq">⟨h(r)h(r′)⟩=Δδ<sup>(d)</sup>(r−r′) ⇒ std(h<sub>cell</sub>)∝dx<sup>−d/2</sup><small>二维 cell-average white disorder：std ∝ 1/dx。该缩放只针对明确的 δ-correlated continuum-field convention。</small></div>
-<p>因此 dx convergence 要固定的是 <b>physical disorder definition</b>，不是数组每个 pixel 的 std。有限相关长度 defects、固定位置 defects、cell-integrated random energy 都必须重新从 covariance / discrete energy 定义推导。</p>
-
-<h2 id="observables">4 · Observable anatomy：一个量只回答一个层次的问题</h2>
-<p>真正容易过度 claim 的地方不是模型，而是把一个 observable 直接命名成某个 mechanism。下面这张表是整条 Research Track 的“证据尺子”。</p>
-<table class="matrix"><thead><tr><th>observable</th><th>主要回答</th><th>不能单独证明</th></tr></thead><tbody><tr><td>P–E / hysteresis</td><td>macroscopic switching response 与 history</td><td>DW-only mechanism / depinning universality</td></tr><tr><td>coercive half-width / switching threshold</td><td>protocol 下的 field scale</td><td>T=0 isolated-wall E<sub>c</sub></td></tr><tr><td>external loop work</td><td>control protocol 的 hysteretic work</td><td>直接等同于 microscopic DW dissipation</td></tr><tr><td>dP/dt / switching-rate trace</td><td>activity 在时间上如何组织</td><td>某一个唯一 microscopic bottleneck</td></tr><tr><td>burst concentration</td><td>activity 是集中释放还是时间分散</td><td>RFIM avalanche universality</td></tr><tr><td>connected components</td><td>空间 fragmentation / coalescence context</td><td>单独定义“nucleation 数量”</td></tr><tr><td>interface density</td><td>boundary-richness / morphology complexity</td><td>wall energy 或 dissipation 的直接测量</td></tr><tr><td>steady v(E)</td><td>isolated wall driven dynamics</td><td>只凭一条幂律就确定 universality class</td></tr><tr><td>B(r), S(q), W(L)</td><td>interface geometry / roughness scaling</td><td>动力学 exponent β</td></tr><tr><td>E<sub>c</sub>(L) + collapse</td><td>finite-size critical test</td><td>通过自由调参“调漂亮”的 collapse 不算证据</td></tr></tbody></table>
-
-<h2 id="analysis-contract">4.5 · Analysis contract：在看结果前先写下哪些 knob 不能随意调</h2>
-<p>universality 项目最危险的自由度往往不在模拟器，而在分析脚本：f<sub>c</sub>、fit window、L subset、roughness range、contour threshold、transient cut 都可以把结果“调顺”。因此每个主 observable 至少要有 primary rule 与 sensitivity rule。</p>
-<table class="matrix"><thead><tr><th>observable</th><th>primary rule</th><th>必须做的 sensitivity</th><th>红灯</th></tr></thead><tbody>
-<tr><td>f<sub>c</sub></td><td>独立 threshold / nonsteady criterion</td><td>exposure、criterion、L</td><td>同一 finite-T / β fit 里自由回调 f<sub>c</sub></td></tr>
-<tr><td>β</td><td>预定 reduced-force window family</td><td>上下窗口、f<sub>c</sub> perturbation、transient cut</td><td>β<sub>eff</sub> 持续漂移</td></tr>
-<tr><td>ζ</td><td>预定 wall-extraction + scale mask</td><td>contour threshold、W/B/S(q)、detrending</td><td>overhang fraction 高或 local/global/spectral exponent 分裂</td></tr>
-<tr id="roughness-gate-bridge"><td colspan="4"><b>完整验收链：</b><a href="pinning-creep.html#roughness-gate">Module 04 · UV/IR mask → effective slope → B/S/W → anomalous/multiscaling → source-level uncertainty</a></td></tr>
-<tr><td>ν / collapse</td><td>固定 size set 与 objective</td><td>leave-one-size-out、端点 L 删除</td><td>collapse 只靠一个 L 或一个自由参数支撑</td></tr>
-<tr id="collapse-gate-bridge"><td colspan="4"><b>完整验收链：</b><a href="depinning.html#collapse-gate">Module 05 · objective → leave-one-size-out → held-out size → correction-to-scaling gate</a></td></tr>
-<tr><td>z</td><td>明确 initial condition / transient observable</td><td>time window、initial-state preparation</td><td>mesoscopic crossover 被当 asymptotic</td></tr>
+<table class="matrix"><thead><tr><th>项</th><th>保留的物理</th><th>它没有自动包含什么</th></tr></thead><tbody><tr><td>φ(r,t)</td><td>局域 有效 堆垛 phase / registry 坐标</td><td>完整原子坐标、多层所有 堆垛 labels</td></tr><tr><td>V₀[1−cos(nφ)]</td><td>periodic 堆垛 景观 / multiple equivalent minima</td><td>材料真实 DFT energy surface 的所有 anisotropy</td></tr><tr><td>κ|∇φ|²/2</td><td>spatial smoothness、畴壁 tension、finite 畴壁 width</td><td>所有 nonlocal 弹性 / electrostatics</td></tr><tr><td>−EP₀sinφ</td><td>electric drive 对 有效 极化 的耦合</td><td>微观 off-diagonal BEC tensor 本身</td></tr><tr><td>F<sub>dis</sub></td><td>可控地测试 耦合形式 / 关联 / 强度</td><td>一个唯一、已知的真实 缺陷 微观 identity</td></tr></tbody></table>
+<div class="warn"><b>建模边界：</b>这个模型的价值是把 “periodic 堆垛 + diffuse 畴壁 + 淬火无序 + drive” 放在同一最小框架里，用于比较机制与 普适性。若结论依赖特定 3R 晶格方向、层间 剪切张量、非对角 Born 有效电荷、多层 界面 耦合，就必须回到更细的自由度。</div>
+<div class="bridge" id="identifiability-bridge"><b>参数不是越多越真实：</b>这个 periodic 模型 写出 κ、V<sub>0</sub>、P<sub>0</sub>、Γ 与 无序 后，下一步不是一起拟合，而是先问哪些 可观测量 能独立约束哪些参数组合。<a href="numerical-modeling.html#identifiability">去 Module 07 看 nondimensionalization / identifiability →</a></div>
+<h3>3.1 · 离散化 不是纯数值细节</h3>
+<div class="eq">⟨h(r)h(r′)⟩=Δδ<sup>(d)</sup>(r−r′) ⇒ std(h<sub>cell</sub>)∝dx<sup>−d/2</sup><small>二维 cell-average white 无序：std ∝ 1/dx。该缩放只针对明确的 δ-correlated continuum-field convention。</small></div>
+<p>因此 dx 收敛 要固定的是 <b>物理 无序 定义</b>，不是数组每个 像素 的 标准差。有限相关长度 缺陷、固定位置 缺陷、网格单元积分 random energy 都必须重新从 协方差 / 离散能量 定义推导。</p>
+<h2 id="observables">4 · 可观测量 结构：一个量只回答一个层次的问题</h2>
+<p>真正容易过度 结论 的地方不是模型，而是把一个 可观测量 直接命名成某个 机制。下面这张表是整条 Research Track 的“证据尺子”。</p>
+<table class="matrix"><thead><tr><th>可观测量</th><th>主要回答</th><th>不能单独证明</th></tr></thead><tbody><tr><td>P–E / 滞回</td><td>宏观 翻转 response 与 history</td><td>DW-only 机制 / 退钉扎 普适性</td></tr><tr><td>coercive half-width / 翻转 阈值</td><td>方案 下的 场 尺度</td><td>T=0 孤立畴壁 E<sub>c</sub></td></tr><tr><td>external 回线功</td><td>control 方案 的 滞回功</td><td>直接等同于 微观 DW 耗散</td></tr><tr><td>dP/dt / 翻转-速率轨迹</td><td>活动度 在时间上如何组织</td><td>某一个唯一 微观 瓶颈</td></tr><tr><td>突发集中度</td><td>活动度 是集中释放还是时间分散</td><td>RFIM 雪崩 普适性</td></tr><tr><td>连通分量</td><td>空间 碎裂 / 合并 context</td><td>单独定义“成核 数量”</td></tr><tr><td>界面 density</td><td>边界丰富度 / morphology complexity</td><td>畴壁 energy 或 耗散 的直接测量</td></tr><tr><td>稳态 v(E)</td><td>孤立畴壁 受驱 动力学</td><td>只凭一条幂律就确定 普适类</td></tr><tr><td>B(r), S(q), W(L)</td><td>界面 几何 / 粗糙度 scaling</td><td>动力学 指数 β</td></tr><tr><td>E<sub>c</sub>(L) + 坍缩</td><td>有限尺寸 临界性检验</td><td>通过自由调参“调漂亮”的 坍缩 不算证据</td></tr></tbody></table>
+<h2 id="analysis-contract">4.5 · 分析约定：在看结果前先写下哪些 可调旋钮 不能随意调</h2>
+<p>普适性 项目最危险的自由度往往不在模拟器，而在分析脚本：f<sub>c</sub>、拟合区间、L 子集、粗糙度 区间、等值线 阈值、瞬态 截断 都可以把结果“调顺”。因此每个主 可观测量 至少要有 主规则 与 敏感性 rule。</p>
+<table class="matrix"><thead><tr><th>可观测量</th><th>主规则</th><th>必须做的 敏感性</th><th>红灯</th></tr></thead><tbody>
+<tr><td>f<sub>c</sub></td><td>独立 阈值 / nonsteady 判据</td><td>观测时长、判据、L</td><td>同一 有限温 / β 拟合 里自由回调 f<sub>c</sub></td></tr>
+<tr><td>β</td><td>预定 reduced-force 区间 族</td><td>上下窗口、f<sub>c</sub> 扰动、瞬态 截断</td><td>β<sub>eff</sub> 持续漂移</td></tr>
+<tr><td>ζ</td><td>预定 畴壁-extraction + 尺度 mask</td><td>等值线 阈值、W/B/S(q)、去趋势</td><td>悬垂 比例 高或 局域/全局/谱指数 分裂</td></tr>
+<tr id="roughness-gate-bridge"><td colspan="4"><b>完整验收链：</b><a href="pinning-creep.html#roughness-gate">Module 04 · UV/IR mask → 有效斜率 → B/S/W → 异常标度/多重标度 → 样本层级 uncertainty</a></td></tr>
+<tr><td>ν / 坍缩</td><td>固定 size set 与 目标函数</td><td>逐一留出尺寸、端点 L 删除</td><td>坍缩 只靠一个 L 或一个自由参数支撑</td></tr>
+<tr id="collapse-gate-bridge"><td colspan="4"><b>完整验收链：</b><a href="depinning.html#collapse-gate">Module 05 · objective → leave-one-size-out → 留出尺寸 → 标度修正判据</a></td></tr>
+<tr><td>z</td><td>明确 初态 / 瞬态 可观测量</td><td>时间区间、initial-态 制备</td><td>介观 交叉区 被当 渐近</td></tr>
 </tbody></table>
-<div class="bridge"><b>预注册不等于僵化。</b>发现新 crossover 后可以升级模型或新增 secondary analysis，但要把它标成 post-hoc，并保留原 primary result。这样“breakdown”才不会被分析自由度悄悄洗掉。</div>
-<h3 id="event-contract">4.6 · Event-statistics contract：burst ≠ avalanche by naming</h3>
-<div class="three"><div class="card"><b>Freeze detector</b><p>primary threshold、dead-time / merge rule、bandwidth / sampling rate 在看 exponent 前固定；另外做一组 detector-sensitivity sweep。</p></div><div class="card"><b>Freeze size definition</b><p>明确 S 是 switched area、integrated wall advance、integrated activity 还是 electrical pulse area；不同定义不能混在同一 τ 里。</p></div><div class="card"><b>Preserve hierarchy</b><p>realization → event → frame/bin/pixel。bootstrap draws 只是计算工具，永远不是新的物理样本。</p></div></div>
+<div class="bridge"><b>预注册不等于僵化。</b>发现新 交叉区 后可以升级模型或新增 次要分析，但要把它标成 事后，并保留原 主 result。这样“失效”才不会被分析自由度悄悄洗掉。</div>
+<h3 id="event-contract">4.6 · 事件统计约定：突发事件 ≠ 雪崩 by naming</h3>
+<div class="three"><div class="card"><b>Freeze 事件检测器</b><p>主 阈值、死时间 / 合并规则、带宽 / 采样率 在看 指数 前固定；另外做一组 事件检测器-敏感性 sweep。</p></div><div class="card"><b>Freeze size 定义</b><p>明确 S 是 翻转面积、integrated 畴壁 advance、integrated 活动度 还是 electrical pulse area；不同定义不能混在同一 τ 里。</p></div><div class="card"><b>Preserve hierarchy</b><p>无序样本 → 事件 → 帧/bin/像素。自助法 draws 只是计算工具，永远不是新的物理样本。</p></div></div>
 <table class="matrix"><thead><tr><th>看到的现象</th><th>允许的最低措辞</th><th>升级前还缺什么</th></tr></thead><tbody>
-<tr><td>intermittent peaks</td><td>bursty / intermittent switching</td><td>固定 event definition + detector robustness</td></tr>
-<tr><td>broad event-size distribution</td><td>broad / heavy-tailed events</td><td>power-law goodness-of-fit + alternatives</td></tr>
-<tr><td>candidate power law</td><td>power-law-consistent window</td><td>cutoff / size dependence + duration relation + realization robustness</td></tr>
-<tr><td>multiple scaling observables</td><td>candidate avalanche criticality</td><td>critical control parameter / scaling relations / universal shape or function where applicable</td></tr>
+<tr><td>间歇 peaks</td><td>突发 / 间歇 翻转</td><td>固定 事件 定义 + 事件检测器 稳健性</td></tr>
+<tr><td>broad 事件-size distribution</td><td>broad / 重尾 事件</td><td>幂律 goodness-of-拟合 + 替代分布</td></tr>
+<tr><td>候选 幂律</td><td>幂律-consistent 区间</td><td>截止 / 尺寸依赖 + duration relation + 无序样本 稳健性</td></tr>
+<tr><td>multiple scaling 可观测量</td><td>候选 雪崩 临界性</td><td>临界 control 参数 / 标度关系 / 普适 形状 or 函数 where applicable</td></tr>
 </tbody></table>
-<div class="warn"><b>Paper-writing rule：</b>“burst concentration” 或 “multiple resistance jumps” 可以是很有价值的 phenomenology；在没有 event-level critical analysis 前，不把它们改名成 RFIM avalanches。<a href="disorder-rfim.html#avalanche-statistics">去 Module 06 看完整统计边界 →</a></div>
-
-
-<h3 id="data-claim-contract">4.7 · Data → Estimator → Evidence → Claim：先知道 n 在哪一层</h3>
-<p>一条研究结论不是从 raw file 直接跳到 paper sentence。中间至少有四层：<b>data object</b> 是记录到的东西；<b>estimator</b> 把它压成一个可比较的量；<b>evidence unit</b> 决定不确定度和独立样本数；最后才是 <b>claim</b>。最常见的伪精确，来自把这四层混在一起。</p>
-<div class="flow"><div><b>Data</b><p>trajectory、field row、frame、endpoint、event、run status。</p></div><div><b>Estimator</b><p>f<sub>c</sub><sup>(i)</sup>、v、β<sub>eff</sub>、ζ、work、event-size statistics。</p></div><div><b>Evidence</b><p>哪些 realization / device / size 真正提供独立信息。</p></div><div><b>Sensitivity</b><p>window、threshold、detector、topology、exposure 改动后是否 survive。</p></div><div><b>Claim</b><p>从 phenomenology 到 candidate criticality，再到 universality。</p></div></div>
-
+<div class="warn"><b>论文写作规则：</b>“突发集中度” 或 “multiple resistance jumps” 可以是很有价值的 现象学；在没有 事件-层级 临界 analysis 前，不把它们改名成 RFIM 雪崩。<a href="disorder-rfim.html#avalanche-statistics">去 Module 06 看完整统计边界 →</a></div>
+<h3 id="data-claim-contract">4.7 · 数据 → 估计量 → 证据 → 结论：先知道 n 在哪一层</h3>
+<p>一条研究结论不是从 原始文件 直接跳到 论文表述。中间至少有四层：<b>数据对象</b> 是记录到的东西；<b>估计量</b> 把它压成一个可比较的量；<b>证据单元</b> 决定不确定度和独立样本数；最后才是 <b>结论</b>。最常见的伪精确，来自把这四层混在一起。</p>
+<div class="flow"><div><b>数据</b><p>轨迹、场 row、帧、endpoint、事件、运行 状态。</p></div><div><b>估计量</b><p>f<sub>c</sub><sup>(i)</sup>、v、β<sub>eff</sub>、ζ、work、事件-size statistics。</p></div><div><b>证据</b><p>哪些 无序样本 / device / size 真正提供独立信息。</p></div><div><b>敏感性</b><p>区间、阈值、事件检测器、拓扑、观测时长 改动后是否 通过。</p></div><div><b>结论</b><p>从 现象学 到 候选 临界性，再到 普适性。</p></div></div>
 <h3>4.7.1 · 同一个文件里有很多 rows，不代表 n 很大</h3>
 <table class="matrix"><thead><tr><th>数据对象</th><th>它适合估计什么</th><th>通常的独立层级</th><th>不能偷换成</th></tr></thead><tbody>
-<tr><td>time-series rows / field rows</td><td>单个 run 的 trajectory、steady window、crossing / switching time</td><td>属于同一个 run / source 的 repeated observations</td><td>几千个独立 samples</td></tr>
-<tr><td>cycles / endpoints</td><td>protocol 内重复性、cycle-level derived observable</td><td>默认 nested in task / device，除非实验设计另有独立随机化</td><td>自动独立的 n</td></tr>
-<tr><td>frames / pixels</td><td>morphology、interface geometry、field map</td><td>同一 realization 的空间/时间采样</td><td>独立 disorder realizations</td></tr>
-<tr><td>thermal seeds</td><td>给定 quenched landscape 下的 thermal expectation / stochastic spread</td><td>inner repeats nested under one disorder realization</td><td>新的 quenched samples</td></tr>
-<tr><td>disorder realizations / devices</td><td>disorder-population inference</td><td>通常是最关键的 independent unit</td><td>由内部 rows 数量放大的 n</td></tr>
-<tr><td>system sizes L</td><td>finite-size trend / collapse</td><td>design strata；每个 L 仍需独立 realizations</td><td>“9 个 L = n=9” 的全部统计依据</td></tr>
-<tr><td>bootstrap draws</td><td>传播 estimator uncertainty</td><td>计算重采样</td><td>新的物理数据</td></tr>
+<tr><td>time-series rows / 场 rows</td><td>单个 运行 的 轨迹、稳态 区间、crossing / 翻转 time</td><td>属于同一个 运行 / 来源 的 重复观测</td><td>几千个独立 样本</td></tr>
+<tr><td>cycles / endpoints</td><td>方案 内重复性、cycle-层级 derived 可观测量</td><td>默认 nested in task / device，除非实验设计另有独立随机化</td><td>自动独立的 n</td></tr>
+<tr><td>帧 / 像素</td><td>morphology、界面 几何、场 map</td><td>同一 无序样本 的空间/时间采样</td><td>独立 无序 无序样本</td></tr>
+<tr><td>热 随机种子</td><td>给定 quenched 景观 下的 热 expectation / 随机波动</td><td>内层 重复 nested under one 无序样本</td><td>新的 quenched 样本</td></tr>
+<tr><td>无序 无序样本 / devices</td><td>无序-总体推断</td><td>通常是最关键的 独立单元</td><td>由内部 rows 数量放大的 n</td></tr>
+<tr><td>体系 sizes L</td><td>有限尺寸 trend / 坍缩</td><td>设计层；每个 L 仍需独立 无序样本</td><td>“9 个 L = n=9” 的全部统计依据</td></tr>
+<tr><td>自助法 draws</td><td>传播 估计量 uncertainty</td><td>计算重采样</td><td>新的物理数据</td></tr>
 </tbody></table>
-<div class="warn"><b>层级规则：</b>trajectory rows、cycles、frames、pixels、events、endpoints 与 bootstrap draws 都可能非常多，但是否能进入独立 n 取决于生成它们的随机化层级。先画出 <b>realization → run/condition → repeated observation</b> 的树，再决定 CI / test / bootstrap 怎么做。</div>
-
-<h3>4.7.2 · threshold 结果必须保留 failure semantics</h3>
-<table class="matrix"><thead><tr><th>run / search 状态</th><th>允许进入的 estimator</th><th>正确解释</th></tr></thead><tbody>
-<tr><td>valid pinned + valid moving bracket</td><td>sample-specific f<sub>c</sub><sup>(i)</sup> interval / estimate</td><td>在注册 criterion 与 exposure 下定位了 threshold</td></tr>
-<tr><td>valid pinned up to E<sub>max</sub>，仍未见 moving</td><td>lower bound：f<sub>c</sub><sup>(i)</sup> &gt; E<sub>max</sub>（在该 protocol 下）</td><td>right-censored / exposure-limited，不是 infinite threshold</td></tr>
-<tr><td>observation time 不足以区分 late motion</td><td>unresolved / censored status</td><td>缺少 exposure，不应硬塞进 pinned 或 moving</td></tr>
-<tr><td>solver / certificate / numerical QC 失败</td><td>不进入 physical threshold estimator</td><td>numerical invalid ≠ physical pinned</td></tr>
+<div class="warn"><b>层级规则：</b>轨迹 rows、cycles、帧、像素、事件、endpoints 与 自助法 draws 都可能非常多，但是否能进入独立 n 取决于生成它们的随机化层级。先画出 <b>无序样本 → 运行/条件 → 重复观测</b> 的树，再决定 CI / 检验 / 自助法 怎么做。</div>
+<h3>4.7.2 · 阈值 结果必须保留 失败状态语义</h3>
+<table class="matrix"><thead><tr><th>运行 / search 状态</th><th>允许进入的 估计量</th><th>正确解释</th></tr></thead><tbody>
+<tr><td>有效钉扎态 + 有效运动态 bracket</td><td>单样本 f<sub>c</sub><sup>(i)</sup> interval / estimate</td><td>在注册 判据 与 观测时长 下定位了 阈值</td></tr>
+<tr><td>有效钉扎态 up to E<sub>max</sub>，仍未见 运动态</td><td>下界：f<sub>c</sub><sup>(i)</sup> &gt; E<sub>max</sub>（在该 方案 下）</td><td>右删失 / 观测时长-limited，不是 infinite 阈值</td></tr>
+<tr><td>观测 time 不足以区分 late 运动</td><td>未解析 / censored 状态</td><td>缺少 观测时长，不应硬塞进 钉扎态 或 运动态</td></tr>
+<tr><td>求解器 / 数值证明 / 数值质量检查 失败</td><td>不进入 物理 阈值 估计量</td><td>数值无效 ≠ 物理 钉扎态</td></tr>
 </tbody></table>
-<div class="q"><b>绝不做的事：</b>把 unresolved 样本删掉直到图变漂亮；把未 bracket 的 sample 随便赋成 E<sub>max</sub>；或者把 numerical failure 解释成“墙被钉住”。这些都会直接偏置 population f<sub>c</sub> 与后续 β。</div>
-
-<h3>4.7.3 · estimator 的 authority 要单向传递</h3>
-<table class="matrix"><thead><tr><th>目标</th><th>上游 authority</th><th>当前层只允许调什么</th><th>红灯</th></tr></thead><tbody>
-<tr><td>β</td><td>独立 T=0 threshold authority</td><td>预注册的 reduced-force / transient window family</td><td>为了让 β 更直而回调 f<sub>c</sub></td></tr>
-<tr><td>ζ</td><td>通过 topology / single-valuedness gate 的 wall extraction</td><td>预注册 scale masks + contour sensitivity</td><td>只挑 W、B、S(q) 中最漂亮的一种</td></tr>
-<tr><td>ν / collapse</td><td>多 L threshold / velocity estimates</td><td>fixed objective + leave-one-size-out sensitivity</td><td>每次 collapse 都重新自由挑 L 和 f<sub>c</sub></td></tr>
-<tr><td>thermal rounding</td><td>冻结的 T=0 f<sub>c</sub> / f<sub>c</sub><sup>(i)</sup></td><td>thermal seeds、T window、rounding observable</td><td>用 finite-T 曲线事后重定 threshold</td></tr>
-<tr><td>avalanche statistics</td><td>冻结的 event detector / size definition</td><td>cutoff、alternative-distribution tests、shape checks</td><td>看到 exponent 后再改 merge/dead-time rule</td></tr>
+<div class="q"><b>绝不做的事：</b>把 未解析 样本删掉直到图变漂亮；把未 bracket 的 样本 随便赋成 E<sub>max</sub>；或者把 数值失败 解释成“墙被钉住”。这些都会直接偏置 总体 f<sub>c</sub> 与后续 β。</div>
+<h3>4.7.3 · 估计量 的 依据 要单向传递</h3>
+<table class="matrix"><thead><tr><th>目标</th><th>上游 依据</th><th>当前层只允许调什么</th><th>红灯</th></tr></thead><tbody>
+<tr><td>β</td><td>独立 T=0 阈值依据</td><td>预注册的 reduced-force / 瞬态 区间 族</td><td>为了让 β 更直而回调 f<sub>c</sub></td></tr>
+<tr><td>ζ</td><td>通过 拓扑 / single-valuedness 判据 的 畴壁 extraction</td><td>预注册 尺度 masks + 等值线 敏感性</td><td>只挑 W、B、S(q) 中最漂亮的一种</td></tr>
+<tr><td>ν / 坍缩</td><td>多 L 阈值 / velocity estimates</td><td>fixed 目标函数 + 逐一留出尺寸 敏感性</td><td>每次 坍缩 都重新自由挑 L 和 f<sub>c</sub></td></tr>
+<tr><td>热圆滑</td><td>冻结的 T=0 f<sub>c</sub> / f<sub>c</sub><sup>(i)</sup></td><td>热 随机种子、T 区间、rounding 可观测量</td><td>用 有限温 曲线事后重定 阈值</td></tr>
+<tr><td>雪崩统计</td><td>冻结的 事件 事件检测器 / size 定义</td><td>截止、alternative-distribution 检验、形状 checks</td><td>看到 指数 后再改 merge/死时间 rule</td></tr>
 </tbody></table>
-<div class="bridge"><b>这叫 authority chain：</b>下游分析可以对上游 uncertainty 做 sensitivity propagation，但不能把上游 estimator 当成隐藏自由参数重新优化。否则同一批数据会被多次“用来证明自己”。</div>
-
-<h3>4.7.4 · claim ladder：失败时知道该退到哪一级</h3>
+<div class="bridge"><b>这叫 依据 链：</b>下游分析可以对上游 uncertainty 做 敏感性 传播，但不能把上游 估计量 当成隐藏自由参数重新优化。否则同一批数据会被多次“用来证明自己”。</div>
+<h3>4.7.4 · 结论 ladder：失败时知道该退到哪一级</h3>
 <table class="matrix"><thead><tr><th>证据层级</th><th>最低要求</th><th>允许的写法</th></tr></thead><tbody>
-<tr><td>E0 · raw integrity</td><td>provenance、config、status、units、重复/别名检查</td><td>dataset / run set is auditable</td></tr>
-<tr><td>E1 · estimator stability</td><td>criterion / window / detector / extraction sensitivity</td><td>robust threshold-like / morphology / dynamic observable</td></tr>
-<tr><td>E2 · population / size evidence</td><td>正确 independent unit、censoring accounting、多 realizations / L</td><td>population separation / finite-size trend / effective exponent</td></tr>
-<tr><td>E3 · cross-observable critical evidence</td><td>f<sub>c</sub>、β、ζ、ν/z 中多个独立 observable 相互兼容</td><td>candidate depinning critical regime</td></tr>
-<tr><td>E4 · universality / breakdown</td><td>scaling relations、collapse、topology gate、corrections 与替代解释一起 survive</td><td>candidate universality class；或明确 mapping breakdown</td></tr>
+<tr><td>E0 · 原始数据完整性</td><td>来源追踪、配置、状态、单位、重复/别名检查</td><td>数据集 / 运行 set is 可审计</td></tr>
+<tr><td>E1 · 估计量 stability</td><td>判据 / 区间 / 事件检测器 / extraction 敏感性</td><td>稳健 阈值-like / morphology / dynamic 可观测量</td></tr>
+<tr><td>E2 · 总体 / size 证据</td><td>正确 独立单元、删失 accounting、多 无序样本 / L</td><td>总体 separation / 有限尺寸 trend / 有效指数</td></tr>
+<tr><td>E3 · cross-可观测量 临界证据</td><td>f<sub>c</sub>、β、ζ、ν/z 中多个独立 可观测量 相互兼容</td><td>候选 退钉扎 临界区间</td></tr>
+<tr><td>E4 · 普适性 / 失效</td><td>标度关系、坍缩、拓扑 判据、修正 与替代解释一起 通过</td><td>候选 普适类；或明确 映射 失效</td></tr>
 </tbody></table>
-<div class="warn"><b>Breakdown 不是“没做成”。</b> 如果 β/ζ/ν 无法在同一 authority chain 下相容，或 topology gate 系统失败，正确结果可能就是：该 sliding-FE regime 只能称为 depinning-like / effective-interface crossover，而不是强行给它套 universality label。</div>
-<div class="bridge"><b>公开边界：</b>这里给的是可复用的 analysis contract，不展示项目未发表数值、内部 campaign label 或当前 gate 状态。真正分析时再把每个 dataset 映射到这张表。上游每个 simulation run 还必须能回答“它到底由哪版代码、哪份 resolved config、哪组随机源与哪种停止状态生成”；<a href="numerical-modeling.html#run-receipt">去 Module 07 看 run receipt / provenance contract →</a></div>
-
-<h3 id="paired-hierarchy">4.8 · Pairing & hierarchical uncertainty：同一 source 内做差，跨 source 才谈 population</h3>
-<p>“matched comparison” 不只是在横轴上把两个参数调到同一个数。若 A/B 两个 coupling 能由同一个预先定义的 latent source 生成，<b>paired design</b> 可以先消掉 realization-to-realization 的大波动，再问 coupling law 本身改变了多少。但 pairing 是实验设计，不是事后统计技巧：必须在看 outcome 前定义，而且不能跨本来就不可交换的 evidence strata 强行配对。</p>
+<div class="warn"><b>失效 不是“没做成”。</b> 如果 β/ζ/ν 无法在同一 依据 链 下相容，或 拓扑 判据 系统失败，正确结果可能就是：该 滑移铁电 区间 只能称为 退钉扎-like / 有效-界面 交叉区，而不是强行给它套 普适性 标签。</div>
+<div class="bridge"><b>公开边界：</b>这里给的是可复用的 分析约定，不展示项目未发表数值、内部 批次标签 或当前 判据 状态。真正分析时再把每个 数据集 映射到这张表。上游每个 simulation 运行 还必须能回答“它到底由哪版代码、哪份 最终生效配置、哪组随机源与哪种停止状态生成”；<a href="numerical-modeling.html#run-receipt">去 Module 07 看 run receipt / provenance contract →</a></div>
+<h3 id="paired-hierarchy">4.8 · 配对 &amp; 分层 uncertainty：同一 来源 内做差，跨 来源 才谈 总体</h3>
+<p>“匹配比较” 不只是在横轴上把两个参数调到同一个数。若 A/B 两个 耦合 能由同一个预先定义的 潜在 来源 生成，<b>配对设计</b> 可以先消掉 无序样本-to-无序样本 的大波动，再问 耦合形式 本身改变了多少。但 配对 是实验设计，不是事后统计技巧：必须在看 outcome 前定义，而且不能跨本来就不可交换的 证据 strata 强行配对。</p>
 <div class="eq">Δ<sub>i</sub> = y<sub>A,i</sub> − y<sub>B,i</sub>　；　Δ̄ = N<sup>−1</sup> Σ<sub>i=1</sub><sup>N</sup> Δ<sub>i</sub></div>
-<p>这里真正进入 population inference 的基本对象是独立 source <b>i</b> 的 paired contrast Δ<sub>i</sub>，不是 A/B 两边所有 time rows 的总和。</p>
-
-<h3>4.8.1 · pairing 什么时候是公平的？</h3>
-<div class="three"><div class="card"><b>Same nuisance source</b><p>两条 condition 共享的是你想消掉的 nuisance variation，例如同一独立 disorder source / device，而不是为了让结果相似才事后挑最接近的 pair。</p></div><div class="card"><b>Frozen mapping</b><p>从 latent source 到 A/B disorder realization 的变换必须预先定义，并保持各自目标 marginal distribution / matching contract；“同 seed”本身不自动等于公平。</p></div><div class="card"><b>Same evidence stratum</b><p>production、holdout、successor、legacy 或不同 protocol 若 authority 不同，就不能只因为能找到共同标签而塞进一张 paired table。</p></div></div>
-<div class="warn"><b>common random numbers 是 variance-reduction device，不是物理等价证明。</b> pairing 能让 within-source contrast 更精确，但不能抹掉 A/B coupling 的不同数学结构，也不能替代 fair physical matching。</div>
-
-<h3>4.8.2 · outer sample 与 inner repeat 要分开</h3>
+<p>这里真正进入 总体推断 的基本对象是独立 来源 <b>i</b> 的 配对差值 Δ<sub>i</sub>，不是 A/B 两边所有 time rows 的总和。</p>
+<h3>4.8.1 · 配对 什么时候是公平的？</h3>
+<div class="three"><div class="card"><b>Same nuisance 来源</b><p>两条 条件 共享的是你想消掉的 干扰波动，例如同一独立 无序 来源 / device，而不是为了让结果相似才事后挑最接近的 pair。</p></div><div class="card"><b>Frozen 映射</b><p>从 潜在 来源 到 A/B 无序样本 的变换必须预先定义，并保持各自目标 边缘分布 / 匹配 contract；“同 随机种子”本身不自动等于公平。</p></div><div class="card"><b>Same 证据 stratum</b><p>production、holdout、successor、legacy 或不同 方案 若 依据 不同，就不能只因为能找到共同标签而塞进一张 配对表。</p></div></div>
+<div class="warn"><b>共同随机数 是 方差降低 device，不是物理等价证明。</b> 配对 能让 within-来源 差值 更精确，但不能抹掉 A/B 耦合 的不同数学结构，也不能替代 fair 物理 匹配。</div>
+<h3>4.8.2 · 外层 样本 与 内层 重复 要分开</h3>
 <table class="matrix"><thead><tr><th>层级</th><th>典型对象</th><th>主要用途</th><th>不确定度怎么处理</th></tr></thead><tbody>
-<tr><td><b>outer independent unit</b></td><td>独立 disorder realization / independent device</td><td>population inference</td><td>CI / bootstrap / model 的最外层 resampling unit</td></tr>
-<tr><td><b>paired condition</b></td><td>同一 source 下 A vs B coupling / protocol</td><td>within-source contrast</td><td>先在 source 内形成 Δ<sub>i</sub>，再跨 i 汇总</td></tr>
-<tr><td><b>inner stochastic repeat</b></td><td>固定 quenched landscape 下的 thermal seeds</td><td>估计 conditional thermal expectation / stochastic spread</td><td>先在 i 内平均或做 nested model；不能冒充新 disorder samples</td></tr>
-<tr><td><b>repeated observation</b></td><td>time rows、cycles、frames、events</td><td>估计 trajectory / event distribution / morphology</td><td>保留 clustering；不能用 row count 放大 population n</td></tr>
-<tr><td><b>bootstrap draw</b></td><td>resampled index sets</td><td>传播 estimator uncertainty</td><td>draw 数量只控制 Monte Carlo precision，不增加物理样本</td></tr>
+<tr><td><b>外层 独立单元</b></td><td>独立 无序样本 / independent device</td><td>总体推断</td><td>CI / 自助法 / 模型 的最外层 重采样单元</td></tr>
+<tr><td><b>配对条件</b></td><td>同一 来源 下 A vs B 耦合 / 方案</td><td>within-来源 差值</td><td>先在 来源 内形成 Δ<sub>i</sub>，再跨 i 汇总</td></tr>
+<tr><td><b>内层 stochastic 重复</b></td><td>固定 quenched 景观 下的 热 随机种子</td><td>估计 条件 热 expectation / 随机波动</td><td>先在 i 内平均或做 nested 模型；不能冒充新 无序 样本</td></tr>
+<tr><td><b>重复观测</b></td><td>time rows、cycles、帧、事件</td><td>估计 轨迹 / 事件 distribution / morphology</td><td>保留 clustering；不能用 row count 放大 总体 n</td></tr>
+<tr><td><b>自助法 draw</b></td><td>resampled index sets</td><td>传播 估计量 uncertainty</td><td>draw 数量只控制 蒙特卡洛精度，不增加物理样本</td></tr>
 </tbody></table>
-
-<h3>4.8.3 · finite-T：先在 quenched source 内平均，再跨 source 推断</h3>
+<h3>4.8.3 · 有限温：先在 淬火无序样本 内平均，再跨 来源 推断</h3>
 <div class="eq">ȳ<sub>i,c</sub> = M<sub>i,c</sub><sup>−1</sup> Σ<sub>j</sub> y<sub>i,c,j</sub>　；　Δ<sub>i</sub> = ȳ<sub>i,A</sub> − ȳ<sub>i,B</sub></div>
-<p>其中 i 是 quenched realization，j 是 thermal seed，c 是 condition。若研究问题是“平均 thermal response 在不同 coupling 间是否不同”，最简单的 authority 是先得到每个 i,c 的 conditional estimator，再对 Δ<sub>i</sub> 做 outer-level inference。若 inner stochastic variance 本身也是科学问题，可用 hierarchical / nested bootstrap，但外层独立单位仍然是 i。</p>
-<div class="warn"><b>不要把更多 thermal seeds 当成更多 disorder。</b> 增加 inner repeats 会降低给定 landscape 下 thermal mean 的 Monte Carlo noise，却不能凭空增加对 disorder population 的覆盖。</div>
-
-<h3>4.8.4 · missing / censored pair 不能靠“补一个数”恢复完整</h3>
+<p>其中 i 是 quenched 无序样本，j 是 热 随机种子，c 是 条件。若研究问题是“平均 热 response 在不同 耦合 间是否不同”，最简单的 依据 是先得到每个 i,c 的 条件 估计量，再对 Δ<sub>i</sub> 做 外层层级 inference。若 内层 随机方差 本身也是科学问题，可用 分层 / nested 自助法，但外层独立单位仍然是 i。</p>
+<div class="warn"><b>不要把更多 热 随机种子 当成更多 无序。</b> 增加 内层 重复 会降低给定 景观 下 热 均值 的 蒙特卡洛 噪声，却不能凭空增加对 无序总体 的覆盖。</div>
+<h3>4.8.4 · 缺失 / censored pair 不能靠“补一个数”恢复完整</h3>
 <table class="matrix"><thead><tr><th>情况</th><th>错误处理</th><th>正确方向</th></tr></thead><tbody>
-<tr><td>A 有 valid estimate，B 只有 lower bound</td><td>把 B=E<sub>max</sub> 后直接算 Δ</td><td>保留 paired censoring / bound 信息；若主 estimator 不支持，降级为 partial-information analysis</td></tr>
-<tr><td>A numerical-invalid，B valid</td><td>把 A 当 pinned 或从 paired sample 静默删除</td><td>记录失配原因；区分 technical missingness 与 physical censoring</td></tr>
-<tr><td>某 source 只有一侧通过 topology gate</td><td>只保留“好看”的另一侧 geometry exponent</td><td>该 paired geometry contrast 不成立；保留 breakdown / missingness 本身</td></tr>
-<tr><td>多个 outcomes 同时显著</td><td>把每个 contrast 当独立发现</td><td>预定义 primary family，必要时 multiplicity control；同时报告 effect / CI</td></tr>
+<tr><td>A 有 有效估计，B 只有 下界</td><td>把 B=E<sub>max</sub> 后直接算 Δ</td><td>保留 配对 删失 / bound 信息；若主 估计量 不支持，降级为 部分信息分析</td></tr>
+<tr><td>A 数值无效，B valid</td><td>把 A 当 钉扎态 或从 配对 样本 静默删除</td><td>记录失配原因；区分 technical 缺失机制 与 物理 删失</td></tr>
+<tr><td>某 来源 只有一侧通过 拓扑 判据</td><td>只保留“好看”的另一侧 几何 指数</td><td>该 配对 几何 差值 不成立；保留 失效 / 缺失机制 本身</td></tr>
+<tr><td>多个 结果 同时显著</td><td>把每个 差值 当独立发现</td><td>预定义 主 族，必要时 多重比较控制；同时报告 effect / CI</td></tr>
 </tbody></table>
-
-<h3>4.8.5 · finite-size 也有 pairing 陷阱</h3>
-<p>为了降噪，有时会让不同 L 使用相关的 disorder construction，例如从同一个大 field crop / restrict 出较小系统。这样做不是禁止的，但会让不同 L 的 estimator 相关；此时“每个 L 一点”不能被当成互相独立的样本。若目标是最简单透明的 finite-size inference，优先让每个 L 有独立 disorder realizations；若有意使用 common-random-number / nested-size design，就把 correlation structure 写进 receipt 和统计模型。</p>
-<div class="q"><b>最实用的统计顺序：</b>先决定 independent unit → 再决定哪些 condition 在 unit 内 paired → 再处理 thermal/event/cycle 等 inner repeats → 最后才选择 bootstrap / hierarchical model。反过来先把 CSV 全部堆进统计包，几乎一定会把 n 算错。</div>
-<div class="bridge">这节与 <a href="#data-claim-contract">Data → Estimator → Evidence → Claim</a> 是同一件事的统计版本；而每个 outer / inner 身份怎样被保存，则回到 <a href="numerical-modeling.html#run-receipt">Module 07 的 run receipt</a>。</div>
-
-<h2>5 · Mechanism falsification：先排掉简单解释，再谈“真正机制”</h2>
+<h3>4.8.5 · 有限尺寸 也有 配对 陷阱</h3>
+<p>为了降噪，有时会让不同 L 使用相关的 无序 construction，例如从同一个大 场 crop / restrict 出较小系统。这样做不是禁止的，但会让不同 L 的 估计量 相关；此时“每个 L 一点”不能被当成互相独立的样本。若目标是最简单透明的 有限尺寸推断，优先让每个 L 有独立 无序 无序样本；若有意使用 共同随机数 / 嵌套尺寸设计，就把 关联 structure 写进 记录 和统计模型。</p>
+<div class="q"><b>最实用的统计顺序：</b>先决定 独立单元 → 再决定哪些 条件 在 unit 内 配对 → 再处理 热/事件/cycle 等 内层 重复 → 最后才选择 自助法 / 分层 模型。反过来先把 CSV 全部堆进统计包，几乎一定会把 n 算错。</div>
+<div class="bridge">这节与 <a href="#data-claim-contract">Data → Estimator → Evidence → Claim</a> 是同一件事的统计版本；而每个 外层 / 内层 身份怎样被保存，则回到 <a href="numerical-modeling.html#run-receipt">Module 07 的 run receipt</a>。</div>
+<h2>5 · 机制证伪：先排掉简单解释，再谈“真正机制”</h2>
 <p>研究型阅读与普通教材最大的区别之一：数据往往更擅长<b>否定一个过于简单的机制</b>，而不是直接唯一确定微观机制。</p>
-<div class="twocol"><div class="card"><b>假说 A：disorder 只增加一个统一 delay</b><p>预期：不同 strength 下 temporal ordering 应保持同一方向，主要只是整体变慢/变快。</p><p><b>若 ordering 随 strength / switching stage 改变：</b>可以排除一个 intensity-independent scalar-delay picture；但还不能因此命名唯一新机制。</p></div><div class="card"><b>假说 B：某种 coupling 永远“更碎”</b><p>预期：component count、interface density、largest-component fraction 应给出跨 stage 一致的 fragmentation ordering。</p><p><b>若不同 morphology metrics 不给统一 ordering：</b>应放弃单一 fragmentation cartoon，转向 stage-dependent pathway。</p></div></div>
-<div class="bridge"><b>最重要的研究纪律：</b>“simple mechanism 被 falsify”本身就是结果。不要为了让故事看起来更完整，立即用另一个没有被独立测量的 mechanism 填空。</div>
-
+<div class="twocol"><div class="card"><b>假说 A：无序 只增加一个统一 delay</b><p>预期：不同 强度 下 temporal 排序 应保持同一方向，主要只是整体变慢/变快。</p><p><b>若 排序 随 强度 / 翻转 stage 改变：</b>可以排除一个 与强度无关 标量延迟图像；但还不能因此命名唯一新机制。</p></div><div class="card"><b>假说 B：某种 耦合 永远“更碎”</b><p>预期：分量 count、界面 density、largest-分量 比例 应给出跨 stage 一致的 碎裂 排序。</p><p><b>若不同 morphology metrics 不给统一 排序：</b>应放弃单一 碎裂 cartoon，转向 阶段依赖 路径。</p></div></div>
+<div class="bridge"><b>最重要的研究纪律：</b>“simple 机制 被 证伪”本身就是结果。不要为了让故事看起来更完整，立即用另一个没有被独立测量的 机制 填空。</div>
 <h2>6 · 这条 Research Track 最终怎样接回 8 个模块？</h2>
-<div class="steps"><div class="step"><b>03</b><p>先判断真正 moving object：wall、coherent sliding，还是条件依赖的多种 pathway。</p></div><div class="step"><b>04 / 06</b><p>把 disorder 从 defect 名字转成可检验的 coupling / strength / correlation。</p></div><div class="step"><b>07</b><p>建立 minimal continuum model，并对 dx / wall extraction 做 sanity check。</p></div><div class="step"><b>05 / 08</b><p>只有 isolated-wall protocol 通过后，才升级到 β、ζ、ν 与 universality / breakdown test。</p></div></div>
-<div class="q">最终不是问“能不能得到漂亮 exponent”，而是问：<b>在 sliding-specific microscopic physics 存在的情况下，哪些 coarse-grained driven-interface predictions survive，哪些 observables 系统性偏离，偏离发生在哪个尺度与哪个假设上？</b></div>
-
+<div class="steps"><div class="step"><b>03</b><p>先判断真正 运动对象：畴壁、协同滑移，还是条件依赖的多种 路径。</p></div><div class="step"><b>04 / 06</b><p>把 无序 从 缺陷 名字转成可检验的 耦合 / 强度 / 关联。</p></div><div class="step"><b>07</b><p>建立 最小 连续体 模型，并对 dx / 畴壁 extraction 做 合理性检查。</p></div><div class="step"><b>05 / 08</b><p>只有 孤立畴壁 方案 通过后，才升级到 β、ζ、ν 与 普适性 / 失效 检验。</p></div></div>
+<div class="q">最终不是问“能不能得到漂亮 指数”，而是问：<b>在 滑移铁电特有 微观 物理 存在的情况下，哪些 粗粒化 受驱界面 预测 通过，哪些 可观测量 系统性偏离，偏离发生在哪个尺度与哪个假设上？</b></div>
 <div class="next"><a href="numerical-modeling.html">← 回到 07 Numerical Modeling</a><a href="depinning.html">去 05 Depinning measurement logic →</a></div>
 </main>
 <script src="../terms.js"></script>
