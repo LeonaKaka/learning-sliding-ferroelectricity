@@ -7,7 +7,7 @@ on:
 
 permissions:
   contents: read
-  pages: write
+n  pages: write
   id-token: write
 
 concurrency:
@@ -55,7 +55,6 @@ jobs:
               bad = [(i, ord(ch)) for i, ch in enumerate(text) if ord(ch) < 32 and ch not in '\n\r\t']
               if bad:
                   raise SystemExit(f'{page}: forbidden control characters found: {bad[:10]}')
-
               for ref in re.findall(r'<img[^>]+src="([^"]+)"', text):
                   if ref.startswith(('http://','https://','data:')):
                       raise SystemExit(f'{page}: remote image not allowed: {ref}')
@@ -119,56 +118,15 @@ jobs:
                   raise SystemExit(f'hash mismatch: {path}')
 
           reproduction_contracts = {
-              'modules/reproduction-lab.html': (
-                  'examples/reproduction-lab/lesson01_tdgl_wall.py',
-                  'assets/reproduction-lab/lesson01_tdgl_wall_result.svg',
-              ),
-              'modules/reproduction-lab-02.html': (
-                  'examples/reproduction-lab/lesson02_2d_wall_extract.py',
-                  'assets/reproduction-lab/lesson02_2d_wall_extract.svg',
-              ),
-              'modules/reproduction-lab-03.html': (
-                  'examples/reproduction-lab/lesson03_ew_roughness.py',
-                  'assets/reproduction-lab/lesson03_ew_roughness_thumbnail.svg',
-                  'assets/reproduction-lab/caballero2020-fig2-time-roughness.webp',
-              ),
-              'modules/reproduction-lab-04.html': (
-                  'examples/reproduction-lab/lesson04_gl_to_ew.py',
-                  'assets/reproduction-lab/lesson04_gl_to_ew_boundary.svg',
-                  'assets/reproduction-lab/caballero2020-fig3-temperature-boundary.webp',
-              ),
-              'modules/reproduction-lab-05.html': (
-                  'examples/reproduction-lab/lesson05_rb_projection.py',
-                  'assets/reproduction-lab/lesson05_rb_projection_correlator.svg',
-                  'assets/reproduction-lab/lesson05_rb_projection_correlator.txt',
-                  'assets/reproduction-lab/caballero2020-fig4-pinning-correlator.webp',
-              ),
-              'modules/reproduction-lab-06.html': (
-                  'examples/reproduction-lab/lesson06_disordered_geometry.py',
-                  'assets/reproduction-lab/lesson06_disordered_geometry_checkpoint.svg',
-                  'assets/reproduction-lab/lesson06_disordered_geometry_checkpoint.txt',
-                  'assets/reproduction-lab/caballero2020-fig5-disordered-geometry.webp',
-              ),
-              'modules/reproduction-lab-07.html': (
-                  'examples/reproduction-lab/lesson07_threshold_search.py',
-                  'assets/reproduction-lab/lesson07_threshold_search.svg',
-                  'assets/reproduction-lab/lesson07_threshold_search.txt',
-                  'assets/reproduction-lab/ferrero2013-fig4a-critical-structure.svg',
-                  'assets/reproduction-lab/ferrero2013-fig4b-finite-size-threshold.svg',
-              ),
-              'modules/reproduction-lab-08.html': (
-                  'examples/reproduction-lab/lesson08_steady_velocity.py',
-                  'assets/reproduction-lab/lesson08_steady_velocity.svg',
-                  'assets/reproduction-lab/lesson08_steady_velocity.txt',
-                  'assets/reproduction-lab/ferrero2013-fig1b-velocity-force.svg',
-              ),
-              'modules/reproduction-lab-09.html': (
-                  'examples/reproduction-lab/lesson09_beta_window.py',
-                  'assets/reproduction-lab/lesson09_beta_window.svg',
-                  'assets/reproduction-lab/lesson09_beta_window.txt',
-                  'assets/reproduction-lab/lesson09_beta_window.csv',
-                  'assets/reproduction-lab/ferrero2013-fig5-critical-relaxation.svg',
-              ),
+              'modules/reproduction-lab.html': ('examples/reproduction-lab/lesson01_tdgl_wall.py','assets/reproduction-lab/lesson01_tdgl_wall_result.svg'),
+              'modules/reproduction-lab-02.html': ('examples/reproduction-lab/lesson02_2d_wall_extract.py','assets/reproduction-lab/lesson02_2d_wall_extract.svg'),
+              'modules/reproduction-lab-03.html': ('examples/reproduction-lab/lesson03_ew_roughness.py','assets/reproduction-lab/lesson03_ew_roughness_thumbnail.svg','assets/reproduction-lab/caballero2020-fig2-time-roughness.webp'),
+              'modules/reproduction-lab-04.html': ('examples/reproduction-lab/lesson04_gl_to_ew.py','assets/reproduction-lab/lesson04_gl_to_ew_boundary.svg','assets/reproduction-lab/caballero2020-fig3-temperature-boundary.webp'),
+              'modules/reproduction-lab-05.html': ('examples/reproduction-lab/lesson05_rb_projection.py','assets/reproduction-lab/lesson05_rb_projection_correlator.svg','assets/reproduction-lab/lesson05_rb_projection_correlator.txt','assets/reproduction-lab/caballero2020-fig4-pinning-correlator.webp'),
+              'modules/reproduction-lab-06.html': ('examples/reproduction-lab/lesson06_disordered_geometry.py','assets/reproduction-lab/lesson06_disordered_geometry_checkpoint.svg','assets/reproduction-lab/lesson06_disordered_geometry_checkpoint.txt','assets/reproduction-lab/caballero2020-fig5-disordered-geometry.webp'),
+              'modules/reproduction-lab-07.html': ('examples/reproduction-lab/lesson07_threshold_search.py','assets/reproduction-lab/lesson07_threshold_search.svg','assets/reproduction-lab/lesson07_threshold_search.txt','assets/reproduction-lab/ferrero2013-fig4a-critical-structure.svg','assets/reproduction-lab/ferrero2013-fig4b-finite-size-threshold.svg'),
+              'modules/reproduction-lab-08.html': ('examples/reproduction-lab/lesson08_steady_velocity.py','assets/reproduction-lab/lesson08_steady_velocity.svg','assets/reproduction-lab/lesson08_steady_velocity.txt','assets/reproduction-lab/ferrero2013-fig1b-velocity-force.svg'),
+              'modules/reproduction-lab-09.html': ('examples/reproduction-lab/lesson09_beta_window.py','assets/reproduction-lab/lesson09_beta_window.svg','assets/reproduction-lab/lesson09_beta_window.txt','assets/reproduction-lab/lesson09_beta_window.csv','assets/reproduction-lab/ferrero2013-fig5-critical-relaxation.svg'),
           }
           for page_name, required_files in reproduction_contracts.items():
               page = Path(page_name)
@@ -183,6 +141,9 @@ jobs:
                   if p.suffix in {'.py', '.svg', '.webp'} and basename not in text:
                       raise SystemExit(f'{page_name}: artifact exists but is not referenced: {required}')
                   if p.suffix == '.svg':
+                      svg_text = p.read_text(encoding='utf-8')
+                      if 'intentionally omitted' in svg_text or '[...' in svg_text:
+                          raise SystemExit(f'{page_name}: placeholder/truncated SVG payload: {required}')
                       try:
                           ET.parse(p)
                       except Exception as exc:
@@ -190,79 +151,53 @@ jobs:
 
           l05_receipt = Path('assets/reproduction-lab/lesson05_rb_projection_correlator.txt').read_text(encoding='utf-8')
           for marker in ('Eq25-vs-Eq26', 'sample RMSE/Gamma0', 'ALL DISORDER-PROJECTION GATES PASS'):
-              if marker not in l05_receipt:
-                  raise SystemExit(f'Lesson05 receipt missing marker: {marker}')
+              if marker not in l05_receipt: raise SystemExit(f'Lesson05 receipt missing marker: {marker}')
           l06_receipt = Path('assets/reproduction-lab/lesson06_disordered_geometry_checkpoint.txt').read_text(encoding='utf-8')
           for marker in ('B median rel', 'S log-bin median rel', 'ASYMPTOTIC ZETA GATE NOT PASSED'):
-              if marker not in l06_receipt:
-                  raise SystemExit(f'Lesson06 receipt missing marker: {marker}')
+              if marker not in l06_receipt: raise SystemExit(f'Lesson06 receipt missing marker: {marker}')
           l07_receipt = Path('assets/reproduction-lab/lesson07_threshold_search.txt').read_text(encoding='utf-8')
           for marker in ('particle max |fc-1|', 'line final bracket width', 'THRESHOLD GOLD TEST + SMALL-LINE BRACKET PASS'):
-              if marker not in l07_receipt:
-                  raise SystemExit(f'Lesson07 receipt missing marker: {marker}')
+              if marker not in l07_receipt: raise SystemExit(f'Lesson07 receipt missing marker: {marker}')
           l08_receipt = Path('assets/reproduction-lab/lesson08_steady_velocity.txt').read_text(encoding='utf-8')
           for marker in ('coarse dt=.100 max error', 'production dt=.025 max err', 'NO BETA FIT IN LESSON 08', 'STEADY VELOCITY ESTIMATOR + DT CONVERGENCE PASS'):
-              if marker not in l08_receipt:
-                  raise SystemExit(f'Lesson08 receipt missing marker: {marker}')
+              if marker not in l08_receipt: raise SystemExit(f'Lesson08 receipt missing marker: {marker}')
           l09_receipt = Path('assets/reproduction-lab/lesson09_beta_window.txt').read_text(encoding='utf-8')
-          for marker in ('particle max |beta-0.5|', 'window beta drift', 'threshold-edge beta span', 'UNIVERSAL BETA CLAIM          = NOT AUTHORIZED', 'WINDOW-STABILITY GATE         = NOT PASSED'):
-              if marker not in l09_receipt:
-                  raise SystemExit(f'Lesson09 receipt missing marker: {marker}')
+          for marker in ('particle max |beta-0.5|','window beta drift','threshold-edge beta span','UNIVERSAL BETA CLAIM          = NOT AUTHORIZED','WINDOW-STABILITY GATE         = NOT PASSED'):
+              if marker not in l09_receipt: raise SystemExit(f'Lesson09 receipt missing marker: {marker}')
 
-          if Path('assets/repaired-0607').exists():
-              raise SystemExit('temporary repaired-0607 asset directory must not return')
-          if Path('scripts').exists():
-              raise SystemExit('legacy evidence-regeneration scripts must not remain in static V1')
-          for legacy_runtime in ('terms-extra.js', 'terms-cleanup.js'):
-              if Path(legacy_runtime).exists():
-                  raise SystemExit(f'unused legacy terminology runtime must be removed: {legacy_runtime}')
-          if Path('_bilingual_noop.txt').exists():
-              raise SystemExit('temporary bilingual staging marker must not remain')
+          if Path('assets/repaired-0607').exists(): raise SystemExit('temporary repaired-0607 asset directory must not return')
+          if Path('scripts').exists(): raise SystemExit('legacy evidence-regeneration scripts must not remain in static V1')
+          for legacy_runtime in ('terms-extra.js','terms-cleanup.js'):
+              if Path(legacy_runtime).exists(): raise SystemExit(f'unused legacy terminology runtime must be removed: {legacy_runtime}')
+          if Path('_bilingual_noop.txt').exists(): raise SystemExit('temporary bilingual staging marker must not remain')
 
           unique_contracts = {
               Path('index.html'): ('id="foundations"',),
-              Path('modules/research-track.html'): (
-                  'id="fair"', 'id="identifiability-bridge"', 'id="data-claim-contract"',
-                  'id="event-contract"', 'id="paired-hierarchy"', 'id="collapse-gate-bridge"',
-                  'id="roughness-gate-bridge"'
-              ),
+              Path('modules/research-track.html'): ('id="fair"','id="identifiability-bridge"','id="data-claim-contract"','id="event-contract"','id="paired-hierarchy"','id="collapse-gate-bridge"','id="roughness-gate-bridge"'),
               Path('modules/pinning-creep.html'): ('id="roughness-gate"',),
-              Path('modules/numerical-modeling.html'): (
-                  'id="identifiability"', 'id="thermal-noise"', 'id="velocity-estimator"',
-                  'id="threshold-authority-bridge"', 'id="run-receipt"'
-              ),
-              Path('modules/depinning.html'): (
-                  'id="data-claim-bridge"', 'id="collapse-gate"', 'id="threshold-ladder"'
-              ),
+              Path('modules/numerical-modeling.html'): ('id="identifiability"','id="thermal-noise"','id="velocity-estimator"','id="threshold-authority-bridge"','id="run-receipt"'),
+              Path('modules/depinning.html'): ('id="data-claim-bridge"','id="collapse-gate"','id="threshold-ladder"'),
           }
           for page, markers in unique_contracts.items():
               text = page.read_text(encoding='utf-8')
               for marker in markers:
-                  if text.count(marker) != 1:
-                      raise SystemExit(f'{page}: expected exactly one unique contract marker: {marker}')
+                  if text.count(marker) != 1: raise SystemExit(f'{page}: expected exactly one unique contract marker: {marker}')
 
           required_links = {
-              Path('modules/numerical-modeling.html'): (
-                  'href="#identifiability"', 'href="#thermal-noise"', 'depinning.html#threshold-ladder',
-                  'research-track.html#fair'
-              ),
+              Path('modules/numerical-modeling.html'): ('href="#identifiability"','href="#thermal-noise"','depinning.html#threshold-ladder','research-track.html#fair'),
               Path('modules/depinning.html'): ('href="#threshold-ladder"',),
-              Path('modules/research-track.html'): (
-                  'numerical-modeling.html#identifiability', 'numerical-modeling.html#thermal-noise',
-                  'depinning.html#collapse-gate', 'pinning-creep.html#roughness-gate'
-              ),
+              Path('modules/research-track.html'): ('numerical-modeling.html#identifiability','numerical-modeling.html#thermal-noise','depinning.html#collapse-gate','pinning-creep.html#roughness-gate'),
               Path('modules/foundations.html'): ('../index.html#foundations',),
               Path('modules/reproduction-lab-06.html'): ('reproduction-lab-07.html',),
               Path('modules/reproduction-lab-07.html'): ('reproduction-lab-08.html',),
-              Path('modules/reproduction-lab-08.html'): ('reproduction-lab-07.html', 'reproduction-lab-09.html'),
+              Path('modules/reproduction-lab-08.html'): ('reproduction-lab-07.html','reproduction-lab-09.html'),
               Path('modules/reproduction-lab-09.html'): ('reproduction-lab-08.html',),
           }
           for page, markers in required_links.items():
               text = page.read_text(encoding='utf-8')
               for marker in markers:
-                  if marker not in text:
-                      raise SystemExit(f'{page}: missing required cross-link: {marker}')
-          print('Static evidence + Reproduction Lab L01-L09 artifact + SVG-integrity + conservative terminology validation passed.')
+                  if marker not in text: raise SystemExit(f'{page}: missing required cross-link: {marker}')
+          print('Static evidence + Reproduction Lab L01-L09 artifact + SVG-integrity + no-placeholder validation passed.')
           PY
 
       - name: Configure Pages
