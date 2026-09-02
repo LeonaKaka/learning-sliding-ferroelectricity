@@ -1,0 +1,36 @@
+Lesson 12 thermal rounding + creep boundary
+paper relation                  = v(fc,T) ~ T^psi
+paper collapse                  = v T^-psi ~ h_+(f T^-psi/beta), h_-(...)
+rounding statistical unit       = quenched disorder realization
+rounding disorder realizations  = 8
+rounding thermal repeats/sample = 3
+rounding T ladder               = 0.0025, 0.005, 0.01, 0.02, 0.04, 0.08
+fc authority audit              = lo, midpoint, hi of each sample bracket
+Brownian gold mean rel error    = 0.112940%
+Brownian gold variance rel err  = 0.795888%
+BROWNIAN NOISE-NORMALIZATION GOLD TEST = PASS
+synthetic target psi            = 0.150000
+synthetic psi low4/low5/all6    = 0.150920 / 0.150587 / 0.150878
+SYNTHETIC THERMAL-EXPONENT GOLD TEST = PASS
+lo psi low4/low5/all6          = 0.081861 / 0.092425 / 0.108981
+mid psi low4/low5/all6          = 0.073079 / 0.087862 / 0.105033
+hi psi low4/low5/all6          = 0.071115 / 0.084517 / 0.101828
+midpoint psi window drift      = 0.031953
+psi window drift gate          = < 0.030
+threshold-authority all6 span  = 0.007152
+midpoint psi low4 bootstrap95  = [0.052590, 0.094732]
+midpoint psi all6 bootstrap95  = [0.084945, 0.127145]
+window-drift bootstrap95       = [0.029133, 0.034808]
+THERMAL-ROUNDING WINDOW GATE    = NOT PASSED
+UNIVERSAL PSI CLAIM             = NOT AUTHORIZED
+subthreshold drive              = f = fc_lo - 0.08
+subthreshold thermal repeats    = 2 per disorder sample
+sub T=0.020 mean v / resolved / half-diff = 0.020971 / 0.5625 / 3.102542
+sub T=0.040 mean v / resolved / half-diff = 0.110550 / 0.9375 / 0.237538
+sub T=0.060 mean v / resolved / half-diff = 0.162843 / 1.0000 / 0.117292
+sub T=0.080 mean v / resolved / half-diff = 0.198881 / 1.0000 / 0.081750
+sub T=0.120 mean v / resolved / half-diff = 0.237164 / 1.0000 / 0.046381
+resolved activated-motion rule  = trajectory fraction 1.0 AND median half-diff < 0.2
+LOW-T CREEP ASYMPTOTIC RESOLVED = NO
+CREEP-LAW / MU CLAIM             = NOT AUTHORIZED
+FINITE-T ROUNDING OBSERVED; ASYMPTOTIC THERMAL AND CREEP EXPONENTS REMAIN OPEN
