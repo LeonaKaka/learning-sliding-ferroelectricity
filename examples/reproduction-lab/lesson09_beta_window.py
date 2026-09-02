@@ -30,6 +30,9 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
+plt.rcParams["font.sans-serif"] = ["Noto Sans CJK SC", "DejaVu Sans"]
+plt.rcParams["axes.unicode_minus"] = False
+
 SEEDS=np.arange(20260902,20260910,dtype=np.int64)
 L,M,DU,RF=32,256,0.25,1.0
 DT_THRESHOLD=0.05
@@ -244,46 +247,46 @@ def finish(fig,name):
 
 # 1) The actual disorder-averaged velocity data on log-log axes.
 fig,ax=plt.subplots(figsize=(7.2,4.6))
-ax.loglog(DFS,mean_v,marker='o',label='8-realization arithmetic mean')
+ax.loglog(DFS,mean_v,marker='o',label='8 个独立无序样本的算术平均')
 for mx,beta,ls in zip((0.170,0.040),(window_beta[0],window_beta[-1]),('--',':')):
     m=DFS<=mx+1e-15
     coef=np.polyfit(np.log(DFS[m]),np.log(mean_v[m]),1)
     y=np.exp(coef[1])*DFS[m]**coef[0]
-    ax.loglog(DFS[m],y,ls,linewidth=2,label=f'fit max delta f={mx:.3f}; beta={beta:.3f}')
-ax.set_xlabel('delta f = f - fc(sample)')
-ax.set_ylabel('disorder-mean steady velocity')
-ax.set_title('Same data, different registered critical windows give different slopes')
+    ax.loglog(DFS[m],y,ls,linewidth=2,label=f'拟合：最大 Δf={mx:.3f}；β={beta:.3f}')
+ax.set_xlabel('Δf = f - fc（单样本）')
+ax.set_ylabel('无序平均稳态速度')
+ax.set_title('同一批数据：不同预登记拟合区间给出不同斜率')
 ax.legend(fontsize=8)
 finish(fig,'lesson09_mean_v_loglog.png')
 
 # 2) Central result: effective beta versus the chosen upper window edge.
 fig,ax=plt.subplots(figsize=(7.0,4.4))
 ax.plot(WINDOW_MAX,window_beta,marker='o')
-ax.axhline(0.245,linestyle='--',label='Ferrero QEW benchmark beta≈0.245')
+ax.axhline(0.245,linestyle='--',label='Ferrero QEW 文献基准 β≈0.245')
 ax.invert_xaxis()
-ax.set_xlabel('registered max delta f (smaller = closer to threshold)')
-ax.set_ylabel('effective beta')
-ax.set_title('No beta plateau: the exponent drifts as the fit window narrows')
+ax.set_xlabel('预登记的最大 Δf（越小越接近阈值）')
+ax.set_ylabel('有效 β')
+ax.set_title('β 无稳定平台：缩窄拟合区间时指数持续漂移')
 ax.legend()
 finish(fig,'lesson09_beta_vs_window.png')
 
 # 3) Threshold-bracket uncertainty is tiny compared with window drift.
 fig,ax=plt.subplots(figsize=(6.8,4.3))
 vals=np.array([beta_if_lo,window_beta[0],beta_if_hi])
-ax.plot(['fc at low edge','fc midpoint','fc at high edge'],vals,marker='o')
-ax.set_ylabel('all-six effective beta')
-ax.set_title('Moving fc across each sample bracket barely changes beta')
+ax.plot(['fc 位于下沿','fc 位于中点','fc 位于上沿'],vals,marker='o')
+ax.set_ylabel('六点拟合的有效 β')
+ax.set_title('在单样本阈值区间内移动 fc 几乎不改变 β')
 ax.tick_params(axis='x',rotation=12)
 finish(fig,'lesson09_threshold_sensitivity.png')
 
 # 4) Bootstrap distribution: precision does not imply asymptotic validity.
 fig,ax=plt.subplots(figsize=(7.0,4.3))
 ax.hist(boot,bins=35)
-ax.axvline(window_beta[0],linestyle='-',label=f'all-six beta={window_beta[0]:.3f}')
-ax.axvline(0.245,linestyle='--',label='QEW benchmark 0.245')
-ax.set_xlabel('bootstrap all-six beta')
-ax.set_ylabel('count')
-ax.set_title('Sample bootstrap is fairly narrow, but the window test still fails')
+ax.axvline(window_beta[0],linestyle='-',label=f'六点拟合 β={window_beta[0]:.3f}')
+ax.axvline(0.245,linestyle='--',label='QEW 文献基准 0.245')
+ax.set_xlabel('自助法六点拟合 β')
+ax.set_ylabel('计数')
+ax.set_title('样本自助法分布较窄，但拟合区间稳定性仍未通过')
 ax.legend()
 finish(fig,'lesson09_bootstrap_beta.png')
 
