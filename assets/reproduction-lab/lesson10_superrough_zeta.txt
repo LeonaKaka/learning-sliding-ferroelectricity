@@ -1,0 +1,26 @@
+Lesson 10 super-rough roughness validation
+track                         = Paper2-oriented
+synthetic target zeta_global = 1.250000
+synthetic zeta_B local       = 0.951442
+synthetic zeta_S global      = 1.223335
+SYNTHETIC SUPER-ROUGH GOLD TEST = PASS
+moving-cert midpoint spread = 0.000000e+00
+moving certificate          = 1 period validated against 2 periods on 2 realizations
+L=128 M=2048 realizations       = 6
+L=128 zeta_B local                  = 0.928961
+L=128 zeta_B realization-bootstrap 95% = [0.910299, 0.944262]
+L=128 zeta_S global                 = 1.315621
+L=128 zeta_S realization-bootstrap 95% = [1.060960, 1.480197]
+L=128 max wall-span / u-period      = 0.199629
+L=256 M=4096 realizations       = 6
+L=256 zeta_B local                  = 0.949576
+L=256 zeta_B realization-bootstrap 95% = [0.916449, 0.966650]
+L=256 zeta_S global                 = 1.201060
+L=256 zeta_S realization-bootstrap 95% = [1.016524, 1.431058]
+L=256 max wall-span / u-period      = 0.283296
+cross-size zeta_B drift      = 0.020615
+cross-size zeta_S drift      = 0.114561
+thermodynamic zeta drift gate = < 0.100
+SMALL-QEW SUPER-ROUGH SIGNATURE = PASS
+THERMODYNAMIC ZETA CLOSURE   = NOT PASSED
+FINITE-SIZE SCALING REQUIRED BEFORE UNIVERSAL ZETA CLAIM
