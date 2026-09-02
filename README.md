@@ -19,6 +19,17 @@ The V1 knowledge tree is organized as eight first-level modules:
 
 Every module has a dedicated deep-reading page under `modules/`.
 
+## Reproduction Lab
+
+The site also contains a separate 12-lesson numerical-method track. It is a teaching and validation chain, **not a ninth first-level module** and not evidence by itself that a real sliding-ferroelectric wall belongs to the QEW universality class.
+
+- **L01–L06 · Paper1 methods:** clean TDGL wall → 2D wall extraction → EW thermal roughening → GL→EW validity boundary → bulk-disorder projection → disordered geometry.
+- **L07–L12 · Paper2 methods:** sample-dependent depinning threshold → steady velocity → β window audit → super-rough ζ measurement → finite-size threshold scaling / ν → thermal rounding and the creep boundary.
+
+The Lab deliberately preserves failed gates. In particular, an effective exponent is never upgraded to a universal exponent merely because one fit is numerically close to a literature benchmark. Statistical independence is kept at the disorder-realization level rather than treating q bins, r bins, temperatures, or drive points as independent samples.
+
+The Pages UI exposes the Lab in three places: the homepage top navigation, a dedicated homepage Lab card, and the persistent left-side all-pages navigation. On wide screens every page also has a right-side in-page table of contents; on narrow screens both sidebars become drawer buttons.
+
 ## Editorial / evidence policy
 
 This is a learning site, not a paper gallery.
@@ -37,18 +48,20 @@ The site now connects this causal chain:
 
 **stacking → symmetry breaking → polarization → switching pathway → pre-existing domain wall → pinning / creep → depinning → disorder / RFIM → phase-field / elastic-interface modeling → frontier evidence audit**
 
-The current frontier conclusion is deliberately conservative: recent 3R-MoS₂ / h-BN work provides strong, mutually reinforcing evidence for domain-wall-mediated switching and pinning-sensitive dynamics, while a full universality test still requires a common set of observables such as constant-field `v(E)`, roughness `B(r)` / `S(q)`, correlation-length scaling and finite-size scaling.
+The current frontier conclusion is deliberately conservative: recent 3R-MoS₂ / h-BN work provides strong, mutually reinforcing evidence for domain-wall-mediated switching and pinning-sensitive dynamics, while a full universality test in a sliding-ferroelectric system still requires a common, material-grounded evidence chain such as constant-field `v(E)`, roughness `B(r)` / `S(q)`, correlation-length scaling and finite-size scaling. The Reproduction Lab demonstrates how to validate those estimators on controlled models; it does not substitute for that material-level evidence.
 
 ## Repository layout
 
-- `index.html` — eight-module knowledge map and reading route
+- `index.html` — eight-module knowledge map, reading route, and prominent Reproduction Lab entry
 - `curriculum.js` — curated paper/module metadata
-- `modules/` — deep-reading lesson pages
-- `assets/` — frozen paper figures and provenance notes
+- `modules/` — eight deep-reading modules, Research Track, and Reproduction Lab L01–L12 pages
+- `examples/reproduction-lab/` — reproducible numerical lesson scripts
+- `assets/` — frozen paper figures, lesson outputs, receipts, and raw tables
+- `site-nav.js` / `site-nav.css` — persistent all-pages navigation and per-page contents navigation
 - `.github/workflows/pages.yml` — static evidence/asset validation and GitHub Pages deployment
 
 ## Deployment
 
 The site is dependency-free and deployed directly from `main` by `.github/workflows/pages.yml`.
 
-The workflow checks internal image references, selectable source-text requirements, evidence-chain markers, and frozen/reused source assets before publishing. It does **not** download literature or generate/crop figures during deployment.
+The workflow checks internal image references, selectable source-text requirements, evidence-chain markers, L01–L12 receipts/raw-data cardinalities, cross-lesson links, and frozen/reused source assets before publishing. It does **not** download literature or generate/crop figures during deployment.
