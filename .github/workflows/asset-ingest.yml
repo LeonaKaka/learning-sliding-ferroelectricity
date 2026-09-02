@@ -61,7 +61,7 @@ jobs:
               -o /tmp/asset-batch.zip
           else
             echo 'No GDRIVE_BEARER_TOKEN secret found; using gdown file-id flow.'
-            gdown --id "${DRIVE_FILE_ID}" --output /tmp/asset-batch.zip
+            gdown "${DRIVE_FILE_ID}" -O /tmp/asset-batch.zip
           fi
           file /tmp/asset-batch.zip
           unzip -t /tmp/asset-batch.zip
