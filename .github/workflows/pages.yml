@@ -56,8 +56,6 @@ jobs:
               if bad:
                   raise SystemExit(f'{page}: forbidden control characters found: {bad[:10]}')
 
-              # Every page, including Research Track and Reproduction Lab, must
-              # ship only local image evidence that actually exists in the artifact.
               for ref in re.findall(r'<img[^>]+src="([^"]+)"', text):
                   if ref.startswith(('http://','https://','data:')):
                       raise SystemExit(f'{page}: remote image not allowed: {ref}')
@@ -120,9 +118,6 @@ jobs:
               if hashlib.sha256(p.read_bytes()).hexdigest() != digest:
                   raise SystemExit(f'hash mismatch: {path}')
 
-          # Reproduction Lab is a separate executable evidence track, not a ninth
-          # mother module. A green Pages run must certify page + code + result +
-          # original-paper comparison evidence in the final deploy artifact.
           reproduction_contracts = {
               'modules/reproduction-lab.html': (
                   'examples/reproduction-lab/lesson01_tdgl_wall.py',
@@ -167,6 +162,13 @@ jobs:
                   'assets/reproduction-lab/lesson08_steady_velocity.txt',
                   'assets/reproduction-lab/ferrero2013-fig1b-velocity-force.svg',
               ),
+              'modules/reproduction-lab-09.html': (
+                  'examples/reproduction-lab/lesson09_beta_window.py',
+                  'assets/reproduction-lab/lesson09_beta_window.svg',
+                  'assets/reproduction-lab/lesson09_beta_window.txt',
+                  'assets/reproduction-lab/lesson09_beta_window.csv',
+                  'assets/reproduction-lab/ferrero2013-fig5-critical-relaxation.svg',
+              ),
           }
           for page_name, required_files in reproduction_contracts.items():
               page = Path(page_name)
@@ -180,8 +182,6 @@ jobs:
                   basename = p.name
                   if p.suffix in {'.py', '.svg', '.webp'} and basename not in text:
                       raise SystemExit(f'{page_name}: artifact exists but is not referenced: {required}')
-                  # Parse every SVG in the final artifact. This catches truncated
-                  # embedded figures that a mere existence check cannot detect.
                   if p.suffix == '.svg':
                       try:
                           ET.parse(p)
@@ -204,6 +204,10 @@ jobs:
           for marker in ('coarse dt=.100 max error', 'production dt=.025 max err', 'NO BETA FIT IN LESSON 08', 'STEADY VELOCITY ESTIMATOR + DT CONVERGENCE PASS'):
               if marker not in l08_receipt:
                   raise SystemExit(f'Lesson08 receipt missing marker: {marker}')
+          l09_receipt = Path('assets/reproduction-lab/lesson09_beta_window.txt').read_text(encoding='utf-8')
+          for marker in ('particle max |beta-0.5|', 'window beta drift', 'threshold-edge beta span', 'UNIVERSAL BETA CLAIM          = NOT AUTHORIZED', 'WINDOW-STABILITY GATE         = NOT PASSED'):
+              if marker not in l09_receipt:
+                  raise SystemExit(f'Lesson09 receipt missing marker: {marker}')
 
           if Path('assets/repaired-0607').exists():
               raise SystemExit('temporary repaired-0607 asset directory must not return')
@@ -250,14 +254,15 @@ jobs:
               Path('modules/foundations.html'): ('../index.html#foundations',),
               Path('modules/reproduction-lab-06.html'): ('reproduction-lab-07.html',),
               Path('modules/reproduction-lab-07.html'): ('reproduction-lab-08.html',),
-              Path('modules/reproduction-lab-08.html'): ('reproduction-lab-07.html', 'depinning.html#collapse-gate'),
+              Path('modules/reproduction-lab-08.html'): ('reproduction-lab-07.html', 'reproduction-lab-09.html'),
+              Path('modules/reproduction-lab-09.html'): ('reproduction-lab-08.html',),
           }
           for page, markers in required_links.items():
               text = page.read_text(encoding='utf-8')
               for marker in markers:
                   if marker not in text:
                       raise SystemExit(f'{page}: missing required cross-link: {marker}')
-          print('Static evidence + Reproduction Lab L01-L08 artifact + SVG-integrity + conservative terminology validation passed.')
+          print('Static evidence + Reproduction Lab L01-L09 artifact + SVG-integrity + conservative terminology validation passed.')
           PY
 
       - name: Configure Pages
