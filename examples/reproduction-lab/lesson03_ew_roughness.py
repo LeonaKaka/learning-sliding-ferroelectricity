@@ -14,6 +14,9 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 
+plt.rcParams["font.sans-serif"] = ["Noto Sans CJK SC", "DejaVu Sans"]
+plt.rcParams["axes.unicode_minus"] = False
+
 # Caballero Eq. (16) for alpha=delta=gamma=eta=1.
 eta_tilde = 2.0 * math.sqrt(2.0) / 3.0
 c = eta_tilde
@@ -137,13 +140,13 @@ ax = fig.add_subplot(gs[:, 0])
 for t in target_times:
     rr = results[t]["r"]
     ax.loglog(rr, results[t]["sim"], marker="o", markersize=2.5, linewidth=1.1,
-              label=f"simulation t={t:g}")
+              label=f"数值模拟 t={t:g}")
     ax.loglog(rr, results[t]["theory"], linestyle="--", linewidth=1.6,
               label=f"Eq.19 t={t:g}")
 ax.loglog(r_late, T*r_late/c, linestyle=":", linewidth=2.0, label=r"$B_{\rm th}=Tr/c$")
 ax.set_xlabel("r")
 ax.set_ylabel(r"$B(r,t)$")
-ax.set_title("EW roughness: simulation vs Caballero Eq. (19)")
+ax.set_title("EW 粗糙度：数值模拟与 Caballero Eq. (19) 对照")
 ax.legend(fontsize=7.5, ncol=2)
 
 ax = fig.add_subplot(gs[0, 1])
@@ -153,8 +156,8 @@ for t in target_times:
     ax.semilogx(rr, 100*rel, label=f"t={t:g}")
 ax.axvspan(4, 64, alpha=0.08)
 ax.set_xlabel("r")
-ax.set_ylabel("|sim-theory| / theory (%)")
-ax.set_title("Declared comparison window: 4 <= r <= 64")
+ax.set_ylabel("|数值-理论| / 理论 (%)")
+ax.set_title("预先声明的比较区间：4 ≤ r ≤ 64")
 ax.legend(fontsize=8)
 
 ax = fig.add_subplot(gs[1, 1])
@@ -165,10 +168,10 @@ for t in target_times:
     offset += 2.2
 ax.set_xlim(0, N)
 ax.set_xlabel("y")
-ax.set_ylabel("u(y) + offset")
-ax.set_title("One thermal realization: roughness grows with time")
+ax.set_ylabel("u(y) + 纵向偏移")
+ax.set_title("单个热噪声样本：粗糙度随时间增长")
 ax.legend(fontsize=8)
 
-fig.suptitle("Reproduction Lab · Lesson 03 · EW thermal roughening thumbnail", fontsize=14)
+fig.suptitle("复现实验室 · 第 03 课 · EW 热粗糙化缩略复现", fontsize=14)
 fig.savefig(out)
 print(f"saved: {out}")
