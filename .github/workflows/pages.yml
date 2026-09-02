@@ -128,6 +128,8 @@ jobs:
               'modules/reproduction-lab-08.html': ('examples/reproduction-lab/lesson08_steady_velocity.py','assets/reproduction-lab/lesson08_steady_velocity.svg','assets/reproduction-lab/lesson08_steady_velocity.txt','assets/reproduction-lab/ferrero2013-fig1b-velocity-force.svg'),
               'modules/reproduction-lab-09.html': ('examples/reproduction-lab/lesson09_beta_window.py','assets/reproduction-lab/lesson09_beta_window.svg','assets/reproduction-lab/lesson09_beta_window.txt','assets/reproduction-lab/lesson09_beta_window.csv','assets/reproduction-lab/ferrero2013-fig5-critical-relaxation.svg'),
               'modules/reproduction-lab-10.html': ('examples/reproduction-lab/lesson10_superrough_zeta.py','assets/reproduction-lab/lesson10_superrough_zeta.svg','assets/reproduction-lab/lesson10_superrough_zeta.txt','assets/reproduction-lab/lesson10_superrough_zeta.csv','assets/reproduction-lab/ferrero2013-fig4a-critical-structure.svg'),
+              'modules/reproduction-lab-11.html': ('examples/reproduction-lab/lesson11_fss_nu.py','assets/reproduction-lab/lesson11_fss_nu.svg','assets/reproduction-lab/lesson11_fss_nu.txt','assets/reproduction-lab/lesson11_fc_raw.csv','assets/reproduction-lab/ferrero2013-fig4b-finite-size-threshold.svg'),
+              'modules/reproduction-lab-12.html': ('examples/reproduction-lab/lesson12_thermal_rounding.py','assets/reproduction-lab/lesson12_thermal_rounding.svg','assets/reproduction-lab/lesson12_thermal_rounding.txt','assets/reproduction-lab/lesson12_rounding_raw.csv','assets/reproduction-lab/lesson12_subthreshold_raw.csv','assets/reproduction-lab/ferrero2013-fig6-thermal-rounding.svg'),
           }
           for page_name, required_files in reproduction_contracts.items():
               page = Path(page_name)
@@ -168,6 +170,22 @@ jobs:
           l10_receipt = Path('assets/reproduction-lab/lesson10_superrough_zeta.txt').read_text(encoding='utf-8')
           for marker in ('SYNTHETIC SUPER-ROUGH GOLD TEST = PASS','SMALL-QEW SUPER-ROUGH SIGNATURE = PASS','THERMODYNAMIC ZETA CLOSURE   = NOT PASSED','FINITE-SIZE SCALING REQUIRED BEFORE UNIVERSAL ZETA CLAIM'):
               if marker not in l10_receipt: raise SystemExit(f'Lesson10 receipt missing marker: {marker}')
+          l11_receipt = Path('assets/reproduction-lab/lesson11_fss_nu.txt').read_text(encoding='utf-8')
+          for marker in ('SYNTHETIC FSS GOLD TEST         = PASS','size-window nu drift','SIZE-WINDOW STABILITY GATE     = NOT PASSED','UNIVERSAL NU CLAIM              = NOT AUTHORIZED'):
+              if marker not in l11_receipt: raise SystemExit(f'Lesson11 receipt missing marker: {marker}')
+          l12_receipt = Path('assets/reproduction-lab/lesson12_thermal_rounding.txt').read_text(encoding='utf-8')
+          for marker in ('BROWNIAN NOISE-NORMALIZATION GOLD TEST = PASS','SYNTHETIC THERMAL-EXPONENT GOLD TEST = PASS','THERMAL-ROUNDING WINDOW GATE    = NOT PASSED','UNIVERSAL PSI CLAIM             = NOT AUTHORIZED','LOW-T CREEP ASYMPTOTIC RESOLVED = NO','CREEP-LAW / MU CLAIM             = NOT AUTHORIZED'):
+              if marker not in l12_receipt: raise SystemExit(f'Lesson12 receipt missing marker: {marker}')
+
+          csv_counts = {
+              'assets/reproduction-lab/lesson11_fc_raw.csv': 192,
+              'assets/reproduction-lab/lesson12_rounding_raw.csv': 144,
+              'assets/reproduction-lab/lesson12_subthreshold_raw.csv': 40,
+          }
+          for path, expected in csv_counts.items():
+              n = sum(1 for _ in Path(path).open(encoding='utf-8')) - 1
+              if n != expected:
+                  raise SystemExit(f'{path}: expected {expected} data rows, found {n}')
 
           if Path('assets/repaired-0607').exists(): raise SystemExit('temporary repaired-0607 asset directory must not return')
           if Path('scripts').exists(): raise SystemExit('legacy evidence-regeneration scripts must not remain in static V1')
@@ -195,14 +213,16 @@ jobs:
               Path('modules/reproduction-lab-06.html'): ('reproduction-lab-07.html',),
               Path('modules/reproduction-lab-07.html'): ('reproduction-lab-08.html',),
               Path('modules/reproduction-lab-08.html'): ('reproduction-lab-07.html','reproduction-lab-09.html'),
-              Path('modules/reproduction-lab-09.html'): ('reproduction-lab-08.html',),
-              Path('modules/reproduction-lab-10.html'): ('reproduction-lab-09.html',),
+              Path('modules/reproduction-lab-09.html'): ('reproduction-lab-08.html','reproduction-lab-10.html'),
+              Path('modules/reproduction-lab-10.html'): ('reproduction-lab-09.html','reproduction-lab-11.html'),
+              Path('modules/reproduction-lab-11.html'): ('reproduction-lab-10.html','reproduction-lab-12.html'),
+              Path('modules/reproduction-lab-12.html'): ('reproduction-lab-11.html','research-track.html'),
           }
           for page, markers in required_links.items():
               text = page.read_text(encoding='utf-8')
               for marker in markers:
                   if marker not in text: raise SystemExit(f'{page}: missing required cross-link: {marker}')
-          print('Static evidence + Reproduction Lab L01-L10 artifact + SVG-integrity + no-placeholder validation passed.')
+          print('Static evidence + Reproduction Lab L01-L12 artifact + raw-data cardinality + SVG-integrity + no-placeholder validation passed.')
           PY
 
       - name: Configure Pages
