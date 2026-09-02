@@ -16,6 +16,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 
+plt.rcParams["font.sans-serif"] = ["Noto Sans CJK SC", "DejaVu Sans"]
+plt.rcParams["axes.unicode_minus"] = False
+
 # --- Paper model: alpha=delta=gamma=eta=1, h=0 ---
 alpha = delta = gamma = eta = 1.0
 phi0_exact = 1.0
@@ -249,15 +252,15 @@ out_path = out_dir / "lesson04_gl_to_ew_boundary.svg"
 fig, axes = plt.subplots(2, 2, figsize=(11.4, 8.0), constrained_layout=True)
 
 for ax, T, data, title in (
-    (axes[0, 0], 0.05, low, "Low T: bulk GL follows EW"),
-    (axes[0, 1], 0.30, high, "High T: mapping breaks down"),
+    (axes[0, 0], 0.05, low, "低温：体场 GL 跟随 EW"),
+    (axes[0, 1], 0.30, high, "高温：映射失效"),
 ):
     for t in target_times:
         d = data[t]
         ax.loglog(d["r"], d["B"], "o-", markersize=2.6, linewidth=1.0,
-                  label=f"GL fit-u, t={t:g}")
+                  label=f"GL 拟合 u，t={t:g}")
         ax.loglog(d["r"], d["theory"], "--", linewidth=1.5,
-                  label=f"EW Eq.19, t={t:g}")
+                  label=f"EW Eq.19，t={t:g}")
     ax.set_xlabel("r")
     ax.set_ylabel("B(r,t)")
     ax.set_title(title)
@@ -268,13 +271,13 @@ bins = np.linspace(0.4, 3.5, 42)
 ax.hist(low[100.0]["W"].ravel(), bins=bins, alpha=0.65, density=True, label="T=0.05")
 ax.hist(high[100.0]["W"].ravel(), bins=bins, alpha=0.55, density=True, label="T=0.30")
 ax.axvline(w_exact, linestyle="--", linewidth=1.5, label=r"$w=\sqrt{2}$")
-ax.set_xlabel("fitted wall width w")
-ax.set_ylabel("density")
-ax.set_title("Profile-fit diagnostic")
+ax.set_xlabel("拟合畴壁宽度 w")
+ax.set_ylabel("密度")
+ax.set_title("剖面拟合诊断")
 ax.legend(fontsize=8)
 
 ax = axes[1, 1]
-labels = ["median\nEq.19 error", "multi-\ncrossing", "width\nstd / sqrt(2)"]
+labels = ["Eq.19 中位误差", "多重零点交叉", "宽度标准差 / sqrt(2)"]
 lowvals = [
     100 * low[100.0]["median_rel"],
     100 * low[100.0]["multi_cross"],
@@ -291,9 +294,9 @@ ax.bar(xx - width / 2, lowvals, width, label="T=0.05")
 ax.bar(xx + width / 2, highvals, width, label="T=0.30")
 ax.set_xticks(xx, labels)
 ax.set_ylabel("%")
-ax.set_title("The mapping fails before we force a zeta fit")
+ax.set_title("映射失效时不应强行拟合 ζ")
 ax.legend(fontsize=8)
 
-fig.suptitle("Reproduction Lab · Lesson 04 · 2D GL -> 1D EW validity boundary", fontsize=14)
+fig.suptitle("复现实验室 · 第 04 课 · 二维 GL → 一维 EW 适用边界", fontsize=14)
 fig.savefig(out_path)
 print(f"saved: {out_path}")
