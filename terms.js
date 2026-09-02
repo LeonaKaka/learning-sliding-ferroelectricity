@@ -28,6 +28,7 @@
     ['critical depinning','临界退钉扎'],
     ['depinning criticality','退钉扎临界性'],
     ['depinning threshold','退钉扎阈值'],
+    ['depinning field','退钉扎场'],
     ['critical manifold','临界流形'],
     ['critical geometry','临界几何'],
     ['critical exponents','临界指数'],
@@ -102,8 +103,16 @@
   function annotateConceptChips() {
     document.querySelectorAll('.concept').forEach(el => {
       const raw = el.textContent.trim();
+      if (raw.includes('（')) {
+        // Curriculum V2 writes reader-facing bilingual labels explicitly.
+        // Mark any known English term already present so annotateText() does
+        // not add a second Chinese gloss later on the same page.
+        const lower = raw.toLowerCase();
+        for (const key of orderedTerms) if (lower.includes(key)) seen.add(key);
+        return;
+      }
       const zh = glossary.get(raw.toLowerCase());
-      if (!zh || raw.includes('（')) return;
+      if (!zh) return;
       el.textContent = `${raw}（${zh}）`;
       seen.add(raw.toLowerCase());
     });
@@ -120,7 +129,10 @@
       node.nodeValue = node.nodeValue.replace(termRe, (whole, lead, raw, offset, full) => {
         const key = raw.toLowerCase();
         const after = full.slice(offset + whole.length);
-        if (after.startsWith('（')) {
+        // Explicit bilingual prose may place a symbol such as β / ζ between
+        // the English term and its Chinese gloss. Treat that as already
+        // annotated too, e.g. "velocity exponent β（速度指数 β）".
+        if (/^\s*[βζνμψ]?\s*（/.test(after)) {
           seen.add(key);
           return whole;
         }
