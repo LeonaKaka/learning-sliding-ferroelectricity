@@ -126,9 +126,6 @@ def main() -> None:
         if not path.is_file():
             raise RuntimeError(f"Lab 04 required asset/source missing: {path.relative_to(ROOT)}")
 
-    if "LOW-T MAPPING PASS; HIGH-T BREAKDOWN DETECTED" not in raw:
-        raise RuntimeError("Lab 04 machine receipt marker changed in HTML")
-
     py = PYTHON.read_text(encoding="utf-8")
     required_python = (
         'plt.rcParams["font.sans-serif"] = ["Noto Sans CJK SC", "DejaVu Sans"]',
@@ -173,7 +170,7 @@ def main() -> None:
 
     print(
         f"Lab 04 seal PASS: {len(equations)} equations, {len(checked)} local links, "
-        "HTML/paper-Figure/SVG/Python contracts intact."
+        "HTML/paper-Figure/SVG/Python contracts intact; machine receipt locked in Python."
     )
 
 
