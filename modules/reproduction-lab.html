@@ -1,21 +1,22 @@
 <!DOCTYPE html>
-<html lang="zh-CN"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Reproduction Lab（复现实验室）（复现实验室）01 · TDGL Domain Wall（畴壁）已知答案测试</title><style>
+
+<html lang="zh-CN"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Reproduction Lab（复现实验室）01 · TDGL Domain Wall（畴壁）已知答案测试</title><style>
 :root{--b:#f3f0e8;--p:#fffdf8;--i:#191a18;--m:#716d66;--l:#d8d1c3;--a:#6d493b;--soft:#eee8dc}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--b);color:var(--i);font:15px/1.76 system-ui,-apple-system,"PingFang SC",sans-serif}.top{position:sticky;top:0;z-index:3;background:#f3f0e8ee;backdrop-filter:blur(12px);border-bottom:1px solid var(--l)}.bar,main{width:min(1040px,calc(100% - 32px));margin:auto}.bar{height:62px;display:flex;align-items:center;justify-content:space-between;gap:20px}.bar b,h1,h2,h3,.q,.bridge,.eq,.step b{font-family:Georgia,"Times New Roman","Songti SC",serif}.bar a,a{color:#504c46}.bar small,.rule,.cap{color:var(--m)}main{padding:52px 0 90px}h1{font-size:clamp(40px,6.8vw,66px);line-height:1.04;margin:12px 0 18px;letter-spacing:-.04em}h2{font-size:29px;line-height:1.25;margin:64px 0 15px}h3{font-size:18px;margin:0 0 6px}.deck{font:19px/1.62 Georgia,"Songti SC",serif;color:#4f4b45;max-width:900px}.q{background:#20211f;color:#f6f1e7;border-radius:14px;padding:20px 22px;font-size:18px;margin:30px 0}.rule,.cap{font-size:12px}.fig,.codebox{background:#fff;border:1px solid var(--l);border-radius:14px;overflow:hidden;margin:26px 0}.head,.cap{padding:10px 14px;background:#f0ece3}.fig img{display:block;width:100%;height:auto;background:#fff}.cap{display:block;border-top:1px solid var(--l)}.three{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.card,.step{background:var(--p);border:1px solid var(--l);border-radius:11px;padding:15px}.card p,.step p{font-size:13px;margin:5px 0}.bridge{font-size:18px;padding:18px 20px;margin:32px 0;border-left:4px solid var(--a);background:var(--soft)}.eq{font-size:18px;text-align:center;padding:14px 12px;margin:16px 0;background:#faf7f0;border:1px solid var(--l);border-radius:10px;overflow-x:auto}.eq small{display:block;font:12px/1.5 system-ui;color:var(--m);margin-top:7px}.warn{background:#fff7e8;border:1px solid #e4d3ad;border-radius:11px;padding:14px 16px;margin:18px 0}.pass{background:#eef6ef;border:1px solid #bfd2c4;border-radius:11px;padding:14px 16px;margin:18px 0}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:22px 0}.matrix{width:100%;border-collapse:collapse;margin:22px 0;background:#fff;border:1px solid var(--l)}.matrix th,.matrix td{padding:11px 12px;border-bottom:1px solid var(--l);vertical-align:top;text-align:left}.matrix th{background:#f0ece3;font:13px Georgia,serif}.matrix td{font-size:13px}.matrix tr:last-child td{border-bottom:0}pre{margin:0;padding:20px;overflow:auto;background:#1e201f;color:#f2eee6;font:12.5px/1.58 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.next{margin-top:44px;padding-top:20px;border-top:1px solid var(--l);display:flex;justify-content:space-between;gap:16px}@media(max-width:760px){.three,.steps{grid-template-columns:1fr}.bar span{display:none}.matrix{display:block;overflow-x:auto}.next{flex-direction:column}h2{margin-top:54px}}
-</style></head><body><header class="top"><div class="bar"><b>Reproduction Lab（复现实验室） <small>· Lesson 01 · Gold Test</small></b><span><a href="../index.html">首页</a> · <a href="numerical-modeling.html">M07</a> · <a href="#code">代码</a> · <a href="#result">结果</a></span></div></header><main>
-<div class="rule"><a href="../index.html">Learning Sliding Ferroelectricity</a> / Reproduction Lab（复现实验室） / Lesson 01</div>
+</style></head><body><header class="top"><div class="bar"><b>复现实验室 <small>· Lesson 01 · Gold Test</small></b><span><a href="../index.html">首页</a> · <a href="numerical-modeling.html">模块 07</a> · <a href="#code">代码</a> · <a href="#result">结果</a></span></div></header><main>
+<div class="rule"><a href="../index.html">Learning Sliding Ferroelectricity</a> / 复现实验室 / Lesson 01</div>
 <h1>先别复现整篇论文：先证明你的 TDGL 真的会长出“正确的墙”</h1>
-<p class="deck">主论文：Caballero et al., PRB 102, 104204 (2020)。这节不直接挑战作者的大尺寸 2D GL ↔ elastic-line 结果，而先抽出一个可解析、普通 CPU 很快就能验收的已知答案测试：数值 domain wall（畴壁）必须收敛到论文 Eq. (7–8) 的 tanh kink（双曲正切扭结）。</p>
+<p class="deck">主论文：Caballero et al., PRB 102, 104204 (2020)。这节不直接挑战作者的大尺寸二维 GL ↔ elastic-line model（弹性线模型）结果，而先抽出一个可解析、普通 CPU 很快就能验收的已知答案测试：数值 domain wall（畴壁）必须收敛到论文 Eq. (7–8) 的 tanh kink（双曲正切扭结）。</p>
 <div class="q">唯一目标：<b>不相信“看起来差不多”。解析解自己来验代码。</b><br/>剖面 RMSE、畴壁宽度、自由能下降三关都过，才允许进入二维畴壁。</div>
 <h2>0 · 这节到底复现论文的哪一块？</h2>
-<p>Caballero 的 体场层面使用非守恒标量 order parameter（序参量） φ(r,t)、双井 φ⁴ 势和 overdamped Langevin（过阻尼朗之万）/ Model A（A 型模型）动力学；无无序情形的 stationary soliton（定态孤子）给出一堵解析可知的畴壁。项目权威来源是 Drive 中的 Caballero et al. 2020 PDF；期刊版本：<a href="https://doi.org/10.1103/PhysRevB.102.104204" rel="noopener" target="_blank">PRB 102, 104204</a>。</p>
+<p>Caballero 的体场层面使用非守恒标量 order parameter（序参量） φ(r,t)、双井 φ⁴ 势和 overdamped Langevin（过阻尼朗之万）/ Model A（A 型模型）动力学；无序为零的情形的 stationary soliton（定态孤子）给出一堵解析可知的畴壁。项目权威来源是 Drive 中的 Caballero et al. 2020 PDF；期刊版本：<a href="https://doi.org/10.1103/PhysRevB.102.104204" rel="noopener" target="_blank">PRB 102, 104204</a>。</p>
 <div class="eq">V(φ)=−αφ²/2+δφ⁴/4　；　η∂<sub>t</sub>φ=γ∇²φ−V′(φ)+h+ξ</div>
-<div class="eq">φ*(x)=−φ₀ tanh(x/w),　φ₀=√(α/δ),　w=√(2γ/α)<small>本课只取 h=0、T=0 的无无序一维验证单元。</small></div>
-<div class="warn"><b>不是“复现论文 Fig. 1”。</b>这是从同一模型和解析结果抽出的最小验证单元。它先检查离散化、边界条件和 TDGL 更新；roughness（粗糙度）/ structure factor（结构因子）后面再复现。</div>
+<div class="eq">φ*(x)=−φ₀ tanh(x/w),　φ₀=√(α/δ),　w=√(2γ/α)<small>本课只取 h=0、T=0、无序为零的一维验证单元。</small></div>
+<div class="warn"><b>不是“复现论文图 1”。</b>这是从同一模型和解析结果抽出的最小验证单元。它先检查离散化、边界条件和 TDGL 更新；roughness（粗糙度）/ structure factor（结构因子）后面再复现。</div>
 <h2>1 · 为什么故意从一堵错误的畴壁开始？</h2>
 <div class="three"><div class="card"><h3>不能直接初始化答案</h3><p>如果一开始就填解析 tanh，代码“不动”并不能证明积分器正确。</p></div><div class="card"><h3>故意设成 3w</h3><p>初始畴壁比平衡畴壁宽三倍，强迫 TDGL 真正发生弛豫。</p></div><div class="card"><h3>看它自己回去</h3><p>正确代码应把畴壁收缩到 w，同时自由能下降。</p></div></div>
 <div class="eq">φ(x,0)=−φ₀ tanh[x/(3w)]　→　TDGL　→　−φ₀ tanh(x/w)</div>
 <h2 id="code">2 · 从方程到代码，只看四步</h2>
-<div class="steps"><div class="step"><b>① 网格</b><p>一维 x 网格；无无序、无热噪声。</p></div><div class="step"><b>② Laplacian（拉普拉斯算子）</b><p>中心差分 ∂²φ/∂x²。</p></div><div class="step"><b>③ TDGL</b><p>显式 Euler（欧拉）更新 γ∇²φ+αφ−δφ³。</p></div><div class="step"><b>④ 边界条件</b><p>左右固定为 +φ₀ / −φ₀，保证存在单墙。</p></div></div>
+<div class="steps"><div class="step"><b>① 网格</b><p>一维 x 网格；无序为零、无热噪声。</p></div><div class="step"><b>② Laplacian（拉普拉斯算子）</b><p>中心差分 ∂²φ/∂x²。</p></div><div class="step"><b>③ TDGL</b><p>显式 Euler（欧拉）更新 γ∇²φ+αφ−δφ³。</p></div><div class="step"><b>④ 边界条件</b><p>左右固定为 +φ₀ / −φ₀，保证存在单墙。</p></div></div>
 <div class="codebox"><div class="head"><b>真正的动力学核心</b></div><pre>lap = (phi[2:] - 2*phi[1:-1] + phi[:-2]) / dx**2
 rhs = (gamma*lap + alpha*phi[1:-1] - delta*phi[1:-1]**3) / eta
 phi[1:-1] += dt * rhs
@@ -37,12 +38,12 @@ assert width_error &lt; 5e-3</pre></div>
 <h2>5 · 和你的滑移铁电项目怎么接？</h2>
 <table class="matrix"><thead><tr><th>本课对象</th><th>你的项目对应</th><th>下一步</th></tr></thead><tbody>
 <tr><td>φ⁴ 势</td><td>周期堆垛 / 极化有效势</td><td>换成滑移铁电特定能量景观</td></tr>
-<tr><td>无无序单畴壁</td><td>单畴壁初始化 / E=0 弛豫</td><td>做真正的畴壁稳定性验证</td></tr>
+<tr><td>无序为零的单畴壁</td><td>单畴壁初始化 / E=0 弛豫</td><td>做真正的畴壁稳定性验证</td></tr>
 <tr><td>畴壁宽度</td><td>网格分辨率合理性检查</td><td>确认 dx 能分辨畴壁，避免伪退钉扎</td></tr>
 <tr><td>TDGL 更新</td><td>phase-field（相场）时间演化</td><td>再加恒定 E、淬火 RF/RB、热噪声</td></tr>
 <tr><td>硬性回归测试</td><td>求解器改动后的最低验收</td><td>已知答案测试通过后才跑阈值批量扫描</td></tr>
 </tbody></table>
-<div class="bridge"><b>方法流的真正含义：</b>成熟方法不是“直接算 β”。它先证明 无无序对象是对的，再证明估计量是对的，再增加无序和驱动，最后才谈临界性。</div>
+<div class="bridge"><b>方法流的真正含义：</b>成熟方法不是“直接算 β”。它先证明无序为零时的对象是对的，再证明估计量是对的，再增加无序和驱动，最后才谈临界性。</div>
 <h2>6 · 出错时你应该先查什么？</h2>
 <table class="matrix"><thead><tr><th>症状</th><th>先查</th><th>别先怪</th></tr></thead><tbody>
 <tr><td>NaN / 振荡</td><td>dt 与显式扩散稳定性</td><td>理论不适用</td></tr>
@@ -59,7 +60,7 @@ numerical width   = 1.415395
 relative w error  = 0.0835%
 profile RMSE      = 9.754e-05</pre></div>
 <h2>8 · <a href="reproduction-lab-02.html">第 02 课已上线：二维体场 → u(y) → B(r)</a></h2>
-<div class="steps"><div class="step"><b>二维畴壁</b><p>把 φ(x) 扩成 φ(x,y)。</p></div><div class="step"><b>提取 u(y)</b><p>从 diffuse field（弥散场）中找畴壁位置。</p></div><div class="step"><b>已知答案测试</b><p>平直畴壁应有 B(r)≈0。</p></div><div class="step"><b>然后 T&gt;0</b><p>开始复现 Caballero 的无无序粗糙度增长。</p></div></div>
+<div class="steps"><div class="step"><b>二维畴壁</b><p>把 φ(x) 扩成 φ(x,y)。</p></div><div class="step"><b>提取 u(y)</b><p>从 diffuse field（弥散场）中找畴壁位置。</p></div><div class="step"><b>已知答案测试</b><p>平直畴壁应有 B(r)≈0。</p></div><div class="step"><b>然后 T&gt;0</b><p>开始复现 Caballero 在无序为零时的粗糙度增长。</p></div></div>
 <div class="q">后续固定模板：<b>论文原式 → 最小代码 → 即时已知答案测试 → 小尺寸论文图缩略图 → 对应回你的项目源码。</b></div>
 <div class="next"><a href="numerical-modeling.html">← 回模块 07</a><a href="../index.html">回首页 →</a></div>
 </main></body></html>
