@@ -11,7 +11,6 @@ REPLACEMENTS = (
     ('Science · main text · published PDF p.1 · 跨栏拼接，原文未改', 'Science · 正文 · 已发表 PDF 第 1 页 · 跨栏拼接，原文未改'),
     ('Science · main text · published PDF p.2 · 原文未改', 'Science · 正文 · 已发表 PDF 第 2 页 · 原文未改'),
     ('Nature Communications · main text · published PDF pp.3–4 · 跨栏/跨页拼接，原文未改', 'Nature Communications · 正文 · 已发表 PDF 第 3–4 页 · 跨栏/跨页拼接，原文未改'),
-    ('跨栏/跨页拼接：只恢复 published PDF 的连续阅读顺序；原句未改。', '跨栏/跨页拼接：只恢复已发表 PDF 的连续阅读顺序；原句未改。'),
     ('PRL · main text · published PDF p.2 · 原文未改', 'PRL · 正文 · 已发表 PDF 第 2 页 · 原文未改'),
 )
 
@@ -21,14 +20,12 @@ REQUIRED = (
     'Science · 正文 · 已发表 PDF 第 1 页',
     'Science · 正文 · 已发表 PDF 第 2 页',
     'Nature Communications · 正文 · 已发表 PDF 第 3–4 页',
-    '跨栏/跨页拼接：只恢复已发表 PDF 的连续阅读顺序；原句未改。',
     'PRL · 正文 · 已发表 PDF 第 2 页',
 )
-FORBIDDEN = (
+FORBIDDEN_OUTSIDE_SOURCE = (
     '>Map</a>', '>Multilayer</a>', '>Symmetry</a>',
     'Theoretical Model · published PDF',
     'main text · published PDF',
-    '只恢复 published PDF',
 )
 LOCKED_RAW = (
     'sliding ferroelectricity（滑移铁电）',
@@ -74,13 +71,18 @@ def main() -> None:
         if out.count(token) != count:
             raise RuntimeError(f'Foundations scientific term/claim drifted: {token}')
 
-    visible = after.get_text(' ', strip=True)
+    # Audit only visible text outside frozen paper-original blocks.
+    audit = BeautifulSoup(out, "html.parser")
+    for node in audit.select('.source-text'):
+        node.decompose()
+    visible_outside_source = str(audit)
+    visible_text = after.get_text(' ', strip=True)
     for token in REQUIRED:
-        if token not in visible:
+        if token not in visible_text:
             raise RuntimeError(f'Foundations required Language V2 text missing: {token}')
-    for token in FORBIDDEN:
-        if token in out:
-            raise RuntimeError(f'Foundations editorial English remains: {token}')
+    for token in FORBIDDEN_OUTSIDE_SOURCE:
+        if token in visible_outside_source:
+            raise RuntimeError(f'Foundations editorial English remains outside source text: {token}')
 
     TARGET.write_text(out, encoding='utf-8')
     print('Foundations final editorial Language V2 repair complete; source text/Figures/links/science unchanged.')
