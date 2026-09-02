@@ -5,26 +5,26 @@
 </style></head><body><header class="top"><div class="bar"><b>复现实验室 <small>· 第 03 课 · 首次论文曲线缩略复现</small></b><span><a href="reproduction-lab-02.html">L02</a> · <a href="../index.html">首页</a> · <a href="#compare">论文对照</a> · <a href="#code">代码</a></span></div></header><main>
 <div class="rule"><a href="../index.html">Learning Sliding Ferroelectricity</a> / 复现实验室 / 第 03 课</div>
 <h1>第一次真正复现论文曲线：thermal roughness（热粗糙度）为什么从 0 长出来？</h1>
-<p class="deck">前两课都还是已知答案测试：先验证畴壁剖面，再验证畴壁提取器。现在第一次进入 Caballero 2020 的定量主结果。论文 Fig.2 从完全平直的界面出发，让 thermal noise（热噪声）逐步建立几何相关，并把数值 B(r,t) 与解析 Eq. (19) 直接比较。我们先只复现其中最干净的 1D Edwards–Wilkinson 层，因为这里既有论文图，也有精确解析基准。</p>
+<p class="deck">前两课都还是已知答案测试：先验证畴壁剖面，再验证畴壁提取器。现在第一次进入 Caballero 2020 的定量主结果。论文 Fig.2 从完全平直的界面出发，让 thermal noise（热噪声）逐步建立几何相关，并把数值 B(r,t) 与解析 Eq. (19) 直接比较。我们先只复现其中最干净的 一维 Edwards–Wilkinson 层，因为这里既有论文图，也有精确解析基准。</p>
 <div class="q"><b>本课验收标准升级：</b>不是“曲线趋势一样”，而是论文方案 → 解析 Eq.19 → 我们的数值模拟三层对照。我们预先冻结比较窗口 4≤r≤64，再看相对误差；不能看完结果后再挑一段最像的。</div>
 <h2 id="compare">0 · 原论文 Fig.2 与我们的缩略复现</h2>
 <div class="two">
-<figure class="fig"><a href="../assets/reproduction-lab/caballero2020-fig2-time-roughness.webp" rel="noopener" target="_blank"><img alt="Caballero 2020 图 2：界面粗糙度随时间演化" src="../assets/reproduction-lab/caballero2020-fig2-time-roughness.webp"/></a><figcaption class="cap"><b>Caballero et al. 2020 · Fig.2。</b><br/>上排是 1D Edwards–Wilkinson，下排是 2D Ginzburg–Landau。作者从平直界面出发，在 t=10<sup>j</sup>, j=1…6 观察 B(r,t)，彩色虚线是 Eq. (19)，黑色点线是长时热粗糙度 Tr/c。</figcaption></figure>
+<figure class="fig"><a href="../assets/reproduction-lab/caballero2020-fig2-time-roughness.webp" rel="noopener" target="_blank"><img alt="Caballero 2020 图 2：界面粗糙度随时间演化" src="../assets/reproduction-lab/caballero2020-fig2-time-roughness.webp"/></a><figcaption class="cap"><b>Caballero et al. 2020 · Fig.2。</b><br/>上排是一维 Edwards–Wilkinson，下排是二维 Ginzburg–Landau。作者从平直界面出发，在 t=10<sup>j</sup>, j=1…6 观察 B(r,t)，彩色虚线是 Eq. (19)，黑色点线是长时热粗糙度 Tr/c。</figcaption></figure>
 <figure class="fig"><a href="../assets/reproduction-lab/lesson03_ew_roughness_thumbnail.svg" rel="noopener" target="_blank"><img alt="本课 EW 数值模拟与 Caballero Eq.19 的粗糙度对照" src="../assets/reproduction-lab/lesson03_ew_roughness_thumbnail.svg"/></a><figcaption class="cap"><b>本课缩略复现。</b><br/>只取 t=10,100,1000，实线/点是数值模拟，虚线是论文 Eq. (19)。右上直接画相对误差；右下展示同一独立热噪声样本随时间逐渐粗糙化。</figcaption></figure>
 </div>
 <div class="verdict"><b>现在可以叫“论文曲线的缩略复现”。</b> 因为我们已经在复现 Fig.2 中明确的可观测量、时间演化和解析基准。但还不能叫完整复现：系统长度、dt、时间范围和独立样本数都没有逐项照搬论文。</div>
 <h2>1 · 先把论文方案写下来，防止偷偷改题</h2>
 <table class="matrix"><thead><tr><th>项目</th><th>Caballero 2020</th><th>本课</th><th>为什么不同</th></tr></thead><tbody>
-<tr><td>模型</td><td>1D Edwards–Wilkinson Eq. (15)</td><td>相同</td><td>这一层先不碰 2D GL</td></tr>
+<tr><td>模型</td><td>1D Edwards–Wilkinson Eq. (15)</td><td>相同</td><td>这一层先不碰二维 GL</td></tr>
 <tr><td>映射参数</td><td>α=δ=γ=η=1 → η̃=c=2√2/3</td><td>相同</td><td>直接用论文 Eq. (16)</td></tr>
 <tr><td>温度</td><td>T=0.05</td><td>T=0.05</td><td>相同</td></tr>
 <tr><td>线长</td><td>L=4096，dy=1</td><td>N=256，dy=1</td><td>先做 CPU 快速缩略复现</td></tr>
 <tr><td>时间步长</td><td>Δt=10<sup>−2</sup></td><td>Δt=0.1</td><td>更粗，但必须被 Eq.19 误差验收条件约束</td></tr>
 <tr><td>时刻</td><td>10,10²,…,10⁶</td><td>10,100,1000</td><td>避免为了“完整”先跑长时大系统</td></tr>
-<tr><td>独立样本数</td><td>10</td><td>64</td><td>1D 很便宜，多取样降低 Monte Carlo（蒙特卡洛）采样噪声；因此并不代表方案参数完全一致</td></tr>
+<tr><td>独立样本数</td><td>10</td><td>64</td><td>一维模型很便宜，多取样降低 Monte Carlo（蒙特卡洛）采样噪声；因此并不代表方案参数完全一致</td></tr>
 </tbody></table>
 <div class="warn"><b>“我们的独立样本更多”不代表比论文更高级。</b> 系统尺寸与时间跨度更小，所以这仍然是缩略复现。复现课最重要的是把哪些地方相同、哪些地方缩小写在同一张表里。</div>
-<h2>2 · Eq. (15)：这次第一次真的加 thermal noise（热噪声）</h2>
+<h2>2 · Eq. (15)：这次第一次真的加热噪声</h2>
 <div class="eq">η̃ ∂<sub>t</sub>u = c ∂²<sub>y</sub>u + ξ̃(y,t)</div>
 <div class="eq">⟨ξ̃(y,t) ξ̃(y′,t′)⟩ = 2 η̃ T δ(y−y′) δ(t−t′)</div>
 <p>论文通过 bulk-to-line projection（体场到界面线投影）得到这条 EW 方程。α=δ=γ=η=1 时，Eq. (16) 给出 η̃=c=2√2/3，因此扩散比 c/η̃=1。离散到 dy、dt 后，每一步直接加到 u 的热噪声增量是：</p>
@@ -57,8 +57,8 @@ u += np.sqrt(2*T*dt/(eta_tilde*dy)) * rng.standard_normal(u.shape)</pre></div>
 <tr><td>t=100</td><td>1.39%</td><td>1.86%</td><td>3.40%</td><td><b>通过</b></td></tr>
 <tr><td>t=1000</td><td>1.02%</td><td>1.33%</td><td>2.46%</td><td><b>通过</b></td></tr>
 </tbody></table>
-<p>另外，t=1000 时 r=2…10 的平均 B/(Tr/c)=<b>0.9592</b>，也已经接近 长时热斜率。</p>
-<div class="pass"><b>这就是“论文图 + 解析式 + 我们曲线”三重闭环。</b> 即使我们的图看起来很像论文，如果 Eq.19 相对误差 超过预先设定阈值，也不能算通过；反过来，即使颜色和排版完全不像，数值量对上才是真正重要的复现。</div>
+<p>另外，t=1000 时 r=2…10 的平均 B/(Tr/c)=<b>0.9592</b>，也已经接近长时热斜率。</p>
+<div class="pass"><b>这就是“论文图 + 解析式 + 我们曲线”三重闭环。</b> 即使我们的图看起来很像论文，如果 Eq.19 相对误差超过预先设定阈值，也不能算通过；反过来，即使颜色和排版完全不像，数值量对上才是真正重要的复现。</div>
 <h2 id="code">7 · 完整脚本</h2>
 <p><a href="../examples/reproduction-lab/lesson03_ew_roughness.py"><b>打开第 03 课 Python 脚本 →</b></a>　依赖仍然只有 NumPy + Matplotlib；普通 CPU 约十秒级。</p>
 <div class="codebox"><div class="head"><b>预期输出</b></div><pre>eta_tilde = c     = 0.942809042
