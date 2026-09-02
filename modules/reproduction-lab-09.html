@@ -11,11 +11,11 @@
 <figure class="figure"><img src="../assets/reproduction-lab/lesson09_mean_v_loglog.png" alt="无序平均速度随 Δf 的双对数图"><figcaption class="caption"><b>本课模拟输出。</b> 六个 Δf 点来自 8 个独立 quenched disorder（淬火无序）样本的算术平均；每个样本都先独立确定自己的 fc。图中只展示预先登记的最宽与最窄两个拟合区间：同一批数据得到的斜率明显不同。</figcaption></figure>
 <h2>2 · 核心结果：β 没有形成稳定平台</h2>
 <figure class="figure"><img src="../assets/reproduction-lab/lesson09_beta_vs_window.png" alt="有效 β 随拟合区间上界变化"><figcaption class="caption"><b>本课模拟输出 · 核心判据。</b> 横轴越往右表示最大 Δf 越小、越靠近单样本阈值；β 从 0.268 持续滑到 0.166。虚线 0.245 只作为 Ferrero QEW 的文献基准值，不是拟合目标。</figcaption></figure>
-<table class="table"><thead><tr><th>max Δf</th><th>β<sub>eff</sub></th></tr></thead><tbody><tr><td>0.170</td><td>0.267993</td></tr><tr><td>0.105</td><td>0.229890</td></tr><tr><td>0.065</td><td>0.195041</td></tr><tr><td>0.040</td><td>0.165810</td></tr></tbody></table>
+<table class="table"><thead><tr><th>最大 Δf</th><th>有效 β</th></tr></thead><tbody><tr><td>0.170</td><td>0.267993</td></tr><tr><td>0.105</td><td>0.229890</td></tr><tr><td>0.065</td><td>0.195041</td></tr><tr><td>0.040</td><td>0.165810</td></tr></tbody></table>
 <div class="hold"><b>拟合区间稳定性：未通过。</b> β 漂移为 0.102183，远高于预先登记的 0.030 判据。</div>
 <h2>3 · 是不是 L07 的 fc 不够准？不是主要问题</h2>
 <figure class="figure medium"><img src="../assets/reproduction-lab/lesson09_threshold_sensitivity.png" alt="β 对单样本阈值区间边缘的敏感性"><figcaption class="caption"><b>本课模拟输出。</b> 把每个样本的 fc 从阈值区间中点分别移到下沿和上沿，六点拟合的 β 只变化约 0.001004；这比 0.102 的拟合区间漂移小两个数量级。</figcaption></figure>
-<h2>4 · bootstrap（自助法）置信区间为什么也不能救？</h2>
+<h2>4 · 自助法置信区间为什么也不能救？</h2>
 <figure class="figure medium"><img src="../assets/reproduction-lab/lesson09_bootstrap_beta.png" alt="β 的样本自助法分布"><figcaption class="caption"><b>本课模拟输出。</b> 样本自助法回答的是“重新抽取独立无序样本时，当前 β 估计量会波动多少”；它并不回答“数据是否已经进入渐近临界区间”。因此置信区间覆盖 0.245，并不能抵消系统性的拟合区间漂移。</figcaption></figure>
 <h2 id="result">5 · 本课结论</h2><div class="ok"><b>回归分析已知答案测试：通过。</b> 同一套双对数拟合流程在 tilted washboard（倾斜搓衣板势）模型中正确恢复 β=1/2。</div><div class="hold"><b>普适 β 结论：不授权。</b> 当前 L=32、u 方向周期边界的几何设置只给出随拟合区间变化的有效 β。</div>
 <h2>6 · 可复查</h2><div class="code-links"><a href="../examples/reproduction-lab/lesson09_beta_window.py">Python 脚本</a><a href="../assets/reproduction-lab/lesson09_beta_window.txt">运行回执</a><a href="../assets/reproduction-lab/lesson09_beta_window.csv">8 个无序样本 CSV</a><a href="../assets/reproduction-lab/source-figure-receipt.json">论文原图来源回执</a></div>
