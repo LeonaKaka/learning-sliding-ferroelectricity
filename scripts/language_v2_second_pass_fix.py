@@ -1,80 +1,158 @@
 from __future__ import annotations
 
-from bs4 import BeautifulSoup, NavigableString
+from pathlib import Path
+from urllib.parse import urlsplit
+
+from bs4 import BeautifulSoup
 from language_v2_second_pass import ROOT
 
-TARGET = ROOT / "modules/reproduction-lab.html"
-LOCKED_NUMERIC_STRINGS = ("1.415395", "0.0835%", "9.75×10⁻⁵")
+PAGE = ROOT / "modules/reproduction-lab.html"
+SVG = ROOT / "assets/reproduction-lab/lesson01_tdgl_wall_result.svg"
+PYTHON = ROOT / "examples/reproduction-lab/lesson01_tdgl_wall.py"
 
-TEXT_REPLACEMENTS = {
-    " / Lesson 01": " / 第 01 课",
-    "无序为零的情形的 stationary soliton（定态孤子）": "无序为零时，stationary soliton（定态孤子）",
-}
+FORBIDDEN_VISIBLE = (
+    "Lesson 01",
+    "Gold Test",
+    "gold test",
+    "Hard gate",
+    "validation unit",
+    "sanity check",
+    "threshold campaign",
+    "criticality",
+    "无序为零的情形的",
+    "Reproduction Lab（复现实验室）（复现实验室）",
+    " gate ",
+    " window ",
+    " authority ",
+    " pipeline ",
+    " checkpoint ",
+    " benchmark ",
+    " realization",
+    " raw data",
+    " steady velocity",
+    " sample-specific threshold",
+    " effective exponent",
+)
+
+REQUIRED_VISIBLE = (
+    "Reproduction Lab（复现实验室）01",
+    "TDGL Domain Wall（畴壁）",
+    "已知答案测试",
+    "tanh kink（双曲正切扭结）",
+    "order parameter（序参量）",
+    "overdamped Langevin（过阻尼朗之万）",
+    "Model A（A 型模型）",
+    "stationary soliton（定态孤子）",
+    "roughness（粗糙度）",
+    "structure factor（结构因子）",
+    "Laplacian（拉普拉斯算子）",
+    "Euler（欧拉）",
+    "sliding ferroelectricity（滑移铁电）",
+    "phase-field（相场）",
+)
 
 
-def equation_body_text(eq) -> str:
-    clone = BeautifulSoup(str(eq), "html.parser").select_one(".eq")
-    for small in clone.select("small"):
-        small.decompose()
-    return clone.get_text(" ", strip=False)
+def visible_teaching_text(soup: BeautifulSoup) -> str:
+    clone = BeautifulSoup(str(soup), "html.parser")
+    for selector in (".eq", "pre", "code", "script", "style", "math"):
+        for node in clone.select(selector):
+            node.decompose()
+    return " ".join(clone.stripped_strings)
 
 
-def blocked(node: NavigableString) -> bool:
-    parent = node.parent
-    if parent is None or parent.name in {"script", "style", "pre", "code", "math", "small"}:
-        return True
-    if parent.find_parent(class_="eq") or "eq" in parent.get("class", []):
-        return True
-    return False
+def resolve_local(base: Path, href: str) -> Path | None:
+    if not href or href.startswith(("http://", "https://", "mailto:", "#")):
+        return None
+    parsed = urlsplit(href)
+    if not parsed.path:
+        return None
+    return (base.parent / parsed.path).resolve()
 
 
 def main() -> None:
-    raw = TARGET.read_text(encoding="utf-8")
+    raw = PAGE.read_text(encoding="utf-8")
     soup = BeautifulSoup(raw, "html.parser")
-    before_eq = [equation_body_text(eq) for eq in soup.select(".eq")]
-    before_pre = [pre.get_text() for pre in soup.select("pre")]
-    before_code = [code.get_text() for code in soup.select("code")]
-    before_hrefs = [a.get("href") for a in soup.find_all("a")]
-    before_img_src = [img.get("src") for img in soup.find_all("img")]
-    before_numeric_counts = {token: raw.count(token) for token in LOCKED_NUMERIC_STRINGS}
+    text = visible_teaching_text(soup)
 
-    for node in list(soup.find_all(string=True)):
-        if not isinstance(node, NavigableString) or blocked(node):
-            continue
-        old = str(node)
-        new = old
-        for src, dst in TEXT_REPLACEMENTS.items():
-            new = new.replace(src, dst)
-        if new != old:
-            node.replace_with(new)
+    for token in FORBIDDEN_VISIBLE:
+        if token in text:
+            raise RuntimeError(f"Lab 01 visible Language V2 residue: {token!r}")
+    for token in REQUIRED_VISIBLE:
+        if token not in text:
+            raise RuntimeError(f"Lab 01 required Language V2 form missing: {token!r}")
 
-    header_small = soup.select_one("header .bar small")
-    if header_small is None:
-        raise RuntimeError("Lab 01 header lesson label missing")
-    header_small.string = "· 第 01 课 · 已知答案测试"
+    if "9.75×10<sup>−5</sup>" not in raw:
+        raise RuntimeError("Lab 01 HTML RMSE result changed")
+    for token in ("1.415395", "0.0835%"):
+        if token not in raw:
+            raise RuntimeError(f"Lab 01 HTML locked numerical result missing: {token}")
+
+    equations = soup.select(".eq")
+    if len(equations) != 5:
+        raise RuntimeError(f"Lab 01 expected 5 equations, found {len(equations)}")
 
     figure = soup.select_one("figure.fig img")
     if figure is None:
         raise RuntimeError("Lab 01 result Figure missing")
-    figure["alt"] = "TDGL 畴壁向解析扭结弛豫与自由能收敛"
+    if figure.get("src") != "../assets/reproduction-lab/lesson01_tdgl_wall_result.svg":
+        raise RuntimeError(f"Lab 01 Figure wiring changed: {figure.get('src')}")
+    if figure.get("alt") != "TDGL 畴壁向解析扭结弛豫与自由能收敛":
+        raise RuntimeError("Lab 01 Figure alt text regressed")
 
-    if [equation_body_text(eq) for eq in soup.select(".eq")] != before_eq:
-        raise RuntimeError("Lab 01 equation body changed")
-    if [pre.get_text() for pre in soup.select("pre")] != before_pre:
-        raise RuntimeError("Lab 01 preformatted code/output changed")
-    if [code.get_text() for code in soup.select("code")] != before_code:
-        raise RuntimeError("Lab 01 inline code changed")
-    if [a.get("href") for a in soup.find_all("a")] != before_hrefs:
-        raise RuntimeError("Lab 01 links changed")
-    if [img.get("src") for img in soup.find_all("img")] != before_img_src:
-        raise RuntimeError("Lab 01 Figure path changed")
+    checked = set()
+    for a in soup.find_all("a"):
+        path = resolve_local(PAGE, a.get("href"))
+        if path is None or path in checked:
+            continue
+        checked.add(path)
+        try:
+            path.relative_to(ROOT.resolve())
+        except ValueError as exc:
+            raise RuntimeError(f"Lab 01 local link escapes repository: {a.get('href')}") from exc
+        if not path.is_file():
+            raise RuntimeError(f"Lab 01 local link target missing: {a.get('href')}")
+    if PYTHON.resolve() not in checked:
+        raise RuntimeError("Lab 01 full Python source link missing")
 
-    rendered = str(soup)
-    after_numeric_counts = {token: rendered.count(token) for token in LOCKED_NUMERIC_STRINGS}
-    if after_numeric_counts != before_numeric_counts:
-        raise RuntimeError(f"Lab 01 locked numerical results changed: {before_numeric_counts} -> {after_numeric_counts}")
+    if not SVG.is_file() or not PYTHON.is_file():
+        raise RuntimeError("Lab 01 source/plot asset missing")
 
-    TARGET.write_text(rendered, encoding="utf-8")
+    svg = SVG.read_text(encoding="utf-8")
+    for token in (
+        "TDGL 畴壁弛豫与自由能收敛",
+        "向解析扭结弛豫",
+        "解析解",
+        "TDGL 下自由能下降",
+        "剖面 RMSE = 9.75×10⁻⁵",
+        "宽度误差 = 0.0835%",
+    ):
+        if token not in svg:
+            raise RuntimeError(f"Lab 01 SVG expected label/result missing: {token!r}")
+    for token in (
+        "Relaxation toward analytic kink",
+        ">analytic</text>",
+        "Free energy decreases under TDGL",
+        "profile RMSE =",
+        "width error =",
+    ):
+        if token in svg:
+            raise RuntimeError(f"Lab 01 SVG English label residue: {token!r}")
+
+    py = PYTHON.read_text(encoding="utf-8")
+    for token in (
+        "assert rmse < 5e-4",
+        "assert width_error < 5e-3",
+        'label="解析扭结"',
+        'ax1.set_title("畴壁剖面弛豫")',
+        'ax2.set_title("TDGL 下自由能下降")',
+    ):
+        if token not in py:
+            raise RuntimeError(f"Lab 01 Python scientific/plot contract changed: {token!r}")
+
+    print(
+        f"Lab 01 seal PASS: {len(equations)} equations, {len(checked)} local links, "
+        "HTML/SVG/Python contracts intact."
+    )
 
 
 if __name__ == "__main__":
