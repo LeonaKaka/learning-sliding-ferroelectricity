@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import re
-from copy import copy
 from bs4 import BeautifulSoup, NavigableString
 from language_v2_second_pass import ROOT, source_blocks
 
@@ -9,7 +8,6 @@ from language_v2_second_pass import ROOT, source_blocks
 TARGET = ROOT / "modules/numerical-modeling.html"
 
 REPLACEMENTS = {
-    # Page framing / provenance.
     "From Theory to Numerical Modeling": "07 从理论到数值建模",
     "phase-field 文献集": "相场文献集",
     "Drive PDF": "项目 Drive PDF",
@@ -18,8 +16,6 @@ REPLACEMENTS = {
     "原始 Figure": "原论文图",
     "Module 05": "模块 05",
     "Module 08": "模块 08",
-
-    # General prose and model reduction.
     "畴壁、elastic 与 静电 能量": "畴壁、弹性与静电能量",
     "完整 tensor 极化": "完整张量极化",
     "静电 / elastic 非局域性": "静电 / 弹性非局域性",
@@ -34,8 +30,6 @@ REPLACEMENTS = {
     "单壁 β/ζ/ν": "单畴壁 β/ζ/ν",
     "single-畴壁 problem": "单畴壁问题",
     "界面 index": "界面索引",
-
-    # Identifiability / calibration.
     "无量纲化 & 可辨识性": "无量纲化与可辨识性",
     "连续体 模型": "连续体模型",
     "无序 amplitude": "无序幅度",
@@ -62,7 +56,7 @@ REPLACEMENTS = {
     "无序 morphology + 阈值 statistics": "无序形貌 + 阈值统计",
     "关联 effects": "关联效应",
     "dimensionless ratio": "无量纲比",
-    "<th>ratio</th>": "<th>比值</th>",
+    "ratio": "比值",
     "畴壁 core": "畴壁核心区",
     "grid points": "网格点",
     "体系 size": "体系尺寸",
@@ -90,8 +84,6 @@ REPLACEMENTS = {
     "calibration closure": "校准闭合",
     "structural / static / dynamic 可观测量": "结构 / 静态 / 动态可观测量",
     "phenomenological control 参数": "现象学控制参数",
-
-    # Disorder couplings and correlation length.
     "翻转 cost": "翻转代价",
     "order-参数 的某个符号": "序参量的某个符号",
     "frozen region": "固定区域",
@@ -106,8 +98,6 @@ REPLACEMENTS = {
     "correlated-RF 稳健性": "相关随机场稳健性",
     "apparent 指数": "表观指数",
     "same 无序强度": "相同无序强度",
-
-    # Grid / discretization.
     "Grid sanity": "网格检验",
     "continuum Δ": "连续体 Δ",
     "cell/node": "网格单元 / 节点",
@@ -116,8 +106,6 @@ REPLACEMENTS = {
     "dx dependence": "dx 依赖",
     "像素 的标准差": "网格点的标准差",
     "δ-correlated 噪声": "δ 相关噪声",
-
-    # Thermal noise / FDT.
     "quenched 场": "淬火场",
     "热噪声 随时间刷新": "热噪声随时间刷新",
     "空间 cell measure": "空间网格单元测度",
@@ -152,17 +140,12 @@ REPLACEMENTS = {
     "thermal seeds": "热噪声随机种子",
     "finite-T protocol / outer-vs-inner statistics": "有限温流程 / 外层与内层统计",
     "thermal rounding measurement logic": "热圆滑测量逻辑",
-
-    # Reproduction Lab bridge.
     "只读 checklist": "只读检查清单",
     "解析 kink": "解析 kink（孤子）",
     "EW 粗糙度 vs Eq.19": "EW 粗糙度与 Eq. 19 对照",
     "validity boundary": "有效性边界",
     "有效 钉扎 correlator": "有效钉扎相关函数",
     "disordered B/S cross-模型 阶段验证": "含无序 B/S 跨模型阶段验证",
-    "硬判据": "硬判据",
-
-    # Steady-velocity estimator.
     "稳态-畴壁 velocity contract": "稳态畴壁速度估计约定",
     "有限 观测 time": "有限观测时长",
     "畴壁-拓扑变化": "畴壁拓扑变化",
@@ -217,8 +200,6 @@ REPLACEMENTS = {
     "E=0 stability": "E=0 稳定性",
     "threshold inference ladder": "阈值推断层级",
     "exponent robustness": "指数稳健性",
-
-    # Run receipts / provenance.
     "运行 记录 / 来源追踪": "运行记录 / 来源追踪",
     "figure / 估计量": "图 / 估计量",
     "raw output": "原始输出",
@@ -287,13 +268,10 @@ REPLACEMENTS = {
     "independent 证据单元": "独立证据单元",
     "候选 figure": "候选图",
     "Data → Estimator → Evidence → Claim contract": "数据 → 估计量 → 证据 → 结论契约",
-
-    # Final experimental checklist / closing prose.
     "无 drive": "无驱动",
     "strong 缺陷": "强缺陷",
     "像素 amplitude": "网格点幅度",
     "constant drive": "恒定驱动",
-    "grid points": "网格点",
     "size 收敛": "尺寸收敛",
     "随机种子 statistics": "随机种子统计",
     "畴壁 extraction": "畴壁提取",
@@ -302,15 +280,12 @@ REPLACEMENTS = {
     "numerical 模型": "数值模型",
     "generic 相场": "通用相场",
     "periodic 堆垛 坐标": "周期性堆垛坐标",
-    "fair 匹配": "公平匹配",
-    "进入 Research Track": "进入 Research Track →",
     "06 Disorder & RFIM": "06 Disorder（无序）与 RFIM",
     "08 Current Frontiers": "08 Current Frontiers（当前前沿）",
 }
 
 
-def source_formula_blocks(soup: BeautifulSoup) -> list[str]:
-    """Capture equation content while excluding explanatory <small> prose."""
+def formula_blocks(soup: BeautifulSoup) -> list[str]:
     out: list[str] = []
     for el in soup.select(".eq"):
         clone = BeautifulSoup(str(el), "html.parser").select_one(".eq")
@@ -326,9 +301,7 @@ def inside_eq(node: NavigableString) -> bool:
     parent = node.parent
     if parent is None:
         return False
-    if "eq" in parent.get("class", []):
-        return True
-    return parent.find_parent(class_="eq") is not None
+    return "eq" in parent.get("class", []) or parent.find_parent(class_="eq") is not None
 
 
 def inside_eq_small(node: NavigableString) -> bool:
@@ -345,8 +318,6 @@ def blocked(node: NavigableString) -> bool:
         return True
     if parent.find_parent(class_="source-text") or "source-text" in parent.get("class", []):
         return True
-    # Preserve the displayed mathematical expression itself. Explanatory small
-    # text inside an equation card remains editable prose.
     if inside_eq(node) and not inside_eq_small(node):
         return True
     return False
@@ -356,7 +327,7 @@ def main() -> None:
     text = TARGET.read_text(encoding="utf-8")
     soup = BeautifulSoup(text, "html.parser")
     before_sources = source_blocks(soup)
-    before_formulae = source_formula_blocks(soup)
+    before_formulae = formula_blocks(soup)
     before_images = [(img.get("src"), img.get("alt")) for img in soup.find_all("img")]
     before_figure_links = [a.get("href") for a in soup.select("figure a")]
 
@@ -377,14 +348,12 @@ def main() -> None:
         new = old
         for a, b in sorted(REPLACEMENTS.items(), key=lambda item: len(item[0]), reverse=True):
             new = new.replace(a, b)
-        # Repair historical spacing damage, but never touch quotations or formulae.
         new = re.sub(r"(?<=[\u4e00-\u9fff])\s+(?=[\u4e00-\u9fff])", "", new)
         new = re.sub(r"\s+([，。；：！？、）])", r"\1", new)
         new = re.sub(r"（\s+", "（", new)
         if new != old:
             node.replace_with(new)
 
-    # One first-use teaching term that is useful to recognize in English.
     h_reduction = soup.find("h2", id="reduction")
     if h_reduction:
         next_p = h_reduction.find_next_sibling("p")
@@ -397,7 +366,7 @@ def main() -> None:
 
     if source_blocks(soup) != before_sources:
         raise RuntimeError("Module 07 source-text changed during Language V2 repair")
-    if source_formula_blocks(soup) != before_formulae:
+    if formula_blocks(soup) != before_formulae:
         raise RuntimeError("Module 07 displayed formula changed during Language V2 repair")
     if [(img.get("src"), img.get("alt")) for img in soup.find_all("img")] != before_images:
         raise RuntimeError("Module 07 image src/alt changed during Language V2 repair")
