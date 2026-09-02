@@ -1,0 +1,120 @@
+name: Regenerate Lab 08 plots
+
+on:
+  push:
+    paths:
+      - '.github/workflows/regenerate-lab08-plots.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install CJK font and scientific Python dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk
+          python -m pip install --disable-pip-version-check numpy matplotlib pillow
+      - name: Regenerate and verify Lab 08 scientific evidence
+        env:
+          MPLBACKEND: Agg
+        run: |
+          set -euo pipefail
+          cp assets/reproduction-lab/lesson08_steady_velocity.txt /tmp/lab08_before.txt
+          python examples/reproduction-lab/lesson08_steady_velocity.py | tee /tmp/lab08.out
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          from PIL import Image
+
+          out = Path('/tmp/lab08.out').read_text(encoding='utf-8')
+          receipt = Path('assets/reproduction-lab/lesson08_steady_velocity.txt').read_text(encoding='utf-8')
+          before = Path('/tmp/lab08_before.txt').read_text(encoding='utf-8')
+
+          for marker in ('NO BETA FIT IN LESSON 08', 'STEADY VELOCITY ESTIMATOR + DT CONVERGENCE PASS'):
+              if marker not in out or marker not in receipt:
+                  raise SystemExit(f'Lab 08 marker missing: {marker}')
+
+          exact = (
+              'registered fc bracket        = [0.777636719, 0.777783203]',
+              'registered fc midpoint       = 0.777709961',
+              'velocity dt gate             = 0.500%',
+              'line delta-f ladder          = 0.02, 0.04, 0.08, 0.16',
+              'steady protocol             = discard 1 u-period; measure next 3 periods',
+          )
+          for token in exact:
+              if token not in receipt:
+                  raise SystemExit(f'Lab 08 fixed protocol/result drifted: {token}')
+
+          def number(pattern, text=receipt):
+              m = re.search(pattern, text)
+              if not m:
+                  raise SystemExit(f'missing numeric receipt field: {pattern}')
+              return float(m.group(1))
+
+          particle = number(r'particle max rel error\s+= ([0-9.]+)%')
+          coarse = number(r'coarse dt=\.100 max error\s+= ([0-9.]+)%')
+          mid = number(r'dt=\.050 max error\s+= ([0-9.]+)%')
+          prod = number(r'production dt=\.025 max err\s+= ([0-9.]+)%')
+          station = number(r'steady 3-period spread max\s+= ([0-9.]+)%')
+          tm = re.search(r'first-period transient shift\s+= ([0-9.]+)% \.\. ([0-9.]+)%', receipt)
+          if not tm:
+              raise SystemExit('transient range missing')
+          tlo, thi = map(float, tm.groups())
+
+          if not particle < 0.002:
+              raise SystemExit(f'particle velocity gold test failed: {particle}%')
+          if not (coarse > 0.5 and prod < 0.5 and station < 0.05):
+              raise SystemExit(f'dt/stationarity gate failed: coarse={coarse}, prod={prod}, station={station}')
+          if not (abs(particle-0.001387) <= 0.00001 and abs(coarse-1.010) <= 0.005 and abs(mid-0.439) <= 0.005 and abs(prod-0.147) <= 0.005):
+              raise SystemExit('Lab 08 displayed convergence numbers drifted materially')
+          if not (abs(tlo-3.47) <= 0.02 and abs(thi-4.93) <= 0.02 and abs(station-0.0010) <= 0.0002):
+              raise SystemExit('Lab 08 transient/stationarity numbers drifted materially')
+
+          old_v = re.findall(r'df=([0-9.]+) f=([0-9.]+) v\(dt=\.025\)=([0-9.]+) v\(dt=\.0125\)=([0-9.]+)', before)
+          new_v = re.findall(r'df=([0-9.]+) f=([0-9.]+) v\(dt=\.025\)=([0-9.]+) v\(dt=\.0125\)=([0-9.]+)', receipt)
+          if len(old_v) != 4 or len(new_v) != 4:
+              raise SystemExit('Lab 08 expected four velocity rows')
+          for old, new in zip(old_v, new_v):
+              if old[:2] != new[:2]:
+                  raise SystemExit(f'Lab 08 force ladder drifted: {old[:2]} vs {new[:2]}')
+              for a,b in zip(old[2:], new[2:]):
+                  if abs(float(a)-float(b)) > 2e-6:
+                      raise SystemExit(f'Lab 08 velocity result drifted: {a} vs {b}')
+
+          for name in ('lesson08_vf.png','lesson08_transient_periods.png','lesson08_dt_error.png','lesson08_particle_velocity_gold.png'):
+              p=Path('assets/reproduction-lab')/name
+              if not p.exists() or p.stat().st_size < 10_000:
+                  raise SystemExit(f'missing or suspiciously small plot: {name}')
+              with Image.open(p) as im:
+                  w,h=im.size
+              if w < 900 or h < 500:
+                  raise SystemExit(f'plot below evidence contract: {name} {w}x{h}')
+
+          print('LAB 08 REPRODUCIBLE STEADY-VELOCITY EVIDENCE = PASS')
+          PY
+      - name: Commit only regenerated Lab 08 plots
+        run: |
+          set -euo pipefail
+          files=(
+            assets/reproduction-lab/lesson08_vf.png
+            assets/reproduction-lab/lesson08_transient_periods.png
+            assets/reproduction-lab/lesson08_dt_error.png
+            assets/reproduction-lab/lesson08_particle_velocity_gold.png
+            assets/reproduction-lab/lesson08_steady_velocity.txt
+          )
+          git diff --stat -- "${files[@]}"
+          if git diff --quiet -- "${files[@]}"; then
+            echo 'Lab 08 evidence already up to date.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "${files[@]}"
+          git commit -m 'Regenerate Lab 08 localized scientific evidence'
+          git push
