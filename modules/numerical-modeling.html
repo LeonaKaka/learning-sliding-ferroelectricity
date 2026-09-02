@@ -40,7 +40,7 @@
 <h3>4.5.1 · 先用无序为零单谐波扇区看清“参数组合”</h3>
 <p>对 Research Track 中采用的周期性堆垛模型，先暂时关掉驱动与无序，并只保留一维、无序为零的单谐波扇区：</p>
 <div class="eq">F = ∫ dx [ κ/2 (∂<sub>x</sub>φ)² + V<sub>0</sub>(1 − cos(nφ)) ]</div>
-<p>在<b>这个明确归一化</b> 下，相邻极小值之间的 sine-Gordon kink（孤子）（孤子）（孤子） 有特征宽度与壁张力：</p>
+<p>在<b>这个明确归一化</b> 下，相邻极小值之间的 sine-Gordon kink（孤子） 有特征宽度与壁张力：</p>
 <div class="eq">ℓ<sub>w</sub> = √[ κ / (n²V<sub>0</sub>) ]　；　γ<sub>w</sub> = 8√(κV<sub>0</sub>) / n</div>
 <div class="warn"><b>公式边界：</b>这两式只属于这里写出的无序为零、单谐波、局域梯度模型。真实滑移铁电堆垛景观若有方向各向异性、多谐波、非局域弹性或多个耦合界面，应重新对实际能量景观做数值畴壁校准，不能把这两个前因子当材料定律。</div>
 <p>这两式立刻暴露可辨识性：只知道畴壁宽度时，只约束 <b>κ/V<sub>0</sub></b> 的组合；如果还能独立知道畴壁张力 / 畴壁能量，才有机会在这个简化模型里拆开：</p>
@@ -62,7 +62,7 @@
 <tr><td>dx / ℓ<sub>w</sub></td><td>网格相对畴壁核心区的解析度</td><td>畴壁是否被足够多网格点解析</td></tr>
 <tr><td>L / ℓ<sub>w</sub></td><td>体系尺寸相对微观畴壁尺度</td><td>有限尺寸标度是否真的离开畴壁核心区尺度</td></tr>
 <tr><td>ξ<sub>d</sub> / ℓ<sub>w</sub></td><td>无序关联长度相对畴壁宽度</td><td>畴壁看到的是近白噪声、有限相关缺陷，还是平滑景观</td></tr>
-<tr><td>E P<sub>0</sub> / V<sub>0</sub></td><td>驱动耦合相对局域 periodic energy 尺度</td><td>它只是自然驱动力比，不自动等于矫顽场 / 退钉扎场</td></tr>
+<tr><td>E P<sub>0</sub> / V<sub>0</sub></td><td>驱动耦合相对局域周期性能量尺度</td><td>它只是自然驱动力比，不自动等于矫顽场 / 退钉扎场</td></tr>
 <tr><td>σ<sub>RF</sub> / V<sub>0</sub> 或 σ<sub>RB</sub> / V<sub>0</sub></td><td>无序能量尺度相对无序为零势垒</td><td>不同耦合形式仍需公平匹配，不能只比同一个数字 σ</td></tr>
 </tbody></table>
 <div class="bridge">这正好把两处旧知识接起来：<a href="#grid">网格检验</a> 负责“dx 改变时物理无序是否保持不变”；<a href="research-track.html#fair">Research Track 的公平匹配</a> 负责“RF 与 RB 是否在明确物理尺度上可比”。这里补的是更上游的一步：<b>先把无序为零时的能量 / 长度尺度冻结。</b></div>
@@ -79,11 +79,11 @@
 <div class="src"><div class="head"><b>原文 · Fedeli, Kamlah &amp; Frangi 2019</b>　<span class="rule">Smart Mater. Struct. 28, 035021 · 项目 Drive PDF</span></div><blockquote class="source-text"><p>Different kinds of defects were considered: holes, point charges and polarization pinning in single crystals, as well as grain boundaries in polycrystals, without and with additional dielectric interphase.</p><p>It can be seen that defects lead to nucleation of new domains. Compared to the energy barrier for switching in an ideal single crystal, the overall coercive field strength is significantly reduced towards realistic values.</p></blockquote><div class="translation"><b>中文导读</b><p>Fedeli 等直接比较多类实际缺陷，包括孔洞、点电荷、极化钉扎以及多晶中的晶界。它们都可能促进新畴成核，并把相对于理想单晶的翻转势垒和矫顽场降低到更接近真实器件的范围。这里最重要的提醒是：不同缺陷对应的耦合机制并不相同。</p></div><div class="note">这一篇的价值是提醒你：不同缺陷类型对应不同物理耦合，不能全部塞进一个“噪声强度 σ”后还声称微观机制相同。</div></div>
 <table class="matrix"><thead><tr><th>连续场里的做法</th><th>物理含义</th><th>与 06 的关系</th></tr></thead><tbody><tr><td>V(φ,r) 或 α(r)、势垒(r) 随位置变</td><td>局域翻转代价 / 畴壁能量随位置变；若 ±φ 对称仍保留，常可看成随机键型</td><td>随机的是景观，不直接偏爱 + 或 −</td></tr><tr><td>−h(r)φ</td><td>局域偏置直接偏爱序参量的某个符号</td><td>连续体随机场耦合；但<b>不等同于“已经用了 RFIM”</b></td></tr><tr><td>固定区域 φ 或极大局域势垒</td><td>钉扎中心 / 固定区域</td><td>更接近强、局域、非高斯缺陷，而不是白噪声</td></tr><tr><td>有限相关长度 h<sub>ℓ</sub>(r)</td><td>缺陷景观有真实尺寸 ℓ</td><td>dx 改变时必须保持 ℓ 的物理长度不变</td></tr></tbody></table>
 <h2 id="disorder-axes">研究桥接 · 无序至少有三条独立轴：耦合方式 × 强度 × 关联长度</h2>
-<p>只写“RF 强度 = σ”仍然少了一维信息。即使耦合形式与 RMS（均方根）强度相同，只要空间相关长度不同，畴壁看到的 energy 景观就可以完全不同。最小写法是：</p>
+<p>只写“RF 强度 = σ”仍然少了一维信息。即使耦合形式与 RMS（均方根）强度相同，只要空间相关长度不同，畴壁看到的能量景观就可以完全不同。最小写法是：</p>
 <div class="eq">⟨h(r)h(r′)⟩ = Δ · C(|r−r′|/ξ<sub>d</sub>)<small>耦合方式决定 h 怎样进入自由能；Δ/σ 决定幅度；ξ<sub>d</sub> 决定无序在空间上是近似白噪声、有限尺寸 defect，还是延展/成簇的无序景观。</small></div>
 <div class="twocol"><div class="card"><h3>δ 相关极限</h3><p>理想连续体白噪声没有有限微观 ξ<sub>d</sub>。离散成网格单元平均局域场时，网格方差必须随网格单元体积重标度；二维对应标准差 ∝ dx<sup>−1</sup>。</p></div><div class="card"><h3>有限相关长度无序</h3><p>若先定义一个物理 ξ<sub>d</sub> 并生成连续相关场，dx 加密的任务是更好地解析同一个 ξ<sub>d</sub>；不能再机械把“每格 σ”按白噪声公式解释。</p></div></div>
 <div class="warn"><b>因此相关随机场稳健性不是“换一种随机数”。</b>它是在问：当无序本身带有一个新的物理长度 ξ<sub>d</sub> 时，阈值、粗糙度和表观指数是否只发生非普适偏移，还是出现新的交叉区尺度 / 映射失效。</div>
-<div class="bridge"><a href="research-track.html#fair">Research Track 的 fair matching</a> 控制的是不同耦合的比较尺度；本节补上第三轴 ξ<sub>d</sub>。二者一起才能把“相同无序强度”说完整。</div>
+<div class="bridge"><a href="research-track.html#fair">Research Track 的公平匹配</a> 控制的是不同耦合的比较尺度；本节补上第三轴 ξ<sub>d</sub>。二者一起才能把“相同无序强度”说完整。</div>
 <h2 id="grid">6 · 最容易把数值结果做假的地方：dx 改了，无序也跟着变</h2>
 <p>下面不是某篇论文的直接原句，而是本站对连续体白噪声无序的离散化推导。它是做收敛检验前必须固定的量。</p>
 <div class="eq">⟨h(r)h(r′)⟩ = Δ δ<sup>(d)</sup>(r−r′)　⇒　Var(h<sub>cell</sub>) = Δ / dx<sup>d</sup><small>因此网格单元 / 节点上使用独立 N(0,1) 时，为保持连续体 Δ 不变：σ<sub>grid</sub> = √Δ · dx<sup>−d/2</sup>。二维就是 σ<sub>grid</sub> ∝ 1/dx。</small></div>
@@ -94,7 +94,7 @@
 <p>淬火无序与热噪声都会在代码里出现随机数，但物理角色完全不同：<b>淬火场在一次运行内固定；热噪声随时间刷新，并且其幅度必须与迁移率、温度、空间网格单元测度和时间步长一起满足涨落–耗散约定。</b></p>
 <div class="twocol"><div class="card"><h3>淬火无序</h3><p>描述固定无序景观。一个无序样本生成后整条轨迹都使用同一 h(r) / δV(r)。白噪声空间归一化涉及网格单元测度，但没有时间 δ 函数。</p></div><div class="card"><h3>热噪声</h3><p>描述与热浴相连的快速随机力。白噪声理想化同时在空间和时间上均为 δ 相关；改变 dx 或 dt 都会改变离散采样幅度。</p></div></div>
 <h3>6.2.1 · 先声明连续方程，再写离散随机数</h3>
-<p>对常迁移率、加性噪声的 overdamped（过阻尼）TDGL / 模型 A 约定：</p>
+<p>对常迁移率、加性噪声的过阻尼 TDGL / 模型 A 约定：</p>
 <div class="eq">∂<sub>t</sub>φ(r,t) = −Γ δF/δφ + ξ(r,t)</div>
 <div class="eq">⟨ξ(r,t)⟩ = 0　；　⟨ξ(r,t)ξ(r′,t′)⟩ = 2Γ k<sub>B</sub>T δ<sup>(d)</sup>(r−r′) δ(t−t′)</div>
 <p>这一定义把热浴的噪声强度和耗散迁移率 Γ 绑在一起。若模型使用无量纲能量 / 温度，或 Γ 的定义放在方程另一侧，前因子必须跟着该归一化重新推导；不要从别人的代码里抄一个 <code>sqrt(T)</code>。</p>
@@ -118,7 +118,7 @@
 <div class="eq">独立淬火无序样本 i → 热噪声随机种子 j → 轨迹帧 t</div>
 <div class="bridge"><a href="research-track.html#temperature">Research Track：有限温流程 / 外层与内层统计</a>　·　<a href="depinning.html#thermal-rounding">模块 05：热圆滑测量逻辑</a></div>
 <div class="q"><b>代码验收一句话：</b>改 dx 或 dt 后，如果你不能明确说明“为了保持同一个物理 T，随机项到底按什么公式重标了”，有限温指数暂时没有解释资格。</div>
-<div class="bridge" id="reproduction-lab-bridge"><b>想把这些规则真正写成代码，而不是只读检查清单？</b> 新的 <a href="reproduction-lab.html">Reproduction Lab</a> 正按 Caballero 2020 一步步复现：L01 解析 kink（孤子） → L02 2D 场→u(y) → L03 EW 粗糙度与 Eq. 19 对照 → L04 2D GL→EW 有效性边界 → L05 体相 RB→有效钉扎相关函数 → L06 含无序 B/S 跨模型阶段验证。每课都有可运行脚本和硬判据，再把同一估计量迁回滑移铁电。</div>
+<div class="bridge" id="reproduction-lab-bridge"><b>想把这些规则真正写成代码，而不是只读检查清单？</b> 新的 <a href="reproduction-lab.html">Reproduction Lab</a> 正按 Caballero 2020 一步步复现：L01 解析孤子 → L02 2D 场→u(y) → L03 EW 粗糙度与 Eq. 19 对照 → L04 2D GL→EW 有效性边界 → L05 体相 RB→有效钉扎相关函数 → L06 含无序 B/S 跨模型阶段验证。每课都有可运行脚本和硬判据，再把同一估计量迁回滑移铁电。</div>
 <h2 id="velocity-estimator">6.3 · 稳态畴壁速度估计约定：一个 v(E) 点到底怎样才算“测到了”？</h2>
 <p>退钉扎最常见的下一步是画 <i>v</i>(E)，但“轨迹最后动了一点”并不等于得到稳态速度。尤其靠近 E<sub>c</sub> 时，长瞬态、间歇突发事件、有限观测时长与畴壁拓扑变化都会把一个单点速度变成分析自由度。这里把 <b>运行是否有效、畴壁怎样位移、什么时候进入稳态区间、单条轨迹的误差和跨无序来源的误差</b> 分开。</p>
 <div class="bridge"><b>为什么要这么严格：</b>模块 05 的 Ferrero 2013 已经显示，退钉扎附近可以存在很长的非稳态交叉区；过早把瞬态当渐近区间，会系统性偏置有效指数。稳态速度路线与非稳态弛豫路线都可以研究临界性，但不能把两套估计量混在同一条 β 拟合里。</div>
