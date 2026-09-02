@@ -103,15 +103,15 @@
       "source_page": 8,
       "crop_box_px_at_500dpi": [
         167,
-        2583,
+        2740,
         3417,
-        4283
+        4320
       ],
       "pixel_size": [
         3250,
-        1700
+        1580
       ],
-      "sha256": "1c5e03eea65c9179c32a04790b8e102d7ab6cb6f0c81468483b3d2f09cc93379",
+      "sha256": "69600557d31d912003837dfa25b42f0c6d0730cc35b0bc78182bd5b43e081b10",
       "citation": "Ferrero et al., Annu. Rev. Condens. Matter Phys. 12, 111 (2021), Fig. 4"
     }
   ]
