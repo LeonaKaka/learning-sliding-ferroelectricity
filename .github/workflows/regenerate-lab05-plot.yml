@@ -1,0 +1,51 @@
+name: Regenerate Lab 05 plot
+
+on:
+  push:
+    paths:
+      - '.github/workflows/regenerate-lab05-plot.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install CJK font and scientific Python dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk
+          python -m pip install --disable-pip-version-check numpy matplotlib
+      - name: Regenerate and verify Lab 05 scientific SVG
+        env:
+          MPLBACKEND: Agg
+        run: |
+          python examples/reproduction-lab/lesson05_rb_projection.py | tee /tmp/lab05.out
+          grep -F 'Gamma(0) Eq.26             = 0.071833070' /tmp/lab05.out
+          grep -F 'Eq25-vs-Eq26 RMSE/Gamma0   = 0.0000002%' /tmp/lab05.out
+          grep -F 'Eq25-vs-Eq26 max/Gamma0    = 0.0000012%' /tmp/lab05.out
+          grep -F 'C(0)/Gamma(0)              = 0.995554' /tmp/lab05.out
+          grep -F 'sample RMSE/Gamma0, u=0..5 = 0.222%' /tmp/lab05.out
+          grep -F 'sample max/Gamma0           = 0.445%' /tmp/lab05.out
+          grep -F 'normalized-shape RMSE       = 0.104%' /tmp/lab05.out
+          grep -F 'first zero theory           = 1.039429' /tmp/lab05.out
+          grep -F 'first zero empirical        = 1.039472' /tmp/lab05.out
+          grep -F 'WRONG std=1 amplitude       = 0.099555 x theory' /tmp/lab05.out
+          grep -F 'ALL DISORDER-PROJECTION GATES PASS' /tmp/lab05.out
+      - name: Commit only the regenerated Lab 05 SVG
+        run: |
+          set -euo pipefail
+          git diff -- assets/reproduction-lab/lesson05_rb_projection_correlator.svg
+          if git diff --quiet -- assets/reproduction-lab/lesson05_rb_projection_correlator.svg; then
+            echo 'SVG already up to date.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/reproduction-lab/lesson05_rb_projection_correlator.svg
+          git commit -m 'Regenerate Lab 05 localized scientific plot'
+          git push
