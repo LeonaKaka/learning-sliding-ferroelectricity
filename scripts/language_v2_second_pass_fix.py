@@ -1,362 +1,42 @@
 from __future__ import annotations
 
-import re
 from bs4 import BeautifulSoup, NavigableString
 from language_v2_second_pass import ROOT
 
 TARGET = ROOT / "modules/research-track.html"
 
-REPLACEMENTS = {
-    # Framing / navigation.
-    "Research Track · 无序 → Depinning · Learning Sliding Ferroelectricity": "Research Track（研究路线） · 无序 → Depinning（退钉扎） · Learning Sliding Ferroelectricity",
-    "· Research Track": "· Research Track（研究路线）",
-    "8-module map": "8 模块知识图谱",
-    "Disorder": "无序",
-    "Protocols": "实验方案",
-    "Model": "模型",
-    "Observables": "可观测量",
-    "Evidence": "证据链",
-    " / Research Track": " / Research Track（研究路线）",
-    "这不是第 9 个基础模块": "这不是第 9 个基础模块",
-    "无序 与 相场": "无序与相场",
-    "不同 无序 耦合": "不同无序耦合",
-    "滞回 问题": "滞回问题",
-    "孤立畴壁 实验": "孤立畴壁实验",
-    "每个 可观测量 到底允许你 结论 什么": "每个可观测量到底允许你得出什么结论",
-    "传统 铁性材料 受驱界面 框架 在 滑移铁电 中能走多远": "传统铁性材料的受驱界面框架在滑移铁电中能走多远",
-    "必然 普适": "必然普适",
-    "设计 成立 与 失效 两种结果": "设计让成立与失效两种结果",
-    "periodic scalar model": "periodic scalar model（周期标量模型）",
-    "teaching/research effective model": "教学 / 研究用有效模型",
-    "第一性原理 Hamiltonian": "第一性原理 Hamiltonian（哈密顿量）",
-    "03 · 运动对象": "03 · 运动对象",
-    "翻转 是否由 预存畴壁 主导": "翻转是否由预存畴壁主导",
-    "04 · real 无序": "04 · 真实无序",
-    "畴壁 为什么停、慢、变粗糙": "畴壁为什么停、慢、变粗糙",
-    "06 · 无序 关系": "06 · 无序关系",
-    "随机的是 偏置、势垒 还是更复杂结构": "随机的是偏置、势垒还是更复杂结构",
-    "把 堆垛 物理 压成可控连续场": "把堆垛物理压成可控连续场",
-    "隔离一堵 畴壁": "隔离一堵畴壁",
-
-    # Disorder comparison.
-    "无序 is not one number：σ 之前先问“随机了什么”": "无序不是一个数：σ 之前先问“随机了什么”",
-    "无序 不是只用一个幅度参数描述": "无序不能只用一个幅度参数描述",
-    "正、负 局域 成核 偏置": "正、负局域成核偏置",
-    "无序 势 的 随机场 与 随机键 分量": "无序势的随机场与随机键分量",
-    "滞回 形状 本身携带 无序类型 与 强度 的信息": "滞回形状本身携带无序类型与强度的信息",
-    "所有 缺陷": "所有缺陷",
-    "一个 σ": "一个 σ",
-    "耦合 type": "耦合类型",
-    "无序 是直接偏爱某个 局域状态，还是改 势垒 / 刚度 / 迁移率 / 几何": "无序是直接偏爱某个局域状态，还是改变势垒 / 刚度 / 迁移率 / 几何",
-    "RMS、energy 方差、局域力 RMS": "RMS、能量方差、局域力 RMS",
-    "白噪声无序 与 有限尺寸 缺陷": "白噪声无序与有限尺寸缺陷",
-    "集体动力学": "集体动力学",
-    "局域 成核 biases": "局域成核偏置",
-    "inference anchor": "推断锚点",
-    "随机键–随机场 Ising 框架": "随机键–随机场 Ising（伊辛）框架",
-    "回线 形状 含 无序 信息": "回线形状含无序信息",
-    "真实 滑移铁电 自动服从": "真实滑移铁电自动服从",
-    "滑移铁电 anchor": "滑移铁电锚点",
-    "匹配规则": "匹配规则",
-    "RF 的 σ 和 RB 的 σ 谁大": "RF 的 σ 和 RB 的 σ 谁大",
-    "明确的 匹配规则": "明确的匹配规则",
-    "耦合形式 本身是否仍改变 翻转": "耦合形式本身是否仍改变翻转",
-    "一个适合 滑移铁电 的有效比较语言": "一个适合滑移铁电的有效比较语言",
-    "Additive 随机场型 耦合": "加性随机场型耦合",
-    "局域 广义力 / 力矩": "局域广义力 / 力矩",
-    "局域相位 坐标": "局域相位坐标",
-    "势垒-amplitude / 随机键型 耦合": "势垒振幅 / 随机键型耦合",
-    "periodic 景观 的 势垒 / 曲率": "周期景观的势垒 / 曲率",
-    "连续体 有效 耦合": "连续体有效耦合",
-    "微观 来源": "微观来源",
-    "same 参数 标准差": "相同参数标准差",
-    "不同 耦合 函数": "不同耦合函数",
-    "等强": "等强",
-    "same energy 方差": "相同能量方差",
-    "比较 energy 景观 涨落": "比较能量景观涨落",
-    "derivative / force": "导数 / 力",
-    "same phase-averaged 局域-force RMS": "相同相位平均局域力 RMS",
-    "直接对齐 动力学方程 里 无序 force 尺度": "直接对齐动力学方程里的无序力尺度",
-    "相位测度": "相位测度",
-    "把局域 force 尺度 对齐以后": "把局域力尺度对齐以后",
-    "耦合形式 还重要吗": "耦合形式还重要吗",
-    "匹配 是控制变量": "匹配是控制变量",
-    "两个 无序 动力学": "两种无序动力学",
-
-    # Real disorder mapping.
-    "真实 滑移铁电 里": "真实滑移铁电里",
-    "growth-induced structural 无序": "生长诱导结构无序",
-    "极化 翻转": "极化翻转",
-    "多畴 动力学": "多畴动力学",
-    "铁电响应 的演化": "铁电响应的演化",
-    "structural 无序": "结构无序",
-    "迁移率 / 几何 无序": "迁移率 / 几何无序",
-    "真实 滑移铁电 为什么必须研究 无序": "真实滑移铁电为什么必须研究无序",
-    "有效 无序 项": "有效无序项",
-    "rough edge": "粗糙边缘",
-    "畴壁 曲率": "畴壁曲率",
-    "Gaussian white RF": "Gaussian white random field（高斯白噪声随机场）",
-    "trapped charge / 静电 inhomogeneity": "陷阱电荷 / 静电非均匀性",
-    "局域 极化 偏置": "局域极化偏置",
-    "pure RB": "纯随机键型耦合",
-    "strain / 堆垛 inhomogeneity": "应变 / 堆垛非均匀性",
-    "periodic 景观、畴壁 energy、preferred registry": "周期景观、畴壁能量、偏好堆垛",
-    "单一 scalar σ": "单一标量 σ",
-    "growth 缺陷 / grains": "生长缺陷 / 晶粒",
-    "initial 畴 网络": "初始畴网络",
-    "一个 微观 机制": "一个微观机制",
-
-    # Full switching vs isolated wall.
-    "这是 Research Track 最重要的 方案 split": "这是研究路线里最重要的方案区分",
-    "Triangle-wave 滞回": "三角波滞回",
-    "完整 翻转 体系": "完整翻转体系",
-    "一个预先存在的 畴壁": "一个预先存在的畴壁",
-    "临界退钉扎": "临界退钉扎",
-    "成核、多畴 路径 与 history 混合因素": "成核、多畴路径与历史混合因素",
-    "single / mixed 畴": "单畴 / 混合畴",
-    "翻转 拓扑": "翻转拓扑",
-    "明确构造并先 relax 一堵 预存畴壁": "明确构造并先弛豫一堵预存畴壁",
-    "drive": "驱动",
-    "triangle / cyclic E(t)": "三角波 / 周期 E(t)",
-    "constant E": "恒定 E",
-    "coercive 尺度": "矫顽尺度",
-    "翻转 活动度": "翻转活动度",
-    "morphology": "形貌",
-    "方案-dependent 翻转 / coercive 阈值": "方案依赖的翻转 / 矫顽阈值",
-    "T=0 畴壁 problem": "T=0 畴壁问题",
-    "稳定 稳态-v 区间": "稳定的稳态速度区间",
-    "path history": "路径历史",
-    "多个 walls": "多个畴壁",
-    "finite size": "有限尺寸",
-    "E=0 relax": "E=0 弛豫",
-    "initial 畴壁": "初始畴壁",
-    "② constant E": "② 恒定 E",
-    "sweep 中截一段": "扫场中截一段",
-    "稳态-v 判据": "稳态速度判据",
-    "truly 钉扎态": "确实钉扎态",
-
-    # Temperature axis.
-    "温度 是新的实验轴": "温度是新的实验轴",
-    "T=0 方案 稳定": "T=0 方案稳定",
-    "Deep 阈值以下 · 蠕变": "远低于阈值 · 蠕变",
-    "热激活 barriers": "热激活势垒",
-    "长期 漂移": "长期漂移",
-    "稳定 蠕变 区间": "稳定蠕变区间",
-    "Near 阈值 · 热圆滑": "临近阈值 · 热圆滑",
-    "T=0 singularity": "T=0 奇异性",
-    "joint 场–温度 scaling": "联合场–温度标度",
-    "一个 景观": "一个景观",
-    "无序 随机种子": "无序随机种子",
-    "无序 总体推断 的 外层 区块": "无序总体推断的外层单元",
-    "quenched 景观": "淬火景观",
-    "Langevin/噪声 随机种子": "Langevin（朗之万）/ 噪声随机种子",
-    "同一 景观 内的 条件 重复": "同一景观内的条件重复",
-    "同一次 运行": "同一次运行",
-    "新的 无序 样本": "新的无序样本",
-    "最重要的 anti-overfit rule": "最重要的防过拟合规则",
-    "有限温 数据": "有限温数据",
-    "样本间 阈值 variation": "样本间阈值差异",
-    "Module 04：怎么找可测 creep window": "模块 04：怎么找可测蠕变区间",
-    "Module 05：怎么测 thermal rounding / ψ": "模块 05：怎么测热圆滑 / ψ",
-    "Module 07：thermal noise / FDT 怎样随 dx、dt 离散": "模块 07：热噪声 / FDT 怎样随 dx、dt 离散",
-
-    # Minimal model / discretization.
-    "从 堆垛构型 到 最小 滑移铁电 相场": "从堆垛构型到最小滑移铁电相场",
-    "普通 φ⁴ 相场 能教 界面 动力学": "普通 φ⁴ 相场能教界面动力学",
-    "周期性 堆垛 坐标": "周期性堆垛坐标",
-    "局域 registry": "局域 stacking registry（堆垛配位）",
-    "把 极化 写成": "把极化写成",
-    "局域 有效 堆垛 phase / registry 坐标": "局域有效相位 / 堆垛坐标",
-    "堆垛 labels": "堆垛标签",
-    "periodic 堆垛 景观 / multiple 等价极小值": "周期堆垛景观 / 多个等价极小值",
-    "DFT energy surface 的所有 anisotropy": "DFT 能量面的所有各向异性",
-    "spatial smoothness、畴壁 tension、finite 畴壁 width": "空间平滑性、畴壁张力、有限畴壁宽度",
-    "nonlocal 弹性 / electrostatics": "非局域弹性 / 静电作用",
-    "electric drive 对 有效 极化 的耦合": "电场驱动对有效极化的耦合",
-    "真实 缺陷 微观 identity": "真实缺陷的微观来源",
-    "periodic 堆垛 + diffuse 畴壁 + 淬火无序 + drive": "周期堆垛 + 弥散畴壁 + 淬火无序 + 驱动",
-    "比较机制与 普适性": "比较机制与普适性",
-    "特定 3R 晶格方向": "特定 3R 晶格方向",
-    "层间 剪切张量": "层间剪切张量",
-    "多层 界面 耦合": "多层界面耦合",
-    "参数组合": "参数组合",
-    "去 Module 07 看 nondimensionalization / identifiability": "去模块 07 看无量纲化 / 可辨识性",
-    "二维 网格单元平均 white 无序": "二维网格单元平均白噪声无序",
-    "物理 无序 定义": "物理无序定义",
-    "数组每个 像素": "数组每个像素",
-    "网格单元积分 random energy": "网格单元积分随机能量",
-    "协方差 / 离散能量 定义": "协方差 / 离散能量定义",
-
-    # Observable / analysis contract.
-    "可观测量 结构": "可观测量结构",
-    "过度 结论": "过度下结论",
-    "一个 可观测量": "一个可观测量",
-    "某个 机制": "某个机制",
-    "Research Track 的“证据尺子”": "研究路线的“证据尺子”",
-    "宏观 翻转 response 与 history": "宏观翻转响应与历史",
-    "DW-only 机制": "纯畴壁机制",
-    "coercive half-width / 翻转 阈值": "矫顽半宽 / 翻转阈值",
-    "方案 下的 场 尺度": "方案下的场尺度",
-    "external 回线功": "外部回线功",
-    "control 方案 的 滞回功": "控制方案的滞回功",
-    "微观 DW 耗散": "微观畴壁耗散",
-    "翻转-速率轨迹": "翻转速率轨迹",
-    "空间 碎裂 / 合并 context": "空间碎裂 / 合并背景",
-    "界面 density": "界面密度",
-    "边界丰富度 / morphology complexity": "边界丰富度 / 形貌复杂度",
-    "畴壁 energy": "畴壁能量",
-    "孤立畴壁 受驱 动力学": "孤立畴壁受驱动力学",
-    "界面 几何 / 粗糙度 scaling": "界面几何 / 粗糙度标度",
-    "动力学 指数": "动力学指数",
-    "有限尺寸 临界性检验": "有限尺寸临界性检验",
-    "分析约定": "分析约定",
-    "主 可观测量": "主可观测量",
-    "敏感性 rule": "敏感性检验",
-    "nonsteady 判据": "非稳态判据",
-    "reduced-force 区间 族": "约化驱动力区间族",
-    "上下窗口": "上下区间",
-    "畴壁-extraction": "畴壁提取",
-    "尺度 mask": "尺度掩膜",
-    "size set": "尺寸集合",
-    "roughness-gate": "roughness-gate",
-    "样本层级 uncertainty": "样本层级不确定度",
-    "fixed 目标函数": "固定目标函数",
-    "leave-one-size-out": "逐一留出尺寸",
-    "initial-态 制备": "初态制备",
-    "主 result": "主结果",
-    "事件统计约定": "事件统计约定",
-    "Freeze 事件检测器": "固定事件检测器",
-    "事件检测器-敏感性 sweep": "事件检测器敏感性扫描",
-    "Freeze size 定义": "固定事件大小定义",
-    "electrical pulse area": "电学脉冲面积",
-    "Preserve hierarchy": "保留层级结构",
-    "帧/bin/像素": "帧 / 时间箱 / 像素",
-    "自助法 draws": "自助法重采样",
-    "间歇 peaks": "间歇峰",
-    "broad 事件-size distribution": "宽事件大小分布",
-    "broad / 重尾 事件": "宽分布 / 重尾事件",
-    "goodness-of-拟合": "拟合优度",
-    "duration relation": "持续时间关系",
-    "multiple scaling 可观测量": "多个标度可观测量",
-    "临界 control 参数": "临界控制参数",
-    "multiple resistance jumps": "多重电阻跃迁",
-    "事件-层级 临界 analysis": "事件层级临界分析",
-    "去 Module 06 看完整统计边界": "去模块 06 看完整统计边界",
-
-    # Data -> estimator -> evidence -> claim.
-    "数据 → 估计量 → 证据 → 结论": "数据 → 估计量 → 证据 → 结论",
-    "场 row": "场记录行",
-    "endpoint": "终点状态",
-    "事件-size statistics": "事件大小统计",
-    "device / size": "器件 / 尺寸",
-    "time-series rows / 场 rows": "时间序列行 / 场记录行",
-    "crossing / 翻转 time": "越过事件 / 翻转时间",
-    "nested in task / device": "嵌套在任务 / 器件内",
-    "cycle-层级 derived 可观测量": "循环层级派生可观测量",
-    "场 map": "场分布图",
-    "独立 无序 无序样本": "独立无序样本",
-    "热 expectation / 随机波动": "热平均 / 随机波动",
-    "内层 重复 nested under one 无序样本": "嵌套在单个无序样本内的内层重复",
-    "新的 quenched 样本": "新的淬火无序样本",
-    "无序 无序样本 / devices": "无序样本 / 器件",
-    "体系 sizes L": "体系尺寸 L",
-    "有限尺寸 trend / 坍缩": "有限尺寸趋势 / 坍缩",
-    "自助法 draws": "自助法重采样",
-    "估计量 uncertainty": "估计量不确定度",
-    "轨迹 rows": "轨迹记录行",
-    "cycles": "循环",
-    "endpoints": "终点状态",
-    "CI / 检验": "置信区间 / 检验",
-    "运行 / search 状态": "运行 / 搜索状态",
-    "bracket": "上下界夹定",
-    "interval / estimate": "区间 / 估计值",
-    "观测时长-limited": "受观测时长限制",
-    "infinite 阈值": "无限阈值",
-    "观测 time": "观测时间",
-    "censored 状态": "删失状态",
-    "未 bracket 的 样本": "未完成上下界夹定的样本",
-    "reduced-force / 瞬态 区间 族": "约化驱动力 / 瞬态区间族",
-    "尺度 masks": "尺度掩膜",
-    "velocity estimates": "速度估计值",
-    "fixed 目标函数": "固定目标函数",
-    "rounding 可观测量": "圆滑可观测量",
-    "alternative-distribution 检验": "替代分布检验",
-    "形状 checks": "形状检验",
-    "merge/死时间 rule": "合并 / 死时间规则",
-    "估计量 的 依据": "估计量的依据",
-    "uncertainty 做 敏感性 传播": "不确定度做敏感性传播",
-    "结论 ladder": "结论阶梯",
-    "估计量 stability": "估计量稳定性",
-    "阈值-like / morphology / dynamic 可观测量": "类阈值 / 形貌 / 动力学可观测量",
-    "总体 / size 证据": "总体 / 尺寸证据",
-    "删失 accounting": "删失处理",
-    "总体 separation / 有限尺寸 trend / 有效指数": "总体区分 / 有限尺寸趋势 / 有效指数",
-    "cross-可观测量 临界证据": "跨可观测量临界证据",
-    "退钉扎-like / 有效-界面 交叉区": "类退钉扎 / 有效界面交叉区",
-    "simulation 运行": "模拟运行",
-    "run receipt / provenance contract": "运行记录 / 来源追踪约定",
-
-    # Paired / hierarchical uncertainty.
-    "配对 & 分层 uncertainty": "配对与分层不确定度",
-    "无序样本-to-无序样本": "无序样本之间",
-    "outcome": "结果",
-    "证据 strata": "证据层级",
-    "time rows": "时间序列行",
-    "Same nuisance 来源": "相同干扰来源",
-    "同一独立 无序 来源 / device": "同一独立无序来源 / 器件",
-    "pair": "配对",
-    "Frozen 映射": "固定映射",
-    "匹配 contract": "匹配约定",
-    "Same 证据 stratum": "相同证据层级",
-    "production、holdout、successor、legacy": "生产数据、留出数据、后继数据、历史数据",
-    "共同随机数 是 方差降低 device": "共同随机数是方差降低工具",
-    "within-来源 差值": "来源内差值",
-    "fair 物理 匹配": "公平的物理匹配",
-    "independent device": "独立器件",
-    "内层 stochastic 重复": "内层随机重复",
-    "热 expectation": "热平均",
-    "nested 模型": "分层模型",
-    "事件 distribution": "事件分布",
-    "resampled index sets": "重采样索引集合",
-    "draw 数量": "重采样次数",
-    "平均 热 response": "平均热响应",
-    "外层层级 inference": "外层层级推断",
-    "censored pair": "删失配对",
-    "B valid": "B 有效",
-    "technical 缺失机制": "技术性缺失机制",
-    "effect / CI": "效应量 / 置信区间",
-    "无序 construction": "无序构造",
-    "crop / restrict": "裁剪 / 限制",
-    "关联 structure": "相关结构",
-    "unit 内 配对": "单元内配对",
-    "Data → Estimator → Evidence → Claim": "数据 → 估计量 → 证据 → 结论",
-    "Module 07 的 run receipt": "模块 07 的运行记录",
-
-    # Mechanism falsification / closing.
-    "统一 delay": "统一延迟",
-    "temporal 排序": "时间排序",
-    "翻转 stage": "翻转阶段",
-    "分量 count": "分量数量",
-    "界面 density": "界面密度",
-    "largest-分量 比例": "最大分量比例",
-    "morphology metrics": "形貌指标",
-    "碎裂 cartoon": "碎裂图像",
-    "simple 机制": "简单机制",
-    "这条 Research Track": "这条研究路线",
-    "dx / 畴壁 extraction": "dx / 畴壁提取",
-    "孤立畴壁 方案": "孤立畴壁方案",
-    "漂亮 指数": "漂亮指数",
-    "滑移铁电特有 微观 物理": "滑移铁电特有的微观物理",
-    "粗粒化 受驱界面 预测": "粗粒化受驱界面预测",
-    "可观测量 系统性偏离": "可观测量系统性偏离",
-    "← 回到 07 Numerical Modeling": "← 回到 07 Numerical Modeling（数值建模）",
-    "去 05 Depinning measurement logic →": "去 05 Depinning（退钉扎）测量逻辑 →",
+# Small, idempotent cleanup found by reverse-scanning the first-pass bot HTML.
+TEXT_REPLACEMENTS = {
+    "Module 04 · UV/IR mask": "模块 04 · UV/IR 尺度掩膜",
+    "Module 05 · objective": "模块 05 · 目标函数",
+    "去 Module 07 看运行记录 / 来源追踪约定": "去模块 07 看运行记录 / 来源追踪约定",
+    "去 Module 07 看无量纲化 / 可辨识性": "去模块 07 看无量纲化 / 可辨识性",
+    "不能因为把突发事件叫作 avalanche 就把它当成雪崩": "不能因为把突发事件叫作“雪崩”就把它当成雪崩临界现象",
+    "幂律-consistent 区间": "与幂律相容的区间",
+    "、work、事件大小统计": "、回线功、事件大小统计",
+    "同一个文件里有很多 rows，不代表 n 很大": "同一个文件里有很多记录行，不代表 n 很大",
+    "由内部 rows 数量放大的 n": "由内部记录行数量放大的 n",
+    "无序-总体推断": "无序总体推断",
+    "去模块 06 看完整统计边界": "去模块 06 看完整统计边界",
+    "07 Numerical Modeling（数值建模）": "07 Numerical Modeling（数值建模）",
 }
+
+SMALL_REPLACEMENTS = {
+    "二维 网格单元平均 white 无序：std ∝ 1/dx。该缩放只针对明确的 δ 相关连续场约定。":
+        "二维网格单元平均白噪声无序：std ∝ 1/dx。该缩放只针对明确的 δ 相关连续场约定。",
+}
+
+
+def equation_body_text(eq) -> str:
+    clone = BeautifulSoup(str(eq), "html.parser").select_one(".eq")
+    for small in clone.select("small"):
+        small.decompose()
+    return clone.get_text(" ", strip=False)
 
 
 def blocked(node: NavigableString) -> bool:
     parent = node.parent
-    if parent is None or parent.name in {"script", "style", "pre", "math"}:
+    if parent is None or parent.name in {"script", "style", "pre", "math", "small"}:
         return True
     if parent.find_parent(class_="eq") or "eq" in parent.get("class", []):
         return True
@@ -365,7 +45,7 @@ def blocked(node: NavigableString) -> bool:
 
 def main() -> None:
     soup = BeautifulSoup(TARGET.read_text(encoding="utf-8"), "html.parser")
-    before_eq = [el.get_text(" ", strip=False) for el in soup.select(".eq")]
+    before_eq_bodies = [equation_body_text(eq) for eq in soup.select(".eq")]
     before_hrefs = [a.get("href") for a in soup.find_all("a")]
 
     for node in list(soup.find_all(string=True)):
@@ -373,20 +53,23 @@ def main() -> None:
             continue
         old = str(node)
         new = old
-        for src, dst in sorted(REPLACEMENTS.items(), key=lambda item: len(item[0]), reverse=True):
+        for src, dst in TEXT_REPLACEMENTS.items():
             new = new.replace(src, dst)
-        # Remove accidental spaces introduced between adjacent Chinese tokens,
-        # but keep ordinary ASCII / formula spacing intact.
-        new = re.sub(r"(?<=[\u4e00-\u9fff])\s+(?=[\u4e00-\u9fff])", "", new)
-        new = re.sub(r"\s+([，。；：！？、）])", r"\1", new)
-        new = re.sub(r"（\s+", "（", new)
         if new != old:
             node.replace_with(new)
 
-    if [el.get_text(" ", strip=False) for el in soup.select(".eq")] != before_eq:
-        raise RuntimeError("Research Track equation text changed during Language V2 repair")
+    # Equation mathematical bodies are immutable; only human-readable <small>
+    # guides may be localized.
+    for small in soup.select(".eq small"):
+        old = small.get_text()
+        new = SMALL_REPLACEMENTS.get(old, old)
+        if new != old:
+            small.string = new
+
+    if [equation_body_text(eq) for eq in soup.select(".eq")] != before_eq_bodies:
+        raise RuntimeError("Research Track mathematical equation body changed")
     if [a.get("href") for a in soup.find_all("a")] != before_hrefs:
-        raise RuntimeError("Research Track links changed during Language V2 repair")
+        raise RuntimeError("Research Track links changed during second audit")
 
     TARGET.write_text(str(soup), encoding="utf-8")
 
