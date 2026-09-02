@@ -40,6 +40,21 @@
     labs.map(([t,f])=>`<a class="site-nav-sub ${isActive(f)?'active':''}" href="${hrefFor(f)}">${t}</a>`).join('');
   document.body.appendChild(left);
 
+  if(currentFile==='index.html'){
+    const hero=document.querySelector('main .hero');
+    if(hero && !document.getElementById('reproduction-lab-entry')){
+      const section=document.createElement('section');
+      section.className='wrap'; section.id='reproduction-lab-entry';
+      section.style.cssText='padding-top:8px;padding-bottom:10px';
+      section.innerHTML=`<div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:center;background:#1f201e;color:#f8f3e8;border-radius:16px;padding:22px 24px;box-shadow:0 12px 30px #00000012"><div><div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.68;margin-bottom:5px">Reproduction Lab · 12 lessons</div><b style="font:700 22px/1.25 Georgia,serif">从论文公式走到可复跑的数值证据链</b><p style="margin:8px 0 0;color:#ddd6ca">L01–L06：Paper1 方法基础；L07–L12：threshold → steady velocity → β → ζ → finite-size scaling → thermal rounding / creep boundary。</p></div><a href="modules/reproduction-lab.html" style="text-decoration:none;color:#1f201e;background:#fffdf8;border-radius:10px;padding:12px 16px;font-weight:750;white-space:nowrap">打开 Reproduction Lab →</a></div>`;
+      hero.insertAdjacentElement('afterend',section);
+    }
+    const topNav=document.querySelector('.top .nav');
+    if(topNav && !topNav.querySelector('[data-lab-link]')){
+      const a=document.createElement('a'); a.href='modules/reproduction-lab.html'; a.textContent='Reproduction Lab'; a.dataset.labLink='1'; a.style.fontWeight='750'; topNav.appendChild(a);
+    }
+  }
+
   const ensureId=(el,i)=>{if(el.id)return el.id; const base=(el.textContent||'section').trim().toLowerCase().replace(/[^a-z0-9\u4e00-\u9fff]+/g,'-').replace(/^-|-$/g,'').slice(0,48)||`section-${i+1}`; let id=base,n=2; while(document.getElementById(id))id=`${base}-${n++}`; el.id=id; return id};
   const headings=[...document.querySelectorAll('main h2, main h3')].filter(h=>!h.closest('.site-sidebar,.page-toc'));
   const right=document.createElement('aside'); right.className='page-toc'; right.id='pageToc';
