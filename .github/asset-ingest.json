@@ -1,9 +1,9 @@
 {
   "disabled": false,
-  "drive_file_id": "1cZl5izlDHxEci5dDnhB1CUX2D48bpJeO",
-  "archive_name": "learning-sliding-ferroelectricity-lab0712-source-bridge-20260902.zip",
+  "drive_file_id": "1_xb8BJOKW5D58MtuooLHKiAJwQ6B9Uc-",
+  "archive_name": "learning-sliding-ferroelectricity-lab0712-pages-20260902.zip",
   "destination": ".",
-  "sha256": "cdb41018d05fc3ccfb2428423fba28243f5e81cb4400b92f8c814249de3312f5",
+  "sha256": "c11186b70c7833270d007f376d83e0895751bd0677db63ec8c2e1d22c995319c",
   "mode": "merge",
-  "requested_at": "2026-09-02T15:25:00+08:00"
+  "requested_at": "2026-09-02T15:28:00+08:00"
 }
