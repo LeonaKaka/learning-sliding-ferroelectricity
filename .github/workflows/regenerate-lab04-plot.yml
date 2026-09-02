@@ -1,0 +1,46 @@
+name: Regenerate Lab 04 plot
+
+on:
+  push:
+    paths:
+      - '.github/workflows/regenerate-lab04-plot.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install CJK font and scientific Python dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk
+          python -m pip install --disable-pip-version-check numpy scipy matplotlib
+      - name: Regenerate and verify Lab 04 scientific SVG
+        env:
+          MPLBACKEND: Agg
+        run: |
+          python examples/reproduction-lab/lesson04_gl_to_ew.py | tee /tmp/lab04.out
+          grep -F 'LOW-T T=0.05 t= 10.0: median=7.67% rms=7.57% A=0.9879' /tmp/lab04.out
+          grep -F 'LOW-T T=0.05 t=100.0: median=4.49% rms=4.36% A=0.9870' /tmp/lab04.out
+          grep -F 'HIGH-T T=0.30 t= 10.0: median=26.52%' /tmp/lab04.out
+          grep -F 'HIGH-T T=0.30 t=100.0: median=40.51%' /tmp/lab04.out
+          grep -F 'w=1.7018+/-0.9760 multi=7.23%' /tmp/lab04.out
+          grep -F 'LOW-T MAPPING PASS; HIGH-T BREAKDOWN DETECTED' /tmp/lab04.out
+      - name: Commit only the regenerated Lab 04 SVG
+        run: |
+          set -euo pipefail
+          git diff -- assets/reproduction-lab/lesson04_gl_to_ew_boundary.svg
+          if git diff --quiet -- assets/reproduction-lab/lesson04_gl_to_ew_boundary.svg; then
+            echo 'SVG already up to date.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/reproduction-lab/lesson04_gl_to_ew_boundary.svg
+          git commit -m 'Regenerate Lab 04 localized scientific plot'
+          git push
