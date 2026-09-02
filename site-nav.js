@@ -2,6 +2,22 @@
   const path=location.pathname.replace(/\/+$/,'');
   const inModules=/\/modules\//.test(path);
   const prefix=inModules?'../':'';
+
+  // Three legacy SVG wrappers contained damaged/non-canonical embedded JPEG
+  // payloads.  Their source-panel JPEGs were independently verified from the
+  // Drive relay batch, so the rendered site routes those exact figures to the
+  // verified local JPEG assets while keeping old SVG paths as legacy history.
+  const repairedFerrero=new Set([
+    'ferrero2013-fig1b-velocity-force.svg',
+    'ferrero2013-fig4b-finite-size-threshold.svg',
+    'ferrero2013-fig6-thermal-rounding.svg',
+  ]);
+  document.querySelectorAll('img[src]').forEach(img=>{
+    const src=img.getAttribute('src')||'';
+    const name=src.split('/').pop();
+    if(repairedFerrero.has(name)) img.setAttribute('src',src.replace(/\.svg(?:\?.*)?$/,'.jpg'));
+  });
+
   const pages=[
     ['首页','index.html'],
     ['01 · What is Sliding FE?','modules/foundations.html'],
