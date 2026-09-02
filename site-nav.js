@@ -56,9 +56,9 @@
   }
 
   const ensureId=(el,i)=>{if(el.id)return el.id; const base=(el.textContent||'section').trim().toLowerCase().replace(/[^a-z0-9\u4e00-\u9fff]+/g,'-').replace(/^-|-$/g,'').slice(0,48)||`section-${i+1}`; let id=base,n=2; while(document.getElementById(id))id=`${base}-${n++}`; el.id=id; return id};
-  const headings=[...document.querySelectorAll('main h2, main h3')].filter(h=>!h.closest('.site-sidebar,.page-toc'));
+  const headings=[...document.querySelectorAll('main h2')].filter(h=>!h.closest('.site-sidebar,.page-toc'));
   const right=document.createElement('aside'); right.className='page-toc'; right.id='pageToc';
-  right.innerHTML='<div class="page-toc-title">On this page</div>'+(headings.length?headings.map((h,i)=>`<a class="toc-${h.tagName.toLowerCase()}" href="#${ensureId(h,i)}">${h.textContent.trim().replace(/\s+/g,' ')}</a>`).join(''):'<div style="padding:4px 8px;color:#807a70">本页暂无分节</div>');
+  right.innerHTML='<div class="page-toc-title">On this page</div>'+(headings.length?headings.map((h,i)=>`<a class="toc-h2" href="#${ensureId(h,i)}">${h.textContent.trim().replace(/\s+/g,' ')}</a>`).join(''):'<div style="padding:4px 8px;color:#807a70">本页暂无分节</div>');
   document.body.appendChild(right);
 
   const mkBtn=(side,label,target)=>{const b=document.createElement('button');b.className=`nav-drawer-btn ${side}`;b.type='button';b.setAttribute('aria-label',label);b.textContent=side==='left'?'☰':'≡';b.onclick=()=>{document.getElementById(target).classList.toggle('open');document.body.classList.toggle('nav-drawer-open',document.querySelector('.site-sidebar.open,.page-toc.open'))};document.body.appendChild(b)};
