@@ -1,199 +1,107 @@
 from __future__ import annotations
 
-from pathlib import Path
-from urllib.parse import urlsplit
-import json
-import struct
-
 from bs4 import BeautifulSoup
 from language_v2_second_pass import ROOT
 
-TARGET = ROOT / "modules/reproduction-lab-08.html"
-PYTHON = ROOT / "examples/reproduction-lab/lesson08_steady_velocity.py"
-RECEIPT = ROOT / "assets/reproduction-lab/lesson08_steady_velocity.txt"
-SOURCE_RECEIPT = ROOT / "assets/reproduction-lab/source-figure-receipt.json"
-PAPER_FIG = ROOT / "assets/reproduction-lab/source-ferrero2013-review-fig1-full.png"
-PLOT_FILES = (
-    ROOT / "assets/reproduction-lab/lesson08_vf.png",
-    ROOT / "assets/reproduction-lab/lesson08_transient_periods.png",
-    ROOT / "assets/reproduction-lab/lesson08_dt_error.png",
-    ROOT / "assets/reproduction-lab/lesson08_particle_velocity_gold.png",
+TARGET = ROOT / "modules/reproduction-lab-09.html"
+LOCKED_RESULTS = (
+    "0.267993", "0.229890", "0.195041", "0.165810",
+    "0.102183", "0.030", "0.001004", "0.245", "L=32",
 )
-
 EXPECTED_SRCS = (
-    "../assets/reproduction-lab/source-ferrero2013-review-fig1-full.png",
-    "../assets/reproduction-lab/lesson08_vf.png",
-    "../assets/reproduction-lab/lesson08_transient_periods.png",
-    "../assets/reproduction-lab/lesson08_dt_error.png",
-    "../assets/reproduction-lab/lesson08_particle_velocity_gold.png",
+    "../assets/reproduction-lab/source-ferrero2013-pre-fig5-full.png",
+    "../assets/reproduction-lab/lesson09_mean_v_loglog.png",
+    "../assets/reproduction-lab/lesson09_beta_vs_window.png",
+    "../assets/reproduction-lab/lesson09_threshold_sensitivity.png",
+    "../assets/reproduction-lab/lesson09_bootstrap_beta.png",
 )
-EXPECTED_ALTS = (
-    "Ferrero 2013 综述图 1 完整原图区域",
-    "模拟得到的稳态速度随驱动力变化",
-    "逐个无序周期的平均速度",
-    "速度相对误差随积分步长变化",
-    "速度估计量的解析已知答案测试",
+REPLACEMENTS = (
+    ("<title>Reproduction Lab 09 · Beta window stability</title>", "<title>Reproduction Lab（复现实验室）09 · β 拟合区间稳定性</title>"),
+    ("<b>Reproduction Lab <small>· Lesson 09 · Paper2 Method Track</small></b>", "<b>Reproduction Lab（复现实验室） <small>· 第 09 课 · 第二篇工作方法线</small></b>"),
+    ("<a href=\"../index.html\">Learning Sliding Ferroelectricity</a> / Reproduction Lab / Lesson 09", "<a href=\"../index.html\">Learning Sliding Ferroelectricity</a> / 复现实验室 / 第 09 课"),
+    ("<span class=\"tag\">β window audit</span><span class=\"tag\">8 disorder realizations</span><span class=\"tag\">no post-hoc tuning</span>", "<span class=\"tag\">β 拟合区间审计</span><span class=\"tag\">8 个独立无序样本</span><span class=\"tag\">禁止事后挑点</span>"),
+    ("<h1>一条漂亮的 log–log 直线，不等于 universal β</h1>", "<h1>一条漂亮的双对数直线，不等于普适 β</h1>"),
+    ("<p class=\"lead\">Ferrero 的关键提醒不是“正确答案等于 0.245”，而是 <b>mesoscopic corrections 会制造 biased effective exponents</b>。因此 L09 只问：当我们按预注册规则逐步缩小 Δf window，β 有没有形成稳定 plateau？</p>", "<p class=\"lead\">Ferrero 的关键提醒不是“正确答案等于 0.245”，而是 <b>mesoscopic corrections（介观修正）会制造有偏的 effective exponent（有效指数）</b>。因此 L09 只问：按照预先登记的规则逐步缩小 Δf 拟合区间时，β 是否形成稳定平台。</p>"),
+    ("<div class=\"read-order\"><div><b>1 · 论文 Fig.5</b><span>同一 critical relaxation 出现不同 effective slopes。</span></div><div><b>2 · 我们的 v(Δf)</b><span>8 个 realization 的 mean velocity。</span></div><div><b>3 · β vs window</b><span>真正的授权 gate。</span></div><div><b>4 · 排除替代解释</b><span>fc bracket 与 bootstrap 都不能救 window drift。</span></div></div>", "<div class=\"read-order\"><div><b>1 · 论文 Fig.5</b><span>同一次临界弛豫在不同尺度上出现不同有效斜率。</span></div><div><b>2 · 我们的 v(Δf)</b><span>对 8 个独立无序样本取算术平均。</span></div><div><b>3 · β 随拟合区间变化</b><span>这是决定是否授权 β 的核心判据。</span></div><div><b>4 · 排除替代解释</b><span>阈值区间与 bootstrap（自助法）都不能消除拟合区间漂移。</span></div></div>"),
+    ("<h2>0 · 论文原图：corrections-to-scaling 是看得见的</h2>", "<h2>0 · 论文原图：corrections-to-scaling（标度修正）是看得见的</h2>"),
+    ("alt=\"Ferrero PRE 2013 Figure 5 full crop\"", "alt=\"Ferrero PRE 2013 图 5 完整原图区域\""),
+    ("完整保留 velocity panel (a)、width panel (b)、两段 power-law guide 与原始 caption。panel (a) 在不同时间区间给出约 0.16 与 0.13 的 effective decay slope，正是“一个局部 power law 不代表 asymptotic exponent”的直观例子。", "完整保留速度子图 (a)、宽度子图 (b)、两段幂律参考线和论文原始图注。子图 (a) 在不同时间区间给出约 0.16 与 0.13 的有效衰减斜率，直观说明：局部幂律并不等于 asymptotic exponent（渐近指数）。"),
+    ("<div class=\"bridge\"><b>我们不是拿 Fig.5 的 time slope 去直接比较 β。</b> 它提供的是方法论证据：临界附近存在 crossover / corrections-to-scaling，所以 steady v(f) 的 β 也必须做 scale-window stability，而不能只挑一个最像 benchmark 的窗口。</div>", "<div class=\"bridge\"><b>我们不是拿 Fig.5 的时间斜率直接比较 β。</b> 它提供的是方法论证据：临界附近存在 crossover（交叉）与标度修正，因此稳态 v(f) 的 β 也必须检查拟合区间稳定性，不能只挑一个最接近文献基准值的区间。</div>"),
+    ("alt=\"Disorder mean velocity versus delta f on log log axes\"", "alt=\"无序平均速度随 Δf 的双对数图\""),
+    ("<b>Our simulation output。</b> 六个 Δf 点是 8 个独立 quenched realizations 的 arithmetic mean；每个 realization 先自己找 fc。图上只示范最宽和最窄两个 registered window 的 fit：同一批数据的 slope 明显不同。", "<b>本课模拟输出。</b> 六个 Δf 点来自 8 个独立 quenched disorder（淬火无序）样本的算术平均；每个样本都先独立确定自己的 fc。图中只展示预先登记的最宽与最窄两个拟合区间：同一批数据得到的斜率明显不同。"),
+    ("<h2>2 · 核心结果：β 没有 plateau</h2>", "<h2>2 · 核心结果：β 没有形成稳定平台</h2>"),
+    ("alt=\"Effective beta versus fit window\"", "alt=\"有效 β 随拟合区间上界变化\""),
+    ("<b>Our simulation output · central gate。</b> 横轴越往右表示 max Δf 越小、越靠近 sample threshold；β 从 0.268 持续滑到 0.166。虚线 0.245 只作为 Ferrero QEW benchmark，不是拟合目标。", "<b>本课模拟输出 · 核心判据。</b> 横轴越往右表示最大 Δf 越小、越靠近单样本阈值；β 从 0.268 持续滑到 0.166。虚线 0.245 只作为 Ferrero QEW 的文献基准值，不是拟合目标。"),
+    ("<div class=\"hold\"><b>WINDOW-STABILITY GATE NOT PASSED。</b> drift=0.102183，远高于预注册 0.030。</div>", "<div class=\"hold\"><b>拟合区间稳定性：未通过。</b> β 漂移为 0.102183，远高于预先登记的 0.030 判据。</div>"),
+    ("<h2>3 · 是不是 L07 的 fc 不够准？不是主要问题</h2>", "<h2>3 · 是不是 L07 的 fc 不够准？不是主要问题</h2>"),
+    ("alt=\"Beta sensitivity to threshold bracket edge\"", "alt=\"β 对单样本阈值区间边缘的敏感性\""),
+    ("<b>Our simulation output。</b> 把每个 sample 的 fc 从 bracket midpoint 推到 low/high edge，all-six β 只变化约 0.001004；这比 0.102 的 window drift 小两个数量级。", "<b>本课模拟输出。</b> 把每个样本的 fc 从阈值区间中点分别移到下沿和上沿，六点拟合的 β 只变化约 0.001004；这比 0.102 的拟合区间漂移小两个数量级。"),
+    ("<h2>4 · bootstrap CI 为什么也不能救？</h2>", "<h2>4 · bootstrap（自助法）置信区间为什么也不能救？</h2>"),
+    ("alt=\"Bootstrap distribution of beta\"", "alt=\"β 的样本自助法分布\""),
+    ("<b>Our simulation output。</b> sample bootstrap 回答“换一批 disorder realization，当前 estimator 会抖多少”；它不回答“是否已经进入 asymptotic critical window”。所以 CI 覆盖 0.245 不能覆盖掉系统性 window drift。", "<b>本课模拟输出。</b> 样本自助法回答的是“重新抽取独立无序样本时，当前 β 估计量会波动多少”；它并不回答“数据是否已经进入渐近临界区间”。因此置信区间覆盖 0.245，并不能抵消系统性的拟合区间漂移。"),
+    ("<h2 id=\"result\">5 · 本课结论</h2><div class=\"ok\"><b>Regression pipeline gold test PASS。</b> tilted washboard 的 β=1/2 被同一套 log-fit pipeline 正确恢复。</div><div class=\"hold\"><b>UNIVERSAL BETA CLAIM = NOT AUTHORIZED。</b> 当前 L=32 / periodic-u geometry 只给出 window-dependent effective β。</div>", "<h2 id=\"result\">5 · 本课结论</h2><div class=\"ok\"><b>回归分析已知答案测试：通过。</b> 同一套双对数拟合流程在 tilted washboard（倾斜搓衣板势）模型中正确恢复 β=1/2。</div><div class=\"hold\"><b>普适 β 结论：不授权。</b> 当前 L=32、u 方向周期边界的几何设置只给出随拟合区间变化的有效 β。</div>"),
+    (">run receipt</a>", ">运行回执</a>"),
+    (">8-realization CSV</a>", ">8 个无序样本 CSV</a>"),
+    (">论文截图 receipt</a>", ">论文原图来源回执</a>"),
 )
-REQUIRED_VISIBLE = (
-    "steady velocity（稳态速度）",
-    "center-of-mass velocity（质心速度）",
-    "depinning（退钉扎）",
-    "thermal rounding（热圆整）",
-    "creep（蠕变）",
-    "fast flow（快速流动）",
-    "稳态速度估计量 + dt 收敛：通过",
-    "本课不拟合 β",
-    "3.47%–4.93%",
-    "0.0010%",
-    "0.001387%",
-    "0.5%",
-    "dt=.1 未通过",
-    "dt=.025 通过",
-)
-FORBIDDEN_VISIBLE = (
-    "transient removal", "dt convergence", "production dt", "reference dt",
-    "measurement window", "run receipt", "Our simulation output", "Code gold test",
-    "sample threshold", "critical-window audit", "velocity error", "normalization",
-    "observable", "NO BETA FIT IN LESSON 08", "STEADY VELOCITY ESTIMATOR + DT CONVERGENCE PASS",
-)
-PYTHON_LOCKS = (
-    "SEED=20260902",
-    "FC_LO,FC_HI=0.77763671875,0.777783203125",
-    "DT_GATE=5e-3",
-    "def particle_v(f,dt=.02,warm=2,measure=4):",
-    "def line_v(f,T,du,u0,dt,warm=1,measure=3):",
-    "p_err=max(x[3] for x in particle); assert p_err<2e-5",
-    "assert abs(lo-FC_LO)<1e-12 and abs(hi-FC_HI)<1e-12",
-    "dfs=np.array([.02,.04,.08,.16])",
-    "dts=(.1,.05,.025,.0125)",
-    "assert coarse>DT_GATE and prod<DT_GATE and station<5e-4",
-    "(out/'lesson08_steady_velocity.txt').write_text('\\n'.join(R)+'\\n')",
-    "label='正式计算 dt=0.025'",
-    "label='参考 dt=0.0125'",
-    "label='L07 阈值区间中点'",
-    "ax.set_title('只在单样本阈值上方测量稳态 v(f)')",
-    "ax.set_title('第 1 个周期仍含退钉扎瞬态')",
-    "label='预设 0.5% 判据'",
-    "ax.set_title('速度估计量的 dt 收敛')",
-    "ax.set_title('运动态速度估计量的已知答案测试')",
-)
-RECEIPT_LOCKS = (
-    "registered fc bracket        = [0.777636719, 0.777783203]",
-    "registered fc midpoint       = 0.777709961",
-    "velocity dt gate             = 0.500%",
-    "particle max rel error       = 0.001387%",
-    "line L, M, du, rf            = 32, 256, 0.250, 1.000",
-    "line delta-f ladder          = 0.02, 0.04, 0.08, 0.16",
-    "steady protocol             = discard 1 u-period; measure next 3 periods",
-    "coarse dt=.100 max error     = 1.010%  FAIL (<0.5% gate)",
-    "dt=.050 max error            = 0.439%",
-    "production dt=.025 max err  = 0.147%  PASS",
-    "reference dt=.0125           = comparison authority for this lesson",
-    "first-period transient shift = 3.47% .. 4.93%",
-    "steady 3-period spread max   = 0.0010%",
-    "df=0.020 f=0.797709961 v(dt=.025)=0.304157138 v(dt=.0125)=0.304576417",
-    "df=0.040 f=0.817709961 v(dt=.025)=0.336752820 v(dt=.0125)=0.337223824",
-    "df=0.080 f=0.857709961 v(dt=.025)=0.390721774 v(dt=.0125)=0.391295561",
-    "df=0.160 f=0.937709961 v(dt=.025)=0.492101344 v(dt=.0125)=0.492828001",
-    "NO BETA FIT IN LESSON 08",
-    "STEADY VELOCITY ESTIMATOR + DT CONVERGENCE PASS",
-)
-
-
-def png_size(path: Path) -> tuple[int, int]:
-    data = path.read_bytes()
-    if data[:8] != b"\x89PNG\r\n\x1a\n" or data[12:16] != b"IHDR":
-        raise RuntimeError(f"Lab 08 artifact is not canonical PNG: {path.relative_to(ROOT)}")
-    return struct.unpack(">II", data[16:24])
-
-
-def visible_text(soup: BeautifulSoup) -> str:
-    clone = BeautifulSoup(str(soup), "html.parser")
-    for node in clone.select("style, script, pre, code, .eq"):
-        node.decompose()
-    return clone.get_text(" ", strip=True)
-
-
-def verify_local_links(soup: BeautifulSoup) -> None:
-    for tag in soup.find_all(["a", "img"]):
-        value = tag.get("href") if tag.name == "a" else tag.get("src")
-        if not value:
-            continue
-        parts = urlsplit(value)
-        if parts.scheme or parts.netloc or not parts.path:
-            continue
-        resolved = (TARGET.parent / parts.path).resolve()
-        try:
-            resolved.relative_to(ROOT.resolve())
-        except ValueError as exc:
-            raise RuntimeError(f"Lab 08 local link escapes repository: {value}") from exc
-        if not resolved.exists():
-            raise RuntimeError(f"Lab 08 broken local link: {value}")
-
-
-def verify_source_provenance() -> None:
-    data = json.loads(SOURCE_RECEIPT.read_text(encoding="utf-8"))
-    if data.get("render_dpi", 0) < 500:
-        raise RuntimeError("Lab 08 source-figure receipt render DPI drifted")
-    matches = [x for x in data.get("figures", []) if x.get("file") == PAPER_FIG.name]
-    if len(matches) != 1:
-        raise RuntimeError("Lab 08 Ferrero review Fig.1 provenance missing or duplicated")
-    entry = matches[0]
-    if entry.get("source_page") != 3:
-        raise RuntimeError("Lab 08 Ferrero review Fig.1 source page drifted")
-    if entry.get("pixel_size") != [3250, 2550]:
-        raise RuntimeError("Lab 08 Ferrero review Fig.1 receipt dimensions drifted")
-    if "Fig. 1" not in entry.get("citation", ""):
-        raise RuntimeError("Lab 08 Ferrero review Fig.1 citation identity drifted")
-    if png_size(PAPER_FIG) != (3250, 2550):
-        raise RuntimeError("Lab 08 Ferrero review Fig.1 file dimensions no longer match receipt")
 
 
 def main() -> None:
-    for path in (TARGET, PYTHON, RECEIPT, SOURCE_RECEIPT, PAPER_FIG, *PLOT_FILES):
-        if not path.exists():
-            raise RuntimeError(f"Lab 08 required artifact missing: {path.relative_to(ROOT)}")
-
     raw = TARGET.read_text(encoding="utf-8")
-    soup = BeautifulSoup(raw, "html.parser")
-    title = soup.title.get_text(strip=True) if soup.title else ""
-    if title != "Reproduction Lab（复现实验室）08 · 稳态速度":
-        raise RuntimeError(f"Lab 08 title drifted: {title!r}")
+    before = BeautifulSoup(raw, "html.parser")
+    before_hrefs = [x.get("href") for x in before.find_all("a")]
+    before_srcs = [x.get("src") for x in before.find_all("img")]
+    before_results = {x: raw.count(x) for x in LOCKED_RESULTS}
 
-    visible = visible_text(soup)
-    for token in REQUIRED_VISIBLE:
+    out = raw
+    for src, dst in REPLACEMENTS:
+        if src not in out:
+            raise RuntimeError(f"Lab 09 expected source fragment missing: {src}")
+        out = out.replace(src, dst, 1)
+
+    after = BeautifulSoup(out, "html.parser")
+    if before_hrefs != [x.get("href") for x in after.find_all("a")]:
+        raise RuntimeError("Lab 09 href wiring changed")
+    if before_srcs != [x.get("src") for x in after.find_all("img")]:
+        raise RuntimeError("Lab 09 Figure wiring changed")
+    if tuple(x.get("src") for x in after.find_all("img")) != EXPECTED_SRCS:
+        raise RuntimeError("Lab 09 expected evidence Figure set changed")
+    for token, count in before_results.items():
+        if out.count(token) != count:
+            raise RuntimeError(f"Lab 09 locked result changed: {token}")
+
+    visible = after.get_text(" ", strip=True)
+    required = (
+        "mesoscopic corrections（介观修正）",
+        "effective exponent（有效指数）",
+        "corrections-to-scaling（标度修正）",
+        "asymptotic exponent（渐近指数）",
+        "crossover（交叉）",
+        "quenched disorder（淬火无序）",
+        "bootstrap（自助法）",
+        "拟合区间稳定性：未通过",
+        "普适 β 结论：不授权",
+        "0.102183",
+        "0.001004",
+    )
+    for token in required:
         if token not in visible:
-            raise RuntimeError(f"Lab 08 required Language V2 text missing: {token}")
-    for token in FORBIDDEN_VISIBLE:
+            raise RuntimeError(f"Lab 09 required teaching text missing: {token}")
+    forbidden = (
+        "β window audit", "disorder realizations", "post-hoc tuning", "effective slopes",
+        "mean velocity", "β vs window", "authorization gate", "window drift", "panel (a)",
+        "power-law guide", "registered window", "sample threshold", "central gate",
+        "QEW benchmark", "bracket midpoint", "low/high edge", "all-six", "sample bootstrap",
+        "current estimator", "asymptotic critical window", "Our simulation output",
+        "Regression pipeline gold test PASS", "UNIVERSAL BETA CLAIM = NOT AUTHORIZED",
+        "WINDOW-STABILITY GATE NOT PASSED", "run receipt",
+    )
+    for token in forbidden:
         if token in visible:
-            raise RuntimeError(f"Lab 08 ordinary workflow English remains visible: {token}")
+            raise RuntimeError(f"Lab 09 ordinary workflow English remains visible: {token}")
 
-    figures = soup.select("figure.figure img")
-    if tuple(x.get("src") for x in figures) != EXPECTED_SRCS:
-        raise RuntimeError("Lab 08 Figure wiring drifted")
-    if tuple(x.get("alt") for x in figures) != EXPECTED_ALTS:
-        raise RuntimeError("Lab 08 Figure alt text drifted")
-    verify_local_links(soup)
-
-    py = PYTHON.read_text(encoding="utf-8")
-    for token in PYTHON_LOCKS:
-        if token not in py:
-            raise RuntimeError(f"Lab 08 Python contract drifted: {token}")
-
-    receipt = RECEIPT.read_text(encoding="utf-8")
-    for token in RECEIPT_LOCKS:
-        if token not in receipt:
-            raise RuntimeError(f"Lab 08 receipt/result drifted: {token}")
-
-    verify_source_provenance()
-    for plot in PLOT_FILES:
-        w, h = png_size(plot)
-        if w < 900 or h < 500:
-            raise RuntimeError(f"Lab 08 code plot below evidence resolution contract: {plot.name} {w}x{h}")
-        if plot.stat().st_size < 10_000:
-            raise RuntimeError(f"Lab 08 code plot suspiciously small: {plot.name}")
-
-    print("Lab 08 read-only Language V2 seal PASS; prose/science/results/provenance/Figures/links preserved.")
+    TARGET.write_text(out, encoding="utf-8")
+    print("Lab 09 targeted Language V2 audit complete; beta failure boundary/results/Figure wiring unchanged.")
 
 
 if __name__ == "__main__":
