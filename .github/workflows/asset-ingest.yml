@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - '.github/asset-ingest.json'
+      - '.github/workflows/asset-ingest.yml'
   workflow_dispatch:
 
 permissions:
@@ -25,7 +26,7 @@ jobs:
 
       - name: Install relay downloader
         run: |
-          python3 -m pip install --disable-pip-version-check --quiet gdown
+          python3 -m pip install --disable-pip-version-check --quiet gdown google-auth requests
 
       - name: Read manifest
         id: manifest
@@ -50,19 +51,61 @@ jobs:
         if: steps.manifest.outputs.disabled != 'true'
         env:
           DRIVE_FILE_ID: ${{ steps.manifest.outputs.drive_file_id }}
+          GDRIVE_SERVICE_ACCOUNT_JSON: ${{ secrets.GDRIVE_SERVICE_ACCOUNT_JSON }}
           GDRIVE_BEARER_TOKEN: ${{ secrets.GDRIVE_BEARER_TOKEN }}
         run: |
           set -euo pipefail
-          if [ -n "${GDRIVE_BEARER_TOKEN:-}" ]; then
-            echo 'Using authenticated Drive API download.'
+          rm -f /tmp/asset-batch.zip
+
+          if [ -n "${GDRIVE_SERVICE_ACCOUNT_JSON:-}" ]; then
+            echo 'Drive auth: Service Account (preferred V2 path).'
+            python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          import requests
+          from google.oauth2 import service_account
+          from google.auth.transport.requests import Request
+
+          info=json.loads(os.environ['GDRIVE_SERVICE_ACCOUNT_JSON'])
+          creds=service_account.Credentials.from_service_account_info(
+              info,
+              scopes=['https://www.googleapis.com/auth/drive.readonly'],
+          )
+          creds.refresh(Request())
+          file_id=os.environ['DRIVE_FILE_ID']
+          url=f'https://www.googleapis.com/drive/v3/files/{file_id}?alt=media&supportsAllDrives=true'
+          with requests.get(url, headers={'Authorization': f'Bearer {creds.token}'}, stream=True, timeout=120) as r:
+              r.raise_for_status()
+              with Path('/tmp/asset-batch.zip').open('wb') as f:
+                  for chunk in r.iter_content(chunk_size=1024*1024):
+                      if chunk: f.write(chunk)
+          PY
+          elif [ -n "${GDRIVE_BEARER_TOKEN:-}" ]; then
+            echo 'Drive auth: legacy bearer token compatibility path.'
             curl --fail --location --retry 3 \
               -H "Authorization: Bearer ${GDRIVE_BEARER_TOKEN}" \
-              "https://www.googleapis.com/drive/v3/files/${DRIVE_FILE_ID}?alt=media" \
+              "https://www.googleapis.com/drive/v3/files/${DRIVE_FILE_ID}?alt=media&supportsAllDrives=true" \
               -o /tmp/asset-batch.zip
           else
-            echo 'No GDRIVE_BEARER_TOKEN secret found; using gdown file-id flow.'
-            gdown "${DRIVE_FILE_ID}" -O /tmp/asset-batch.zip
+            echo 'Drive auth: no private credential found; trying V2 single-ZIP public-link fallback.'
+            if ! gdown "${DRIVE_FILE_ID}" -O /tmp/asset-batch.zip; then
+              echo 'ERROR: Drive authorization/download failed.' >&2
+              echo 'Configure GDRIVE_SERVICE_ACCOUNT_JSON (preferred), or temporarily share only this ZIP as Anyone-with-link Viewer.' >&2
+              exit 41
+            fi
           fi
+
+          test -s /tmp/asset-batch.zip || { echo 'ERROR: downloaded file is empty' >&2; exit 42; }
+          MAGIC="$(python3 - <<'PY'
+          from pathlib import Path
+          print(Path('/tmp/asset-batch.zip').read_bytes()[:4].hex())
+          PY
+          )"
+          echo "magic=${MAGIC}"
+          case "$MAGIC" in
+            504b0304|504b0506|504b0708) ;;
+            *) echo 'ERROR: Drive download is not a ZIP (possible login/error HTML).' >&2; exit 43 ;;
+          esac
           file /tmp/asset-batch.zip
           unzip -t /tmp/asset-batch.zip
 
@@ -75,7 +118,10 @@ jobs:
           ACTUAL_SHA="$(sha256sum /tmp/asset-batch.zip | awk '{print $1}')"
           echo "expected=${EXPECTED_SHA}"
           echo "actual=${ACTUAL_SHA}"
-          test "$ACTUAL_SHA" = "$EXPECTED_SHA"
+          if [ "$ACTUAL_SHA" != "$EXPECTED_SHA" ]; then
+            echo 'ERROR: SHA-256 mismatch; refusing to extract or modify repository.' >&2
+            exit 44
+          fi
 
       - name: Safe merge extract
         if: steps.manifest.outputs.disabled != 'true'
