@@ -53,7 +53,7 @@
 <div class="warn"><b>建模边界：</b>这个模型的价值是把 “周期堆垛 + 弥散畴壁 + 淬火无序 + 驱动” 放在同一最小框架里，用于比较机制与普适性。若结论依赖特定 3R 晶格方向、层间剪切张量、非对角 Born 有效电荷、多层界面耦合，就必须回到更细的自由度。</div>
 <div class="bridge" id="identifiability-bridge"><b>参数不是越多越真实：</b>这个 periodic 模型写出 κ、V<sub>0</sub>、P<sub>0</sub>、Γ 与无序后，下一步不是一起拟合，而是先问哪些可观测量能独立约束哪些参数组合。<a href="numerical-modeling.html#identifiability">去模块 07 看无量纲化 / 可辨识性 →</a></div>
 <h3>3.1 · 离散化不是纯数值细节</h3>
-<div class="eq">⟨h(r)h(r′)⟩=Δδ<sup>(d)</sup>(r−r′) ⇒ std(h<sub>cell</sub>)∝dx<sup>−d/2</sup><small>二维 网格单元平均 white 无序：std ∝ 1/dx。该缩放只针对明确的 δ 相关连续场约定。</small></div>
+<div class="eq">⟨h(r)h(r′)⟩=Δδ<sup>(d)</sup>(r−r′) ⇒ std(h<sub>cell</sub>)∝dx<sup>−d/2</sup><small>二维网格单元平均白噪声无序：std ∝ 1/dx。该缩放只针对明确的 δ 相关连续场约定。</small></div>
 <p>因此 dx 收敛要固定的是 <b>物理无序定义</b>，不是数组每个像素的标准差。有限相关长度缺陷、固定位置缺陷、网格单元积分随机能量都必须重新从协方差 / 离散能量定义推导。</p>
 <h2 id="observables">4 · 可观测量结构：一个量只回答一个层次的问题</h2>
 <p>真正容易过度下结论的地方不是模型，而是把一个可观测量直接命名成某个机制。下面这张表是整条研究路线的“证据尺子”。</p>
@@ -64,31 +64,31 @@
 <tr><td>f<sub>c</sub></td><td>独立阈值 / 非稳态判据</td><td>观测时长、判据、L</td><td>同一有限温 / β 拟合里自由回调 f<sub>c</sub></td></tr>
 <tr><td>β</td><td>预定约化驱动力区间族</td><td>上下区间、f<sub>c</sub> 扰动、瞬态截断</td><td>β<sub>eff</sub> 持续漂移</td></tr>
 <tr><td>ζ</td><td>预定畴壁提取 + 尺度掩膜</td><td>等值线阈值、W/B/S(q)、去趋势</td><td>悬垂比例高或局域/全局/谱指数分裂</td></tr>
-<tr id="roughness-gate-bridge"><td colspan="4"><b>完整验收链：</b><a href="pinning-creep.html#roughness-gate">Module 04 · UV/IR mask → 有效斜率 → B/S/W → 异常标度/多重标度 → 样本层级不确定度</a></td></tr>
+<tr id="roughness-gate-bridge"><td colspan="4"><b>完整验收链：</b><a href="pinning-creep.html#roughness-gate">模块 04 · UV/IR 尺度掩膜 → 有效斜率 → B/S/W → 异常标度/多重标度 → 样本层级不确定度</a></td></tr>
 <tr><td>ν / 坍缩</td><td>固定尺寸集合与目标函数</td><td>逐一留出尺寸、端点 L 删除</td><td>坍缩只靠一个 L 或一个自由参数支撑</td></tr>
-<tr id="collapse-gate-bridge"><td colspan="4"><b>完整验收链：</b><a href="depinning.html#collapse-gate">Module 05 · objective → 逐一留出尺寸 → 留出尺寸 → 标度修正判据</a></td></tr>
+<tr id="collapse-gate-bridge"><td colspan="4"><b>完整验收链：</b><a href="depinning.html#collapse-gate">模块 05 · 目标函数 → 逐一留出尺寸 → 留出尺寸 → 标度修正判据</a></td></tr>
 <tr><td>z</td><td>明确初态 / 瞬态可观测量</td><td>时间区间、初态制备</td><td>介观交叉区被当渐近</td></tr>
 </tbody></table>
 <div class="bridge"><b>预注册不等于僵化。</b>发现新交叉区后可以升级模型或新增次要分析，但要把它标成事后，并保留原主结果。这样“失效”才不会被分析自由度悄悄洗掉。</div>
-<h3 id="event-contract">4.6 · 事件统计约定：不能因为把突发事件叫作 avalanche 就把它当成雪崩</h3>
+<h3 id="event-contract">4.6 · 事件统计约定：不能因为把突发事件叫作“雪崩”就把它当成雪崩临界现象</h3>
 <div class="three"><div class="card"><b>固定事件检测器</b><p>主阈值、死时间 / 合并规则、带宽 / 采样率在看指数前固定；另外做一组事件检测器敏感性扫描。</p></div><div class="card"><b>固定事件大小定义</b><p>明确 S 是翻转面积、畴壁累计前进量、累计活动度还是电学脉冲面积；不同定义不能混在同一 τ 里。</p></div><div class="card"><b>保留层级结构</b><p>无序样本 → 事件 → 帧 / 时间箱 / 像素。自助法重采样只是计算工具，永远不是新的物理样本。</p></div></div>
 <table class="matrix"><thead><tr><th>看到的现象</th><th>允许的最低措辞</th><th>升级前还缺什么</th></tr></thead><tbody>
 <tr><td>间歇峰</td><td>突发 / 间歇翻转</td><td>固定事件定义 + 事件检测器稳健性</td></tr>
 <tr><td>宽事件大小分布</td><td>宽分布 / 重尾事件</td><td>幂律拟合优度 + 替代分布</td></tr>
-<tr><td>候选幂律</td><td>幂律-consistent 区间</td><td>截止 / 尺寸依赖 + 持续时间关系 + 无序样本稳健性</td></tr>
+<tr><td>候选幂律</td><td>与幂律相容的区间</td><td>截止 / 尺寸依赖 + 持续时间关系 + 无序样本稳健性</td></tr>
 <tr><td>多个标度可观测量</td><td>候选雪崩临界性</td><td>临界控制参数 / 标度关系 / 适用时还要检查普适形状或标度函数</td></tr>
 </tbody></table>
 <div class="warn"><b>论文写作规则：</b>“突发集中度” 或 “多重电阻跃迁” 可以是很有价值的现象学；在没有事件层级临界分析前，不把它们改名成 RFIM 雪崩。<a href="disorder-rfim.html#avalanche-statistics">去模块 06 看完整统计边界 →</a></div>
 <h3 id="data-claim-contract">4.7 · 数据 → 估计量 → 证据 → 结论：先知道 n 在哪一层</h3>
 <p>一条研究结论不是从原始文件直接跳到论文表述。中间至少有四层：<b>数据对象</b> 是记录到的东西；<b>估计量</b> 把它压成一个可比较的量；<b>证据单元</b> 决定不确定度和独立样本数；最后才是 <b>结论</b>。最常见的伪精确，来自把这四层混在一起。</p>
-<div class="flow"><div><b>数据</b><p>轨迹、场记录行、帧、终点状态、事件、运行状态。</p></div><div><b>估计量</b><p>f<sub>c</sub><sup>(i)</sup>、v、β<sub>eff</sub>、ζ、work、事件大小统计。</p></div><div><b>证据</b><p>哪些无序样本 / 器件 / 尺寸真正提供独立信息。</p></div><div><b>敏感性</b><p>区间、阈值、事件检测器、拓扑、观测时长改动后是否通过。</p></div><div><b>结论</b><p>从现象学到候选临界性，再到普适性。</p></div></div>
-<h3>4.7.1 · 同一个文件里有很多 rows，不代表 n 很大</h3>
+<div class="flow"><div><b>数据</b><p>轨迹、场记录行、帧、终点状态、事件、运行状态。</p></div><div><b>估计量</b><p>f<sub>c</sub><sup>(i)</sup>、v、β<sub>eff</sub>、ζ、回线功、事件大小统计。</p></div><div><b>证据</b><p>哪些无序样本 / 器件 / 尺寸真正提供独立信息。</p></div><div><b>敏感性</b><p>区间、阈值、事件检测器、拓扑、观测时长改动后是否通过。</p></div><div><b>结论</b><p>从现象学到候选临界性，再到普适性。</p></div></div>
+<h3>4.7.1 · 同一个文件里有很多记录行，不代表 n 很大</h3>
 <table class="matrix"><thead><tr><th>数据对象</th><th>它适合估计什么</th><th>通常的独立层级</th><th>不能偷换成</th></tr></thead><tbody>
 <tr><td>时间序列行 / 场记录行</td><td>单个运行的轨迹、稳态区间、越过事件 / 翻转时间</td><td>属于同一个运行 / 来源的重复观测</td><td>几千个独立样本</td></tr>
 <tr><td>循环 / 终点状态</td><td>方案内重复性、循环层级派生可观测量</td><td>默认嵌套在任务 / 器件内，除非实验设计另有独立随机化</td><td>自动独立的 n</td></tr>
 <tr><td>帧 / 像素</td><td>形貌、界面几何、场分布图</td><td>同一无序样本的空间/时间采样</td><td>独立无序样本</td></tr>
 <tr><td>热随机种子</td><td>给定淬火景观下的热平均 / 随机波动</td><td>嵌套在单个无序样本内的内层重复</td><td>新的淬火无序样本</td></tr>
-<tr><td>无序样本 / 器件</td><td>无序-总体推断</td><td>通常是最关键的独立单元</td><td>由内部 rows 数量放大的 n</td></tr>
+<tr><td>无序样本 / 器件</td><td>无序总体推断</td><td>通常是最关键的独立单元</td><td>由内部记录行数量放大的 n</td></tr>
 <tr><td>体系尺寸 L</td><td>有限尺寸趋势 / 坍缩</td><td>设计层；每个 L 仍需独立无序样本</td><td>“9 个 L = n=9” 的全部统计依据</td></tr>
 <tr><td>自助法重采样</td><td>传播估计量不确定度</td><td>计算重采样</td><td>新的物理数据</td></tr>
 </tbody></table>
@@ -119,7 +119,7 @@
 <tr><td>E4 · 普适性 / 失效</td><td>标度关系、坍缩、拓扑判据、修正与替代解释一起通过</td><td>候选普适类；或明确映射失效</td></tr>
 </tbody></table>
 <div class="warn"><b>失效不是“没做成”。</b> 如果 β/ζ/ν 无法在同一依据链下相容，或拓扑判据系统失败，正确结果可能就是：该滑移铁电区间只能称为类退钉扎 / 有效界面交叉区，而不是强行给它套普适性标签。</div>
-<div class="bridge"><b>公开边界：</b>这里给的是可复用的分析约定，不展示项目未发表数值、内部批次标签或当前判据状态。真正分析时再把每个数据集映射到这张表。上游每个模拟运行还必须能回答“它到底由哪版代码、哪份最终生效配置、哪组随机源与哪种停止状态生成”；<a href="numerical-modeling.html#run-receipt">去 Module 07 看运行记录 / 来源追踪约定 →</a></div>
+<div class="bridge"><b>公开边界：</b>这里给的是可复用的分析约定，不展示项目未发表数值、内部批次标签或当前判据状态。真正分析时再把每个数据集映射到这张表。上游每个模拟运行还必须能回答“它到底由哪版代码、哪份最终生效配置、哪组随机源与哪种停止状态生成”；<a href="numerical-modeling.html#run-receipt">去模块 07 看运行记录 / 来源追踪约定 →</a></div>
 <h3 id="paired-hierarchy">4.8 · 配对与分层不确定度：同一来源内做差，跨来源才谈总体</h3>
 <p>“匹配比较” 不只是在横轴上把两个参数调到同一个数。若 A/B 两个耦合能由同一个预先定义的潜在来源生成，<b>配对设计</b> 可以先消掉无序样本之间的大波动，再问耦合形式本身改变了多少。但配对是实验设计，不是事后统计技巧：必须在看结果前定义，而且不能跨本来就不可交换的证据层级强行配对。</p>
 <div class="eq">Δ<sub>i</sub> = y<sub>A,i</sub> − y<sub>B,i</sub>　；　Δ̄ = N<sup>−1</sup> Σ<sub>i=1</sub><sup>N</sup> Δ<sub>i</sub></div>
