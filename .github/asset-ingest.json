@@ -1,9 +1,9 @@
 {
-  "disabled": true,
-  "drive_file_id": "1_xb8BJOKW5D58MtuooLHKiAJwQ6B9Uc-",
-  "archive_name": "learning-sliding-ferroelectricity-lab0712-pages-20260902.zip",
+  "disabled": false,
+  "drive_file_id": "12o3TWRYIAAN43vCINNl2jHiGUAmaw8PN",
+  "archive_name": "learning-sliding-ferroelectricity-lab0712-600dpi-crops-20260902.zip",
   "destination": ".",
-  "sha256": "c11186b70c7833270d007f376d83e0895751bd0677db63ec8c2e1d22c995319c",
+  "sha256": "f1ca9a5949d4b27b81ab15de642f5684c4f238a31f48821e607d242d1459cd71",
   "mode": "merge",
-  "requested_at": "2026-09-02T15:28:00+08:00"
+  "requested_at": "2026-09-02T15:41:00+08:00"
 }
