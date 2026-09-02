@@ -4,28 +4,12 @@ from bs4 import BeautifulSoup, NavigableString
 from language_v2_second_pass import ROOT
 
 TARGET = ROOT / "modules/reproduction-lab.html"
+LOCKED_NUMERIC_STRINGS = ("1.415395", "0.0835%", "9.75×10⁻⁵")
 
 TEXT_REPLACEMENTS = {
-    "Reproduction Lab（复现实验室）（复现实验室）01": "Reproduction Lab（复现实验室）01",
-    "Reproduction Lab（复现实验室） ": "复现实验室 ",
-    "· Lesson 01 · Gold Test": "· 第 01 课 · 已知答案测试",
-    " / Reproduction Lab（复现实验室） / Lesson 01": " / 复现实验室 / 第 01 课",
-    "M07": "模块 07",
-    "大尺寸 2D GL ↔ elastic-line 结果": "大尺寸二维 GL ↔ elastic-line model（弹性线模型）结果",
-    "Caballero 的 体场层面": "Caballero 的体场层面",
-    "无无序情形": "无序为零的情形",
-    "不是“复现论文 Fig. 1”": "不是“复现论文图 1”",
-    "一维 x 网格；无无序、无热噪声": "一维 x 网格；无序为零、无热噪声",
-    "无无序单畴壁": "无序为零的单畴壁",
-    "它先证明 无无序对象是对的": "它先证明无序为零时的对象是对的",
-    "Caballero 的无无序粗糙度增长": "Caballero 在无序为零时的粗糙度增长",
+    " / Lesson 01": " / 第 01 课",
+    "无序为零的情形的 stationary soliton（定态孤子）": "无序为零时，stationary soliton（定态孤子）",
 }
-
-SMALL_REPLACEMENTS = {
-    "本课只取 h=0、T=0 的无无序一维验证单元。": "本课只取 h=0、T=0、无序为零的一维验证单元。",
-}
-
-LOCKED_NUMERIC_STRINGS = ("1.415395", "0.0835%", "9.75×10⁻⁵")
 
 
 def equation_body_text(eq) -> str:
@@ -64,11 +48,15 @@ def main() -> None:
         if new != old:
             node.replace_with(new)
 
-    for small in soup.select(".eq small"):
-        old = small.get_text()
-        new = SMALL_REPLACEMENTS.get(old, old)
-        if new != old:
-            small.string = new
+    header_small = soup.select_one("header .bar small")
+    if header_small is None:
+        raise RuntimeError("Lab 01 header lesson label missing")
+    header_small.string = "· 第 01 课 · 已知答案测试"
+
+    figure = soup.select_one("figure.fig img")
+    if figure is None:
+        raise RuntimeError("Lab 01 result Figure missing")
+    figure["alt"] = "TDGL 畴壁向解析扭结弛豫与自由能收敛"
 
     if [equation_body_text(eq) for eq in soup.select(".eq")] != before_eq:
         raise RuntimeError("Lab 01 equation body changed")
