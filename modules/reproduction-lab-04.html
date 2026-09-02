@@ -6,7 +6,7 @@
 <div class="rule"><a href="../index.html">Learning Sliding Ferroelectricity</a> / 复现实验室 / 第 04 课</div>
 <h1>最重要的不只是“映射成功”：还要知道什么时候该停止把体场畴壁当作弹性线</h1>
 <p class="deck">Caballero 2020 的真正价值，不只是证明二维 Ginzburg–Landau（GL）可以约化成一维 Edwards–Wilkinson（EW）。论文还明确测试了这种 model reduction（模型约化）的适用边界：低温时两种描述吻合；温度升高、体场涨落增强后，soliton ansatz（孤子假设）与 single-valued interface（单值界面）描述会逐渐失效。这一课就同时复现“通过”和“失效”两侧。</p>
-<div class="q"><b>本课规则：</b>低温要通过 Eq.19 的硬性验收条件；高温则不允许为了“复现成功”继续调参数。只要 体场到弹性线映射 的诊断一起恶化，就应该把结果标成 <b>映射失效</b>，而不是硬塞一个 ζ。</div>
+<div class="q"><b>本课规则：</b>低温要通过 Eq.19 的硬性验收条件；高温则不允许为了“复现成功”继续调参数。只要体场到弹性线映射的诊断一起恶化，就应该把结果标成 <b>映射失效</b>，而不是硬塞一个 ζ。</div>
 <h2 id="compare">0 · 原论文 Fig.3 与我们的适用边界缩略复现</h2>
 <div class="two">
 <figure class="fig"><a href="../assets/reproduction-lab/caballero2020-fig3-temperature-boundary.webp" rel="noopener" target="_blank"><img alt="Caballero 2020 图 3：温度升高时 GL 到 EW 映射逐渐失效" src="../assets/reproduction-lab/caballero2020-fig3-temperature-boundary.webp"/></a><figcaption class="cap"><b>Caballero et al. 2020 · Fig.3。</b><br/>作者固定 t=10<sup>3</sup>，扫描 T=0.05,0.07,0.1,0.15,0.2,0.3。EW 仍按 Eq.19；二维 GL 在低温与理论接近，但论文正文指出 T 大于约 0.15 后开始出现明显偏离。</figcaption></figure>
@@ -14,7 +14,7 @@
 </div>
 <div class="verdict"><b>这不是 Fig.3 的同协议复现。</b> 论文是 L<sub>x</sub>=256、L<sub>y</sub>=4096、t=10<sup>3</sup> 的完整温度扫描；我们是 L<sub>x</sub>=64、L<sub>y</sub>=128、12 个独立热噪声样本的快速适用边界测试。它的作用是先验证“低温通过、高温失效”这个方法结构，再决定是否值得跑大尺寸。</div>
 <h2>1 · 先修正第 02 课的一个教学简化：有限温度不能只找零点交叉</h2>
-<p>第 02 课 在 T=0 的 无序为零畴壁 上用 φ=0 零点交叉 很合适，因为每一列只有一个干净的零点交叉。但论文在 有限温度 下采用更严格的估计量：对固定 y,t 的整个 横向剖面 φ(x,y,t) 拟合孤子，并把 <b>{φ₀,w,u(y)}</b> 都作为 拟合参数。</p>
+<p>第 02 课在 T=0 的无序为零畴壁上用 φ=0 零点交叉很合适，因为每一列只有一个干净的零点交叉。但论文在有限温度下采用更严格的估计量：对固定 y,t 的整个横向剖面 φ(x,y,t) 拟合孤子，并把 <b>{φ₀,w,u(y)}</b> 都作为拟合参数。</p>
 <div class="eq">φ<sub>fit</sub>(x;y)=−A(y) tanh[(x−u(y))/w(y)]</div>
 <div class="codebox"><div class="head"><b>零点交叉只用于初始化，不作为最终估计量</b></div><pre>pars, _ = curve_fit(
     soliton, x_window, phi_column,
