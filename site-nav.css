@@ -8,7 +8,8 @@
 .site-nav-title,.page-toc-title{font-weight:750;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--site-nav-muted);margin:0 7px 8px}
 .site-nav-home{font-weight:750;margin-bottom:12px!important}
 .site-nav-section{margin:15px 7px 5px;font-weight:700;font-size:11px;color:var(--site-nav-muted)}
-.site-nav-lab{border:1px solid var(--site-nav-line);background:#fffdf8;margin:8px 0 12px!important;font-weight:700}
+.site-nav-phase{margin:10px 7px 3px;font-weight:750;font-size:10.5px;letter-spacing:.04em;color:var(--site-nav-muted)}
+.site-nav-lab{border:1px solid var(--site-nav-line);background:#fffdf8;margin:8px 0 9px!important;font-weight:700}
 .site-nav-sub{padding-left:17px!important;font-size:12px}
 .page-toc a{padding:4px 8px;color:#68635b}
 .page-toc a.active{color:#111;font-weight:700;background:#ebe5da}
