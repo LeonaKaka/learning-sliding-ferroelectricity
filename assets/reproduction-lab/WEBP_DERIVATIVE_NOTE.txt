@@ -1,0 +1,1 @@
+Web-optimized Ferrero panel derivatives are generated only from the Relay-verified source-panel JPEGs. Scientific panel content is preserved; format/encoding is optimized only for robust browser delivery. Source JPEG SHA-256 values are recorded in relay_sha_manifest.txt.
