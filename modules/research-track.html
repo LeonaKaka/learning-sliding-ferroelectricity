@@ -46,12 +46,12 @@
 <div class="warn"><b>最重要的防过拟合规则：</b>热圆滑必须继承独立 T=0 阈值。若允许每个无序随机种子在同一批有限温数据里自由移动自己的 f<sub>c</sub>，再去优化 ψ / 坍缩，就可能人为抹掉样本间阈值差异。</div>
 <div class="bridge"><a href="pinning-creep.html#finite-temperature">模块 04：怎么找可测蠕变区间</a>　·　<a href="depinning.html#thermal-rounding">模块 05：怎么测热圆滑 / ψ</a>　·　<a href="numerical-modeling.html#thermal-noise">模块 07：热噪声 / FDT 怎样随 dx、dt 离散</a></div>
 <h2 id="model">3 · 从堆垛构型到最小滑移铁电相场</h2>
-<p>普通 φ⁴ 相场能教界面动力学，却容易把滑移铁电最重要的“周期性堆垛坐标”藏掉。一个更贴近本项目问题、但仍保持最小的教学模型，是把局域 stacking registry（堆垛配位） 压成周期变量 φ(r,t)，再把极化写成 φ 的周期函数。</p>
+<p>普通 φ⁴ 相场能教界面动力学，却容易把滑移铁电最重要的“周期性堆垛坐标”藏掉。一个更贴近本项目问题、但仍保持最小的教学模型，是把局域 stacking registry（堆垛配位）压成周期变量 φ(r,t)，再把极化写成 φ 的周期函数。</p>
 <div class="eq">P(φ)=P<sub>0</sub> sinφ</div>
 <div class="eq">F[φ]=∫d²r { κ/2 |∇φ|² + V<sub>0</sub>[1−cos(nφ)] − E P<sub>0</sub>sinφ + F<sub>dis</sub>[φ,r] }</div>
 <table class="matrix"><thead><tr><th>项</th><th>保留的物理</th><th>它没有自动包含什么</th></tr></thead><tbody><tr><td>φ(r,t)</td><td>局域有效相位 / 堆垛坐标</td><td>完整原子坐标、多层所有堆垛标签</td></tr><tr><td>V₀[1−cos(nφ)]</td><td>周期堆垛景观 / 多个等价极小值</td><td>材料真实 DFT 能量面的所有各向异性</td></tr><tr><td>κ|∇φ|²/2</td><td>空间平滑性、畴壁张力、有限畴壁宽度</td><td>所有非局域弹性 / 静电作用</td></tr><tr><td>−EP₀sinφ</td><td>电场驱动对有效极化的耦合</td><td>微观非对角 BEC 张量本身</td></tr><tr><td>F<sub>dis</sub></td><td>可控地测试耦合形式 / 关联 / 强度</td><td>一个唯一、已知的真实缺陷的微观来源</td></tr></tbody></table>
 <div class="warn"><b>建模边界：</b>这个模型的价值是把 “周期堆垛 + 弥散畴壁 + 淬火无序 + 驱动” 放在同一最小框架里，用于比较机制与普适性。若结论依赖特定 3R 晶格方向、层间剪切张量、非对角 Born 有效电荷、多层界面耦合，就必须回到更细的自由度。</div>
-<div class="bridge" id="identifiability-bridge"><b>参数不是越多越真实：</b>这个 periodic 模型写出 κ、V<sub>0</sub>、P<sub>0</sub>、Γ 与无序后，下一步不是一起拟合，而是先问哪些可观测量能独立约束哪些参数组合。<a href="numerical-modeling.html#identifiability">去模块 07 看无量纲化 / 可辨识性 →</a></div>
+<div class="bridge" id="identifiability-bridge"><b>参数不是越多越真实：</b>这个周期模型写出 κ、V<sub>0</sub>、P<sub>0</sub>、Γ 与无序后，下一步不是一起拟合，而是先问哪些可观测量能独立约束哪些参数组合。<a href="numerical-modeling.html#identifiability">去模块 07 看无量纲化 / 可辨识性 →</a></div>
 <h3>3.1 · 离散化不是纯数值细节</h3>
 <div class="eq">⟨h(r)h(r′)⟩=Δδ<sup>(d)</sup>(r−r′) ⇒ std(h<sub>cell</sub>)∝dx<sup>−d/2</sup><small>二维网格单元平均白噪声无序：std ∝ 1/dx。该缩放只针对明确的 δ 相关连续场约定。</small></div>
 <p>因此 dx 收敛要固定的是 <b>物理无序定义</b>，不是数组每个像素的标准差。有限相关长度缺陷、固定位置缺陷、网格单元积分随机能量都必须重新从协方差 / 离散能量定义推导。</p>
