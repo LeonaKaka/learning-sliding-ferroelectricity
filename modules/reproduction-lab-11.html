@@ -1,43 +1,43 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Reproduction Lab 11 · Finite-size scaling / ν</title><link rel="stylesheet" href="../reproduction-lab-paper2.css"></head><body>
-<header class="top"><div class="bar"><b>Reproduction Lab <small>· Lesson 11 · Paper2 Method Track</small></b><span><a href="reproduction-lab-10.html">上一课</a> · <a href="../index.html">首页</a> · <a href="#result">结论</a></span></div></header>
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Reproduction Lab（复现实验室）11 · 有限尺寸标度与 ν</title><link rel="stylesheet" href="../reproduction-lab-paper2.css"></head><body>
+<header class="top"><div class="bar"><b>Reproduction Lab（复现实验室） <small>· 第 11 课 · 第二篇工作方法线</small></b><span><a href="reproduction-lab-10.html">上一课</a> · <a href="../index.html">首页</a> · <a href="#result">结论</a></span></div></header>
 <main>
-<div class="crumb"><a href="../index.html">Learning Sliding Ferroelectricity</a> / Reproduction Lab / Lesson 11</div>
-<div><span class="tag">真实 simulation plot</span><span class="tag">论文原图完整裁切</span><span class="tag">finite-size threshold</span></div>
-<h1>先看 f<sub>c</sub>(L)，再看它的 sample-to-sample 波动</h1>
-<p class="lead">旧版把论文的 finite-size critical-force 图和我们的 ν 拟合图并排放，却没讲清两张图的 y 轴其实不同。现在按数据层级读：<b>论文先告诉我们 finite-size threshold 会受 L 和 aspect ratio 影响 → 我们先画同样的 mean f<sub>c</sub>(L) → 再用同一批 sample 的 std(f<sub>c</sub>) 去估 ν → 最后检查 ν 对 size window 是否稳定。</b></p>
-<div class="read-order"><div><b>1 · 论文 Fig.2</b><span>mean finite-size threshold 随 L / aspect protocol 改变。</span></div><div><b>2 · 我们的 mean f<sub>c</sub></b><span>同样画 L→threshold，但不比绝对数值。</span></div><div><b>3 · ν-sensitive observable</b><span>std(f<sub>c</sub><sup>sample</sup>) 随 L 收缩。</span></div><div><b>4 · size-window gate</b><span>一个 slope 不够，必须换尺寸窗口仍稳定。</span></div></div>
+<div class="crumb"><a href="../index.html">Learning Sliding Ferroelectricity</a> / 复现实验室 / 第 11 课</div>
+<div><span class="tag">真实模拟图</span><span class="tag">论文原图完整裁切</span><span class="tag">finite-size scaling（有限尺寸标度）</span></div>
+<h1>先看 f<sub>c</sub>(L)，再看它的样本间波动</h1>
+<p class="lead">这课最容易犯的错，是把“平均阈值随尺寸变化”和“阈值分布宽度随尺寸收缩”混成同一件事。正确顺序是：<b>论文先告诉我们有限尺寸阈值会受 L 和横向几何影响 → 我们先画同一种平均 f<sub>c</sub>(L) → 再用同一批独立无序样本的 std(f<sub>c</sub>) 估计 ν → 最后检查 ν 对尺寸区间是否稳定。</b></p>
+<div class="read-order"><div><b>1 · 论文 Fig.2</b><span>平均有限尺寸阈值随 L 和横向尺度方案改变。</span></div><div><b>2 · 我们的平均 f<sub>c</sub></b><span>同样画 L→阈值，但不比较绝对数值。</span></div><div><b>3 · 对 ν 敏感的量</b><span>std(f<sub>c</sub><sup>sample</sup>) 随 L 收缩。</span></div><div><b>4 · 尺寸区间判据</b><span>一个斜率不够，换尺寸区间后仍稳定才有资格谈 ν。</span></div></div>
 
-<h2>0 · 论文原图：finite-size critical force 到底在画什么？</h2>
-<figure class="figure source"><img src="../assets/reproduction-lab/source-ferrero2013-pre-fig2-full.png" alt="Ferrero PRE 2013 Figure 2 full crop with original caption"><figcaption class="caption"><b>Ferrero, Bustingorry & Kolton, PRE 87, 032122 (2013), Fig.2。</b> 保留完整坐标、legend、不同 aspect-ratio 数据和论文原始 caption。横轴是 L，纵轴是 finite-size critical force；不同 k 对应 M=kL<sup>ζ</sup>。虚线是他们模型的 thermodynamic critical force。</figcaption></figure>
-<div class="figure-note"><b>先别找 ν。</b> 这张论文图最直接说明的是：有限系统里的 f<sub>c</sub> 本身不是一个“尺寸无关常数”；L 和 transverse geometry 都会留下 finite-size correction。</div>
+<h2>0 · 论文原图：有限尺寸临界力到底在画什么？</h2>
+<figure class="figure source"><img src="../assets/reproduction-lab/source-ferrero2013-pre-fig2-full.png" alt="Ferrero PRE 2013 图 2 完整原图区域"><figcaption class="caption"><b>Ferrero, Bustingorry & Kolton, PRE 87, 032122 (2013), Fig.2。</b> 保留完整坐标、图例、不同纵横比数据和论文原始图注。横轴是 L，纵轴是有限尺寸临界力；不同 k 对应 M=kL<sup>ζ</sup>。虚线是他们模型的热力学极限临界力。</figcaption></figure>
+<div class="figure-note"><b>先别找 ν。</b> 这张论文图最直接说明的是：有限系统里的 f<sub>c</sub> 本身不是一个“尺寸无关常数”；L 和横向几何都会留下 finite-size correction（有限尺寸修正）。</div>
 
-<h2>1 · 先把我们的 mean f<sub>c</sub>(L) 画在同一种坐标上</h2>
-<figure class="figure medium"><img src="../assets/reproduction-lab/lesson11_mean_fc.png" alt="Mean sample critical force versus system size"><figcaption class="caption"><b>Our simulation output · mean f<sub>c</sub>(L)。</b> 每个点来自该尺寸 48 个独立 quenched-disorder realizations 的 sample threshold。横轴和论文 Fig.2 一样是 L，纵轴也同样是 threshold，所以这一步是最直接的 observable-level bridge。</figcaption></figure>
-<table class="table"><thead><tr><th>L</th><th>M grid</th><th>mean f<sub>c</sub></th><th>independent realizations</th></tr></thead><tbody><tr><td>32</td><td>320</td><td>0.819978841</td><td>48</td></tr><tr><td>64</td><td>736</td><td>0.823315430</td><td>48</td></tr><tr><td>128</td><td>1728</td><td>0.823396810</td><td>48</td></tr><tr><td>256</td><td>4096</td><td>0.821850586</td><td>48</td></tr></tbody></table>
-<div class="warn"><b>这里不能和论文的 f<sub>c</sub>≈1.916 比大小。</b> disorder normalization、force units、critical-state algorithm 和 finite geometry 都不同。可比较的是“finite-size threshold 是需要控制的量”，不是横轴上某个具体数值。</div>
+<h2>1 · 先把我们的平均 f<sub>c</sub>(L) 画在同一种坐标上</h2>
+<figure class="figure medium"><img src="../assets/reproduction-lab/lesson11_mean_fc.png" alt="单样本临界力的平均值随系统尺寸变化"><figcaption class="caption"><b>本课模拟输出 · 平均 f<sub>c</sub>(L)。</b> 每个点来自该尺寸 48 个独立 quenched disorder（淬火无序）样本的单样本阈值。横轴和论文 Fig.2 一样是 L，纵轴也同样是阈值，所以这是最直接的同一可观测量对照。</figcaption></figure>
+<table class="table"><thead><tr><th>L</th><th>M 网格</th><th>平均 f<sub>c</sub></th><th>独立无序样本</th></tr></thead><tbody><tr><td>32</td><td>320</td><td>0.819978841</td><td>48</td></tr><tr><td>64</td><td>736</td><td>0.823315430</td><td>48</td></tr><tr><td>128</td><td>1728</td><td>0.823396810</td><td>48</td></tr><tr><td>256</td><td>4096</td><td>0.821850586</td><td>48</td></tr></tbody></table>
+<div class="warn"><b>这里不能和论文的 f<sub>c</sub>≈1.916 比大小。</b> 无序归一化、力单位、临界态算法和有限几何都不同。可比较的是“有限尺寸阈值必须被控制”，不是某个具体阈值数值。</div>
 
-<h2>2 · ν 不是从 mean f<sub>c</sub> 读出来的：看 distribution width</h2>
-<p>对每个 L，我们其实有 48 个 sample-specific thresholds。ν-sensitive 的量是它们的 sample-to-sample fluctuation：</p>
+<h2>2 · ν 不是从平均 f<sub>c</sub> 读出来的：要看分布宽度</h2>
+<p>对每个 L，我们实际有 48 个单样本阈值。对 ν 敏感的是这些阈值的样本间涨落：</p>
 <div class="eq">std(f<sub>c</sub><sup>sample</sup>) ∼ L<sup>−1/ν</sup></div>
-<figure class="figure"><img src="../assets/reproduction-lab/lesson11_std_fc.png" alt="Threshold standard deviation versus size with finite-size fit"><figcaption class="caption"><b>Our simulation output · std(f<sub>c</sub>) vs L。</b> 这是本课真正用于 ν 的图。数据点是 48-realization distribution width；直线是四尺寸 log–log effective fit。它和上面的 mean f<sub>c</sub>(L) 来自同一批 threshold table，但 y 轴和物理问题已经换了。</figcaption></figure>
+<figure class="figure"><img src="../assets/reproduction-lab/lesson11_std_fc.png" alt="阈值标准差随系统尺寸变化及有限尺寸拟合"><figcaption class="caption"><b>本课模拟输出 · std(f<sub>c</sub>) 随 L 变化。</b> 这是本课真正用于 ν 的图。数据点是 48 个独立无序样本形成的分布宽度；直线是四个尺寸的双对数有效拟合。它和上面的平均 f<sub>c</sub>(L) 来自同一张阈值表，但纵轴和物理问题已经改变。</figcaption></figure>
 <table class="table"><thead><tr><th>L</th><th>std(f<sub>c</sub>)</th></tr></thead><tbody><tr><td>32</td><td>0.064453427</td></tr><tr><td>64</td><td>0.033881635</td></tr><tr><td>128</td><td>0.026465858</td></tr><tr><td>256</td><td>0.015059779</td></tr></tbody></table>
-<p>同一 regression 在 synthetic data 上先恢复 ν<sub>target</sub>=4/3：得到 ν=1.318867，gold test PASS。也就是说，如果输入真的遵守指定 finite-size power law，分析代码能把它读出来。</p>
+<p>同一套回归分析先在目标 ν=4/3 的合成数据上做已知答案测试：恢复得到 ν=1.318867，<b>测试通过</b>。这说明当输入确实遵守指定的有限尺寸幂律时，分析代码能够把指数读出来。</p>
 
-<h2>3 · 为什么 all-four ν=1.50 仍然不能当结果？</h2>
-<figure class="figure medium"><img src="../assets/reproduction-lab/lesson11_nu_vs_window.png" alt="Effective nu for different finite-size windows"><figcaption class="caption"><b>Our simulation output · size-window audit。</b> 同一 raw threshold table，只改变纳入 slope 的 L window。横向虚线 4/3 是 QEW benchmark，不是拟合目标。真正的 gate 是不同预注册 size window 给出的 ν 是否彼此稳定。</figcaption></figure>
-<table class="table"><thead><tr><th>size window</th><th>ν<sub>eff</sub></th></tr></thead><tbody><tr><td>L=32,64,128</td><td>1.557481</td></tr><tr><td>L=32,64,128,256</td><td>1.503976</td></tr><tr><td>L=64,128,256</td><td>1.709690</td></tr></tbody></table>
-<div class="hold"><b>SIZE-WINDOW STABILITY GATE = NOT PASSED。</b> ν span=0.205713，高于预注册 0.15 gate。也就是说，当前 slope 仍然明显受 finite-size correction 控制，不能把 1.503976 升级成 thermodynamic ν。</div>
+<h2>3 · 为什么四尺寸 ν=1.503976 仍然不能当普适结果？</h2>
+<figure class="figure medium"><img src="../assets/reproduction-lab/lesson11_nu_vs_window.png" alt="不同有限尺寸区间给出的有效 ν"><figcaption class="caption"><b>本课模拟输出 · 尺寸区间审计。</b> 使用同一张原始阈值表，只改变纳入斜率拟合的 L 区间。横向虚线 4/3 是 QEW 文献基准，不是拟合目标。真正的判据是不同预先登记尺寸区间给出的 ν 是否彼此稳定。</figcaption></figure>
+<table class="table"><thead><tr><th>尺寸区间</th><th>有效 ν</th></tr></thead><tbody><tr><td>L=32,64,128</td><td>1.557481</td></tr><tr><td>L=32,64,128,256</td><td>1.503976</td></tr><tr><td>L=64,128,256</td><td>1.709690</td></tr></tbody></table>
+<div class="hold"><b>尺寸区间稳定性：未通过。</b> ν 的跨度为 0.205713，高于预先登记的 0.15 判据。也就是说，当前斜率仍明显受有限尺寸修正控制，不能把 1.503976 升级成热力学极限 ν。</div>
 
-<h2>4 · distribution collapse 为什么也不能单独救场？</h2>
-<figure class="figure medium"><img src="../assets/reproduction-lab/lesson11_collapse_score.png" alt="Quantile collapse score versus assumed nu"><figcaption class="caption"><b>Our simulation output · collapse sensitivity。</b> 横轴是假设 ν，纵轴是四尺寸 centered threshold distributions 的 quantile-collapse score（越低越好）。最低点很浅：ν=1.405、4/3 和 variance-fit 1.504 的 score 很接近。</figcaption></figure>
-<div class="grid3"><div class="card"><b>best scan</b><p>ν=1.405<br>score=0.117003</p></div><div class="card"><b>QEW 4/3</b><p>score=0.120858</p></div><div class="card"><b>variance fit 1.504</b><p>score=0.123243</p></div></div>
-<p>而且 collapse 和 variance fit 用的是<b>同一批 48×4 thresholds</b>，不是新的独立证据。一个宽而浅的 optimum 不能覆盖掉 size-window drift。</p>
+<h2>4 · 分布坍缩为什么也不能单独救场？</h2>
+<figure class="figure medium"><img src="../assets/reproduction-lab/lesson11_collapse_score.png" alt="不同假设 ν 下的分位数坍缩评分"><figcaption class="caption"><b>本课模拟输出 · 坍缩敏感性。</b> 横轴是假设的 ν，纵轴是四个尺寸中心化阈值分布的分位数坍缩评分（越低越好）。最低点很浅：ν=1.405、4/3 和方差拟合得到的 1.504，评分彼此很接近。</figcaption></figure>
+<div class="grid3"><div class="card"><b>最优扫描</b><p>ν=1.405<br>评分=0.117003</p></div><div class="card"><b>QEW 4/3</b><p>评分=0.120858</p></div><div class="card"><b>方差拟合 1.504</b><p>评分=0.123243</p></div></div>
+<p>而且分布坍缩和方差拟合使用的是<b>同一批 48×4 个阈值</b>，并不是新的独立证据。一个宽而浅的最优点不能覆盖掉尺寸区间漂移。</p>
 
 <h2 id="result">5 · 这一课最后到底能说什么？</h2>
-<div class="ok"><b>FINITE-SIZE TREND EXISTS。</b> sample-to-sample threshold fluctuations 从 L=32 到 256 明显收缩；synthetic FSS gold test 也通过。</div>
-<div class="hold"><b>UNIVERSAL NU CLAIM = NOT AUTHORIZED。</b> 当前尺寸下 ν 对 size window 仍不稳定；bootstrap 95% 区间 [1.241478, 1.903499] 也很宽。下一步需要更大 L / 更强 finite-size evidence，而不是继续挑一个最接近 4/3 的窗口。</div>
+<div class="ok"><b>有限尺寸趋势：存在。</b> 样本间阈值涨落从 L=32 到 256 明显收缩；合成有限尺寸标度的已知答案测试也通过。</div>
+<div class="hold"><b>普适 ν 结论：不授权。</b> 当前尺寸下 ν 对尺寸区间仍不稳定；样本自助法 95% 区间 [1.241478, 1.903499] 也很宽。下一步需要更大的 L 和更强的有限尺寸证据，而不是继续挑一个最接近 4/3 的区间。</div>
 
 <h2>6 · 可复查数据</h2>
-<div class="code-links"><a href="../examples/reproduction-lab/lesson11_fss_nu.py">完整 Python 脚本</a><a href="../assets/reproduction-lab/lesson11_fss_nu.txt">run receipt</a><a href="../assets/reproduction-lab/lesson11_fc_raw.csv">192-row threshold table</a><a href="../assets/reproduction-lab/source-figure-receipt.json">论文截图 receipt</a></div>
+<div class="code-links"><a href="../examples/reproduction-lab/lesson11_fss_nu.py">完整 Python 脚本</a><a href="../assets/reproduction-lab/lesson11_fss_nu.txt">运行回执</a><a href="../assets/reproduction-lab/lesson11_fc_raw.csv">192 行原始阈值表</a><a href="../assets/reproduction-lab/source-figure-receipt.json">论文截图来源回执</a></div>
 <div class="next"><a href="reproduction-lab-10.html">← L10</a><a href="reproduction-lab-12.html">L12 →</a></div>
 </main><script src="../terms.js"></script></body></html>
