@@ -31,13 +31,15 @@
   const hrefFor=f=>prefix+f.replace(/^modules\//,inModules?'':'modules/');
   const currentFile=(path.split('/').pop()||'index.html');
   const isActive=f=>currentFile===f.split('/').pop();
+  const labLink=([t,f])=>`<a class="site-nav-sub ${isActive(f)?'active':''}" href="${hrefFor(f)}">${t}</a>`;
 
   const left=document.createElement('aside'); left.className='site-sidebar'; left.id='siteSidebar';
   left.innerHTML='<div class="site-nav-title">All pages</div>'+
     pages.map(([t,f],i)=>`<a class="${i===0?'site-nav-home ':''}${isActive(f)?'active':''}" href="${hrefFor(f)}">${t}</a>`).join('')+
-    '<div class="site-nav-section">Reproduction Lab · Paper2 methods</div>'+
+    '<div class="site-nav-section">Reproduction Lab · 12 lessons</div>'+
     `<a class="site-nav-lab ${isActive('modules/reproduction-lab.html')?'active':''}" href="${hrefFor('modules/reproduction-lab.html')}">Open Reproduction Lab →</a>`+
-    labs.map(([t,f])=>`<a class="site-nav-sub ${isActive(f)?'active':''}" href="${hrefFor(f)}">${t}</a>`).join('');
+    '<div class="site-nav-phase">Paper1 · L01–L06</div>'+labs.slice(0,6).map(labLink).join('')+
+    '<div class="site-nav-phase">Paper2 · L07–L12</div>'+labs.slice(6).map(labLink).join('');
   document.body.appendChild(left);
 
   if(currentFile==='index.html'){
