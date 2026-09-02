@@ -1,46 +1,46 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Reproduction Lab 12 · Thermal rounding / creep boundary</title><link rel="stylesheet" href="../reproduction-lab-paper2.css"></head><body>
-<header class="top"><div class="bar"><b>Reproduction Lab <small>· Lesson 12 · Paper2 Method Track</small></b><span><a href="reproduction-lab-11.html">上一课</a> · <a href="../index.html">首页</a> · <a href="#result">结论</a></span></div></header>
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Reproduction Lab（复现实验室）12 · 热圆整与蠕变边界</title><link rel="stylesheet" href="../reproduction-lab-paper2.css"></head><body>
+<header class="top"><div class="bar"><b>Reproduction Lab（复现实验室） <small>· 第 12 课 · 第二篇工作方法线</small></b><span><a href="reproduction-lab-11.html">上一课</a> · <a href="../index.html">首页</a> · <a href="#result">结论</a></span></div></header>
 <main>
-<div class="crumb"><a href="../index.html">Learning Sliding Ferroelectricity</a> / Reproduction Lab / Lesson 12</div>
-<div><span class="tag">真实 simulation plot</span><span class="tag">论文原图完整裁切</span><span class="tag">thermal rounding ≠ creep</span></div>
-<h1>同样是有限温：thermal rounding 和 creep 是两条不同证据链</h1>
-<p class="lead">L12 旧版最严重的问题不是图模糊，而是把错误的 PRE Fig.6 当作 thermal rounding 证据。现在完全重置：<b>先用正确的 v–f regime map 定位 f=f<sub>c</sub> 的 thermal rounding；再用 2021 creep review 的完整原图讨论 f&lt;f<sub>c</sub> 的 activated motion。</b> 两部分各自用真实代码图验收，绝不混成一个“有限温指数”。</p>
-<div class="read-order"><div><b>1 · 总地图</b><span>先在 v–f 图上分清 depinning、rounding、creep。</span></div><div><b>2 · f=f<sub>c</sub></b><span>画 v(T)，检查 ψ 对 temperature window 是否稳定。</span></div><div><b>3 · f&lt;f<sub>c</sub></b><span>看 activated motion，但先检查低温轨迹是否真的解析。</span></div><div><b>4 · 才谈 μ</b><span>低温 asymptotic 没解析，就禁止 creep-law fit。</span></div></div>
+<div class="crumb"><a href="../index.html">Learning Sliding Ferroelectricity</a> / 复现实验室 / 第 12 课</div>
+<div><span class="tag">真实模拟图</span><span class="tag">论文原图完整裁切</span><span class="tag">thermal rounding（热圆整）≠ creep（蠕变）</span></div>
+<h1>同样是有限温，热圆整和蠕变是两条不同证据链</h1>
+<p class="lead">这课最重要的修正不是“换一张更清楚的图”，而是把物理问题分开。旧版曾把<b>错误的 PRE Fig.6</b> 当作 thermal rounding 的证据；现在重新建立顺序：<b>先用正确的 v–f 总图定位 f=f<sub>c</sub> 的热圆整，再用 2021 年综述的完整原图讨论 f&lt;f<sub>c</sub> 的热激活运动。</b> 两部分各自有独立判据，不能合并成一个“有限温指数”。</p>
+<div class="read-order"><div><b>1 · 总图</b><span>先在 v–f 图上分清 depinning（退钉扎）、热圆整和蠕变。</span></div><div><b>2 · f=f<sub>c</sub></b><span>画 v(T)，检查 ψ 对温度拟合区间是否稳定。</span></div><div><b>3 · f&lt;f<sub>c</sub></b><span>观察热激活运动，但先检查最低温轨迹是否真的解析。</span></div><div><b>4 · 最后才谈 μ</b><span>低温渐近区没有解析，就禁止拟合蠕变律。</span></div></div>
 
-<h2>0 · 正确的 transport map：三种关系不要混</h2>
-<figure class="figure source"><img src="../assets/reproduction-lab/source-ferrero2013-review-fig1-full.png" alt="Ferrero 2013 Numerical Approaches Figure 1 full crop with original caption"><figcaption class="caption"><b>Ferrero et al., Numerical Approaches on Driven Elastic Interfaces in Random Media (2013), Fig.1。</b> 这里保留 a–d 全部 panels 和原始 caption。请重点看 panel (b)：T=0 depinning、f=f<sub>c</sub> 的 thermal rounding、低驱动 creep、fast flow 都放在同一 v–f 坐标中。</figcaption></figure>
-<div class="grid3"><div class="card"><b>depinning · T=0</b><p>f&gt;f<sub>c</sub><br>v∼(f−f<sub>c</sub>)<sup>β</sup></p></div><div class="card"><b>thermal rounding</b><p>f=f<sub>c</sub><br>v∼T<sup>ψ</sup></p></div><div class="card"><b>creep</b><p>f&lt;f<sub>c</sub>, T&gt;0<br>thermally activated transport</p></div></div>
-<div class="warn"><b>因此 L12 不是“再拟一个指数”。</b> ψ 要在 threshold 上研究 temperature scaling；μ 属于低-drive creep law，变量、极限和收敛要求都不同。</div>
+<h2>0 · 正确的输运总图：三种关系不要混</h2>
+<figure class="figure source"><img src="../assets/reproduction-lab/source-ferrero2013-review-fig1-full.png" alt="Ferrero 2013 Numerical Approaches 图 1 完整原图区域"><figcaption class="caption"><b>Ferrero et al., Numerical Approaches on Driven Elastic Interfaces in Random Media (2013), Fig.1。</b> 完整保留 a–d 四个子图和论文原始图注。重点看子图 (b)：T=0 的退钉扎、f=f<sub>c</sub> 的热圆整、低驱动蠕变以及快速流动都被放在同一 v–f 坐标中。</figcaption></figure>
+<div class="grid3"><div class="card"><b>退钉扎 · T=0</b><p>f&gt;f<sub>c</sub><br>v∼(f−f<sub>c</sub>)<sup>β</sup></p></div><div class="card"><b>热圆整</b><p>f=f<sub>c</sub><br>v∼T<sup>ψ</sup></p></div><div class="card"><b>蠕变</b><p>f&lt;f<sub>c</sub>, T&gt;0<br>热激活输运</p></div></div>
+<div class="warn"><b>因此 L12 不是“再拟一个指数”。</b> ψ 研究的是阈值处随温度的标度；μ 属于阈值下、低驱动的蠕变律。自变量、极限条件和收敛要求都不同。</div>
 
-<h2>1 · thermal rounding：我们真的画 v(f<sub>c</sub>,T)</h2>
+<h2>1 · 热圆整：真正画 v(f<sub>c</sub>,T)</h2>
 <div class="eq">v(f<sub>c</sub>,T) ∼ T<sup>ψ</sup></div>
-<figure class="figure"><img src="../assets/reproduction-lab/lesson12_rounding_vT.png" alt="Velocity at sample depinning threshold versus temperature"><figcaption class="caption"><b>Our simulation output · rounding v(T)。</b> 横轴 T，纵轴是每个 disorder sample 在其 sample-specific threshold authority 上的 steady velocity，再做 realization-level aggregation。lo / midpoint / hi 三种 threshold authority 都实际计算；图里显示它们的差别。</figcaption></figure>
-<div class="figure-note"><b>这张图和公式的变量是直接对齐的。</b> 但“看起来能画直线”仍不够；ψ 必须对 temperature fit window 稳定。</div>
+<figure class="figure"><img src="../assets/reproduction-lab/lesson12_rounding_vT.png" alt="各单样本退钉扎阈值处的速度随温度变化"><figcaption class="caption"><b>本课模拟输出 · 热圆整 v(T)。</b> 横轴为 T。对每个独立无序样本，都分别在其阈值区间下沿、中点和上沿计算稳态速度；每个样本内部先平均 3 条热噪声重复，再在 8 个独立无序样本之间做统计。三种阈值取值方案都实际计算，并在图中显示。</figcaption></figure>
+<div class="figure-note"><b>这张图和公式的变量直接对应。</b> 但“看起来像直线”仍不够；ψ 必须在改变温度拟合区间后保持稳定。</div>
 
-<h2>2 · ψ 的真正 gate：换温度窗还能不能得到同一个指数？</h2>
-<figure class="figure medium"><img src="../assets/reproduction-lab/lesson12_psi_vs_window.png" alt="Thermal rounding exponent versus temperature fit window"><figcaption class="caption"><b>Our simulation output · ψ window audit。</b> 三条曲线对应每个 sample threshold bracket 的 lo / midpoint / hi authority。横轴从 low4 → low5 → all6 逐步加入更高温点；如果已经处在稳定 asymptotic regime，ψ 不应持续系统漂移。</figcaption></figure>
-<table class="table"><thead><tr><th>authority</th><th>ψ low4</th><th>ψ low5</th><th>ψ all6</th></tr></thead><tbody><tr><td>f<sub>−</sub></td><td>0.081861</td><td>0.092425</td><td>0.108981</td></tr><tr><td>midpoint</td><td>0.073079</td><td>0.087862</td><td>0.105033</td></tr><tr><td>f<sub>+</sub></td><td>0.071115</td><td>0.084517</td><td>0.101828</td></tr></tbody></table>
-<div class="ok"><b>数值实现先过两道 gold test。</b> Brownian noise normalization PASS；synthetic ψ=0.15 用同一 regression 恢复 0.150920 / 0.150587 / 0.150878。</div>
-<div class="hold"><b>THERMAL-ROUNDING WINDOW GATE = NOT PASSED。</b> midpoint low4→all6 drift=0.031953，略高于预注册 0.030 gate；bootstrap 的 drift 95%=[0.029133,0.034808] 也跨在 gate 附近。因此 UNIVERSAL PSI CLAIM = NOT AUTHORIZED。</div>
+<h2>2 · ψ 的关键判据：换温度区间还能不能得到同一个指数？</h2>
+<figure class="figure medium"><img src="../assets/reproduction-lab/lesson12_psi_vs_window.png" alt="热圆整有效指数随温度拟合区间变化"><figcaption class="caption"><b>本课模拟输出 · ψ 拟合区间审计。</b> 三条曲线对应每个单样本阈值区间的下沿、中点和上沿。横轴从最低 4 个温度点、最低 5 个温度点到全部 6 个温度点逐步扩大拟合区间；若已经进入稳定的渐近区，ψ 不应持续系统漂移。</figcaption></figure>
+<table class="table"><thead><tr><th>阈值取值方案</th><th>ψ · 最低 4 点</th><th>ψ · 最低 5 点</th><th>ψ · 全部 6 点</th></tr></thead><tbody><tr><td>f<sub>−</sub></td><td>0.081861</td><td>0.092425</td><td>0.108981</td></tr><tr><td>中点</td><td>0.073079</td><td>0.087862</td><td>0.105033</td></tr><tr><td>f<sub>+</sub></td><td>0.071115</td><td>0.084517</td><td>0.101828</td></tr></tbody></table>
+<div class="ok"><b>数值实现先通过两道已知答案测试。</b> Brownian（布朗）噪声归一化测试中，位移均值相对误差为 0.112940%，方差相对误差为 0.795888%；合成 ψ=0.15 用同一回归流程恢复 0.150920 / 0.150587 / 0.150878。两项均通过。</div>
+<div class="hold"><b>热圆整拟合区间稳定性：未通过。</b> 中点方案从最低 4 点到全部 6 点的 ψ 漂移为 0.031953，略高于预先登记的 0.030 判据；对独立无序样本做自助法得到的漂移 95% 区间为 [0.029133, 0.034808]，也落在判据附近。因此<b>普适 ψ 结论：不授权</b>。</div>
 
-<h2>3 · creep 的论文原图：低驱动 finite-T motion 是另一件事</h2>
-<figure class="figure source"><img src="../assets/reproduction-lab/source-ferrero2021-fig3-full.png" alt="Ferrero Annual Review 2021 Figure 3 full crop with original caption"><figcaption class="caption"><b>Ferrero, Foini, Giamarchi, Kolton & Rosso, Annual Review of Condensed Matter Physics 12 (2021), Fig.3。</b> 完整保留两个 panels 和原始 caption。panel (a) 展示 finite-temperature velocity–force characteristic：T=0 threshold 以下 pinned，而 T&gt;0 的低-drive 区出现 creep；panel (b) 是实验中的 creep-law verification。</figcaption></figure>
-<p>这张图给出的关键不是“阈值以下 v 非零”这么简单，而是一个<b>低力、低温、长时间</b>的 asymptotic transport regime。我们的短时数值若连最低温 trajectory 都没可靠走出 pinning landscape，就没有资格直接拟 μ。</p>
+<h2>3 · 蠕变的论文原图：阈值下有限温运动是另一件事</h2>
+<figure class="figure source"><img src="../assets/reproduction-lab/source-ferrero2021-fig3-full.png" alt="Ferrero Annual Review 2021 图 3 完整原图区域"><figcaption class="caption"><b>Ferrero, Foini, Giamarchi, Kolton & Rosso, Annual Review of Condensed Matter Physics 12 (2021), Fig.3。</b> 完整保留两个子图和论文原始图注。子图 (a) 展示有限温速度–力特性：T=0 时阈值以下钉扎，而 T&gt;0 的低驱动区出现蠕变；子图 (b) 展示实验中的蠕变律检验。</figcaption></figure>
+<p>这里的关键并不只是“阈值以下 v 非零”，而是一个<b>低力、低温、长时间</b>的 asymptotic regime（渐近区）。如果短时数值在最低温度下连钉扎景观中的前向运动都没有稳定解析，就没有资格直接拟合 μ。</p>
 
-<h2>4 · 我们的 subthreshold run：先只问“热激活运动解析出来了吗？”</h2>
-<figure class="figure medium"><img src="../assets/reproduction-lab/lesson12_subthreshold_vT.png" alt="Subthreshold activated velocity versus temperature"><figcaption class="caption"><b>Our simulation output · subthreshold v(T)。</b> drive 固定为每个 sample 的 f<sub>c,lo</sub>−0.08，只扫描 T。它显示 finite-time activated velocity 随 T 增强，但注意：<b>横轴是 T，不是 f</b>，所以这张图本身绝不是 creep-law μ fit。</figcaption></figure>
+<h2>4 · 我们的阈值下计算：先只问“热激活运动解析出来了吗？”</h2>
+<figure class="figure medium"><img src="../assets/reproduction-lab/lesson12_subthreshold_vT.png" alt="阈值下热激活速度随温度变化"><figcaption class="caption"><b>本课模拟输出 · 阈值下 v(T)。</b> 对每个独立无序样本，把驱动力固定在 f=f<sub>c,lo</sub>−0.08，只扫描 T；每个样本内部有 2 条热轨迹。图中有限观测时间内的平均速度随 T 增大，但要注意：<b>横轴是 T，不是 f</b>，因此这张图本身绝不是蠕变律的 μ 拟合。</figcaption></figure>
 
-<h2>5 · 为什么最低温数据还不够资格进入 creep asymptotic？</h2>
-<figure class="figure source"><img src="../assets/reproduction-lab/source-ferrero2021-fig4-full.png" alt="Ferrero Annual Review 2021 Figure 4 full crop with original caption"><figcaption class="caption"><b>Ferrero et al. 2021, Fig.4。</b> 完整保留 (a) 单自由度 barrier picture 与 (b) extended-interface creep energetics。panel (b) 的重点是：extended interface 在最优尺度 ℓ<sub>opt</sub> 上发生集体 activated rearrangement，低力时相关 length/barrier 增长；这正是为什么 creep 的低温数值极难收敛。</figcaption></figure>
-<div class="grid2"><figure class="figure" style="margin:0"><img src="../assets/reproduction-lab/lesson12_resolved_fraction.png" alt="Resolved trajectory fraction versus temperature"><figcaption class="caption"><b>Resolved fraction。</b> 最低温 T=0.02 只有 56.25% trajectory 在给定观测窗内达到 substantial forward motion。</figcaption></figure><figure class="figure" style="margin:0"><img src="../assets/reproduction-lab/lesson12_halfwindow_stability.png" alt="Half-window velocity stability versus temperature"><figcaption class="caption"><b>Stationarity diagnostic。</b> 比较同一 trajectory 前后半测量窗的 velocity；最低温 median relative difference=3.102542，说明还远未稳定。</figcaption></figure></div>
-<table class="table"><thead><tr><th>T</th><th>mean v</th><th>resolved fraction</th><th>median half-window diff</th></tr></thead><tbody><tr><td>0.020</td><td>0.020971</td><td><b>0.5625</b></td><td><b>3.102542</b></td></tr><tr><td>0.040</td><td>0.110550</td><td>0.9375</td><td>0.237538</td></tr><tr><td>0.060</td><td>0.162843</td><td>1.0000</td><td>0.117292</td></tr><tr><td>0.080</td><td>0.198881</td><td>1.0000</td><td>0.081750</td></tr><tr><td>0.120</td><td>0.237164</td><td>1.0000</td><td>0.046381</td></tr></tbody></table>
-<div class="hold"><b>LOW-T CREEP ASYMPTOTIC RESOLVED = NO。</b> 预注册的 resolved-motion rule 要求 fraction=1 且 median half-window diff&lt;0.2；最低温两项都失败。因此 CREEP-LAW / μ CLAIM = NOT AUTHORIZED。</div>
+<h2>5 · 为什么最低温数据还不够资格进入蠕变渐近区？</h2>
+<figure class="figure source"><img src="../assets/reproduction-lab/source-ferrero2021-fig4-full.png" alt="Ferrero Annual Review 2021 图 4 完整原图区域"><figcaption class="caption"><b>Ferrero et al. 2021, Fig.4。</b> 完整保留 (a) 单自由度势垒图与 (b) extended interface（延展界面）的蠕变能量学。子图 (b) 的重点是：延展界面在最优尺度 ℓ<sub>opt</sub> 上发生集体热激活重排，低驱动力下相关尺度和势垒增大；这正是低温蠕变数值极难收敛的原因。</figcaption></figure>
+<div class="grid2"><figure class="figure" style="margin:0"><img src="../assets/reproduction-lab/lesson12_resolved_fraction.png" alt="不同温度下已解析热轨迹比例"><figcaption class="caption"><b>已解析轨迹比例。</b> 最低温 T=0.02 时，在给定观测时间内达到规定前向位移的轨迹比例平均只有 56.25%。</figcaption></figure><figure class="figure" style="margin:0"><img src="../assets/reproduction-lab/lesson12_halfwindow_stability.png" alt="不同温度下前后半观测窗速度稳定性"><figcaption class="caption"><b>稳态诊断。</b> 比较同一轨迹前半与后半测量窗的速度；最低温的中位相对差为 3.102542，说明运动仍强烈非稳态。</figcaption></figure></div>
+<table class="table"><thead><tr><th>T</th><th>平均 v</th><th>已解析轨迹比例</th><th>前后半窗相对差中位数</th></tr></thead><tbody><tr><td>0.020</td><td>0.020971</td><td><b>0.5625</b></td><td><b>3.102542</b></td></tr><tr><td>0.040</td><td>0.110550</td><td>0.9375</td><td>0.237538</td></tr><tr><td>0.060</td><td>0.162843</td><td>1.0000</td><td>0.117292</td></tr><tr><td>0.080</td><td>0.198881</td><td>1.0000</td><td>0.081750</td></tr><tr><td>0.120</td><td>0.237164</td><td>1.0000</td><td>0.046381</td></tr></tbody></table>
+<div class="hold"><b>低温蠕变渐近区：尚未解析。</b> 预先登记的热激活运动判据要求“已解析轨迹比例=1 且前后半窗相对差中位数&lt;0.2”；最低温两项都失败。因此<b>蠕变律 / μ 结论：不授权</b>。</div>
 
 <h2 id="result">6 · L12 的最终边界</h2>
-<div class="ok"><b>FINITE-T ROUNDING OBSERVED。</b> 在 sample threshold 附近，velocity 随 T 系统增加；noise normalization 与 synthetic ψ pipeline 都已独立验证。</div>
-<div class="hold"><b>ASYMPTOTIC EXPONENTS REMAIN OPEN。</b> ψ 对 temperature window 尚未稳定；低温 subthreshold trajectories 也没有充分解析出 creep asymptotic。正确结论是“看见有限温效应，但指数证据链未闭合”，而不是硬报 ψ 或 μ。</div>
+<div class="ok"><b>有限温热圆整现象：可见。</b> 在单样本阈值附近，速度随 T 系统增加；布朗噪声归一化与合成 ψ 的已知答案测试都已独立通过。</div>
+<div class="hold"><b>渐近指数证据链仍未闭合。</b> ψ 对温度拟合区间尚未稳定；阈值下最低温轨迹也没有充分解析出蠕变渐近区。当前正确结论是“看见有限温效应，但普适 ψ 与蠕变 μ 都不授权”，而不是硬报一个指数。</div>
 
 <h2>7 · 可复查数据</h2>
-<div class="code-links"><a href="../examples/reproduction-lab/lesson12_thermal_rounding.py">完整 Python 脚本</a><a href="../assets/reproduction-lab/lesson12_thermal_rounding.txt">run receipt</a><a href="../assets/reproduction-lab/lesson12_rounding_raw.csv">rounding raw · 144 rows</a><a href="../assets/reproduction-lab/lesson12_subthreshold_raw.csv">subthreshold raw · 40 rows</a><a href="../assets/reproduction-lab/source-figure-receipt.json">论文截图 receipt</a></div>
+<div class="code-links"><a href="../examples/reproduction-lab/lesson12_thermal_rounding.py">完整 Python 脚本</a><a href="../assets/reproduction-lab/lesson12_thermal_rounding.txt">运行回执</a><a href="../assets/reproduction-lab/lesson12_rounding_raw.csv">热圆整原始数据 · 144 行</a><a href="../assets/reproduction-lab/lesson12_subthreshold_raw.csv">阈值下原始数据 · 40 行</a><a href="../assets/reproduction-lab/source-figure-receipt.json">论文截图来源回执</a></div>
 <div class="next"><a href="reproduction-lab-11.html">← L11</a><a href="research-track.html">Research Track →</a></div>
 </main><script src="../terms.js"></script></body></html>
