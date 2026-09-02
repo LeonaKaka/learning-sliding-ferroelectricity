@@ -5,25 +5,13 @@ from language_v2_second_pass import ROOT
 
 TARGET = ROOT / "modules/research-track.html"
 
-# Small, idempotent cleanup found by reverse-scanning the first-pass bot HTML.
-TEXT_REPLACEMENTS = {
-    "Module 04 · UV/IR mask": "模块 04 · UV/IR 尺度掩膜",
-    "Module 05 · objective": "模块 05 · 目标函数",
-    "去 Module 07 看运行记录 / 来源追踪约定": "去模块 07 看运行记录 / 来源追踪约定",
-    "去 Module 07 看无量纲化 / 可辨识性": "去模块 07 看无量纲化 / 可辨识性",
-    "不能因为把突发事件叫作 avalanche 就把它当成雪崩": "不能因为把突发事件叫作“雪崩”就把它当成雪崩临界现象",
-    "幂律-consistent 区间": "与幂律相容的区间",
-    "、work、事件大小统计": "、回线功、事件大小统计",
-    "同一个文件里有很多 rows，不代表 n 很大": "同一个文件里有很多记录行，不代表 n 很大",
-    "由内部 rows 数量放大的 n": "由内部记录行数量放大的 n",
-    "无序-总体推断": "无序总体推断",
-    "去模块 06 看完整统计边界": "去模块 06 看完整统计边界",
-    "07 Numerical Modeling（数值建模）": "07 Numerical Modeling（数值建模）",
-}
-
-SMALL_REPLACEMENTS = {
-    "二维 网格单元平均 white 无序：std ∝ 1/dx。该缩放只针对明确的 δ 相关连续场约定。":
-        "二维网格单元平均白噪声无序：std ∝ 1/dx。该缩放只针对明确的 δ 相关连续场约定。",
+# Final tiny cleanup from the post-bot reverse scan. Keep this intentionally
+# narrow and idempotent.
+REPLACEMENTS = {
+    "自助法 draw": "自助法重采样",
+    "其中 i 是 quenched 无序样本": "其中 i 是淬火无序样本",
+    "分层 / nested 自助法": "分层 / 嵌套自助法",
+    "配对删失 / bound 信息": "配对删失 / 边界信息",
 }
 
 
@@ -53,23 +41,15 @@ def main() -> None:
             continue
         old = str(node)
         new = old
-        for src, dst in TEXT_REPLACEMENTS.items():
+        for src, dst in REPLACEMENTS.items():
             new = new.replace(src, dst)
         if new != old:
             node.replace_with(new)
 
-    # Equation mathematical bodies are immutable; only human-readable <small>
-    # guides may be localized.
-    for small in soup.select(".eq small"):
-        old = small.get_text()
-        new = SMALL_REPLACEMENTS.get(old, old)
-        if new != old:
-            small.string = new
-
     if [equation_body_text(eq) for eq in soup.select(".eq")] != before_eq_bodies:
         raise RuntimeError("Research Track mathematical equation body changed")
     if [a.get("href") for a in soup.find_all("a")] != before_hrefs:
-        raise RuntimeError("Research Track links changed during second audit")
+        raise RuntimeError("Research Track links changed during final cleanup")
 
     TARGET.write_text(str(soup), encoding="utf-8")
 
