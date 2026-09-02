@@ -1,0 +1,198 @@
+[
+  {
+    "name": "ferrero2013-pre-fig1-critical-structure-factor.png",
+    "source": "Ferrero 等 - 2013 - Nonsteady relaxation and critical exponents at the depinning transition.pdf",
+    "page": 5,
+    "render_dpi": 600,
+    "crop_reference_render_px": [
+      111,
+      90,
+      600,
+      380
+    ],
+    "reference_render_size_px": [
+      1190,
+      1684
+    ],
+    "pdf_crop_box_points": [
+      55.5,
+      45.0,
+      300.0,
+      190.0
+    ],
+    "output_pixels": [
+      2037,
+      1208
+    ],
+    "sha256": "7352703d4e3db9dd43b225fc31c5edece7c3bdc27e3417feb4af99f1e30990a9",
+    "bytes": 123457
+  },
+  {
+    "name": "ferrero2013-pre-fig2-finite-size-critical-force.png",
+    "source": "Ferrero 等 - 2013 - Nonsteady relaxation and critical exponents at the depinning transition.pdf",
+    "page": 5,
+    "render_dpi": 600,
+    "crop_reference_render_px": [
+      631,
+      86,
+      1110,
+      380
+    ],
+    "reference_render_size_px": [
+      1190,
+      1684
+    ],
+    "pdf_crop_box_points": [
+      315.5,
+      43.0,
+      555.0,
+      190.0
+    ],
+    "output_pixels": [
+      1996,
+      1225
+    ],
+    "sha256": "f22ff86b80b8b3eed3da888f0f3462fcc70c11c7d40ba4462951a00ebb338743",
+    "bytes": 149819
+  },
+  {
+    "name": "ferrero2013-pre-fig3a-velocity-relaxation.png",
+    "source": "Ferrero 等 - 2013 - Nonsteady relaxation and critical exponents at the depinning transition.pdf",
+    "page": 6,
+    "render_dpi": 600,
+    "crop_reference_render_px": [
+      641,
+      90,
+      1150,
+      390
+    ],
+    "reference_render_size_px": [
+      1190,
+      1684
+    ],
+    "pdf_crop_box_points": [
+      320.5,
+      45.0,
+      575.0,
+      195.0
+    ],
+    "output_pixels": [
+      2121,
+      1250
+    ],
+    "sha256": "14f3f12347242a5960dacca8e6942868ade986bb0de0ca516ad07535942cea5e",
+    "bytes": 390980
+  },
+  {
+    "name": "ferrero2013-pre-fig5a-velocity-crossover.png",
+    "source": "Ferrero 等 - 2013 - Nonsteady relaxation and critical exponents at the depinning transition.pdf",
+    "page": 7,
+    "render_dpi": 600,
+    "crop_reference_render_px": [
+      151,
+      900,
+      600,
+      1040
+    ],
+    "reference_render_size_px": [
+      1190,
+      1684
+    ],
+    "pdf_crop_box_points": [
+      75.5,
+      450.0,
+      300.0,
+      520.0
+    ],
+    "output_pixels": [
+      1871,
+      584
+    ],
+    "sha256": "77a26b1c0a676e1f5583ac35419a4af879ef69f4145da6eead403631023fe585",
+    "bytes": 70321
+  },
+  {
+    "name": "ferrero2013-review-fig1b-velocity-force.png",
+    "source": "Ferrero 等 - 2013 - Numerical approaches on driven elastic interfaces in random media.pdf",
+    "page": 3,
+    "render_dpi": 600,
+    "crop_reference_render_px": [
+      440,
+      100,
+      1000,
+      376
+    ],
+    "reference_render_size_px": [
+      1224,
+      1584
+    ],
+    "pdf_crop_box_points": [
+      220.0,
+      50.0,
+      500.0,
+      188.0
+    ],
+    "output_pixels": [
+      2334,
+      1150
+    ],
+    "sha256": "0c67f72aa73fa690d5a8ca8015e80389641fac9e46c1d398323edf3d79c0dc71",
+    "bytes": 162055
+  },
+  {
+    "name": "ferrero2021-fig3a-creep-velocity-force.png",
+    "source": "Ferrero 等 - 2021 - Creep Motion of Elastic Interfaces Driven in a Disordered Landscape.pdf",
+    "page": 8,
+    "render_dpi": 600,
+    "crop_reference_render_px": [
+      180,
+      70,
+      609,
+      370
+    ],
+    "reference_render_size_px": [
+      1062,
+      1314
+    ],
+    "pdf_crop_box_points": [
+      90.0,
+      35.0,
+      304.5,
+      185.0
+    ],
+    "output_pixels": [
+      1788,
+      1250
+    ],
+    "sha256": "86fca9d67e33ec17808bb1d0a119b2c48fd6ec40ad9b065267ffd0dc09aa037b",
+    "bytes": 70294
+  },
+  {
+    "name": "ferrero2021-fig4b-creep-barrier-scaling.png",
+    "source": "Ferrero 等 - 2021 - Creep Motion of Elastic Interfaces Driven in a Disordered Landscape.pdf",
+    "page": 8,
+    "render_dpi": 600,
+    "crop_reference_render_px": [
+      570,
+      800,
+      999,
+      1080
+    ],
+    "reference_render_size_px": [
+      1062,
+      1314
+    ],
+    "pdf_crop_box_points": [
+      285.0,
+      400.0,
+      499.5,
+      540.0
+    ],
+    "output_pixels": [
+      1787,
+      1167
+    ],
+    "sha256": "f48028fbd683a6862fae794abf436b4616cbb0dd3c0b318ae2bd96f7fc55fdbd",
+    "bytes": 90546
+  }
+]
