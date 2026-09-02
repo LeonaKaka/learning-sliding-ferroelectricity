@@ -11,173 +11,204 @@ import struct
 from bs4 import BeautifulSoup
 from language_v2_second_pass import ROOT
 
-TARGET = ROOT / "modules/reproduction-lab-11.html"
-PYTHON = ROOT / "examples/reproduction-lab/lesson11_fss_nu.py"
-RECEIPT = ROOT / "assets/reproduction-lab/lesson11_fss_nu.txt"
-RAW_CSV = ROOT / "assets/reproduction-lab/lesson11_fc_raw.csv"
+TARGET = ROOT / "modules/reproduction-lab-12.html"
+PYTHON = ROOT / "examples/reproduction-lab/lesson12_thermal_rounding.py"
+RECEIPT = ROOT / "assets/reproduction-lab/lesson12_thermal_rounding.txt"
+ROUND_CSV = ROOT / "assets/reproduction-lab/lesson12_rounding_raw.csv"
+SUB_CSV = ROOT / "assets/reproduction-lab/lesson12_subthreshold_raw.csv"
 SOURCE_RECEIPT = ROOT / "assets/reproduction-lab/source-figure-receipt.json"
-PAPER_FIG = ROOT / "assets/reproduction-lab/source-ferrero2013-pre-fig2-full.png"
+SOURCE_FIGS = {
+    "source-ferrero2013-review-fig1-full.png": (3, (3250, 2550), "Fig. 1"),
+    "source-ferrero2021-fig3-full.png": (8, (2883, 1550), "Fig. 3"),
+    "source-ferrero2021-fig4-full.png": (8, (3250, 1580), "Fig. 4"),
+}
 PLOT_FILES = (
-    ROOT / "assets/reproduction-lab/lesson11_mean_fc.png",
-    ROOT / "assets/reproduction-lab/lesson11_std_fc.png",
-    ROOT / "assets/reproduction-lab/lesson11_nu_vs_window.png",
-    ROOT / "assets/reproduction-lab/lesson11_collapse_score.png",
+    ROOT / "assets/reproduction-lab/lesson12_rounding_vT.png",
+    ROOT / "assets/reproduction-lab/lesson12_psi_vs_window.png",
+    ROOT / "assets/reproduction-lab/lesson12_subthreshold_vT.png",
+    ROOT / "assets/reproduction-lab/lesson12_resolved_fraction.png",
+    ROOT / "assets/reproduction-lab/lesson12_halfwindow_stability.png",
 )
 EXPECTED_SRCS = (
-    "../assets/reproduction-lab/source-ferrero2013-pre-fig2-full.png",
-    "../assets/reproduction-lab/lesson11_mean_fc.png",
-    "../assets/reproduction-lab/lesson11_std_fc.png",
-    "../assets/reproduction-lab/lesson11_nu_vs_window.png",
-    "../assets/reproduction-lab/lesson11_collapse_score.png",
+    "../assets/reproduction-lab/source-ferrero2013-review-fig1-full.png",
+    "../assets/reproduction-lab/lesson12_rounding_vT.png",
+    "../assets/reproduction-lab/lesson12_psi_vs_window.png",
+    "../assets/reproduction-lab/source-ferrero2021-fig3-full.png",
+    "../assets/reproduction-lab/lesson12_subthreshold_vT.png",
+    "../assets/reproduction-lab/source-ferrero2021-fig4-full.png",
+    "../assets/reproduction-lab/lesson12_resolved_fraction.png",
+    "../assets/reproduction-lab/lesson12_halfwindow_stability.png",
 )
 EXPECTED_ALTS = (
-    "Ferrero PRE 2013 图 2 完整原图区域",
-    "单样本临界力的平均值随系统尺寸变化",
-    "阈值标准差随系统尺寸变化及有限尺寸拟合",
-    "不同有限尺寸区间给出的有效 ν",
-    "不同假设 ν 下的分位数坍缩评分",
+    "Ferrero 2013 Numerical Approaches 图 1 完整原图区域",
+    "各单样本退钉扎阈值处的速度随温度变化",
+    "热圆整有效指数随温度拟合区间变化",
+    "Ferrero Annual Review 2021 图 3 完整原图区域",
+    "阈值下热激活速度随温度变化",
+    "Ferrero Annual Review 2021 图 4 完整原图区域",
+    "不同温度下已解析热轨迹比例",
+    "不同温度下前后半观测窗速度稳定性",
 )
 REQUIRED_VISIBLE = (
-    "finite-size scaling（有限尺寸标度）",
-    "finite-size correction（有限尺寸修正）",
-    "quenched disorder（淬火无序）",
-    "ν=1.318867",
-    "1.557481",
-    "1.503976",
-    "1.709690",
-    "0.205713",
-    "0.15 判据",
-    "尺寸区间稳定性：未通过",
-    "有限尺寸趋势：存在",
-    "普适 ν 结论：不授权",
-    "[1.241478, 1.903499]",
-    "ν=1.405",
-    "评分=0.117003",
-    "评分=0.120858",
-    "评分=0.123243",
+    "thermal rounding（热圆整）≠ creep（蠕变）",
+    "错误的 PRE Fig.6",
+    "depinning（退钉扎）",
+    "Brownian（布朗）",
+    "asymptotic regime（渐近区）",
+    "extended interface（延展界面）",
+    "0.112940%",
+    "0.795888%",
+    "0.150920 / 0.150587 / 0.150878",
+    "0.081861",
+    "0.092425",
+    "0.108981",
+    "0.073079",
+    "0.087862",
+    "0.105033",
+    "0.071115",
+    "0.084517",
+    "0.101828",
+    "0.031953",
+    "0.030 判据",
+    "[0.029133, 0.034808]",
+    "热圆整拟合区间稳定性：未通过",
+    "普适 ψ 结论：不授权",
+    "0.5625",
+    "3.102542",
+    "低温蠕变渐近区：尚未解析",
+    "蠕变律 / μ 结论：不授权",
+    "有限温热圆整现象：可见",
+    "普适 ψ 与蠕变 μ 都不授权",
 )
 FORBIDDEN_VISIBLE = (
-    "Lesson 11",
+    "Lesson 12",
     "Paper2 Method Track",
     "真实 simulation plot",
-    "finite-size threshold",
-    "sample-to-sample",
-    "mean finite-size threshold",
-    "aspect protocol",
-    "ν-sensitive observable",
-    "size-window gate",
-    "finite-size critical force",
-    "aspect-ratio",
-    "original caption",
-    "thermodynamic critical force",
-    "Our simulation output",
-    "quenched-disorder realizations",
-    "sample threshold",
-    "observable-level bridge",
-    "M grid",
-    "independent realizations",
-    "disorder normalization",
-    "force units",
-    "critical-state algorithm",
-    "finite geometry",
-    "distribution width",
-    "sample-specific thresholds",
-    "sample-to-sample fluctuation",
-    "48-realization distribution width",
-    "log–log effective fit",
-    "same regression",
-    "synthetic data",
-    "gold test PASS",
-    "all-four",
-    "raw threshold table",
-    "size-window audit",
-    "pre-registered",
-    "SIZE-WINDOW STABILITY GATE",
-    "thermodynamic ν",
-    "distribution collapse",
-    "quantile-collapse score",
-    "variance fit",
-    "best scan",
-    "optimum",
-    "FINITE-SIZE TREND EXISTS",
-    "UNIVERSAL NU CLAIM",
-    "bootstrap 95%",
+    "thermal rounding ≠ creep",
+    "transport map",
+    "regime map",
+    "temperature window",
+    "activated motion",
+    "creep-law fit",
+    "full crop with original caption",
+    "panels",
+    "panel (b)",
+    "low-drive",
+    "thermally activated transport",
+    "threshold authority",
+    "sample-specific threshold authority",
+    "steady velocity",
+    "realization-level aggregation",
+    "lo / midpoint / hi",
+    "gold test",
+    "THERMAL-ROUNDING WINDOW GATE",
+    "UNIVERSAL PSI CLAIM",
+    "subthreshold run",
+    "finite-time activated velocity",
+    "creep-law μ fit",
+    "barrier picture",
+    "creep energetics",
+    "Resolved fraction",
+    "trajectory fraction",
+    "Stationarity diagnostic",
+    "median relative difference",
+    "LOW-T CREEP ASYMPTOTIC RESOLVED",
+    "CREEP-LAW / μ CLAIM",
+    "FINITE-T ROUNDING OBSERVED",
+    "ASYMPTOTIC EXPONENTS REMAIN OPEN",
+    "synthetic ψ pipeline",
+    "subthreshold trajectories",
     "run receipt",
-    "192-row threshold table",
+    "rounding raw",
+    "subthreshold raw",
     "论文截图 receipt",
-    "finite-size scaling（有限尺寸标度）（有限尺寸标度）",
-    "quenched disorder（淬火无序）（淬火无序）",
+    "thermal rounding（热圆整）（热圆整）",
+    "creep（蠕变）（蠕变）",
 )
 PYTHON_LOCKS = (
-    "TARGET_NU=4/3",
-    "WINDOW_DRIFT_GATE=0.15",
-    "BOOTSTRAPS=3000",
-    "EXPECTED={32:320,64:736,128:1728,256:4096}",
-    "N_PER_SIZE=48",
-    "assert len(rr)==N_PER_SIZE",
-    "assert all(r['M']==M for r in rr)",
-    "assert len({r['seed'] for r in rr})==N_PER_SIZE",
-    "assert all(abs((r['fc_hi']-r['fc_lo'])-1/512)<1e-12 for r in rr)",
-    "def fit_nu(Ls,stds):",
-    "def collapse_score(rows,Ls,nu,probs=np.linspace(.1,.9,9)):",
-    "def synthetic_gold(Ls,nu=TARGET_NU,seed=20261110):",
-    "assert abs(syn_nu-TARGET_NU)<.05",
-    "rng=np.random.default_rng(20261111); boot=[]",
-    "grid=np.linspace(.8,2.2,281)",
-    "window_pass=window_drift<WINDOW_DRIFT_GATE",
-    "f'SIZE-WINDOW STABILITY GATE     = {\"PASS\" if window_pass else \"NOT PASSED\"}'",
-    "'UNIVERSAL NU CLAIM              = NOT AUTHORIZED'",
-    "'FINITE-SIZE TREND EXISTS; THERMODYNAMIC CLOSURE REQUIRES LARGER-SCALE EVIDENCE'",
-    "(out/'lesson11_fss_nu.txt').write_text",
-    "finish(fig,'lesson11_mean_fc.png')",
-    "finish(fig,'lesson11_std_fc.png')",
-    "finish(fig,'lesson11_nu_vs_window.png')",
-    "finish(fig,'lesson11_collapse_score.png')",
+    "PSI_SYNTH=0.15",
+    "PSI_WINDOW_GATE=0.03",
+    "BOOTSTRAPS=5000",
+    "ROUND_SEEDS=8",
+    "def brownian_gold(seed=20261201,ntraj=10000,dt=.02,steps=500,f=.17,T=.08):",
+    "sig=math.sqrt(2*T*dt)",
+    "assert bm_err<.01 and bv_err<.03",
+    "def synthetic_psi_gold(Ts,seed=20261202,psi=PSI_SYNTH,n=512):",
+    "assert max(abs(x-PSI_SYNTH) for x in synth_fits)<.005",
+    "assert len(rounding)==144 and len(sub)==40",
+    "assert set(rounding.authority)=={'lo','mid','hi'}",
+    "assert len(Ts)==6 and len(rounding.seed.unique())==ROUND_SEEDS",
+    "rng=np.random.default_rng(20261212); b6=[]; b4=[]; bd=[]",
+    "subthreshold drive              = f = fc_lo - 0.08",
+    "creep_resolved=[(rf==1.0 and hd<.2) for _,_,rf,hd in subagg]",
+    "assert not lowT_resolved",
+    "f'THERMAL-ROUNDING WINDOW GATE    = {\"PASS\" if mid_drift<PSI_WINDOW_GATE else \"NOT PASSED\"}'",
+    "'UNIVERSAL PSI CLAIM             = NOT AUTHORIZED'",
+    "'LOW-T CREEP ASYMPTOTIC RESOLVED = NO'",
+    "'CREEP-LAW / MU CLAIM             = NOT AUTHORIZED'",
+    "'FINITE-T ROUNDING OBSERVED; ASYMPTOTIC THERMAL AND CREEP EXPONENTS REMAIN OPEN'",
+    "(out/'lesson12_thermal_rounding.txt').write_text",
+    "finish(fig,'lesson12_rounding_vT.png')",
+    "finish(fig,'lesson12_psi_vs_window.png')",
+    "finish(fig,'lesson12_subthreshold_vT.png')",
+    "finish(fig,'lesson12_resolved_fraction.png')",
+    "finish(fig,'lesson12_halfwindow_stability.png')",
 )
 RECEIPT_LOCKS = (
-    "paper relation                 = Var(fc_sample) ~ L^(-2/nu_dep)",
-    "paper aspect protocol          = M_phys ~ L^zeta_dep with zeta_dep=1.25",
-    "raw statistical unit           = disorder realization",
-    "realizations per L            = 48",
-    "L ladder                       = 32, 64, 128, 256",
-    "M grid ladder                  = 320, 736, 1728, 4096",
-    "moving certificate             = 1 u-period",
-    "fc bracket width               = 0.001953125",
-    "synthetic target nu           = 1.333333",
-    "synthetic recovered nu        = 1.318867",
-    "SYNTHETIC FSS GOLD TEST         = PASS",
-    "L= 32 M= 320 mean fc             = 0.819978841",
-    "L= 32 M= 320 std(fc)             = 0.064453427",
-    "L= 64 M= 736 mean fc             = 0.823315430",
-    "L= 64 M= 736 std(fc)             = 0.033881635",
-    "L=128 M=1728 mean fc             = 0.823396810",
-    "L=128 M=1728 std(fc)             = 0.026465858",
-    "L=256 M=4096 mean fc             = 0.821850586",
-    "L=256 M=4096 std(fc)             = 0.015059779",
-    "nu all four sizes             = 1.503976",
-    "nu smallest three             = 1.557481",
-    "nu largest three              = 1.709690",
-    "size-window nu drift          = 0.205713",
-    "size-window drift gate        = < 0.150",
-    "realization-bootstrap 95% nu  = [1.241478, 1.903499]",
-    "quantile-collapse best nu      = 1.405000",
-    "collapse score best            = 0.117003",
-    "collapse score nu=4/3          = 0.120858",
-    "collapse score variance-fit nu = 0.123243",
-    "SIZE-WINDOW STABILITY GATE     = NOT PASSED",
-    "UNIVERSAL NU CLAIM              = NOT AUTHORIZED",
-    "FINITE-SIZE TREND EXISTS; THERMODYNAMIC CLOSURE REQUIRES LARGER-SCALE EVIDENCE",
+    "paper relation                  = v(fc,T) ~ T^psi",
+    "rounding statistical unit       = quenched disorder realization",
+    "rounding disorder realizations  = 8",
+    "rounding thermal repeats/sample = 3",
+    "rounding T ladder               = 0.0025, 0.005, 0.01, 0.02, 0.04, 0.08",
+    "fc authority audit              = lo, midpoint, hi of each sample bracket",
+    "Brownian gold mean rel error    = 0.112940%",
+    "Brownian gold variance rel err  = 0.795888%",
+    "BROWNIAN NOISE-NORMALIZATION GOLD TEST = PASS",
+    "synthetic target psi            = 0.150000",
+    "synthetic psi low4/low5/all6    = 0.150920 / 0.150587 / 0.150878",
+    "SYNTHETIC THERMAL-EXPONENT GOLD TEST = PASS",
+    "lo psi low4/low5/all6          = 0.081861 / 0.092425 / 0.108981",
+    "mid psi low4/low5/all6          = 0.073079 / 0.087862 / 0.105033",
+    "hi psi low4/low5/all6          = 0.071115 / 0.084517 / 0.101828",
+    "midpoint psi window drift      = 0.031953",
+    "psi window drift gate          = < 0.030",
+    "threshold-authority all6 span  = 0.007152",
+    "midpoint psi low4 bootstrap95  = [0.052590, 0.094732]",
+    "midpoint psi all6 bootstrap95  = [0.084945, 0.127145]",
+    "window-drift bootstrap95       = [0.029133, 0.034808]",
+    "THERMAL-ROUNDING WINDOW GATE    = NOT PASSED",
+    "UNIVERSAL PSI CLAIM             = NOT AUTHORIZED",
+    "subthreshold drive              = f = fc_lo - 0.08",
+    "subthreshold thermal repeats    = 2 per disorder sample",
+    "sub T=0.020 mean v / resolved / half-diff = 0.020971 / 0.5625 / 3.102542",
+    "sub T=0.040 mean v / resolved / half-diff = 0.110550 / 0.9375 / 0.237538",
+    "sub T=0.060 mean v / resolved / half-diff = 0.162843 / 1.0000 / 0.117292",
+    "sub T=0.080 mean v / resolved / half-diff = 0.198881 / 1.0000 / 0.081750",
+    "sub T=0.120 mean v / resolved / half-diff = 0.237164 / 1.0000 / 0.046381",
+    "resolved activated-motion rule  = trajectory fraction 1.0 AND median half-diff < 0.2",
+    "LOW-T CREEP ASYMPTOTIC RESOLVED = NO",
+    "CREEP-LAW / MU CLAIM             = NOT AUTHORIZED",
+    "FINITE-T ROUNDING OBSERVED; ASYMPTOTIC THERMAL AND CREEP EXPONENTS REMAIN OPEN",
 )
-EXPECTED_M = {32: 320, 64: 736, 128: 1728, 256: 4096}
-EXPECTED_MEAN = {32: 0.819978841, 64: 0.823315430, 128: 0.823396810, 256: 0.821850586}
-EXPECTED_STD = {32: 0.064453427, 64: 0.033881635, 128: 0.026465858, 256: 0.015059779}
-EXPECTED_NU = (1.557481, 1.503976, 1.709690)
+ROUND_TS = (0.0025, 0.005, 0.01, 0.02, 0.04, 0.08)
+EXPECTED_PSIS = {
+    "lo": (0.081861, 0.092425, 0.108981),
+    "mid": (0.073079, 0.087862, 0.105033),
+    "hi": (0.071115, 0.084517, 0.101828),
+}
+SUB_EXPECTED = {
+    0.020: (0.020971, 0.5625, 3.102542),
+    0.040: (0.110550, 0.9375, 0.237538),
+    0.060: (0.162843, 1.0000, 0.117292),
+    0.080: (0.198881, 1.0000, 0.081750),
+    0.120: (0.237164, 1.0000, 0.046381),
+}
 
 
 def png_size(path: Path) -> tuple[int, int]:
     data = path.read_bytes()
     if data[:8] != b"\x89PNG\r\n\x1a\n" or data[12:16] != b"IHDR":
-        raise RuntimeError(f"Lab 11 artifact is not canonical PNG: {path.relative_to(ROOT)}")
+        raise RuntimeError(f"Lab 12 artifact is not canonical PNG: {path.relative_to(ROOT)}")
     return struct.unpack(">II", data[16:24])
 
 
@@ -200,135 +231,176 @@ def verify_local_links(soup: BeautifulSoup) -> None:
         try:
             resolved.relative_to(ROOT.resolve())
         except ValueError as exc:
-            raise RuntimeError(f"Lab 11 local link escapes repository: {value}") from exc
+            raise RuntimeError(f"Lab 12 local link escapes repository: {value}") from exc
         if not resolved.exists():
-            raise RuntimeError(f"Lab 11 broken local link: {value}")
+            raise RuntimeError(f"Lab 12 broken local link: {value}")
+
+
+def log_slope(xs: list[float], ys: list[float]) -> float:
+    lx = [math.log(x) for x in xs]
+    ly = [math.log(y) for y in ys]
+    xm = statistics.fmean(lx)
+    ym = statistics.fmean(ly)
+    den = sum((x - xm) ** 2 for x in lx)
+    return sum((x - xm) * (y - ym) for x, y in zip(lx, ly)) / den
+
+
+def verify_rounding_csv() -> None:
+    with ROUND_CSV.open(newline="", encoding="utf-8") as handle:
+        rows = list(csv.DictReader(handle))
+    expected_header = ["seed", "authority", "T", "v_rep1", "v_rep2", "v_rep3", "v_mean_within_disorder", "max_half_rel_diff"]
+    if not rows or list(rows[0].keys()) != expected_header:
+        raise RuntimeError("Lab 12 rounding raw CSV header drifted")
+    if len(rows) != 144:
+        raise RuntimeError(f"Lab 12 rounding raw CSV must contain 144 rows, found {len(rows)}")
+    seeds = sorted({int(r["seed"]) for r in rows})
+    if len(seeds) != 8:
+        raise RuntimeError("Lab 12 rounding data must contain 8 independent disorder seeds")
+    authorities = {r["authority"] for r in rows}
+    if authorities != {"lo", "mid", "hi"}:
+        raise RuntimeError(f"Lab 12 threshold authority set drifted: {authorities}")
+    temps = tuple(sorted({float(r["T"]) for r in rows}))
+    if temps != ROUND_TS:
+        raise RuntimeError(f"Lab 12 rounding temperature ladder drifted: {temps}")
+
+    agg = {}
+    for authority in ("lo", "mid", "hi"):
+        means = []
+        for T in ROUND_TS:
+            group = [r for r in rows if r["authority"] == authority and float(r["T"]) == T]
+            if len(group) != 8 or len({int(r["seed"]) for r in group}) != 8:
+                raise RuntimeError(f"Lab 12 {authority}, T={T} must contain 8 independent disorder rows")
+            vals = []
+            for row in group:
+                reps = [float(row[f"v_rep{i}"]) for i in (1, 2, 3)]
+                row_mean = float(row["v_mean_within_disorder"])
+                if abs(statistics.fmean(reps) - row_mean) > 2e-12:
+                    raise RuntimeError(f"Lab 12 within-disorder thermal-repeat mean drifted for seed={row['seed']}, authority={authority}, T={T}")
+                vals.append(row_mean)
+            means.append(statistics.fmean(vals))
+        agg[authority] = means
+        got = tuple(log_slope(list(ROUND_TS[:n]), means[:n]) for n in (4, 5, 6))
+        for value, expected in zip(got, EXPECTED_PSIS[authority]):
+            if abs(value - expected) > 8e-7:
+                raise RuntimeError(f"Lab 12 raw rounding data no longer reproduce psi for {authority}: {got}")
+
+    mid = EXPECTED_PSIS["mid"]
+    drift = max(mid) - min(mid)
+    if abs(drift - 0.031953) > 8e-7:
+        raise RuntimeError(f"Lab 12 midpoint psi window drift changed: {drift:.6f}")
+    if drift <= 0.030:
+        raise RuntimeError("Lab 12 thermal-rounding failure boundary was weakened")
+    all6_span = max(EXPECTED_PSIS[a][2] for a in EXPECTED_PSIS) - min(EXPECTED_PSIS[a][2] for a in EXPECTED_PSIS)
+    if abs(all6_span - 0.007153) > 2e-6:
+        raise RuntimeError("Lab 12 threshold-authority all6 span unexpectedly changed")
+
+
+def verify_subthreshold_csv() -> None:
+    with SUB_CSV.open(newline="", encoding="utf-8") as handle:
+        rows = list(csv.DictReader(handle))
+    expected_header = ["seed", "delta_f", "T", "v_rep1", "v_rep2", "mean_v", "resolved_fraction", "max_half_rel_diff"]
+    if not rows or list(rows[0].keys()) != expected_header:
+        raise RuntimeError("Lab 12 subthreshold raw CSV header drifted")
+    if len(rows) != 40:
+        raise RuntimeError(f"Lab 12 subthreshold raw CSV must contain 40 rows, found {len(rows)}")
+    if len({int(r["seed"]) for r in rows}) != 8:
+        raise RuntimeError("Lab 12 subthreshold data must contain 8 independent disorder seeds")
+    if any(abs(float(r["delta_f"]) + 0.08) > 1e-12 for r in rows):
+        raise RuntimeError("Lab 12 subthreshold drive offset drifted from -0.08")
+
+    for T, expected in SUB_EXPECTED.items():
+        group = [r for r in rows if abs(float(r["T"]) - T) < 1e-12]
+        if len(group) != 8 or len({int(r["seed"]) for r in group}) != 8:
+            raise RuntimeError(f"Lab 12 subthreshold T={T} must contain 8 independent disorder rows")
+        means = []
+        resolved = []
+        halfdiff = []
+        for row in group:
+            rep_mean = statistics.fmean([float(row["v_rep1"]), float(row["v_rep2"])])
+            mean_v = float(row["mean_v"])
+            if abs(rep_mean - mean_v) > 2e-12:
+                raise RuntimeError(f"Lab 12 subthreshold thermal-repeat mean drifted for seed={row['seed']}, T={T}")
+            means.append(mean_v)
+            resolved.append(float(row["resolved_fraction"]))
+            halfdiff.append(float(row["max_half_rel_diff"]))
+        got = (statistics.fmean(means), statistics.fmean(resolved), statistics.median(halfdiff))
+        tolerances = (8e-7, 8e-7, 8e-7)
+        for value, target, tol in zip(got, expected, tolerances):
+            if abs(value - target) > tol:
+                raise RuntimeError(f"Lab 12 subthreshold aggregate drifted at T={T}: {got} vs {expected}")
+
+    low = SUB_EXPECTED[0.020]
+    if low[1] == 1.0 and low[2] < 0.2:
+        raise RuntimeError("Lab 12 low-T creep failure boundary was weakened")
 
 
 def verify_source_provenance() -> None:
     data = json.loads(SOURCE_RECEIPT.read_text(encoding="utf-8"))
     if data.get("render_dpi", 0) < 500:
-        raise RuntimeError("Lab 11 source-figure receipt render DPI drifted")
-    matches = [x for x in data.get("figures", []) if x.get("file") == PAPER_FIG.name]
-    if len(matches) != 1:
-        raise RuntimeError("Lab 11 Ferrero Fig.2 provenance missing or duplicated")
-    entry = matches[0]
-    if entry.get("source_page") != 5 or entry.get("pixel_size") != [1783, 1550]:
-        raise RuntimeError("Lab 11 Ferrero Fig.2 provenance dimensions/page drifted")
-    if "Fig. 2" not in entry.get("citation", ""):
-        raise RuntimeError("Lab 11 Ferrero Fig.2 citation identity drifted")
-    if png_size(PAPER_FIG) != (1783, 1550):
-        raise RuntimeError("Lab 11 Ferrero Fig.2 actual dimensions no longer match receipt")
-
-
-def slope(points: list[tuple[float, float]]) -> float:
-    xs = [math.log(x) for x, _ in points]
-    ys = [math.log(y) for _, y in points]
-    xm = sum(xs) / len(xs)
-    ym = sum(ys) / len(ys)
-    den = sum((x - xm) ** 2 for x in xs)
-    return sum((x - xm) * (y - ym) for x, y in zip(xs, ys)) / den
-
-
-def fit_nu(Ls: list[int], stds: list[float]) -> float:
-    return -1.0 / slope(list(zip(Ls, stds)))
-
-
-def verify_raw_csv() -> None:
-    with RAW_CSV.open(newline="", encoding="utf-8") as handle:
-        rows = list(csv.DictReader(handle))
-    expected_header = ["L", "M", "seed", "fc_lo", "fc_hi", "fc_mid"]
-    if not rows or list(rows[0].keys()) != expected_header:
-        raise RuntimeError("Lab 11 raw threshold CSV header drifted")
-    if len(rows) != 192:
-        raise RuntimeError(f"Lab 11 raw threshold CSV must contain 192 rows, found {len(rows)}")
-
-    means = {}
-    stds = {}
-    for L, M in EXPECTED_M.items():
-        group = [row for row in rows if int(row["L"]) == L]
-        if len(group) != 48:
-            raise RuntimeError(f"Lab 11 L={L} must contain 48 independent disorder rows")
-        if any(int(row["M"]) != M for row in group):
-            raise RuntimeError(f"Lab 11 L={L} M grid drifted")
-        if len({int(row["seed"]) for row in group}) != 48:
-            raise RuntimeError(f"Lab 11 L={L} seed identities are not independent/unique")
-        vals = []
-        for row in group:
-            lo, hi, mid = map(float, (row["fc_lo"], row["fc_hi"], row["fc_mid"]))
-            if abs((hi - lo) - 1 / 512) > 1e-12:
-                raise RuntimeError(f"Lab 11 fc bracket width drifted for L={L}, seed={row['seed']}")
-            if abs(mid - 0.5 * (lo + hi)) > 1e-12:
-                raise RuntimeError(f"Lab 11 fc midpoint inconsistent for L={L}, seed={row['seed']}")
-            vals.append(mid)
-        means[L] = statistics.fmean(vals)
-        stds[L] = statistics.stdev(vals)
-        if abs(means[L] - EXPECTED_MEAN[L]) > 5e-10:
-            raise RuntimeError(f"Lab 11 L={L} mean fc drifted: {means[L]:.9f}")
-        if abs(stds[L] - EXPECTED_STD[L]) > 5e-10:
-            raise RuntimeError(f"Lab 11 L={L} std(fc) drifted: {stds[L]:.9f}")
-
-    Ls = [32, 64, 128, 256]
-    ss = [stds[L] for L in Ls]
-    nu_small = fit_nu(Ls[:3], ss[:3])
-    nu_all = fit_nu(Ls, ss)
-    nu_large = fit_nu(Ls[1:], ss[1:])
-    for got, expected in zip((nu_small, nu_all, nu_large), EXPECTED_NU):
-        if abs(got - expected) > 8e-7:
-            raise RuntimeError(f"Lab 11 raw CSV no longer reproduces nu: {got:.6f} vs {expected:.6f}")
-    drift = max(nu_small, nu_all, nu_large) - min(nu_small, nu_all, nu_large)
-    if abs(drift - 0.205713) > 8e-7:
-        raise RuntimeError(f"Lab 11 size-window drift changed: {drift:.6f}")
-    if drift <= 0.15:
-        raise RuntimeError("Lab 11 size-window failure boundary was weakened")
+        raise RuntimeError("Lab 12 source-figure receipt render DPI drifted")
+    by_file = {x.get("file"): x for x in data.get("figures", [])}
+    for name, (page, size, fig_marker) in SOURCE_FIGS.items():
+        if name not in by_file:
+            raise RuntimeError(f"Lab 12 source provenance missing: {name}")
+        entry = by_file[name]
+        if entry.get("source_page") != page or tuple(entry.get("pixel_size", [])) != size:
+            raise RuntimeError(f"Lab 12 source provenance page/size drifted: {name}")
+        if fig_marker not in entry.get("citation", ""):
+            raise RuntimeError(f"Lab 12 source citation identity drifted: {name}")
+        actual = png_size(ROOT / "assets/reproduction-lab" / name)
+        if actual != size:
+            raise RuntimeError(f"Lab 12 source Figure dimensions no longer match receipt: {name} {actual}")
 
 
 def main() -> None:
-    for path in (TARGET, PYTHON, RECEIPT, RAW_CSV, SOURCE_RECEIPT, PAPER_FIG, *PLOT_FILES):
+    source_paths = tuple(ROOT / "assets/reproduction-lab" / name for name in SOURCE_FIGS)
+    for path in (TARGET, PYTHON, RECEIPT, ROUND_CSV, SUB_CSV, SOURCE_RECEIPT, *source_paths, *PLOT_FILES):
         if not path.exists():
-            raise RuntimeError(f"Lab 11 required artifact missing: {path.relative_to(ROOT)}")
+            raise RuntimeError(f"Lab 12 required artifact missing: {path.relative_to(ROOT)}")
 
     raw = TARGET.read_text(encoding="utf-8")
     soup = BeautifulSoup(raw, "html.parser")
     title = soup.title.get_text(strip=True) if soup.title else ""
-    if title != "Reproduction Lab（复现实验室）11 · 有限尺寸标度与 ν":
-        raise RuntimeError(f"Lab 11 title drifted: {title!r}")
+    if title != "Reproduction Lab（复现实验室）12 · 热圆整与蠕变边界":
+        raise RuntimeError(f"Lab 12 title drifted: {title!r}")
 
     visible = visible_text(soup)
     for token in REQUIRED_VISIBLE:
         if token not in visible:
-            raise RuntimeError(f"Lab 11 required Language V2 text missing: {token}")
+            raise RuntimeError(f"Lab 12 required Language V2 text missing: {token}")
     for token in FORBIDDEN_VISIBLE:
         if token in visible:
-            raise RuntimeError(f"Lab 11 ordinary workflow English remains visible: {token}")
+            raise RuntimeError(f"Lab 12 ordinary workflow English remains visible: {token}")
 
     figures = soup.select("figure.figure img")
     if tuple(x.get("src") for x in figures) != EXPECTED_SRCS:
-        raise RuntimeError("Lab 11 Figure wiring drifted")
+        raise RuntimeError("Lab 12 Figure wiring drifted")
     if tuple(x.get("alt") for x in figures) != EXPECTED_ALTS:
-        raise RuntimeError("Lab 11 Figure alt text drifted")
+        raise RuntimeError("Lab 12 Figure alt text drifted")
     verify_local_links(soup)
 
     py = PYTHON.read_text(encoding="utf-8")
     for token in PYTHON_LOCKS:
         if token not in py:
-            raise RuntimeError(f"Lab 11 Python contract drifted: {token}")
+            raise RuntimeError(f"Lab 12 Python contract drifted: {token}")
 
     receipt = RECEIPT.read_text(encoding="utf-8")
     for token in RECEIPT_LOCKS:
         if token not in receipt:
-            raise RuntimeError(f"Lab 11 receipt/result/failure boundary drifted: {token}")
+            raise RuntimeError(f"Lab 12 receipt/result/failure boundary drifted: {token}")
 
-    verify_raw_csv()
+    verify_rounding_csv()
+    verify_subthreshold_csv()
     verify_source_provenance()
+
     for plot in PLOT_FILES:
         w, h = png_size(plot)
         if w < 900 or h < 500:
-            raise RuntimeError(f"Lab 11 code plot below evidence resolution contract: {plot.name} {w}x{h}")
+            raise RuntimeError(f"Lab 12 code plot below evidence resolution contract: {plot.name} {w}x{h}")
         if plot.stat().st_size < 10_000:
-            raise RuntimeError(f"Lab 11 code plot suspiciously small: {plot.name}")
+            raise RuntimeError(f"Lab 12 code plot suspiciously small: {plot.name}")
 
-    print("Lab 11 read-only Language V2 seal PASS; synthetic gold test/size-window failure/raw thresholds/provenance/Figures/links preserved.")
+    print("Lab 12 read-only Language V2 seal PASS; Brownian/synthetic tests, psi-window failure, unresolved low-T creep, raw data, provenance, Figures and links preserved.")
 
 
 if __name__ == "__main__":
