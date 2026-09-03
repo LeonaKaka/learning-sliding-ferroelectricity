@@ -1,4 +1,7 @@
 (()=>{
+  if(document.documentElement.dataset.siteNavInitialized==='1') return;
+  document.documentElement.dataset.siteNavInitialized='1';
+
   const path=location.pathname.replace(/\/+$/,'');
   const inModules=/\/modules\//.test(path);
 
