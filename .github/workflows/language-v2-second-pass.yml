@@ -6,6 +6,7 @@ on:
     paths:
       - 'scripts/language_v2_second_pass.py'
       - 'scripts/language_v2_second_pass_fix.py'
+      - 'scripts/reproduction_lab_overview_nav_cleanup.py'
       - 'scripts/site_gap_teaching_seal.py'
       - 'scripts/concept_paths_seal.py'
       - 'scripts/claim_checks_seal.py'
@@ -37,6 +38,8 @@ jobs:
           fetch-depth: 0
       - name: Install parser
         run: python -m pip install --disable-pip-version-check beautifulsoup4
+      - name: Remove duplicate Lab overview nav runtime
+        run: python scripts/reproduction_lab_overview_nav_cleanup.py
       - name: Apply safe visible-text pass
         run: python scripts/language_v2_second_pass_fix.py
       - name: Verify Teaching V2 site-gap read-only seal
