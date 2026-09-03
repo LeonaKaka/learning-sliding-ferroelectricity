@@ -38,4 +38,17 @@
 </tbody></table></div>
 <div class="warn"><b>这就是研究模型应该保持的谦逊：</b>RF/RB 是受控的有效耦合类别，用来问“耦合形式是否重要”；它们不是对某一个真实缺陷化学身份的一一命名。真正材料映射需要独立的显微表征 / 静电学 / 缺陷能量学证据。</div>
 <div class="bridge">现在把理论类别与真实样品重新并排看，边界会更清楚：<b>实验里看见无序，不等于已经知道它属于哪个统计无序类别。</b></div>
-<h2>回到滑移铁电：什么时候该用哪一级模型？</h2><div class="ladder"><div><b>界面始终清晰、单值</b><p>优先从弹性线 / 弹性流形思路出发；RB/RF 作为钉扎景观的统计类别来检验。</p></div><div><b>序参量内部结构重要</b><p>相场 / Ginzburg–Landau 更自然：壁宽、局域极化、弹性/静电耦合都能保留，界面由场涌现。</p></div><div><b>大量成核 / 孤立小畴 / 悬垂</b><p>不能只追一条 h(y)。需要体相场 / 晶格模型，或者至少显式定义怎样从复杂畴结构提取有效界面。</p></div></div><div class="q">这一章的底线：<b>RFIM 是一个体相序参量模型，不是“给弹性畴壁加随机场”的同义词。</b> 若你的滑移铁电模拟用连续 φ(r,t)，真正需要证明的是：在哪些尺度它能约化成弹性界面；又在哪些无序 / 驱动力下这种约化失效。</div><div class="bridge">这正好进入模块 07：不再只讨论“理论上应该属于哪类”，而是把这些判断变成可执行的数值模型——相场、弹性线、RF/RB 离散化、畴壁提取、v(E)、B(r)、有限尺寸标度和收敛检验。</div><div class="next"><a href="depinning.html">← 05 Depinning（退钉扎）· 临界现象</a><a href="numerical-modeling.html">07 从理论到数值建模 →</a></div></main><script src="../terms.js"></script></body></html>
+<h2>回到滑移铁电：什么时候该用哪一级模型？</h2><div class="ladder"><div><b>界面始终清晰、单值</b><p>优先从弹性线 / 弹性流形思路出发；RB/RF 作为钉扎景观的统计类别来检验。</p></div><div><b>序参量内部结构重要</b><p>相场 / Ginzburg–Landau 更自然：壁宽、局域极化、弹性/静电耦合都能保留，界面由场涌现。</p></div><div><b>大量成核 / 孤立小畴 / 悬垂</b><p>不能只追一条 h(y)。需要体相场 / 晶格模型，或者至少显式定义怎样从复杂畴结构提取有效界面。</p></div></div><div class="q">这一章的底线：<b>RFIM 是一个体相序参量模型，不是“给弹性畴壁加随机场”的同义词。</b> 若你的滑移铁电模拟用连续 φ(r,t)，真正需要证明的是：在哪些尺度它能约化成弹性界面；又在哪些无序 / 驱动力下这种约化失效。</div><div class="bridge">这正好进入模块 07：不再只讨论“理论上应该属于哪类”，而是把这些判断变成可执行的数值模型——相场、弹性线、RF/RB 离散化、畴壁提取、v(E)、B(r)、有限尺寸标度和收敛检验。</div>
+<style>
+.claim-check{margin:54px 0 30px;padding-top:28px;border-top:1px solid #d9d4ca}.claim-check h2{margin:0 0 8px}.claim-check .quiz-intro{margin:0 0 15px;color:#666}.claim-check details{margin:9px 0;border:1px solid #d9d4ca;border-radius:10px;background:#fffdf8;padding:12px 14px}.claim-check summary{cursor:pointer;font-weight:650}.claim-check details p{margin:10px 0 2px}.claim-check .answer{font-weight:700}
+</style>
+<section class="claim-check" id="claim-check">
+<h2>判断自测 · 从“有缺陷”到 RF / RB / RFIM 还差几步？</h2>
+<p class="quiz-intro">先判断，再展开。这里专门防止把真实缺陷名称直接等同于某个统计无序模型。</p>
+<details><summary>1 · 实验发现某种缺陷会钉扎畴壁，因此可以直接把该材料称为 RFIM。</summary><p><span class="answer">答案：错。</span> “会钉扎”只说明缺陷进入了有效无序。要叫 RF、RB 或 RFIM，还必须说明它耦合到什么自由度、相关统计是什么，以及粗粒化后保留了哪些结构。</p></details>
+<details><summary>2 · 弹性流形理论里的 random-field disorder（随机场无序）与 RFIM 中直接耦合体相序参量的随机场不是同一个模型对象。</summary><p><span class="answer">答案：对。</span> 名字里都有“random field”并不意味着模型相同；自由度、哈密顿量和允许的几何结构都不同。</p></details>
+<details><summary>3 · 如果界面出现大量悬垂或封闭小畴，单值 h(y) 的弹性线映射可能失效，此时 ζ 的解释也必须重新检查。</summary><p><span class="answer">答案：对。</span> 一旦几何不再能稳定表示成单值界面，原本针对弹性线定义的粗糙度与临界指数就不能无条件照搬。</p></details>
+<details><summary>4 · Paul 2026 展示真实滑移铁电中的多来源无序后，就已经唯一判定了这些缺陷对应 RF、RB 还是 RFIM。</summary><p><span class="answer">答案：错。</span> 这类材料证据说明结构无序、陷阱和多畴路径会共同影响动力学，但并没有自动完成从微观缺陷到唯一统计无序类别的粗粒化判别。</p></details>
+</section>
+
+<div class="next"><a href="depinning.html">← 05 Depinning（退钉扎）· 临界现象</a><a href="numerical-modeling.html">07 从理论到数值建模 →</a></div></main><script src="../terms.js"></script></body></html>
