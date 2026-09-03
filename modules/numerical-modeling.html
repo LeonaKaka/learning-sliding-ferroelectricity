@@ -9,6 +9,21 @@
 <h1>从 φ(r,t) 到一条会退钉扎的畴壁，中间到底做了哪些近似？</h1>
 <p class="deck">前两章已经把问题拆成两种语言：体相序参量可以产生复杂畴结构，弹性界面则擅长描述阈值、粗糙度和普适性。数值建模真正困难的地方，不是“把 TDGL 写进代码”，而是知道每一步粗粒化保留了什么、丢掉了什么，以及网格有没有悄悄改掉你的物理参数。</p>
 <div class="q">学完这一章必须能回答：<b>相场的序参量与自由能项各自代表什么；弥散畴壁怎样变成涌现界面；随机键 / 随机场在连续场里怎样加入；为什么固定代码里的 σ 却改变 dx 会改变物理无序强度？</b></div>
+
+<style>
+.first-read{margin:24px 0 28px;border:1px solid var(--l);border-radius:13px;background:var(--p);padding:17px 18px}.first-read>p{margin:0 0 12px;color:#4f4b45}.first-read-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.first-read-grid a{display:block;text-decoration:none;border:1px solid var(--l);border-radius:10px;padding:12px;background:#faf7f0;color:var(--i)}.first-read-grid b{display:block;font-family:Georgia,"Songti SC",serif;margin-bottom:4px}.first-read-grid small{display:block;color:var(--m);line-height:1.5}.second-read{margin-top:11px;font-size:12.5px;color:#65615a}.second-read a{color:#504c46}@media(max-width:760px){.first-read-grid{grid-template-columns:1fr}}
+</style>
+<section class="first-read" id="first-read">
+<p><b>第一次读这一章，只抓四个支点：</b>先把“模型是什么”与“数值怎么实现”分开。下面四步能讲清，再进入后面的研究级验收细节。</p>
+<div class="first-read-grid">
+<a href="#tdgl"><b>① 场 + 自由能 + 动力学</b><small>先理解 TDGL：状态变量是谁，F 里有哪些物理项，时间演化为什么这样写。</small></a>
+<a href="#reduction"><b>② φ(r,t) 什么时候能变成 u(y,t)</b><small>畴壁是从体场涌现的界面；先验几何不过关，就不要直接套弹性线指数。</small></a>
+<a href="#disorder-axes"><b>③ 无序到底随机了什么</b><small>区分耦合方式、物理强度和关联长度；真实缺陷不能只压成一个 σ。</small></a>
+<a href="#grid"><b>④ dx / dt 不能偷偷改物理</b><small>先掌握淬火白噪声的空间归一化，再看热噪声的空间 + 时间归一化。</small></a>
+</div>
+<div class="second-read"><b>第二遍再读：</b><a href="#identifiability">参数可辨识性与留出验证</a> → <a href="#velocity-estimator">稳态速度估计</a> → <a href="#run-receipt">运行记录与证据追溯</a>。这些决定研究结果是否可发表，但不应挡在初学者第一次建立模型心智图之前。</div>
+</section>
+
 <p class="rule">核心来源：Chen 2008 来自项目 Drive 根目录；Caballero et al. 2020 来自项目 Drive `03 Depinning, elastic-interface, RFIM theory`；Fedeli et al. 2019 来自项目 Drive 的相场文献集。论文图均来自这些 PDF 本身。</p>
 <h2 id="tdgl">1 · Chen 2008：相场不是画畴图的软件，而是一套自由能 + 动力学</h2>
 <p>最先要固定的是模型层级。相场不追踪每个原子，而用空间连续的极化场 <b>P(r)</b> 描述局域状态；畴壁不是单独画进去的几何线，而是 P 从一个自由能极小值连续过渡到另一个极小值的区域。自由能里至少要知道哪些项在竞争：局域朗道势决定偏好的极化态，梯度项惩罚过快的空间变化，静电项 / 弹性项则提供长程耦合与边界条件。</p>
