@@ -69,6 +69,7 @@ def main() -> None:
     css_locked = (
         ".mobile-toc{display:none}",
         "@media(max-width:760px){.mobile-toc{display:block}",
+        "main h2[id]{scroll-margin-top:116px}",
         "table{display:block;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}",
         ".eq,pre{max-width:100%;overflow-x:auto}",
     )
@@ -139,7 +140,7 @@ def main() -> None:
         f"SITE FRAGMENT / RUNTIME SEAL PASS: {len(PAGES)} pages scanned; "
         f"{checked_files} local HTML links and {checked_fragments} fragments resolved; "
         f"{checked_runtime_pages} source pages obey single-owner navigation runtime; "
-        "terms.js/site-nav.js idempotence plus mobile chapter-nav/table/equation guards locked."
+        "terms.js/site-nav.js idempotence plus mobile chapter-nav/anchor/table/equation guards locked."
     )
 
 
