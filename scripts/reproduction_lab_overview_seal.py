@@ -1,0 +1,73 @@
+from __future__ import annotations
+
+from pathlib import Path
+from bs4 import BeautifulSoup
+
+ROOT = Path(__file__).resolve().parents[1]
+OVERVIEW = ROOT / "modules" / "reproduction-lab-overview.html"
+NAV = ROOT / "site-nav.js"
+
+
+def require(condition: bool, message: str) -> None:
+    if not condition:
+        raise RuntimeError(message)
+
+
+def main() -> None:
+    raw = OVERVIEW.read_text(encoding="utf-8")
+    doc = BeautifulSoup(raw, "html.parser")
+
+    require(doc.title is not None and "12 课学习路线" in doc.title.get_text(),
+            "Reproduction Lab overview title drifted")
+    require(len(doc.select("section.stage")) == 3,
+            "Reproduction Lab overview must keep exactly three evidence stages")
+    for stage_id in ("stage-a", "stage-b", "stage-c"):
+        require(doc.find(id=stage_id) is not None, f"Missing Lab stage: {stage_id}")
+
+    lesson_links = [a.get("href") for a in doc.select("a.lesson")]
+    expected = ["reproduction-lab.html"] + [f"reproduction-lab-{i:02d}.html" for i in range(2, 13)]
+    require(lesson_links == expected,
+            f"Lab overview lesson order/links drifted: {lesson_links}")
+    for href in lesson_links:
+        require((OVERVIEW.parent / href).exists(), f"Lab lesson target missing: {href}")
+
+    locked = (
+        "已知答案测试通过 ≠ 目标物理结论通过",
+        "单样本结果 ≠ 热力学极限",
+        "一条漂亮幂律 ≠ 普适指数",
+        "Stage A · L01–L05",
+        "Stage B · L06–L08",
+        "Stage C · L09–L12",
+        "低温映射通过；高温 breakdown 被检测到，不能把失效润色成成功",
+        "几何映射通过；渐近 ζ 判据未通过",
+        "只授权有限样本阈值区间；不授权热力学 f<sub>c</sub>",
+        "稳态速度估计量通过；本课明确不拟合 β",
+        "β 拟合区间判据未通过，普适 β 不授权",
+        "超粗糙特征可见；热力学 ζ 尚未闭合",
+        "尺寸区间稳定性未通过，普适 ν 不授权",
+        "热圆整区间未闭合，ψ 与 creep-law / μ 均不授权",
+        "论文线可以换，证据纪律不能换",
+    )
+    for text in locked:
+        require(text in raw, f"Lab overview scientific boundary drifted: {text}")
+
+    nav = NAV.read_text(encoding="utf-8")
+    require("modules/reproduction-lab-overview.html" in nav,
+            "Global navigation no longer routes to Lab overview")
+    require("12 课学习路线 →" in nav,
+            "Global Lab overview label missing")
+    require("href=\"modules/reproduction-lab-overview.html\"" in nav,
+            "Homepage Lab card no longer routes to overview")
+    require("['L01 · TDGL wall','modules/reproduction-lab.html']" in nav,
+            "L01 canonical lesson URL changed unexpectedly")
+    require("labs.slice(0,6)" in nav and "labs.slice(6)" in nav,
+            "Paper1/Paper2 sidebar grouping drifted")
+
+    print(
+        "REPRODUCTION LAB OVERVIEW SEAL PASS: 12 canonical lesson links, three evidence stages, "
+        "critical claim boundaries, and global overview routing are locked."
+    )
+
+
+if __name__ == "__main__":
+    main()
