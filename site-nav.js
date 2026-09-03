@@ -62,11 +62,12 @@
 
   if(currentFile==='index.html'){
     const hero=document.querySelector('main .hero');
-    if(hero && !document.getElementById('reproduction-lab-entry')){
+    if(hero && !document.getElementById('learning-mode-entry')){
       const section=document.createElement('section');
-      section.className='wrap'; section.id='reproduction-lab-entry';
+      section.className='wrap'; section.id='learning-mode-entry';
       section.style.cssText='padding-top:8px;padding-bottom:10px';
-      section.innerHTML=`<div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:center;background:#1f201e;color:#f8f3e8;border-radius:16px;padding:22px 24px;box-shadow:0 12px 30px #00000012"><div><div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.68;margin-bottom:5px">Reproduction Lab · 12 lessons</div><b style="font:700 22px/1.25 Georgia,serif">从论文公式走到可复跑的数值证据链</b><p style="margin:8px 0 0;color:#ddd6ca">先验证对象与映射，再验证阈值和稳态速度，最后才审计 β、ζ、ν 与有限温结论是否闭合。</p></div><a href="modules/reproduction-lab-overview.html" style="text-decoration:none;color:#1f201e;background:#fffdf8;border-radius:10px;padding:12px 16px;font-weight:750;white-space:nowrap">查看 12 课学习路线 →</a></div>`;
+      const card='display:block;text-decoration:none;color:#1f201e;background:#fffdf8;border:1px solid #d8d1c3;border-radius:11px;padding:14px 15px';
+      section.innerHTML=`<div style="background:#1f201e;color:#f8f3e8;border-radius:16px;padding:21px 22px;box-shadow:0 12px 30px #00000012"><div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.68;margin-bottom:5px">How to use this site</div><b style="font:700 22px/1.25 Georgia,serif">先选你现在要解决的问题</b><p style="margin:7px 0 15px;color:#ddd6ca">不是四条并列课程：8 模块负责第一次系统学习，Concept Paths 负责纵向补概念，Reproduction Lab 负责把数值证据跑通，Research Track 只在基础已经具备后进入研究设计。</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:9px"><a href="#map" style="${card}"><b>第一次系统学</b><span style="display:block;font-size:12px;margin-top:5px;color:#69635c">从 01–08 建立完整物理主线。</span></a><a href="#concept-paths" style="${card}"><b>某个概念反复卡住</b><span style="display:block;font-size:12px;margin-top:5px;color:#69635c">沿 Ec/fc、ζ、RF/RB、creep 或临界闭环纵向补课。</span></a><a href="modules/reproduction-lab-overview.html" style="${card}"><b>想把数值规则真正跑成代码</b><span style="display:block;font-size:12px;margin-top:5px;color:#69635c">12 课：已知答案 → 估计量 → 临界结论授权。</span></a><a href="modules/research-track.html" style="${card}"><b>准备把知识接成研究问题</b><span style="display:block;font-size:12px;margin-top:5px;color:#69635c">先掌握 03–07，再进入无序、孤立畴壁与证据链设计。</span></a></div></div>`;
       hero.insertAdjacentElement('afterend',section);
     }
     const topNav=document.querySelector('.top .nav');
