@@ -85,9 +85,40 @@
   right.innerHTML='<div class="page-toc-title">On this page</div>'+(headings.length?headings.map((h,i)=>`<a class="toc-h2" href="#${ensureId(h,i)}">${h.textContent.trim().replace(/\s+/g,' ')}</a>`).join(''):'<div style="padding:4px 8px;color:#807a70">本页暂无分节</div>');
   document.body.appendChild(right);
 
-  const mkBtn=(side,label,target)=>{const b=document.createElement('button');b.className=`nav-drawer-btn ${side}`;b.type='button';b.setAttribute('aria-label',label);b.textContent=side==='left'?'☰':'≡';b.onclick=()=>{document.getElementById(target).classList.toggle('open');document.body.classList.toggle('nav-drawer-open',document.querySelector('.site-sidebar.open,.page-toc.open'))};document.body.appendChild(b)};
+  const drawerButtons=new Map();
+  const syncDrawerState=()=>{
+    const anyOpen=!!document.querySelector('.site-sidebar.open,.page-toc.open');
+    document.body.classList.toggle('nav-drawer-open',anyOpen);
+    for(const [target,b] of drawerButtons){
+      const expanded=document.getElementById(target)?.classList.contains('open')||false;
+      b.setAttribute('aria-expanded',expanded?'true':'false');
+      b.setAttribute('aria-label',expanded?b.dataset.closeLabel:b.dataset.openLabel);
+    }
+  };
+  const closeDrawers=()=>{left.classList.remove('open');right.classList.remove('open');syncDrawerState()};
+  const mkBtn=(side,label,target)=>{
+    const b=document.createElement('button');
+    b.className=`nav-drawer-btn ${side}`;
+    b.type='button';
+    b.dataset.openLabel=label;
+    b.dataset.closeLabel=label.replace(/^打开/,'关闭');
+    b.setAttribute('aria-label',label);
+    b.setAttribute('aria-controls',target);
+    b.setAttribute('aria-expanded','false');
+    b.textContent=side==='left'?'☰':'≡';
+    drawerButtons.set(target,b);
+    b.onclick=()=>{
+      const drawer=document.getElementById(target);
+      const opening=!drawer.classList.contains('open');
+      (target==='siteSidebar'?right:left).classList.remove('open');
+      drawer.classList.toggle('open',opening);
+      syncDrawerState();
+    };
+    document.body.appendChild(b);
+  };
   mkBtn('left','打开全站导航','siteSidebar'); mkBtn('right','打开本页目录','pageToc');
-  document.addEventListener('click',e=>{if(innerWidth>=1280)return; const a=e.target.closest('.site-sidebar a,.page-toc a'); if(a){left.classList.remove('open');right.classList.remove('open');document.body.classList.remove('nav-drawer-open')}});
+  document.addEventListener('click',e=>{if(innerWidth>=1280)return; const a=e.target.closest('.site-sidebar a,.page-toc a'); if(a)closeDrawers()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.querySelector('.site-sidebar.open,.page-toc.open'))closeDrawers()});
 
   if('IntersectionObserver' in window && headings.length){
     const links=new Map([...right.querySelectorAll('a')].map(a=>[a.getAttribute('href').slice(1),a]));
