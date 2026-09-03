@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import Counter
 from pathlib import Path
 from bs4 import BeautifulSoup
 
@@ -23,8 +24,8 @@ def snapshot(raw: str) -> dict:
 def assert_locked(before: dict, after_raw: str, page: str) -> None:
     after = snapshot(after_raw)
     for key in ("source_text", "hrefs", "images", "eq"):
-        if before[key] != after[key]:
-            raise RuntimeError(f"{page}: locked {key} changed")
+        if Counter(before[key]) != Counter(after[key]):
+            raise RuntimeError(f"{page}: locked {key} content/count changed")
 
 
 def replace_once(raw: str, old: str, new: str, label: str) -> str:
@@ -188,7 +189,7 @@ def main() -> None:
     improve_04()
     improve_05()
     improve_06()
-    print("Teaching V2 phase 1 PASS: 04–06 learning path reordered; source text, equations, figures, and links unchanged.")
+    print("Teaching V2 phase 1 PASS: 04–06 learning path reordered; source text, equations, figures, and links unchanged in content/count.")
 
 
 if __name__ == "__main__":
