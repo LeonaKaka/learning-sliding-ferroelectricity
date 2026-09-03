@@ -1,196 +1,63 @@
 from __future__ import annotations
 
-from pathlib import Path
-from urllib.parse import urlsplit
-
 from bs4 import BeautifulSoup
 from language_v2_second_pass import ROOT
 
-PAGES = [
-    ROOT / 'modules/foundations.html',
-    ROOT / 'modules/switching-pathways.html',
-    ROOT / 'modules/domain-walls.html',
-    ROOT / 'modules/pinning-creep.html',
-    ROOT / 'modules/depinning.html',
-    ROOT / 'modules/disorder-rfim.html',
-    ROOT / 'modules/numerical-modeling.html',
-    ROOT / 'modules/current-frontiers.html',
-    ROOT / 'modules/research-track.html',
-    ROOT / 'modules/reproduction-lab.html',
-    *[ROOT / f'modules/reproduction-lab-{i:02d}.html' for i in range(2, 13)],
-]
+TARGET = ROOT / 'modules/reproduction-lab-08.html'
 
-FORBIDDEN_VISIBLE = (
-    '热圆滑',
-    'elastic-界面 language',
-    '一维 elastic string',
-    '阈值-distribution broadening',
-    'Numerical 模型ing',
-    '普适ity',
-    'De钉扎',
-    '项目项目',
-    '封闭封闭',
-    '无序无序样本',
-    'main text · published PDF',
-    'published PDF',
-    'RF-like',
-    'Se-vacancy',
-    'spatial 多重标度',
-    'lattice 模型',
-    'late 运动',
-    '畴壁 extraction',
-    'size 定义',
-    'CI / 自助法',
-    'cycle 等内层重复',
-    '跨 stage',
-    ' up to E',
+LOCKED_RESULTS = (
+    '3.47%–4.93%',
+    '0.0010%',
+    '0.5%',
+    'dt=.025',
+    'dt=.0125',
+    '0.001387%',
+    'L=32',
+    '本课不拟合 β',
+    '不足以证明临界标度',
 )
-
-FORBIDDEN_VISIBLE_LOWER = (
-    ' gate ',
-    ' authority ',
-    ' fit window',
-    ' workflow ',
-    ' checkpoint ',
-    ' sample-specific',
-    ' held-out',
-    ' source-level',
-    ' estimator ',
-    ' benchmark ',
-    ' raw data',
-    ' steady velocity',
-)
-
-CRITICAL_ANCHORS = {
-    'current-frontiers.html': (
-        '机制证据已经很强，普适性证据还没闭合',
-        '预存畴壁不是无条件必要条件',
-        '在孤立畴壁条件下能否进入受驱无序界面的普适性框架',
-    ),
-    'research-track.html': (
-        '失效不是“没做成”',
-        '候选普适类；或明确映射失效',
-        '不展示项目未发表数值',
-    ),
-    'reproduction-lab-09.html': (
-        '拟合区间稳定性：未通过',
-        '普适 β 结论：不授权',
-        '回归分析已知答案测试：通过',
-    ),
-    'reproduction-lab-10.html': (
-        '小尺寸 QEW 超粗糙特征：通过',
-        '热力学 ζ 闭合：未通过',
-        '不能挑出 1.316 或 1.201 中的任何一个',
-    ),
-    'reproduction-lab-11.html': (
-        '尺寸区间稳定性：未通过',
-        '普适 ν 结论：不授权',
-        'ν=1.318867',
-    ),
-    'reproduction-lab-12.html': (
-        '热圆整拟合区间稳定性：未通过',
-        '普适 ψ 结论：不授权',
-        '低温蠕变渐近区：尚未解析',
-        '蠕变律 / μ 结论：不授权',
-        'Brownian（布朗）噪声归一化测试',
-    ),
-}
 
 
 def visible_text(raw: str) -> str:
     soup = BeautifulSoup(raw, 'html.parser')
-    for selector in ('.source-text', 'pre', 'code', 'script', 'style'):
+    for selector in ('pre', 'code', 'script', 'style'):
         for node in soup.select(selector):
             node.decompose()
     return ' '.join(soup.stripped_strings)
 
 
-def resolve_local(page: Path, value: str) -> Path | None:
-    if not value or value.startswith(('#', 'mailto:', 'javascript:', 'data:')):
-        return None
-    parts = urlsplit(value)
-    if parts.scheme or parts.netloc:
-        return None
-    rel = parts.path
-    if not rel:
-        return None
-    return (page.parent / rel).resolve()
-
-
-def assert_wiring(page: Path, raw: str) -> None:
-    soup = BeautifulSoup(raw, 'html.parser')
-    if soup.find('h1') is None:
-        raise RuntimeError(f'{page.name}: missing h1')
-    if not soup.find_all('a'):
-        raise RuntimeError(f'{page.name}: no links found')
-
-    root_resolved = ROOT.resolve()
-    for img in soup.find_all('img'):
-        target = resolve_local(page, img.get('src', ''))
-        if target is None:
-            continue
-        if root_resolved not in target.parents and target != root_resolved:
-            raise RuntimeError(f'{page.name}: image escapes repository root: {img.get("src")}')
-        if not target.exists():
-            raise RuntimeError(f'{page.name}: missing image asset: {img.get("src")}')
-
-    for a in soup.find_all('a'):
-        href = a.get('href', '')
-        target = resolve_local(page, href)
-        if target is None or target.suffix.lower() != '.html':
-            continue
-        if root_resolved not in target.parents and target != root_resolved:
-            raise RuntimeError(f'{page.name}: link escapes repository root: {href}')
-        if not target.exists():
-            raise RuntimeError(f'{page.name}: missing local HTML target: {href}')
-
-
 def main() -> None:
-    missing = [str(p.relative_to(ROOT)) for p in PAGES if not p.exists()]
-    if missing:
-        raise RuntimeError(f'Final-audit pages missing: {missing}')
+    raw = TARGET.read_text(encoding='utf-8')
+    before = BeautifulSoup(raw, 'html.parser')
+    images_before = [(x.get('src'), x.get('alt')) for x in before.find_all('img')]
+    hrefs_before = [x.get('href') for x in before.find_all('a')]
+    result_counts = {token: raw.count(token) for token in LOCKED_RESULTS}
 
-    for page in PAGES:
-        raw = page.read_text(encoding='utf-8')
-        before = raw
-        visible = visible_text(raw)
-        padded_lower = f' {visible.lower()} '
+    old = '<b>steady velocity（稳态速度）v</b>'
+    new = '<b>稳态速度 v</b>'
+    if raw.count(old) != 1:
+        raise RuntimeError(f'Lab 08 expected exactly one visible steady-velocity phrase, found {raw.count(old)}')
+    out = raw.replace(old, new, 1)
 
-        for token in FORBIDDEN_VISIBLE:
-            if token in visible:
-                raise RuntimeError(f'{page.name}: visible Language V2 residue: {token}')
-        for token in FORBIDDEN_VISIBLE_LOWER:
-            if token in padded_lower:
-                raise RuntimeError(f'{page.name}: visible workflow-English residue: {token.strip()}')
+    after = BeautifulSoup(out, 'html.parser')
+    if images_before != [(x.get('src'), x.get('alt')) for x in after.find_all('img')]:
+        raise RuntimeError('Lab 08 Figure wiring changed')
+    if hrefs_before != [x.get('href') for x in after.find_all('a')]:
+        raise RuntimeError('Lab 08 href wiring changed')
+    for token, count in result_counts.items():
+        if out.count(token) != count:
+            raise RuntimeError(f'Lab 08 numerical/scientific result drifted: {token}')
 
-        assert_wiring(page, raw)
+    visible = visible_text(out)
+    if 'steady velocity' in visible.lower():
+        raise RuntimeError('Lab 08 visible steady velocity residue remains')
+    if '稳态速度 v' not in out:
+        raise RuntimeError('Lab 08 Chinese steady-velocity wording missing')
+    if 'center-of-mass velocity（质心速度）' not in out:
+        raise RuntimeError('Lab 08 center-of-mass velocity first-use explanation drifted')
 
-        for anchor in CRITICAL_ANCHORS.get(page.name, ()):
-            if anchor not in raw:
-                raise RuntimeError(f'{page.name}: critical scientific boundary missing: {anchor}')
-
-        if page.name == 'depinning.html':
-            for anchor in (
-                '6 · 热圆整：',
-                '一维弹性线的数值研究',
-                '阈值分布展宽',
-                'T=0 阈值应先独立闭合',
-                '坍缩应该是待检验结果，不是数据预处理步骤',
-            ):
-                if anchor not in raw:
-                    raise RuntimeError(f'Module 05 final wording/science anchor missing: {anchor}')
-
-        if page.name == 'reproduction-lab.html':
-            if '剖面 RMSE =' not in raw:
-                raise RuntimeError('Lab 01: visible Chinese RMSE label missing')
-            if '<pre' not in raw or 'profile RMSE' not in raw:
-                raise RuntimeError('Lab 01: machine-output profile RMSE label unexpectedly missing')
-
-        if page.read_text(encoding='utf-8') != before:
-            raise RuntimeError(f'{page.name}: read-only final seal changed page bytes')
-
-    print(f'FULL-SITE LANGUAGE V2 FINAL SEAL PASS: {len(PAGES)} teaching pages checked read-only.')
-    print('Scientific figures may retain original English labels; source/code/machine-output text is excluded from prose-language checks.')
+    TARGET.write_text(out, encoding='utf-8')
+    print('Lab 08 visible steady-velocity wording normalized; Figures/links/numerical results/scientific boundaries unchanged.')
 
 
 if __name__ == '__main__':
