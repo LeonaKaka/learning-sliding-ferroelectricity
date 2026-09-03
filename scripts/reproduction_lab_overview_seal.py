@@ -56,16 +56,35 @@ def main() -> None:
             "Global navigation no longer routes to Lab overview")
     require("12 课学习路线 →" in nav,
             "Global Lab overview label missing")
-    require("href=\"modules/reproduction-lab-overview.html\"" in nav,
-            "Homepage Lab card no longer routes to overview")
     require("['L01 · TDGL wall','modules/reproduction-lab.html']" in nav,
             "L01 canonical lesson URL changed unexpectedly")
     require("labs.slice(0,6)" in nav and "labs.slice(6)" in nav,
             "Paper1/Paper2 sidebar grouping drifted")
 
+    # Homepage must present one role-based chooser instead of pushing an advanced
+    # route as the default first action.
+    chooser_locked = (
+        "section.id='learning-mode-entry'",
+        "先选你现在要解决的问题",
+        "第一次系统学",
+        "某个概念反复卡住",
+        "想把数值规则真正跑成代码",
+        "准备把知识接成研究问题",
+        "从 01–08 建立完整物理主线",
+        "先掌握 03–07，再进入无序、孤立畴壁与证据链设计",
+        "href=\"#map\"",
+        "href=\"#concept-paths\"",
+        "href=\"modules/reproduction-lab-overview.html\"",
+        "href=\"modules/research-track.html\"",
+    )
+    for text in chooser_locked:
+        require(text in nav, f"Homepage learning-mode chooser drifted: {text}")
+    require("reproduction-lab-entry" not in nav,
+            "Legacy Lab-only homepage entry reappeared")
+
     print(
         "REPRODUCTION LAB OVERVIEW SEAL PASS: 12 canonical lesson links, three evidence stages, "
-        "critical claim boundaries, and global overview routing are locked."
+        "critical claim boundaries, global overview routing, and four homepage learning modes are locked."
     )
 
 
