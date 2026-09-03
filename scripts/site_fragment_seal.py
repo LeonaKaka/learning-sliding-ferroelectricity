@@ -70,6 +70,11 @@ def main() -> None:
         ("terms.js", "css.href = `${base}site-nav.css`"),
         ("site-nav.js", "if(document.documentElement.dataset.siteNavInitialized==='1') return;"),
         ("site-nav.js", "document.documentElement.dataset.siteNavInitialized='1';"),
+        ("site-nav.js", "b.setAttribute('aria-controls',target);"),
+        ("site-nav.js", "b.setAttribute('aria-expanded','false');"),
+        ("site-nav.js", "const closeDrawers=()=>"),
+        ("site-nav.js", "(target==='siteSidebar'?right:left).classList.remove('open');"),
+        ("site-nav.js", "e.key==='Escape'"),
     )
     for owner, marker in runtime_locked:
         haystack = terms_raw if owner == "terms.js" else nav_raw
@@ -166,7 +171,8 @@ def main() -> None:
         f"{checked_files} local HTML links, {checked_fragments} fragments, {checked_ids} explicit ids, "
         f"and {checked_images} image alt texts validated; one h1 per page; "
         f"{checked_runtime_pages} source pages obey single-owner navigation runtime; "
-        "terms.js/site-nav.js idempotence plus mobile chapter-nav/anchor/table/equation guards locked."
+        "terms.js/site-nav.js idempotence, accessible mutually exclusive mobile drawers, "
+        "and mobile chapter-nav/anchor/table/equation guards locked."
     )
 
 
