@@ -9,7 +9,10 @@ on:
       - 'terms.js'
       - 'site-nav.js'
       - 'site-nav.css'
+      - 'styles.css'
+      - 'reproduction-lab-paper2.css'
       - 'scripts/site_fragment_seal.py'
+      - 'scripts/mobile_readability_seal.mjs'
       - 'scripts/build_search_index.py'
       - '.github/workflows/site-fragment-seal.yml'
 
@@ -25,3 +28,56 @@ jobs:
         run: python scripts/site_fragment_seal.py
       - name: Build static search index smoke test
         run: python scripts/build_search_index.py
+
+  mobile-readability:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Reproduce Pages terminology injection
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          pages=[Path('index.html'),*sorted(Path('modules').glob('*.html'))]
+          for page in pages:
+              text=page.read_text(encoding='utf-8')
+              prefix='' if page.name=='index.html' else '../'
+              tag=f'<script src="{prefix}terms.js"></script>'
+              if '</body>' not in text:
+                  raise SystemExit(f'{page}: missing </body>')
+              if tag not in text:
+                  page.write_text(text.replace('</body>',tag+'</body>'),encoding='utf-8')
+          print(f'Pages runtime reproduced on {len(pages)} pages')
+          PY
+
+      - name: Install headless-browser driver
+        run: npm install --no-save --package-lock=false puppeteer-core@24.16.0
+
+      - name: Audit mobile overflow, sticky layers, and tap targets
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/mobile-site.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID' EXIT
+          ready=0
+          for _ in {1..30}; do
+            if curl -fsS http://127.0.0.1:4173/ >/dev/null; then ready=1; break; fi
+            sleep 0.25
+          done
+          if [ "$ready" -ne 1 ]; then
+            cat /tmp/mobile-site.log
+            exit 1
+          fi
+          CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          if [ -z "$CHROME_BIN" ]; then
+            echo 'No Chromium/Chrome executable found on runner'
+            exit 1
+          fi
+          CHROME_BIN="$CHROME_BIN" node scripts/mobile_readability_seal.mjs http://127.0.0.1:4173
+
+      - name: Upload failing mobile screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-readability-failures
+          path: mobile-readability-artifacts/
+          if-no-files-found: ignore
