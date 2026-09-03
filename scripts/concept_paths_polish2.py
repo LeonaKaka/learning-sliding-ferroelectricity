@@ -12,8 +12,8 @@ PAGE_REPL = {
     'creep、depinning 与 flow': '蠕变、退钉扎与流动',
     '05 Creep → Depinning →': '05 蠕变 → 退钉扎 →',
     '07 Thermal Noise（热噪声） →': '07 热噪声 →',
-    'creep law 或 μ': '蠕变律或 μ',
-    'creep-law 拟合许可证': '蠕变律拟合许可证',
+    ' creep law 或 μ': '蠕变律或 μ',
+    ' creep-law 拟合许可证': '蠕变律拟合许可证',
     'L12 Finite-T →': 'L12 有限温 →',
 }
 INDEX_REPL = {
