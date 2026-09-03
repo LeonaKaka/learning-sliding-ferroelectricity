@@ -11,6 +11,7 @@ on:
       - 'scripts/claim_checks_seal.py'
       - 'scripts/module07_teaching_seal.py'
       - 'scripts/module08_teaching_seal.py'
+      - 'scripts/reproduction_lab_overview_seal.py'
       - 'modules/foundations.html'
       - 'modules/research-track.html'
       - 'modules/concept-paths.html'
@@ -19,6 +20,8 @@ on:
       - 'modules/disorder-rfim.html'
       - 'modules/numerical-modeling.html'
       - 'modules/current-frontiers.html'
+      - 'modules/reproduction-lab-overview.html'
+      - 'site-nav.js'
       - 'index.html'
       - '.github/workflows/language-v2-second-pass.yml'
 
@@ -46,6 +49,8 @@ jobs:
         run: python scripts/module07_teaching_seal.py
       - name: Verify Module 08 Teaching V2 evidence-frame seal
         run: python scripts/module08_teaching_seal.py
+      - name: Verify Reproduction Lab overview seal
+        run: python scripts/reproduction_lab_overview_seal.py
       - name: Verify only expected pages changed
         shell: bash
         run: |
