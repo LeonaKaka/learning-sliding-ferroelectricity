@@ -9,7 +9,7 @@
 <div class="q">核心问题：<b>怎样区分“有一个开关阈值”与“存在退钉扎临界性”？为什么 β、ζ、ν、z 和有限尺寸依赖必须一起看？</b></div>
 <p class="rule">素材来源：Rosso 2003、Ferrero 2013、Wiese 2022 均使用项目 Google Drive · 03 Depinning, elastic-interface, RFIM theory 中的 PDF；Chauve 2000 当前不在该项目 Drive 文件夹，因此按项目 SOP 的例外规则，以 APS 正式发表记录 + arXiv v2 PDF 核验原文与 Fig. 1。作者原文均为可选择、可复制 HTML 真文本；论文图为对应 PDF 派生的无损 PNG，点击可查看原尺寸。</p>
 <div class="terms"><div><b>f<sub>c</sub></b><p>零温下钉扎态与持续运动的临界驱动力。</p></div><div><b>β</b><p>稳态速度开启：v ∼ (f−f<sub>c</sub>)<sup>β</sup>。</p></div><div><b>ζ</b><p>临界界面的粗糙几何指数。</p></div><div><b>ξ, ν</b><p>相关长度 ξ ∼ |f−f<sub>c</sub>|<sup>−ν</sup>。</p></div><div><b>z</b><p>临界时间与长度：t ∼ ξ<sup>z</sup>。</p></div></div>
-<div class="bridge"><b>方法谱系接力：</b>模块 04 已经把 Lemerle → Tybell → Paruch → Metaxas 串起来：先把畴壁运动从完整翻转中隔离，再从蠕变扩到完整速度–场区间。本章继续补上 <b>临界阈值、有限尺寸、瞬态修正与标度关系</b>，而不是重新从一条幂律开始。<a href="pinning-creep.html">回看方法谱系 →</a></div>
+<div class="bridge"><b>第一次读本章，先走四步：</b>Chauve 先分清蠕变 / 退钉扎 / 流动 → Rosso 看临界几何 ζ → Ferrero 学会夹逼 f<sub>c</sub> 并排除瞬态 → Wiese 用 β、ζ、ν、z 做闭环。模块 04 已经完成“低场蠕变 + 粗糙度 + 局域钉扎”的铺垫；Jeudy、热圆整与后面的“进阶研究方法”第二遍再读。<a href="pinning-creep.html">回看模块 04 →</a></div>
 <h2>1 · Chauve 2000：先把蠕变、退钉扎、流动放进同一张相图</h2><p>这张经典示意图的价值是先建立“区间”概念。<b>T=0</b> 时，低于 <i>f</i><sub>c</sub> 的界面保持钉扎态，高于它才有非零渐近速度；<b>T&gt;0</b> 时，热激活把严格的零速度区圆滑成蠕变。也就是说，实验里看到低场仍有极慢运动并不矛盾——它提醒你实验有限温度和理论零温临界点不是同一件事。</p>
 <div class="src"><div class="head"><b>原文 · Chauve, Giamarchi &amp; Le Doussal 2000</b>　<span class="rule">Physical Review B 62 · 正式发表 PDF p.2 · 跨栏恢复阅读顺序，原文未改</span></div><blockquote class="source-text"><p>In the presence of disorder it is natural to expect that, at zero temperature, the system remains pinned and only polarizes under the action of a small applied force, i.e., moves until it locks on a local minimum of the tilted energy landscape. At larger drive, the system follows the force f and acquires a nonzero asymptotic velocity v. In the thermodynamic limit, it is believed that there exists a threshold force f<sub>c</sub> separating both states, and that a dynamical transition occurs at f<sub>c</sub> called depinning, where the velocity is continuously switched on, like an order parameter of a second-order transition in an equilibrium system.</p><p>Beyond f<sub>c</sub>, if one describes the depinning as a conventional dynamical critical phenomenon, the important quantities to determine are the depinning exponent β giving the velocity v ∼ (f − f<sub>c</sub>)<sup>β</sup> and the dynamical exponent z which relates space and time as t ∼ r<sup>z</sup>.</p></blockquote><div class="translation"><b>中文导读</b><p>Chauve 把同一个受驱无序弹性界面放在温度—驱动力平面中理解：零温时存在真正的退钉扎阈值，阈值以下界面最终停止、阈值以上保持持续运动；有限温度则通过热激活把严格的零速度区变成蠕变区。因此“实验里低场还有一点速度”并不否定零温退钉扎理论。</p></div><div class="note">第一条硬标准由此出现：<b>“有阈值”只是起点。</b> 退钉扎语言要求阈值附近的连续速度开启和临界标度，而不是把任意矫顽场重新命名为 f<sub>c</sub>。</div></div>
 <figure class="fig"><a href="../assets/depinning/chauve2000-fig1-force-velocity.png" rel="noopener" target="_blank"><img alt="Chauve 2000 force velocity characteristics showing creep depinning and flow" src="../assets/depinning/chauve2000-fig1-force-velocity.png"/></a><figcaption class="cap"><b>Fig. 1 · 驱动力–速度区间.</b><span class="zoom">点击图片查看 600 DPI 原尺寸</span><br/>实线 T=0 在 f<sub>c</sub> 前钉扎态；有限温度曲线在阈值以下出现蠕变；大驱动力进入流动。它是一张概念地图，不是一组实验数据。</figcaption></figure>
@@ -44,8 +44,8 @@
 <h3>一套最小但严谨的有限温测量顺序</h3>
 <div class="checks"><div class="check"><b>A · 冻结 T=0 依据</b><p>固定几何、无序定义、L、dx 与独立阈值方案；先有 f<sub>c</sub> / f<sub>c</sub><sup>(i)</sup>。</p></div><div class="check"><b>B · 小规模有限温预检</b><p>先用少数 T 和 f/f<sub>c</sub> 检查随机积分器、速度下限、所需观测时间、畴壁拓扑。</p></div><div class="check"><b>C · 分层重复</b><p>同一无序样本下跑多个热随机种子；不确定性不把这些内层重复冒充新的淬火无序样本。</p></div><div class="check"><b>D · 分开两个问题</b><p>深阈值下区间测蠕变；f≈f<sub>c</sub> 测热圆整。不要用一套拟合函数覆盖两个区间。</p></div><div class="check"><b>E · 先 v，再几何</b><p>若速度标度存在候选关系，再检查有限温结构因子 / 粗糙度交叉区是否给出相容的特征长度。</p></div><div class="check"><b>F · 失效结果也要保留</b><p>若有限温触发成核、多畴壁或标度对区间极敏感，记录为映射失效 / 交叉区，而不是删掉“不漂亮”的运行。</p></div></div>
 <div class="bridge"><a href="pinning-creep.html#finite-temperature">回到模块 04 的有限温蠕变测量方案</a>：那里负责 f&lt;f<sub>c</sub> 的热激活区间；这里负责 f≈f<sub>c</sub> 的热圆整。两者相邻，但不是同一个拟合。</div>
-<div class="bridge">到这里，问题已经从“墙会不会动”变成“哪一种无序与哪一种有效界面理论控制它怎么动”。下一章必须把无序本身拆开：随机键、随机场与 RFIM 到底各自意味着什么。</div>
-<h2 id="collapse-gate">6.6 · 坍缩验收判据：把“看起来叠上了”变成可否证的检验</h2>
+
+<h2 id="collapse-gate">进阶研究方法 A · 坍缩验收判据：把“看起来叠上了”变成可否证的检验</h2>
 <p>有限尺寸坍缩很有说服力，也因此特别容易被分析自由度滥用。横轴可以移动 f<sub>c</sub>，纵轴可以调 β/ν，横轴尺度还能调 1/ν；如果再自由挑 L、场区间与插值曲线，几乎总能得到一张“更顺”的图。真正的任务不是追求视觉重合，而是<b>提前限制这些自由度，并让没参与优化的数据有机会把标度假设否掉。</b></p>
 <div class="bridge"><b>方法上的最低共识：</b>数据坍缩可以被定义成一个可量化的优化 / 坍缩优度问题，而不只靠肉眼。对本项目更重要的是在这个思想上再加留出尺寸、来源层级不确定性与标度修正纪律。</div>
 <h3>6.6.1 · 先冻结标度对象，再谈目标函数</h3>
@@ -84,7 +84,7 @@
 <tr><td style="padding:10px;border-top:1px solid var(--l)">C3 · 预测</td><td style="padding:10px;border-top:1px solid var(--l)">留出尺寸无需重新调参即可落在主曲线上 + 独立可观测量交叉核验</td><td style="padding:10px;border-top:1px solid var(--l)">较强的普适性证据，但仍受映射有效性约束</td></tr>
 </tbody></table>
 <div class="q"><b>坍缩验收一句话：</b>如果删掉一个尺寸、换一个预注册区间、传播 f<sub>c</sub> 不确定性或打开留出尺寸后就需要重新“调漂亮”，那张图暂时是标度示意，不是普适性闭合。</div>
-<h2 id="threshold-ladder">6.8 · 阈值推断阶梯：先证明运行有资格，再给 f<sub>c</sub></h2>
+<h2 id="threshold-ladder">进阶研究方法 B · 阈值推断阶梯：先证明运行有资格，再给 f<sub>c</sub></h2>
 <p>在一般相场 / 弥散界面模型里，阈值不是“找一个让曲线最直的数”。它是一条逐级建立的证据链：<b>零场初态稳定 → 每个受驱运行的数值状态有效 → 钉扎态 / 运动态 / 未解析判读有注册标准 → 单个淬火无序样本得到阈值区间或边界 → 跨独立来源做总体推断 → 最后才把阈值依据交给 β。</b></p>
 <div class="bridge"><b>先区分两类问题：</b>对满足特殊数学条件的凸弹性流形哈密顿量，可以有直接定位有限样本临界流形的专门算法；一般相场伴随弥散畴壁、可能的成核 / 悬垂 / 拓扑变化时，不应借用这种“精确阈值”口吻。这里讨论的是后一类更常见的数值证据链。</div>
 <h3>6.8.1 · 判据 0：E=0 自己都站不住，就不要开始阈值搜索</h3>
@@ -116,7 +116,7 @@
 <p>一旦阈值搜索 / 有限尺寸依据冻结，下游速度分析才能定义约化驱动力，例如 <span class="eq">ε = (f − f<sub>c</sub>) / f<sub>c</sub></span>，并检查 <span class="eq">v ∼ ε<sup>β</sup></span> 的稳定区间。最危险的做法是同时自由调整 f<sub>c</sub>、拟合区间与 β，直到双对数图最直。</p>
 <div class="checks"><div class="check"><b>固定或传播不确定性</b><p>要么固定独立阈值估计值，要么把阈值区间 / f<sub>c</sub> 不确定性显式传播到 β；不要把 f<sub>c</sub> 当隐藏拟合可调旋钮。</p></div><div class="check"><b>瞬态判据</b><p>近临界速度的稳态区间必须与早期瞬态分开。长期交叉区会制造看似稳定的有效指数。</p></div><div class="check"><b>区间族</b><p>在预先定义的约化驱动力族上检查 β 对拟合区间的漂移；报告修正 / 交叉区，而不是只留最漂亮窗口。</p></div><div class="check"><b>跨可观测量判据</b><p>β 通过只是 E2/E3 的一部分；ζ、有限尺寸、ν/z、拓扑与标度关系仍需独立闭合。</p></div></div>
 <div class="warn"><b>最短科学路线：</b>先让阈值分类器可审计，再增加阈值无序样本；只有总体阈值稳定后，才值得把算力投入更密的近临界速度网格。反过来先跑大矩阵，往往只是把分类器 / 观测时长的系统误差复制很多遍。</div>
-<h2 id="fit-discipline">7 · 指数提取纪律：漂亮直线最容易骗人</h2>
+<h2 id="fit-discipline">进阶研究方法 C · 指数提取纪律：漂亮直线最容易骗人</h2>
 <p>Ferrero 2013 最值得继承的不是某组 QEW 指数，而是一个负面教训：在微观区间之后仍可能存在很长的 <b>介观交叉区</b>。在这个区间里，双对数图可以非常直，却给出系统偏置的有效指数。作者通过显式标度修正与更长时间/更大尺度才逼近渐近临界区间。</p>
 <div class="src"><div class="head"><b>方法警告 · Ferrero et al. 2013</b>　<span class="rule">项目 Drive PDF · Non-steady relaxation and critical exponents at the depinning transition</span></div><div class="note">论文摘要直接指出：长交叉区可被幂律修正描述；若忽略，会拟合出带系统偏置的有效指数，文献中 β 的差异可大到约 30%。因此“局部斜率稳定几格”不是验收标准。</div></div>
 <h3>7.1 · 阈值先于 β：不要让 f<sub>c</sub> 成为隐藏拟合参数</h3>
@@ -144,5 +144,6 @@
 <h2>把它变成一个靠谱的数值实验</h2><div class="checks"><div class="check"><b>① 先定义并收敛 f<sub>c</sub></b><p>用钉扎态/运动态判据、非稳态松弛或样本阈值分布，检查时间窗口与系统尺寸。</p></div><div class="check"><b>② 测 v(f)，但不要只拟合 β</b><p>明确拟合窗口、离临界的距离、有限温度/有限时间交叉区，并报告不确定度。</p></div><div class="check"><b>③ 独立测临界几何 ζ</b><p>从界面高度 / 结构因子 / B(r) 提取，并检查拟合尺度区间与系统尺寸。</p></div><div class="check"><b>④ 测 ξ 或有限尺寸标度</b><p>至少证明相关尺度在靠近阈值时增长；理想情况下用多 L 数据做坍缩。</p></div><div class="check"><b>⑤ 用标度关系交叉检查</b><p>不要把 β、ζ、ν、z 当四个互不相干的“漂亮数字”。</p></div><div class="check"><b>⑥ 最后才谈普适性</b><p>先说明有效界面、elastic kernel（弹性核）、无序类别和温度区间，再与文献指数比较。</p></div></div>
 <div class="q">这一章的底线：<b>“有阈值 + 一条幂律”不等于退钉扎普适性。</b> 越接近 PRL 级别的普适性结论，越需要多可观测量、多尺寸和相互约束的标度证据。</div>
 <div class="bridge"><b>Research Track：</b>如果你的现有数据来自完整 P–E / 三角波回线翻转，而下一步想测 β、ζ、ν，先不要把回线中的矫顽阈值直接当作这里的 f<sub>c</sub>。<a href="research-track.html#protocol">看完整的完整翻转 vs 孤立畴壁流程对照 →</a></div>
+<div class="bridge">到这里，问题已经从“墙会不会动”变成“哪一种无序与哪一种有效界面理论控制它怎么动”。下一章必须把无序本身拆开：随机键、随机场与 RFIM 到底各自意味着什么。</div>
 <div class="next"><a href="pinning-creep.html">← 04 Pinning（钉扎）、Creep（蠕变）与 Roughness（粗糙度）</a><a href="disorder-rfim.html">06 Disorder（无序）与 RFIM →</a></div>
 </main><script src="../terms.js"></script></body></html>
