@@ -9,6 +9,7 @@ EXPECTED = {
     'depinning.html': 4,
     'disorder-rfim.html': 4,
     'numerical-modeling.html': 4,
+    'current-frontiers.html': 4,
 }
 
 ANCHORS = {
@@ -36,6 +37,12 @@ ANCHORS = {
         '同一淬火景观下的热噪声内层重复',
         '并不自动等于畴壁质心速度',
         '没参与校准的留出可观测量',
+    ),
+    'current-frontiers.html': (
+        '不能从离散偏置后的空间状态直接升级到 β',
+        '不能替代无序退钉扎证据',
+        '否定的是“预存畴壁无条件必要”这种过强外推',
+        '机制链已经很强，普适性链仍缺关键可观测量',
     ),
 }
 
@@ -86,9 +93,9 @@ def main() -> None:
 
         total += len(details)
 
-    if total != 15:
+    if total != 19:
         raise RuntimeError(f'claim-check total drifted: {total}')
-    print('CLAIM CHECK SEAL PASS: modules 04/05/06/07 keep 3/4/4/4 folded evidence-to-claim judgments (15 total) with locked scientific boundaries.')
+    print('CLAIM CHECK SEAL PASS: modules 04-08 keep 3/4/4/4/4 folded evidence-to-claim judgments (19 total) with locked scientific boundaries.')
 
 
 if __name__ == '__main__':
