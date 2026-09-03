@@ -23,7 +23,7 @@ const scienceV3Blocks = {
   'modules/disorder-rfim.html': ['#rb-rf-depinning'],
   'modules/research-track.html': ['#rf-rb-interpretation', '#qew-validity'],
   'modules/numerical-modeling.html': ['#periodicity-boundary', '#multi-interface-extension'],
-  'modules/current-frontiers.html': ['#screening-boundary'],
+  'modules/current-frontiers.html': ['#mechanism-reconcile', '#screening-boundary'],
   'modules/reproduction-lab-10.html': ['#periodic-crossover-diagnostic'],
   'modules/reproduction-lab-11.html': ['#transverse-geometry-diagnostic'],
 };
@@ -134,19 +134,24 @@ for (const viewport of viewports) {
           }
         }
 
-        for (const selector of scienceSelectors) {
+        for (const selector of scienceSelectors || []) {
           const el = document.querySelector(selector);
           if (!el) {
             findings.push(`Science V3 block missing: ${selector}`);
             continue;
           }
           if (!visible(el)) {
-            findings.push(`Science V3 block is not visible: ${selector}`);
+            findings.push(`Science V3 block not visible: ${selector}`);
             continue;
           }
           const r = rect(el);
           if (r.left < -EPS || r.right > viewportWidth + EPS || r.width > viewportWidth + EPS) {
-            findings.push(`Science V3 block ${selector} exceeds the mobile viewport (${r.width.toFixed(1)}px wide)`);
+            findings.push(`Science V3 block ${selector} exceeds mobile viewport (${r.width.toFixed(1)}px wide)`);
+          }
+          for (const child of el.querySelectorAll('table,.eq,pre')) {
+            if (child.scrollWidth > child.clientWidth + EPS && !insideIntentionalScroller(child)) {
+              findings.push(`Science V3 block ${selector}: ${shortLabel(child)} clips without horizontal scrolling`);
+            }
           }
         }
 
@@ -200,10 +205,7 @@ for (const viewport of viewports) {
         }
 
         return findings;
-      }, {
-        viewportWidth: viewport.width,
-        scienceSelectors: scienceV3Blocks[rel] || [],
-      });
+      }, { viewportWidth: viewport.width, scienceSelectors: scienceV3Blocks[rel] || [] });
 
       pageFailures.push(...runtimeFindings);
     } catch (error) {
