@@ -1,0 +1,29 @@
+{
+  "algorithm": "sha256",
+  "blocks": {
+    "modules/depinning.html": [
+      "9c8446e9c65346bbb97dba398d55a54e4f6541599ec0f6f098a13902ac58e975",
+      "f638e51672c9357ea632218e72a35e04e106da4dae50dd60778544cb201f4364",
+      "b9a02641d9bd7f5a94e877492d7ae3f182f92f9c152b317fa36a002022f766bd",
+      "38806b96c61b2f848be7486600341c2ebaececf5c7b5b1e4a5ef6d860f1b848a"
+    ],
+    "modules/disorder-rfim.html": [
+      "9c6b4ed1eef683a9c7cbe1e7ec69b0c978777140f5fd207f7811764eb1f18bb8",
+      "f98b90990a3b19a4ada27d01d40c85b2a38cc4985cea61fa8e2468ff6deeb8b0",
+      "6baf858683261f1c5b39c10aa34b2f5554269cd82c2bcbe2db98357ba1ccc342",
+      "6b961be530be9faeeb3fa7ce87ad73450baeadb89ccbdb78434feabd971b43ff"
+    ],
+    "modules/numerical-modeling.html": [
+      "a3cd776fb1adf5b8f0495b4dc630e33b3cdbf075e92244a71a9dffb5b2f3ca79",
+      "8d585312b2b2586bce11981faf5b95e3f28e0bfb38f0d2893ee560543f3ef69d",
+      "a7f36fea09dcdee9fbf92a06f286a7e7487a2d812863d425ded851b882bb19ff"
+    ],
+    "modules/current-frontiers.html": [
+      "277d26d53f093de5988e8f729e0cae708bc7b316e7014050fe2c0c1ec15d62a9",
+      "4f69cab316b60970c7aa89f02bed7ad4c8cc5f49f5669c6e8301b42cea1685ff",
+      "c0829735d87246b03e46bccb6ba8e8af4dca29530aceb47316527610a938d03b",
+      "f362e8c3c95d5ccf81f8df404d04dabd724c6e46570428d8eeb593e96e6a7e2c",
+      "d02c36cb368529fe645313caa841218b2ae47b56d1b8be9bd4d46d7d2ae03d1b"
+    ]
+  }
+}

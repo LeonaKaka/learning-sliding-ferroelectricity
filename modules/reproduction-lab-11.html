@@ -28,6 +28,8 @@
 <table class="table"><thead><tr><th>尺寸区间</th><th>有效 ν</th></tr></thead><tbody><tr><td>L=32,64,128</td><td>1.557481</td></tr><tr><td>L=32,64,128,256</td><td>1.503976</td></tr><tr><td>L=64,128,256</td><td>1.709690</td></tr></tbody></table>
 <div class="hold"><b>尺寸区间稳定性：未通过。</b> ν 的跨度为 0.205713，高于预先登记的 0.15 判据。也就是说，当前斜率仍明显受有限尺寸修正控制，不能把 1.503976 升级成热力学极限 ν。</div>
 
+<div class="warn" id="transverse-geometry-diagnostic"><b>横向几何不是附属参数：</b>论文 Fig.2 已经用 M=kL<sup>ζ</sup> 明确展示临界力的有限尺寸行为依赖纵横比方案。更一般的随机周期研究也表明横向周期 M 能控制随机流形 / 随机周期交叉。因此当前 ν 的尺寸区间漂移不能被唯一归因于“样本还少”或“L 还小”；后续若要闭合 ν，应把 k 或 M 的变化作为独立有限几何检验。<strong>这条诊断不改变本课结论：</strong>当前尺寸区间稳定性仍然未通过，普适 ν 仍不授权。</div>
+
 <h2>4 · 分布坍缩为什么也不能单独救场？</h2>
 <figure class="figure medium"><img src="../assets/reproduction-lab/lesson11_collapse_score.png" alt="不同假设 ν 下的分位数坍缩评分"><figcaption class="caption"><b>本课模拟输出 · 坍缩敏感性。</b> 横轴是假设的 ν，纵轴是四个尺寸中心化阈值分布的分位数坍缩评分（越低越好）。最低点很浅：ν=1.405、4/3 和方差拟合得到的 1.504，评分彼此很接近。</figcaption></figure>
 <div class="grid3"><div class="card"><b>最优扫描</b><p>ν=1.405<br>评分=0.117003</p></div><div class="card"><b>QEW 4/3</b><p>评分=0.120858</p></div><div class="card"><b>方差拟合 1.504</b><p>评分=0.123243</p></div></div>

@@ -9,10 +9,10 @@ EXPECTED = {
     'switching-pathways.html': 3,
     'domain-walls.html': 3,
     'pinning-creep.html': 3,
-    'depinning.html': 4,
-    'disorder-rfim.html': 4,
-    'numerical-modeling.html': 4,
-    'current-frontiers.html': 4,
+    'depinning.html': 5,
+    'disorder-rfim.html': 5,
+    'numerical-modeling.html': 5,
+    'current-frontiers.html': 5,
 }
 
 ANCHORS = {
@@ -111,9 +111,9 @@ def main() -> None:
 
         total += len(details)
 
-    if total != 28:
-        raise RuntimeError(f'claim-check total drifted: {total}')
-    print('CLAIM CHECK SEAL PASS: modules 01-08 keep 3/3/3/3/4/4/4/4 folded evidence-to-claim judgments (28 total) with locked scientific boundaries.')
+    if total != 32:
+        raise RuntimeError(f'claim-check total drifted after Science V3: {total}')
+    print('CLAIM CHECK SEAL PASS: modules 01-08 keep 3/3/3/3/5/5/5/5 folded evidence-to-claim judgments (32 total) with locked scientific boundaries.')
 
 
 if __name__ == '__main__':

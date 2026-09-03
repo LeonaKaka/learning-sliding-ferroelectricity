@@ -46,9 +46,14 @@
 <div class="claims"><div class="claim"><h3>真正能拿来用的判据</h3><p>壁宽相对观察尺度足够小、界面大体单值、低温/弱体相涨落，并且抽出的 u(y) 的粗糙度 / 结构因子与 约化模型在目标尺度上相容。</p></div><div class="claim"><h3>失效信号</h3><p>强成核、孤立小畴、持续悬垂/封闭小畴、壁宽与相关长度同阶、强局域变形，或不同畴壁提取方法给出显著不同 ζ。此时不要强行拟合弹性线指数。</p></div></div>
 <h2>4 · Dai 2026：什么时候单一 u(y) 不是“近似得粗”，而是自由度真的少了？</h2>
 <p>Caballero 的约化问题默认只有一堵主要界面。多层滑移铁电会出现更直接的失效模式：不是畴壁变得有一点悬垂，而是体系本来就有多个滑移界面。Dai 2026 的三层 γ-InSe 计算显示，相邻层的畴壁位于不同位置，中间可以形成非极性畴，外场下又出现分阶段运动与显著畴壁间相互作用。</p>
+
+<div class="twocol" id="multi-interface-extension"><div class="card"><b>单界面约化</b><div class="eq">u(y,t)</div><p>只保留一堵主要畴壁的位置；所有内部结构都被假定为快变量或可忽略修正。</p></div><div class="card"><b>多界面约化</b><div class="eq">u(y,t) → {u<sub>1</sub>(y,t), u<sub>2</sub>(y,t), …}</div><p>当相邻滑移界面的畴壁可独立移动时，相对位移 d<sub>ij</sub>=u<sub>i</sub>−u<sub>j</sub>、中间畴宽度与 wall–wall correlation（畴壁间关联）都成为新的慢可观测量。</p></div></div>
+<div class="bridge"><b>这不是“给 QEW 多加一个参数”。</b> 一旦 d<sub>ij</sub> 本身携带慢动力学和分阶段翻转信息，把 {u<sub>i</sub>} 强行投影成单个 u 会丢掉可观测自由度。Dai 2026 因而更适合作为“单界面约化何时失效”的材料级反例，而不是拿来给单界面 QEW 指数做直接背书。</div>
 <div class="eq">u(y,t)　→　{u<sub>1</sub>(y,t), u<sub>2</sub>(y,t), …}<small>若多个界面的相对位移会改变能量和动力学，就还需要相互作用项，例如 F<sub>int</sub>[u<sub>1</sub>−u<sub>2</sub>]；这只是粗粒化结构示意，不是 Dai 论文直接给出的 Hamiltonian（哈密顿量）。</small></div>
 <div class="twocol"><div class="card"><h3>仍可做单畴壁最小问题</h3><p>当研究问题明确限定在双层近似、一堵预存畴壁、其它界面自由度被冻结时，单一 u(y) 仍是最干净的普适性检验。</p></div><div class="card"><h3>不能无条件外推</h3><p>三层 / 多层的中间态、耦合畴壁与畴壁间相互作用可能引入新的长度和时间尺度；单畴壁 β/ζ/ν 不能自动描述整个多层翻转。</p></div></div>
 <div class="warn"><b>模型边界不是缺点。</b>真正严谨的说法是：先用单畴壁问题测试最小受驱界面框架；如果未来扩到多层，就显式增加界面索引，而不是把所有额外自由度藏进一个更大的“噪声”。</div>
+
+<div class="warn" id="periodicity-boundary"><b>两种“周期”不要混在一起：</b>上面的局域堆垛势满足类似 <span class="eq" style="display:inline-block;padding:2px 7px;margin:0">V(φ+2π/n)=V(φ)</span>，它表示序参量存在等价堆垛极小值；而 random-periodic disorder（随机周期无序）要求的是<strong>钉扎无序相关函数本身</strong>沿界面位移方向重复，例如 <span class="eq" style="display:inline-block;padding:2px 7px;margin:0">Δ(u+M)=Δ(u)</span>。前者存在，不能自动推出后者。Bustingorry, Kolton &amp; Giamarchi 2010 进一步显示，有限横向周期 M 会让随机流形与随机周期粗糙区间发生尺度交叉，因此大尺度模拟中的周期边界条件本身必须作为有限尺寸变量审计。<a href="https://doi.org/10.1103/PhysRevB.82.094202" rel="noopener" target="_blank">Phys. Rev. B 82, 094202 →</a></div>
 <h2 id="identifiability">4.5 · 无量纲化与可辨识性：参数多，不等于信息多</h2>
 <p>一套连续体模型可以同时写 κ、V<sub>0</sub>、P<sub>0</sub>、Γ、无序幅度、关联长度和温度；但一条实验曲线通常不能把它们全部独立决定。真正应该先问的是：<b>某个可观测量约束的是哪个参数，还是只约束某个参数组合？</b> 如果这个问题没回答，所谓“参数拟合得很好”可能只是不可辨识性。</p>
 <div class="q">最重要的校准顺序：<b>先定自由度与对称性 → 再定无序为零静态性质 → 再定无序为零动力学 → 再加无序 → 最后才拿没参与校准的可观测量做验证。</b></div>
@@ -225,6 +230,8 @@
 <details><summary>2 · 在常迁移率、加性白热噪声的 TDGL 中，减小 dt 时，方程右端“噪声率”的标准差与每步真正加入 φ 的随机增量标准差具有相反的 dt 标度。</summary><p><span class="answer">答案：对。</span> 噪声率标准差随 dt<sup>−1/2</sup>，每步随机增量随 dt<sup>+1/2</sup>。两种写法等价，但必须选清楚代码里的随机数究竟加在哪里；混用会让所谓温度随 dt 漂移。</p></details>
 <details><summary>3 · 固定同一个淬火无序景观，只更换 20 个热噪声随机种子，就得到 20 个独立无序样本，可以直接把它们当作外层统计单元。</summary><p><span class="answer">答案：错。</span> 这些只是同一淬火景观下的热噪声内层重复。它们能更精确估计该景观的有限温响应，却不会自动增加独立无序样本数。</p></details>
 <details><summary>4 · 若平均 dP/dt 很稳定，而且一套参数能很好拟合用于校准的 P–E 回线，就已经同时验证了“稳态畴壁速度”和模型的独立预测能力。</summary><p><span class="answer">答案：错。</span> dP/dt 还可能包含体相弛豫、成核和局域呼吸模，并不自动等于畴壁质心速度；而用来调参的 P–E 回线只能说明校准闭合。稳态 v 要从定义清楚的畴壁坐标与稳定时间区间得到，模型验证还需要没参与校准的留出可观测量。</p></details>
+
+<details><summary>局域堆垛势 V(φ) 是周期函数，是否因此可以把界面无序称为 random-periodic（随机周期无序）？</summary><p><span class="answer">答案：不能。</span> 周期堆垛势描述序参量的等价极小值；随机周期类别要求钉扎无序相关函数沿界面位移方向周期重复。两种“周期”属于不同模型层级。</p></details>
 </section>
 
 <div class="next"><a href="disorder-rfim.html">← 06 Disorder（无序）与 RFIM</a><a href="current-frontiers.html">08 Current Frontiers（当前前沿） →</a></div>

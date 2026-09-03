@@ -49,6 +49,10 @@
 <p>2026 年 CVD 生长 3R-WSe₂ 工作明确报告：生长诱导结构无序会显著影响极化翻转，且多畴动力学控制铁电响应的演化。这类实验告诉我们“无序确实重要”，但从结构无序到 RF / RB / 迁移率 / 几何无序的粗粒化仍需逐项论证。</p>
 <div class="source"><span class="tag">滑移铁电锚点</span><b>Paul et al., Nanoscale (2026), DOI 10.1039/D6NR01832G</b><p>适合作为“真实滑移铁电为什么必须研究无序”的材料学锚点；它不直接替我们决定该用哪一种有效无序项。</p></div>
 <table class="matrix"><thead><tr><th>真实非均匀性</th><th>首先可能影响</th><th>不要自动等同于</th></tr></thead><tbody><tr><td>封闭小畴 / 粗糙边缘</td><td>局域势垒、几何、畴壁曲率</td><td>Gaussian white random field（高斯白噪声随机场）</td></tr><tr><td>陷阱电荷 / 静电非均匀性</td><td>局域极化偏置</td><td>纯随机键型耦合</td></tr><tr><td>应变 / 堆垛非均匀性</td><td>周期景观、畴壁能量、偏好堆垛</td><td>单一标量 σ</td></tr><tr><td>生长缺陷 / 晶粒</td><td>势垒、迁移率、初始畴网络</td><td>只有一个微观机制</td></tr></tbody></table>
+
+<h3 id="rf-rb-interpretation">1.2 · 先分开两个问题：耦合形式不同，临界普适类未必不同</h3>
+<div class="twocol"><div class="card"><b>先比较非普适响应</b><p>在同一匹配规则下比较阈值、速度幅度、有限尺度几何、交叉尺度与路径分布。这些差异可以非常有物理意义，但它们首先回答“耦合形式怎样改变可观测响应”。</p></div><div class="card"><b>再检验临界普适性</b><p>只有在单界面映射成立、临界区被独立定位、多个尺度与多个估计量闭合以后，β / ζ / ν 等渐近量才有资格回答“是否流向同一临界不动点”。</p></div></div>
+<div class="warn"><b>解释纪律：</b><i>f</i><sub>c</sub><sup>RF</sup> ≠ <i>f</i><sub>c</sub><sup>RB</sup> 不能推出“两个普适类”；β<sup>RF</sup> ≈ β<sup>RB</sup> 也不能推出“两个微观无序相同”。标准弹性界面退钉扎中，RB 与 RF 可以流向相同的 RF 型临界不动点；Rosso, Le Doussal &amp; Wiese 2007 直接测得两者在退钉扎处相同的普适 Δ(u)。<a href="https://doi.org/10.1103/PhysRevB.75.220201" rel="noopener" target="_blank">查看 APS 记录 →</a></div>
 <h2 id="protocol">2 · 完整翻转与孤立畴壁退钉扎：不是同一套实验换个名字</h2>
 <p>这是研究路线里最重要的方案区分。三角波滞回很适合研究完整翻转体系；但如果问题变成“一个预先存在的畴壁是否存在临界退钉扎”，就必须尽量把成核、多畴路径与历史混合因素拿掉。</p>
 <table class="matrix"><thead><tr><th></th><th>完整翻转 / 滞回</th><th>孤立畴壁退钉扎</th></tr></thead><tbody><tr><td>初态</td><td>单畴 / 混合畴，可允许翻转拓扑自己发展</td><td>明确构造并先弛豫一堵预存畴壁</td></tr><tr><td>驱动</td><td>三角波 / 周期 E(t)</td><td>恒定 E</td></tr><tr><td>主要输出</td><td>P(E)、矫顽尺度、回线功、翻转活动度、形貌</td><td>u(y,t)、稳态 v(E)、B(r)、S(q)、E<sub>c</sub>(L)</td></tr><tr><td>阈值含义</td><td>方案依赖的翻转 / 矫顽阈值</td><td>在定义的 T=0 畴壁问题中钉扎态→运动态阈值</td></tr><tr><td>β</td><td>不能由回线的 E<sub>c</sub> 直接得到</td><td>在稳定的稳态速度区间中测试 v∼(E−E<sub>c</sub>)<sup>β</sup></td></tr><tr><td>主要风险</td><td>成核、路径历史、多个畴壁混在一起</td><td>瞬态、有限尺寸、畴壁拓扑失效</td></tr></tbody></table>
@@ -60,6 +64,11 @@
 <table class="matrix"><thead><tr><th>层次</th><th>应该固定什么</th><th>重复什么</th><th>独立统计单元</th></tr></thead><tbody><tr><td>淬火无序</td><td>一个景观 h(r)/δV(r)</td><td>换无序随机种子</td><td>用于无序总体推断的外层单元</td></tr><tr><td>热噪声</td><td>同一个淬火景观</td><td>换 Langevin（朗之万）/ 噪声随机种子</td><td>同一景观内的条件重复</td></tr><tr><td>轨迹帧</td><td>同一次运行</td><td>随时间采样</td><td>不是新的无序样本</td></tr></tbody></table>
 <div class="warn"><b>最重要的防过拟合规则：</b>热圆整必须继承独立 T=0 阈值。若允许每个无序随机种子在同一批有限温数据里自由移动自己的 f<sub>c</sub>，再去优化 ψ / 坍缩，就可能人为抹掉样本间阈值差异。</div>
 <div class="bridge"><a href="pinning-creep.html#finite-temperature">模块 04：怎么找可测蠕变区间</a>　·　<a href="depinning.html#thermal-rounding">模块 05：怎么测热圆整 / ψ</a>　·　<a href="numerical-modeling.html#thermal-noise">模块 07：热噪声 / FDT 怎样随 dx、dt 离散</a></div>
+
+<h3 id="qew-validity">在拟合 β / ζ / ν 之前，先检查单界面映射是否还成立</h3>
+<p>QEW 不是“看到一堵墙以后默认套用”的公式，而是一组可以被数据证伪的长波假设。下面五项至少要逐项检查；任何一项持续失败，都应该先改模型，而不是继续扩大指数拟合。</p>
+<div class="flow"><div><b>几何</b><p>畴壁能否长期稳定写成单值 u(y,t)？持续悬垂、封闭小畴、分叉或脱离小畴说明单值表示正在失效。</p></div><div><b>自由度</b><p>真的只有一堵主要界面吗？若 u<sub>1</sub>,u<sub>2</sub>,… 的相对位移本身是慢变量，就不能无条件压成一个 u。</p></div><div><b>弹性核</b><p>恢复力是否近似局域、谐和？若静电 / 应变产生显著 q 依赖，或非线性弹性不可忽略，应检验长程或 qKPZ 等扩展。</p></div><div><b>无序是否淬火</b><p>一次运行中缺陷景观是否近似固定？若自由载流子屏蔽随 φ、E、时间或历史重排，h(r) 不能再被无条件视为静态背景。</p></div><div><b>动力学</b><p>是否处于过阻尼、主要向前的界面运动极限？强惯性、内部畴壁模、显著回退或塑性重排都需要额外动力学自由度。</p></div></div>
+<div class="bridge"><b>允许三种科学出口：</b>① 这些检查在目标尺度内成立 → QEW 映射仍是合理候选；② 只有某一项系统偏离 → 明确写出需要的扩展；③ 单值界面或单自由度本身失效 → <strong>“单界面映射失效”就是结果</strong>。第三种不是没做成，而是对传统受驱界面框架适用范围的直接检验。</div>
 <h2 id="model">3 · 从堆垛构型到最小滑移铁电相场</h2>
 <p>普通 φ⁴ 相场能教界面动力学，却容易把滑移铁电最重要的“周期性堆垛坐标”藏掉。一个更贴近本项目问题、但仍保持最小的教学模型，是把局域 stacking registry（堆垛配位）压成周期变量 φ(r,t)，再把极化写成 φ 的周期函数。</p>
 <div class="eq">P(φ)=P<sub>0</sub> sinφ</div>

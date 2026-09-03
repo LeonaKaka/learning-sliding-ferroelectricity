@@ -50,6 +50,8 @@
 <div class="checks"><div class="check"><b>A · 冻结 T=0 依据</b><p>固定几何、无序定义、L、dx 与独立阈值方案；先有 f<sub>c</sub> / f<sub>c</sub><sup>(i)</sup>。</p></div><div class="check"><b>B · 小规模有限温预检</b><p>先用少数 T 和 f/f<sub>c</sub> 检查随机积分器、速度下限、所需观测时间、畴壁拓扑。</p></div><div class="check"><b>C · 分层重复</b><p>同一无序样本下跑多个热随机种子；不确定性不把这些内层重复冒充新的淬火无序样本。</p></div><div class="check"><b>D · 分开两个问题</b><p>深阈值下区间测蠕变；f≈f<sub>c</sub> 测热圆整。不要用一套拟合函数覆盖两个区间。</p></div><div class="check"><b>E · 先 v，再几何</b><p>若速度标度存在候选关系，再检查有限温结构因子 / 粗糙度交叉区是否给出相容的特征长度。</p></div><div class="check"><b>F · 失效结果也要保留</b><p>若有限温触发成核、多畴壁或标度对区间极敏感，记录为映射失效 / 交叉区，而不是删掉“不漂亮”的运行。</p></div></div>
 <div class="bridge"><a href="pinning-creep.html#finite-temperature">回到模块 04 的有限温蠕变测量方案</a>：那里负责 f&lt;f<sub>c</sub> 的热激活区间；这里负责 f≈f<sub>c</sub> 的热圆整。两者相邻，但不是同一个拟合。</div>
 
+
+<div class="warn" id="qew-validity-boundary"><b>第二遍阅读再加一条模型边界：</b>“测到的指数接近 QEW”不能反过来证明 QEW 就是正确的长波理论。标准 QEW 需要界面仍可稳定表示为单值位移场、弹性近似以谐和且倾斜不变的恢复力为主、动力学处于近似过阻尼的界面运动极限，并且没有必须保留的多界面或塑性自由度。若非线性弹性或法向生长产生 KPZ 型非线性，临界行为可以转入 quenched KPZ（淬火 KPZ，qKPZ）而不是 QEW。<br/><span class="rule">补充理论锚点：Mukerjee &amp; Wiese, Phys. Rev. E 107, 054137 (2023), <a href="https://doi.org/10.1103/PhysRevE.107.054137" rel="noopener" target="_blank">DOI 10.1103/PhysRevE.107.054137</a>。这里引用它是为了限定 QEW 的适用条件，不是把滑移铁电预先归入 qKPZ。</span></div>
 <h2 id="collapse-gate">进阶研究方法 A · 坍缩验收判据：把“看起来叠上了”变成可否证的检验</h2>
 <p>有限尺寸坍缩很有说服力，也因此特别容易被分析自由度滥用。横轴可以移动 f<sub>c</sub>，纵轴可以调 β/ν，横轴尺度还能调 1/ν；如果再自由挑 L、场区间与插值曲线，几乎总能得到一张“更顺”的图。真正的任务不是追求视觉重合，而是<b>提前限制这些自由度，并让没参与优化的数据有机会把标度假设否掉。</b></p>
 <div class="bridge"><b>方法上的最低共识：</b>数据坍缩可以被定义成一个可量化的优化 / 坍缩优度问题，而不只靠肉眼。对本项目更重要的是在这个思想上再加留出尺寸、来源层级不确定性与标度修正纪律。</div>
@@ -161,6 +163,8 @@
 <details><summary>2 · β 的拟合应建立在已经独立约束的 f<sub>c</sub> 上，因为阈值偏差会直接污染幂律斜率。</summary><p><span class="answer">答案：对。</span> 若一边移动 f<sub>c</sub> 一边追求最漂亮的 β，指数很容易吸收阈值误差；“阈值先于指数”是证据链纪律。</p></details>
 <details><summary>3 · 标度坍缩应该被当成待检验结果，而不是先调参数把数据压到一起，再据此宣布普适性。</summary><p><span class="answer">答案：对。</span> 坍缩需要预先定义变量、尺度范围和失败判据。若只有某个精调参数组合看起来漂亮，它不能独立构成普适性证据。</p></details>
 <details><summary>4 · 只要测得一个与文献值接近的 β，就足以确认系统属于同一个退钉扎普适类。</summary><p><span class="answer">答案：错。</span> 普适性至少还要求阈值、稳态速度、临界几何、有限尺寸和不同估计量彼此兼容；“一个指数接近”只能算线索。</p></details>
+
+<details><summary>如果 β、ζ 很接近 QEW 文献值，能否反过来证明滑移铁电畴壁一定属于 QEW？</summary><p><span class="answer">答案：不能。</span> 指数相容只是必要线索之一。还要独立检查单值界面、弹性核、动力学与自由度是否满足 QEW 的长波假设；如果这些条件失效，数值接近可能只是有限尺度巧合或交叉区。</p></details>
 </section>
 
 <div class="next"><a href="pinning-creep.html">← 04 Pinning（钉扎）、Creep（蠕变）与 Roughness（粗糙度）</a><a href="disorder-rfim.html">06 Disorder（无序）与 RFIM →</a></div>
