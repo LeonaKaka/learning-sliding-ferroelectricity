@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'scripts/science_v3_apply.py'
+      - 'scripts/claim_checks_seal.py'
       - '.github/workflows/science-v3-apply.yml'
 
 permissions:
