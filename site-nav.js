@@ -55,7 +55,7 @@
   left.innerHTML='<div class="site-nav-title">All pages</div>'+
     pages.map(([t,f],i)=>`<a class="${i===0?'site-nav-home ':''}${isActive(f)?'active':''}" href="${hrefFor(f)}">${t}</a>`).join('')+
     '<div class="site-nav-section">Reproduction Lab · 12 lessons</div>'+
-    `<a class="site-nav-lab ${isActive('modules/reproduction-lab.html')?'active':''}" href="${hrefFor('modules/reproduction-lab.html')}">Open Reproduction Lab →</a>`+
+    `<a class="site-nav-lab ${isActive('modules/reproduction-lab-overview.html')?'active':''}" href="${hrefFor('modules/reproduction-lab-overview.html')}">12 课学习路线 →</a>`+
     '<div class="site-nav-phase">Paper1 · L01–L06</div>'+labs.slice(0,6).map(labLink).join('')+
     '<div class="site-nav-phase">Paper2 · L07–L12</div>'+labs.slice(6).map(labLink).join('');
   document.body.appendChild(left);
@@ -66,12 +66,12 @@
       const section=document.createElement('section');
       section.className='wrap'; section.id='reproduction-lab-entry';
       section.style.cssText='padding-top:8px;padding-bottom:10px';
-      section.innerHTML=`<div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:center;background:#1f201e;color:#f8f3e8;border-radius:16px;padding:22px 24px;box-shadow:0 12px 30px #00000012"><div><div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.68;margin-bottom:5px">Reproduction Lab · 12 lessons</div><b style="font:700 22px/1.25 Georgia,serif">从论文公式走到可复跑的数值证据链</b><p style="margin:8px 0 0;color:#ddd6ca">L01–L06：Paper1 方法基础；L07–L12：threshold → steady velocity → β → ζ → finite-size scaling → thermal rounding / creep boundary。</p></div><a href="modules/reproduction-lab.html" style="text-decoration:none;color:#1f201e;background:#fffdf8;border-radius:10px;padding:12px 16px;font-weight:750;white-space:nowrap">打开 Reproduction Lab →</a></div>`;
+      section.innerHTML=`<div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:center;background:#1f201e;color:#f8f3e8;border-radius:16px;padding:22px 24px;box-shadow:0 12px 30px #00000012"><div><div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.68;margin-bottom:5px">Reproduction Lab · 12 lessons</div><b style="font:700 22px/1.25 Georgia,serif">从论文公式走到可复跑的数值证据链</b><p style="margin:8px 0 0;color:#ddd6ca">先验证对象与映射，再验证阈值和稳态速度，最后才审计 β、ζ、ν 与有限温结论是否闭合。</p></div><a href="modules/reproduction-lab-overview.html" style="text-decoration:none;color:#1f201e;background:#fffdf8;border-radius:10px;padding:12px 16px;font-weight:750;white-space:nowrap">查看 12 课学习路线 →</a></div>`;
       hero.insertAdjacentElement('afterend',section);
     }
     const topNav=document.querySelector('.top .nav');
     if(topNav && !topNav.querySelector('[data-lab-link]')){
-      const a=document.createElement('a'); a.href='modules/reproduction-lab.html'; a.textContent='Reproduction Lab'; a.dataset.labLink='1'; a.style.fontWeight='750'; topNav.appendChild(a);
+      const a=document.createElement('a'); a.href='modules/reproduction-lab-overview.html'; a.textContent='Reproduction Lab'; a.dataset.labLink='1'; a.style.fontWeight='750'; topNav.appendChild(a);
     }
   }
 
