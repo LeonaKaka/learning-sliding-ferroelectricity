@@ -16,7 +16,7 @@
 main h2[id]{scroll-margin-top:84px}
 .nav-drawer-btn{display:none;position:fixed;z-index:60;top:10px;width:42px;height:42px;border:1px solid var(--site-nav-line);border-radius:10px;background:#fffdf8;color:#222;font-size:18px;box-shadow:0 3px 14px #00000012}
 .nav-drawer-btn.left{left:10px}.nav-drawer-btn.right{right:10px}
-.mobile-toc{display:none!important}
+.mobile-toc{display:none}
 @media(min-width:1280px){body{padding-left:var(--site-nav-w);padding-right:var(--page-toc-w)}body>.top{left:var(--site-nav-w);right:var(--page-toc-w);width:auto}.site-sidebar,.page-toc{display:block}}
 @media(max-width:1279px){.nav-drawer-btn{display:block}.site-sidebar,.page-toc{transform:translateX(-105%);transition:transform .2s ease;box-shadow:0 10px 30px #0002}.page-toc{transform:translateX(105%)}.site-sidebar.open,.page-toc.open{transform:translateX(0)}.site-sidebar{width:min(300px,86vw)}.page-toc{width:min(300px,86vw)}body.nav-drawer-open{overflow:hidden}.top .top-inner,.top .bar{padding-left:52px!important;padding-right:52px!important}}
-@media(max-width:760px){#reproduction-lab-entry>div{grid-template-columns:1fr!important}#reproduction-lab-entry a{justify-self:start}.top .nav{padding-left:0!important;padding-right:0!important}}
+@media(max-width:760px){.mobile-toc{display:block}#reproduction-lab-entry>div{grid-template-columns:1fr!important}#reproduction-lab-entry a{justify-self:start}.top .nav{padding-left:0!important;padding-right:0!important}}
