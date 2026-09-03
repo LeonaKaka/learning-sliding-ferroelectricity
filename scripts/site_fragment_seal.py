@@ -66,10 +66,15 @@ def main() -> None:
         if marker not in haystack:
             failures.append(f"{owner}: navigation runtime guard/injection marker drifted: {marker}")
 
-    if ".mobile-toc{display:none}" not in nav_css:
-        failures.append("site-nav.css: desktop/base mobile-toc hidden rule missing")
-    if "@media(max-width:760px){.mobile-toc{display:block}" not in nav_css:
-        failures.append("site-nav.css: mobile chapter navigation is not explicitly visible at <=760px")
+    css_locked = (
+        ".mobile-toc{display:none}",
+        "@media(max-width:760px){.mobile-toc{display:block}",
+        "table{display:block;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}",
+        ".eq,pre{max-width:100%;overflow-x:auto}",
+    )
+    for marker in css_locked:
+        if marker not in nav_css:
+            failures.append(f"site-nav.css: mobile reading guard drifted: {marker}")
     if ".mobile-toc{display:none!important}" in nav_css:
         failures.append("site-nav.css: legacy !important rule would suppress the mobile chapter navigation")
 
@@ -134,7 +139,7 @@ def main() -> None:
         f"SITE FRAGMENT / RUNTIME SEAL PASS: {len(PAGES)} pages scanned; "
         f"{checked_files} local HTML links and {checked_fragments} fragments resolved; "
         f"{checked_runtime_pages} source pages obey single-owner navigation runtime; "
-        "terms.js/site-nav.js idempotence and mobile chapter-nav visibility locked."
+        "terms.js/site-nav.js idempotence plus mobile chapter-nav/table/equation guards locked."
     )
 
 
