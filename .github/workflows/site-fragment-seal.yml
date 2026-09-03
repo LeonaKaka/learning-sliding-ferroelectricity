@@ -6,6 +6,8 @@ on:
     paths:
       - 'index.html'
       - 'modules/*.html'
+      - 'terms.js'
+      - 'site-nav.js'
       - 'scripts/site_fragment_seal.py'
       - '.github/workflows/site-fragment-seal.yml'
 
@@ -17,5 +19,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Validate local HTML files and fragments
+      - name: Validate local HTML files, fragments, and navigation runtime
         run: python scripts/site_fragment_seal.py
