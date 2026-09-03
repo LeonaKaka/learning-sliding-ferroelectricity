@@ -18,6 +18,15 @@ const viewports = [
   { name: 'narrow', width: 360, height: 800 },
   { name: 'standard', width: 390, height: 844 },
 ];
+const scienceV3Blocks = {
+  'modules/depinning.html': ['#qew-validity-boundary'],
+  'modules/disorder-rfim.html': ['#rb-rf-depinning'],
+  'modules/research-track.html': ['#rf-rb-interpretation', '#qew-validity'],
+  'modules/numerical-modeling.html': ['#periodicity-boundary', '#multi-interface-extension'],
+  'modules/current-frontiers.html': ['#screening-boundary'],
+  'modules/reproduction-lab-10.html': ['#periodic-crossover-diagnostic'],
+  'modules/reproduction-lab-11.html': ['#transverse-geometry-diagnostic'],
+};
 const artifactDir = path.join(root, 'mobile-readability-artifacts');
 fs.mkdirSync(artifactDir, { recursive: true });
 
@@ -61,7 +70,7 @@ for (const viewport of viewports) {
         { timeout: 5000 },
       ).catch(() => {});
 
-      const runtimeFindings = await page.evaluate(async ({ viewportWidth }) => {
+      const runtimeFindings = await page.evaluate(async ({ viewportWidth, scienceSelectors }) => {
         const EPS = 1.5;
         const findings = [];
         const style = el => getComputedStyle(el);
@@ -125,6 +134,22 @@ for (const viewport of viewports) {
           }
         }
 
+        for (const selector of scienceSelectors) {
+          const el = document.querySelector(selector);
+          if (!el) {
+            findings.push(`Science V3 block missing: ${selector}`);
+            continue;
+          }
+          if (!visible(el)) {
+            findings.push(`Science V3 block is not visible: ${selector}`);
+            continue;
+          }
+          const r = rect(el);
+          if (r.left < -EPS || r.right > viewportWidth + EPS || r.width > viewportWidth + EPS) {
+            findings.push(`Science V3 block ${selector} exceeds the mobile viewport (${r.width.toFixed(1)}px wide)`);
+          }
+        }
+
         window.scrollTo(0, Math.min(1200, Math.max(0, document.documentElement.scrollHeight / 3)));
         await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 
@@ -175,7 +200,10 @@ for (const viewport of viewports) {
         }
 
         return findings;
-      }, { viewportWidth: viewport.width });
+      }, {
+        viewportWidth: viewport.width,
+        scienceSelectors: scienceV3Blocks[rel] || [],
+      });
 
       pageFailures.push(...runtimeFindings);
     } catch (error) {
@@ -207,5 +235,5 @@ if (failures.length) {
 console.log(
   `MOBILE READABILITY SEAL PASS: ${pages.length} pages × ${viewports.length} mobile viewports; ` +
   'no document-level horizontal overflow; table/equation/pre overflow remains scrollable; figures fit; ' +
-  'sticky header/TOC geometry, anchor clearance, drawer buttons, and mobile TOC tap targets validated.',
+  'Science V3 blocks fit; sticky header/TOC geometry, anchor clearance, drawer buttons, and mobile TOC tap targets validated.',
 );
