@@ -41,6 +41,9 @@ jobs:
           print(f'terminology runtime checked on {len(pages)} pages')
           PY
 
+      - name: Build static search index
+        run: python scripts/build_search_index.py
+
       - name: Validate site structure and navigation runtime
         run: python scripts/site_fragment_seal.py
 
