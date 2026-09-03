@@ -32,7 +32,7 @@
 
 <section class="path" id="roughness">
 <h2>02 · 粗糙度 ζ：从“墙很弯”到可否证的尺度律</h2>
-<p class="why">ζ 不是图像审美量，而是界面涨落随长度尺度变化的指数。更关键的是：同一个“ζ”在平衡粗糙度、退钉扎临界几何、super-rough（超粗糙）和 RFIM 异常标度里并不自动代表同一件事。</p>
+<p class="why">ζ 不是图像审美量，而是界面涨落随长度尺度变化的指数。更关键的是：同一个“ζ”在平衡粗糙度、退钉扎临界几何、超粗糙和 RFIM 异常标度里并不自动代表同一件事。</p>
 <div class="chain">
 <div class="step"><div class="n">01 · 实验层</div><h3>Paruch 把墙变成 B(L)</h3><p>从畴壁位移 u(z) 构造关联函数，先规定尺度区间，再从斜率提取 ζ。</p><a href="pinning-creep.html#roughness">04 Paruch 粗糙度 →</a></div>
 <div class="step"><div class="n">02 · 临界层</div><h3>Rosso 做多尺寸临界几何</h3><p>临界 ζ 来自 W²(L) 的系统尺寸标度，并要检查拟合下限是否稳定。</p><a href="depinning.html#geometry">05 Rosso 临界流形 →</a></div>
@@ -62,11 +62,11 @@
 <div class="chain">
 <div class="step"><div class="n">01 · 实验层</div><h3>Tybell：速度对场极端非线性</h3><p>v(E) 跨多个数量级下降，建立了低场热激活畴壁运动的实验语言。</p><a href="pinning-creep.html">04 Tybell Creep →</a></div>
 <div class="step"><div class="n">02 · 几何约束</div><h3>μ 不能脱离 ζ 解读</h3><p>Tybell 自己就指出，仅凭动力学 μ 不能唯一识别无序，需要独立的游走 / 粗糙度信息。</p><a href="pinning-creep.html#roughness">04 Paruch 独立 ζ →</a></div>
-<div class="step"><div class="n">03 · 相图层</div><h3>有限温度把零温阈值圆整</h3><p>Chauve 把 creep、depinning 与 flow 放进同一驱动力—温度图景。</p><a href="depinning.html">05 Creep → Depinning →</a></div>
-<div class="step"><div class="n">04 · 数值层</div><h3>热噪声先归一化</h3><p>若离散热噪声没有满足正确的 dt / 网格标度，所谓温度依赖会被数值离散污染。</p><a href="numerical-modeling.html#thermal-noise">07 Thermal Noise（热噪声） →</a></div>
-<div class="step"><div class="n">05 · Lab 层</div><h3>L12：先问渐近区是否解析</h3><p>阈值下出现有限速度只是热激活证据；最低温区间若仍不稳定，就不能授权 creep law 或 μ。</p><a href="reproduction-lab-12.html">L12 Finite-T →</a></div>
+<div class="step"><div class="n">03 · 相图层</div><h3>有限温度把零温阈值圆整</h3><p>Chauve 把 蠕变、退钉扎与流动 放进同一驱动力—温度图景。</p><a href="depinning.html">05 蠕变 → 退钉扎 →</a></div>
+<div class="step"><div class="n">04 · 数值层</div><h3>热噪声先归一化</h3><p>若离散热噪声没有满足正确的 dt / 网格标度，所谓温度依赖会被数值离散污染。</p><a href="numerical-modeling.html#thermal-noise">07 热噪声 →</a></div>
+<div class="step"><div class="n">05 · Lab 层</div><h3>L12：先问渐近区是否解析</h3><p>阈值下出现有限速度只是热激活证据；最低温区间若仍不稳定，就不能授权蠕变律或 μ。</p><a href="reproduction-lab-12.html">L12 有限温 →</a></div>
 </div>
-<div class="stop"><b>停止条件：</b>“阈值下速度非零”不是 creep-law 拟合许可证。先验证热噪声、阈值依据、低温 / 低驱动力窗口和窗口稳定性，再谈 μ。</div>
+<div class="stop"><b>停止条件：</b>“阈值下速度非零”不是蠕变律拟合许可证。先验证热噪声、阈值依据、低温 / 低驱动力窗口和窗口稳定性，再谈 μ。</div>
 </section>
 
 <section class="path" id="closure">
@@ -76,11 +76,11 @@
 <div class="step"><div class="n">01 · 理论层</div><h3>Wiese：指数不是四个自由参数</h3><p>β、ζ、ν、z 由同一临界不动点约束；相关长度、速度和粗糙几何必须能互相解释。</p><a href="depinning.html#scaling">05 Scaling Relations（标度关系） →</a></div>
 <div class="step"><div class="n">02 · 阈值层</div><h3>先做阈值与瞬态审计</h3><p>fc 不稳，β 就没有稳定横轴；有限时间没有饱和，稳态速度就不存在。</p><a href="depinning.html#threshold-ladder">05 阈值推断阶梯 →</a></div>
 <div class="step"><div class="n">03 · 尺度层</div><h3>有限尺寸不是误差条装饰</h3><p>改变 L、拟合区间和估计量，应得到可解释的收敛，而不是每次重新挑窗口。</p><a href="numerical-modeling.html#identifiability">07 尺度与可辨识性 →</a></div>
-<div class="step"><div class="n">04 · 已知答案层</div><h3>先证明分析器会测，再测未知问题</h3><p>合成已知答案测试 只能验证方法没有明显实现错误，不能替代真实数据进入渐近区。</p><a href="reproduction-lab-09.html">L09 β 已知答案测试 →</a></div>
+<div class="step"><div class="n">04 · 已知答案层</div><h3>先证明分析器会测，再测未知问题</h3><p>合成已知答案测试只能验证方法没有明显实现错误，不能替代真实数据进入渐近区。</p><a href="reproduction-lab-09.html">L09 β 已知答案测试 →</a></div>
 <div class="step"><div class="n">05 · Lab 闭环</div><h3>L09 → L10 → L11 → L12</h3><p>β、ζ、ν、ψ 分别接受拟合区间 / 尺寸区间审计；当前失败项必须作为结果保留。</p><a href="reproduction-lab-09.html">从 L09 开始 →</a></div>
 </div>
 <div class="compare"><div class="card"><b>“方法通过”</b><p>已知答案、离散化、数据管线或估计量在受控问题上工作正常。</p></div><div class="card"><b>“物理结论通过”</b><p>真实问题还必须显示尺度区间稳定、跨估计量一致、有限尺寸收敛，并满足预先声明的判据。</p></div></div>
-<div class="stop"><b>停止条件：</b>已知答案测试通过与普适性结论通过 是两个不同层级。只要 β / ζ / ν / ψ 的真实数据尺度区间没有闭合，就应保留“未授权”，而不是用理论期望值替代测量。</div>
+<div class="stop"><b>停止条件：</b>已知答案测试通过与普适性结论通过是两个不同层级。只要 β / ζ / ν / ψ 的真实数据尺度区间没有闭合，就应保留“未授权”，而不是用理论期望值替代测量。</div>
 </section>
 
 <div class="next"><a href="../index.html">← 回首页知识图谱</a><a href="research-track.html">继续：Research Track →</a></div>
