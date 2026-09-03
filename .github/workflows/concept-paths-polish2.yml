@@ -1,0 +1,40 @@
+name: Concept Paths final prose polish
+
+on:
+  push:
+    paths:
+      - 'scripts/concept_paths_polish2.py'
+      - '.github/workflows/concept-paths-polish2.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  polish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install parser
+        run: python -m pip install --disable-pip-version-check beautifulsoup4
+      - name: Apply final Concept Paths polish
+        run: python scripts/concept_paths_polish2.py
+      - name: Verify only concept page and index changed
+        run: |
+          changed="$(git diff --name-only)"
+          printf '%s\n' "$changed"
+          bad="$(printf '%s\n' "$changed" | grep -vE '^(modules/concept-paths\.html|index\.html)?$' || true)"
+          if [ -n "$bad" ]; then
+            echo "Unexpected changed files:"
+            echo "$bad"
+            exit 1
+          fi
+          test -n "$changed"
+      - name: Commit final Concept Paths prose
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add modules/concept-paths.html index.html
+          git commit -m 'Finalize Concept Paths prose'
+          git push
