@@ -41,6 +41,11 @@ ANCHORS = {
     ),
     "current-frontiers.html": (
         '结构状态直接验证；翻转过程未做实时空间成像',
+        'id="mechanism-reconcile"',
+        '这些结果真的互相矛盾吗？先把结构条件对齐。',
+        '不能推出“任何无预存畴壁的滑移铁电都无法翻转”',
+        '不能据此否定多畴样品中的畴壁介导翻转',
+        '单一畴壁坐标未必够用',
         'id="screening-boundary"',
         '无序在一次动力学过程中严格淬火',
         '是否已经直接证明淬火无序 QEW 失效',
@@ -103,7 +108,7 @@ def main() -> None:
         if actual != expected:
             raise RuntimeError(f"{rel}: original .source-text receipt mismatch")
 
-    print("SCIENCE V3 SEAL PASS: RF/RB fixed-point boundary, QEW validity, periodicity crossover, screening, multi-interface mapping, Baek evidence level, L10/L11 diagnostics, and source-text hashes locked.")
+    print("SCIENCE V3 SEAL PASS: RF/RB fixed-point boundary, QEW validity, periodicity crossover, screening, multi-interface mapping, Baek evidence level, mechanism reconciliation, L10/L11 diagnostics, and source-text hashes locked.")
 
 
 if __name__ == "__main__":
