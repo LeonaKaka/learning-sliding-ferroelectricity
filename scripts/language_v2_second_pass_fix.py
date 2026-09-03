@@ -62,6 +62,30 @@ FORBIDDEN_VISIBLE_LOWER = (
 )
 
 CRITICAL_ANCHORS = {
+    'pinning-creep.html': (
+        '第一次读这一章：',
+        'Tybell 看“速度为什么高度非线性”',
+        'Paruch 看“粗糙度怎样被定义和测量”',
+        'Kim 看“统计钉扎如何落回单个局域事件”',
+        '进阶研究方法 · 粗糙度验收判据',
+        '局域退钉扎与临界退钉扎不是同一个概念',
+    ),
+    'depinning.html': (
+        '第一次读本章，先走四步：',
+        '进阶研究方法 A · 坍缩验收判据',
+        '进阶研究方法 B · 阈值推断阶梯',
+        '进阶研究方法 C · 指数提取纪律',
+        '下一章必须把无序本身拆开',
+        '“有阈值 + 一条幂律”不等于退钉扎普适性',
+    ),
+    'disorder-rfim.html': (
+        '第一次读本章，先把问题分成四层：',
+        '不要从“样品有缺陷”直接跳到“它就是 RFIM”',
+        '弹性流形的 “随机场类别” ≠ “用了 RFIM”',
+        '研究桥接 · 真实滑移铁电里的无序到底是什么？',
+        '实验里看见无序，不等于已经知道它属于哪个统计无序类别',
+        'RFIM 是一个体相序参量模型',
+    ),
     'current-frontiers.html': (
         '机制证据已经很强，普适性证据还没闭合',
         '预存畴壁不是无条件必要条件',
@@ -145,6 +169,54 @@ def assert_wiring(page: Path, raw: str) -> None:
             raise RuntimeError(f'{page.name}: missing local HTML target: {href}')
 
 
+def assert_teaching_v2_order(page: Path, raw: str) -> None:
+    if page.name == 'pinning-creep.html':
+        order = (
+            '第一次读这一章：',
+            '1 · Tybell 2002',
+            '2 · Paruch 2005',
+            '进阶研究方法 · 粗糙度验收判据',
+            '3 · Kim 2014',
+            '下一章的问题因此非常明确',
+        )
+        positions = [raw.index(x) for x in order]
+        if positions != sorted(positions):
+            raise RuntimeError('Module 04 Teaching V2 order regressed')
+
+    if page.name == 'depinning.html':
+        order = (
+            '第一次读本章，先走四步：',
+            '1 · Chauve 2000',
+            '2 · Rosso 2003',
+            '3 · Ferrero 2013',
+            '4 · Wiese 2022',
+            '进阶研究方法 A · 坍缩验收判据',
+            '进阶研究方法 B · 阈值推断阶梯',
+            '进阶研究方法 C · 指数提取纪律',
+            '下一章必须把无序本身拆开',
+            '<div class="next">',
+        )
+        positions = [raw.index(x) for x in order]
+        if positions != sorted(positions):
+            raise RuntimeError('Module 05 Teaching V2 order regressed')
+
+    if page.name == 'disorder-rfim.html':
+        order = (
+            '第一次读本章，先把问题分成四层：',
+            '0 · 先拆掉最容易混淆的三个词',
+            '1 · Dahmen &amp; Sethna 1996',
+            '2 · Drossel &amp; Dahmen 1998',
+            '3 · Zhou, Zheng &amp; He',
+            '研究桥接 · 真实滑移铁电里的无序到底是什么？',
+            '回到滑移铁电：什么时候该用哪一级模型？',
+        )
+        positions = [raw.index(x) for x in order]
+        if positions != sorted(positions):
+            raise RuntimeError('Module 06 Teaching V2 order regressed')
+        if raw.count('Paul et al. 2026') != 1:
+            raise RuntimeError('Module 06 Paul 2026 evidence block duplicated or missing')
+
+
 def main() -> None:
     missing = [str(p.relative_to(ROOT)) for p in PAGES if not p.exists()]
     if missing:
@@ -164,10 +236,11 @@ def main() -> None:
                 raise RuntimeError(f'{page.name}: visible workflow-English residue: {token.strip()}')
 
         assert_wiring(page, raw)
+        assert_teaching_v2_order(page, raw)
 
         for anchor in CRITICAL_ANCHORS.get(page.name, ()):
             if anchor not in raw:
-                raise RuntimeError(f'{page.name}: critical scientific boundary missing: {anchor}')
+                raise RuntimeError(f'{page.name}: critical scientific/teaching boundary missing: {anchor}')
 
         if page.name == 'depinning.html':
             for anchor in (
@@ -194,8 +267,8 @@ def main() -> None:
         if page.read_text(encoding='utf-8') != before:
             raise RuntimeError(f'{page.name}: read-only final seal changed page bytes')
 
-    print(f'FULL-SITE LANGUAGE V2 FINAL SEAL PASS: {len(PAGES)} teaching pages checked read-only.')
-    print('Scientific figures may retain original English labels; source/code/machine-output text is excluded from prose-language checks.')
+    print(f'FULL-SITE LANGUAGE + TEACHING V2 FINAL SEAL PASS: {len(PAGES)} teaching pages checked read-only.')
+    print('Teaching V2 phase 1 order is locked for modules 04–06; scientific figures may retain original English labels.')
 
 
 if __name__ == '__main__':
