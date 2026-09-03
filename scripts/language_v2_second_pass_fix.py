@@ -6,7 +6,7 @@ from language_v2_second_pass import ROOT
 TARGET = ROOT / 'modules/depinning.html'
 
 REPLACEMENTS = (
-    ('elastic-界面 language', '弹性界面描述'),
+    ('支持 elastic-界面 language', '支持弹性界面描述'),
     ('一维 elastic string 的', '一维弹性线的'),
     ('阈值-distribution broadening', '阈值分布展宽'),
 )
