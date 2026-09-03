@@ -8,6 +8,7 @@ on:
       - 'modules/*.html'
       - 'terms.js'
       - 'site-nav.js'
+      - 'site-nav.css'
       - 'scripts/site_fragment_seal.py'
       - '.github/workflows/site-fragment-seal.yml'
 
