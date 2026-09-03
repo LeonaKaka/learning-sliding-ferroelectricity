@@ -13,6 +13,7 @@ class PageParser(HTMLParser):
         super().__init__(convert_charrefs=True)
         self.anchors: set[str] = set()
         self.hrefs: list[str] = []
+        self.script_srcs: list[str] = []
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         data = {k: v for k, v in attrs}
@@ -24,6 +25,8 @@ class PageParser(HTMLParser):
             self.anchors.add(node_name)
         if tag == "a" and data.get("href"):
             self.hrefs.append(data["href"] or "")
+        if tag == "script" and data.get("src"):
+            self.script_srcs.append(data["src"] or "")
 
 
 def parse_page(path: Path) -> PageParser:
@@ -32,16 +35,40 @@ def parse_page(path: Path) -> PageParser:
     return parser
 
 
+def script_basename(src: str) -> str:
+    return Path(urlsplit(src).path).name
+
+
 def main() -> None:
     page_set = {p.resolve() for p in PAGES}
     parsed = {p.resolve(): parse_page(p) for p in PAGES}
     failures: list[str] = []
     checked_files = 0
     checked_fragments = 0
+    checked_runtime_pages = 0
 
     for page in PAGES:
         source = page.resolve()
-        for href in parsed[source].hrefs:
+        page_parser = parsed[source]
+
+        # Runtime ownership contract: source HTML may load the terminology
+        # runtime at most once, and must never load site-nav.js directly.
+        # terms.js is the single owner that injects site-nav.css/site-nav.js;
+        # Pages may add terms.js later only when the source page omits it.
+        basenames = [script_basename(src) for src in page_parser.script_srcs]
+        terms_count = basenames.count("terms.js")
+        nav_count = basenames.count("site-nav.js")
+        checked_runtime_pages += 1
+        if terms_count > 1:
+            failures.append(
+                f"{page.relative_to(ROOT)}: terms.js loaded {terms_count} times; source HTML allows at most one"
+            )
+        if nav_count:
+            failures.append(
+                f"{page.relative_to(ROOT)}: direct site-nav.js load forbidden; terms.js owns navigation runtime"
+            )
+
+        for href in page_parser.hrefs:
             parts = urlsplit(href)
             if parts.scheme or parts.netloc or href.startswith(("mailto:", "javascript:", "data:")):
                 continue
@@ -72,14 +99,15 @@ def main() -> None:
                     )
 
     if failures:
-        print("SITE FRAGMENT SEAL FAIL")
+        print("SITE FRAGMENT / RUNTIME SEAL FAIL")
         for item in failures:
             print(" -", item)
-        raise SystemExit(f"{len(failures)} local HTML/fragment link failures")
+        raise SystemExit(f"{len(failures)} site routing/runtime contract failures")
 
     print(
-        f"SITE FRAGMENT SEAL PASS: {len(PAGES)} pages scanned; "
-        f"{checked_files} local HTML links and {checked_fragments} fragments resolved."
+        f"SITE FRAGMENT / RUNTIME SEAL PASS: {len(PAGES)} pages scanned; "
+        f"{checked_files} local HTML links and {checked_fragments} fragments resolved; "
+        f"{checked_runtime_pages} source pages obey single-owner navigation runtime."
     )
 
 
