@@ -18,6 +18,8 @@ class PageParser(HTMLParser):
         self.id_counts: dict[str, int] = {}
         self.hrefs: list[str] = []
         self.script_srcs: list[str] = []
+        self.h1_count = 0
+        self.images: list[tuple[str, str | None]] = []
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         data = {k: v for k, v in attrs}
@@ -32,6 +34,10 @@ class PageParser(HTMLParser):
             self.hrefs.append(data["href"] or "")
         if tag == "script" and data.get("src"):
             self.script_srcs.append(data["src"] or "")
+        if tag == "h1":
+            self.h1_count += 1
+        if tag == "img":
+            self.images.append((data.get("src") or "<missing src>", data.get("alt")))
 
 
 def parse_page(path: Path) -> PageParser:
@@ -52,6 +58,7 @@ def main() -> None:
     checked_fragments = 0
     checked_runtime_pages = 0
     checked_ids = 0
+    checked_images = 0
 
     terms_raw = TERMS.read_text(encoding="utf-8")
     nav_raw = NAV.read_text(encoding="utf-8")
@@ -85,12 +92,20 @@ def main() -> None:
     for page in PAGES:
         source = page.resolve()
         page_parser = parsed[source]
+        rel = page.relative_to(ROOT)
+
+        if page_parser.h1_count != 1:
+            failures.append(f"{rel}: expected exactly one h1, found {page_parser.h1_count}")
+        for src, alt in page_parser.images:
+            checked_images += 1
+            if alt is None or not alt.strip():
+                failures.append(f"{rel}: image missing meaningful alt text: {src}")
 
         duplicates = sorted(node_id for node_id, count in page_parser.id_counts.items() if count > 1)
         checked_ids += len(page_parser.id_counts)
         if duplicates:
             failures.append(
-                f"{page.relative_to(ROOT)}: duplicate id values would make fragment navigation ambiguous: {duplicates}"
+                f"{rel}: duplicate id values would make fragment navigation ambiguous: {duplicates}"
             )
 
         # Runtime ownership contract: source HTML may load the terminology
@@ -103,11 +118,11 @@ def main() -> None:
         checked_runtime_pages += 1
         if terms_count > 1:
             failures.append(
-                f"{page.relative_to(ROOT)}: terms.js loaded {terms_count} times; source HTML allows at most one"
+                f"{rel}: terms.js loaded {terms_count} times; source HTML allows at most one"
             )
         if nav_count:
             failures.append(
-                f"{page.relative_to(ROOT)}: direct site-nav.js load forbidden; terms.js owns navigation runtime"
+                f"{rel}: direct site-nav.js load forbidden; terms.js owns navigation runtime"
             )
 
         for href in page_parser.hrefs:
@@ -123,7 +138,7 @@ def main() -> None:
                     continue
                 checked_files += 1
                 if target not in page_set or not target.exists():
-                    failures.append(f"{page.relative_to(ROOT)}: missing HTML target {href}")
+                    failures.append(f"{rel}: missing HTML target {href}")
                     continue
             else:
                 target = source
@@ -132,23 +147,24 @@ def main() -> None:
                 checked_fragments += 1
                 target_parser = parsed.get(target)
                 if target_parser is None:
-                    failures.append(f"{page.relative_to(ROOT)}: fragment target is not a scanned HTML page: {href}")
+                    failures.append(f"{rel}: fragment target is not a scanned HTML page: {href}")
                     continue
                 if fragment not in target_parser.anchors:
                     failures.append(
-                        f"{page.relative_to(ROOT)}: missing fragment #{fragment} in "
+                        f"{rel}: missing fragment #{fragment} in "
                         f"{Path(target).relative_to(ROOT)} (href={href})"
                     )
 
     if failures:
-        print("SITE FRAGMENT / RUNTIME SEAL FAIL")
+        print("SITE STRUCTURE / RUNTIME SEAL FAIL")
         for item in failures:
             print(" -", item)
-        raise SystemExit(f"{len(failures)} site routing/runtime contract failures")
+        raise SystemExit(f"{len(failures)} site structure/routing/runtime contract failures")
 
     print(
-        f"SITE FRAGMENT / RUNTIME SEAL PASS: {len(PAGES)} pages scanned; "
-        f"{checked_files} local HTML links, {checked_fragments} fragments, and {checked_ids} explicit ids validated; "
+        f"SITE STRUCTURE / RUNTIME SEAL PASS: {len(PAGES)} pages scanned; "
+        f"{checked_files} local HTML links, {checked_fragments} fragments, {checked_ids} explicit ids, "
+        f"and {checked_images} image alt texts validated; one h1 per page; "
         f"{checked_runtime_pages} source pages obey single-owner navigation runtime; "
         "terms.js/site-nav.js idempotence plus mobile chapter-nav/anchor/table/equation guards locked."
     )
