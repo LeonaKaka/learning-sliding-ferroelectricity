@@ -6,6 +6,8 @@ from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 PAGES = [ROOT / "index.html", *sorted((ROOT / "modules").glob("*.html"))]
+TERMS = ROOT / "terms.js"
+NAV = ROOT / "site-nav.js"
 
 
 class PageParser(HTMLParser):
@@ -46,6 +48,21 @@ def main() -> None:
     checked_files = 0
     checked_fragments = 0
     checked_runtime_pages = 0
+
+    terms_raw = TERMS.read_text(encoding="utf-8")
+    nav_raw = NAV.read_text(encoding="utf-8")
+    runtime_locked = (
+        ("terms.js", "if (document.querySelector('script[data-site-nav]')) return;"),
+        ("terms.js", "js.dataset.siteNav = '1'"),
+        ("terms.js", "js.src = `${base}site-nav.js`"),
+        ("terms.js", "css.href = `${base}site-nav.css`"),
+        ("site-nav.js", "if(document.documentElement.dataset.siteNavInitialized==='1') return;"),
+        ("site-nav.js", "document.documentElement.dataset.siteNavInitialized='1';"),
+    )
+    for owner, marker in runtime_locked:
+        haystack = terms_raw if owner == "terms.js" else nav_raw
+        if marker not in haystack:
+            failures.append(f"{owner}: navigation runtime guard/injection marker drifted: {marker}")
 
     for page in PAGES:
         source = page.resolve()
@@ -107,7 +124,8 @@ def main() -> None:
     print(
         f"SITE FRAGMENT / RUNTIME SEAL PASS: {len(PAGES)} pages scanned; "
         f"{checked_files} local HTML links and {checked_fragments} fragments resolved; "
-        f"{checked_runtime_pages} source pages obey single-owner navigation runtime."
+        f"{checked_runtime_pages} source pages obey single-owner navigation runtime; "
+        "terms.js/site-nav.js idempotence guards locked."
     )
 
 
