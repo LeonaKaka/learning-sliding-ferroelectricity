@@ -14,6 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Install parser
+        run: python -m pip install --disable-pip-version-check beautifulsoup4
       - name: Apply compact mechanism matrix
         run: python scripts/add_frontier_mechanism_matrix.py
       - name: Verify placement and restrained scope
