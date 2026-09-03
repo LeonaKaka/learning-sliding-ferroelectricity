@@ -50,6 +50,12 @@ jobs:
           print(f'Pages runtime reproduced on {len(pages)} pages')
           PY
 
+      - name: Install CJK fonts for faithful layout
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends fonts-noto-cjk
+          fc-cache -f
+
       - name: Install headless-browser driver
         run: npm install --no-save --package-lock=false puppeteer-core@24.16.0
 
