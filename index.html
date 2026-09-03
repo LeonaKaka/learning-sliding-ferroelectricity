@@ -11,7 +11,7 @@
 <header class="top">
   <div class="wrap top-inner">
     <div class="brand">Learning Sliding Ferroelectricity<small>literature-first field guide · v0.2</small></div>
-    <nav class="nav"><a href="#map">Knowledge map</a><a href="#research">Research track</a><a href="#modules">Learning route</a><a href="#core">Core papers</a></nav>
+    <nav class="nav"><a href="#map">Knowledge map</a><a href="#concept-paths">Concept paths</a><a href="#research">Research track</a><a href="#modules">Learning route</a><a href="#core">Core papers</a></nav>
   </div>
 </header>
 
@@ -22,6 +22,14 @@
   </section>
 
   <section class="wrap" id="research" style="padding-top:10px"><div class="section-head"><h2>Research track</h2><p>基础课之外，增加一条面向真实研究的桥：怎样把 sliding-FE switching 转成 disorder-coupling、isolated-wall depinning 与 universality / breakdown test。</p></div><div class="thesis" style="display:flex;flex-wrap:wrap;gap:24px;align-items:center;justify-content:space-between"><div><b>从“读懂论文”到“会设计证据链”</b><p>Disorder is not one number → fair RF/RB matching → hysteresis vs isolated-wall protocol → sliding-FE minimal phase field → observable anatomy → analysis/event statistics → data-to-claim contract → mechanism falsification。页面只公开方法与判据，不展示未发表项目数值。</p></div><a href="modules/research-track.html" style="display:inline-block;text-decoration:none;color:#fff;background:#1d1e1c;padding:11px 15px;border-radius:9px;font-size:12px;white-space:nowrap">进入 Research Track →</a></div></section>
+
+  <section class="wrap" id="concept-paths" style="padding-top:10px"><div class="section-head"><h2>Concept paths</h2><p>章节按学习顺序展开；这里把反复出现的核心概念纵向串起来，看它如何从现象、论文证据一路升级到理论定义、数值实现和 Lab 验收。</p></div><div class="papers">
+    <article class="paper"><div class="paper-top"><span class="paper-year">PATH 01</span><span class="paper-kind">threshold</span></div><h3>Ec / fc：一个“翻转阈值”什么时候才是退钉扎临界点？</h3><p class="role">从 P–E 阈值 → T=0 f<sub>c</sub> → 非稳态夹逼 → 单样本 bracket → v(f) → β。</p><a href="modules/concept-paths.html#threshold">打开阈值纵向路径 →</a></article>
+    <article class="paper"><div class="paper-top"><span class="paper-year">PATH 02</span><span class="paper-kind">roughness</span></div><h3>ζ：从“墙很弯”到可否证的尺度律</h3><p class="role">Paruch 的 B(L) → Rosso 的临界几何 → RFIM 映射边界 → GL/EW → L10 super-roughness。</p><a href="modules/concept-paths.html#roughness">打开粗糙度纵向路径 →</a></article>
+    <article class="paper"><div class="paper-top"><span class="paper-year">PATH 03</span><span class="paper-kind">disorder</span></div><h3>RF vs RB：真实缺陷怎样变成有效无序？</h3><p class="role">局域钉扎 → RF/RB/RFIM 定义 → 真实材料多来源无序 → 网格归一化 → Lab 无序投影。</p><a href="modules/concept-paths.html#disorder">打开无序纵向路径 →</a></article>
+    <article class="paper"><div class="paper-top"><span class="paper-year">PATH 04</span><span class="paper-kind">finite T</span></div><h3>Creep：低场还有速度，离“测出 μ”还差什么？</h3><p class="role">Tybell v(E) → 独立 ζ → creep/depinning 相图 → 热噪声归一化 → L12 渐近区审计。</p><a href="modules/concept-paths.html#creep">打开蠕变纵向路径 →</a></article>
+    <article class="paper"><div class="paper-top"><span class="paper-year">PATH 05</span><span class="paper-kind">closure</span></div><h3>β / ζ / ν / ψ：为什么不能各自挑最好看的拟合？</h3><p class="role">标度关系 → 阈值收敛 → 有限尺寸 → 已知答案测试 → L09–L12 的真实尺度区间判据。</p><a href="modules/concept-paths.html#closure">打开临界闭环路径 →</a></article>
+  </div></section>
 
   <section class="wrap" id="map"><div class="section-head"><h2>Knowledge map</h2><p>首页只保留 8 个母节点。论文是这些知识节点的证据与入口，而不是把几十篇 paper 直接画成蜘蛛网。</p></div><div class="map"><div class="map-grid" id="mapGrid"></div><div class="thesis"><b>主线不是年份</b><p>What is sliding FE → switching pathway → domain wall → pinning/creep → depinning → disorder/RFIM → numerical modeling → current frontiers。前面的概念只在后面的论文真正需要时引入。</p></div></div></section>
 
