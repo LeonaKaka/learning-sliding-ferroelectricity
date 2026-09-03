@@ -24,7 +24,7 @@ phi[0], phi[-1] = +phi0, -phi0</pre></div>
 <div class="bridge"><b>这四行以后会原样迁移你的建模思维。</b> <code>alpha*phi-delta*phi**3</code> 来自 <code>-V'(phi)</code>；将来 sliding ferroelectricity（滑移铁电）的周期势、RF、RB 也应该从自由能一项项求导，而不是凭感觉往更新式里塞力。</div>
 <h2>3 · 硬性验收条件怎么写？</h2>
 <p>设 α=δ=γ=η=1，则 φ₀=1、w<sub>exact</sub>=√2=1.414214。数值结果用两个独立量验证：</p>
-<div class="eq">profile RMSE = √⟨(φ<sub>num</sub>−φ<sub>exact</sub>)²⟩　；　w<sub>num</sub>=|φ₀/φ′(0)|</div>
+<div class="eq">剖面 RMSE = √⟨(φ<sub>num</sub>−φ<sub>exact</sub>)²⟩　；　w<sub>num</sub>=|φ₀/φ′(0)|</div>
 <div class="codebox"><div class="head"><b>不是肉眼验收，而是程序自己报错</b></div><pre>assert rmse &lt; 5e-4
 assert width_error &lt; 5e-3</pre></div>
 <h2 id="result">4 · 我实际跑出的结果</h2>
