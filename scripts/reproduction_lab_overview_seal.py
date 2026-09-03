@@ -52,7 +52,18 @@ def main() -> None:
     for text in locked:
         require(text in raw, f"Lab overview scientific boundary drifted: {text}")
 
+    # Runtime contract: terms.js is the single source that injects global nav.
+    scripts = [s.get("src") for s in doc.find_all("script") if s.get("src")]
+    require(scripts.count("../terms.js") == 1,
+            f"Lab overview must load terms.js exactly once, got {scripts}")
+    require("../site-nav.js" not in scripts,
+            "Lab overview must not directly load site-nav.js; terms.js owns nav injection")
+
     nav = NAV.read_text(encoding="utf-8")
+    require("document.documentElement.dataset.siteNavInitialized==='1'" in nav,
+            "Global navigation idempotence guard missing")
+    require("document.documentElement.dataset.siteNavInitialized='1'" in nav,
+            "Global navigation initialization marker missing")
     require("modules/reproduction-lab-overview.html" in nav,
             "Global navigation no longer routes to Lab overview")
     require("12 课学习路线 →" in nav,
@@ -97,7 +108,8 @@ def main() -> None:
 
     print(
         "REPRODUCTION LAB OVERVIEW SEAL PASS: 12 canonical lesson links, three evidence stages, "
-        "critical claim boundaries, global/homepage routing, and Module 07 overview entry are locked."
+        "critical claim boundaries, global/homepage routing, Module 07 overview entry, and single "
+        "idempotent navigation runtime are locked."
     )
 
 
