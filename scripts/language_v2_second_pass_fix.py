@@ -120,6 +120,24 @@ CRITICAL_ANCHORS = {
     ),
 }
 
+FIGURE_READING_V2 = {
+    'pinning-creep.html': {
+        'Tybell Fig.3': 'tybell2002-fig3-creep.png',
+        'Paruch Fig.3': 'paruch2005-fig3-roughness.png',
+        'Kim Fig.1': 'kim2014-fig1-pinning-display.webp',
+    },
+    'depinning.html': {
+        'Rosso Fig.2': 'rosso2003-fig2-critical-roughness.png',
+        'Ferrero Fig.3': 'ferrero2013-fig3-nonsteady-velocity.png',
+        'Wiese Fig.22': 'wiese2022-fig22-depinning-phenomenology.png',
+    },
+    'disorder-rfim.html': {
+        'Drossel Fig.3(a)': 'drossel1998-fig3a-percolative-wall.png',
+        'Zhou Fig.2': 'zhou2012-fig2-anomalous-roughness.png',
+        'Paul Fig.4': 'paul2026-fig4-multidomain-disorder.webp',
+    },
+}
+
 
 def visible_text(raw: str) -> str:
     soup = BeautifulSoup(raw, 'html.parser')
@@ -217,6 +235,39 @@ def assert_teaching_v2_order(page: Path, raw: str) -> None:
             raise RuntimeError('Module 06 Paul 2026 evidence block duplicated or missing')
 
 
+def assert_figure_reading_v2(page: Path, raw: str) -> None:
+    expected = FIGURE_READING_V2.get(page.name)
+    if expected is None:
+        return
+
+    soup = BeautifulSoup(raw, 'html.parser')
+    guides = soup.select('.fig-read[data-figure-read]')
+    if len(guides) != len(expected):
+        raise RuntimeError(f'{page.name}: expected {len(expected)} Figure Reading V2 guides, found {len(guides)}')
+
+    names = [g.get('data-figure-read') for g in guides]
+    if set(names) != set(expected):
+        raise RuntimeError(f'{page.name}: Figure Reading V2 guide names drifted: {names}')
+
+    for guide in guides:
+        name = guide.get('data-figure-read')
+        text = ' '.join(guide.stripped_strings)
+        for heading in ('先看哪里', '看到什么', '能证明 / 不能证明'):
+            if heading not in text:
+                raise RuntimeError(f'{page.name}: {name} missing Figure Reading heading: {heading}')
+
+        figure = guide.find_previous_sibling('figure')
+        if figure is None:
+            raise RuntimeError(f'{page.name}: {name} is not immediately preceded by a figure')
+        img = figure.find('img')
+        src = img.get('src', '') if img else ''
+        if expected[name] not in src:
+            raise RuntimeError(f'{page.name}: {name} guide attached to wrong figure: {src}')
+
+    if '.fig-read{' not in raw or '@media(max-width:760px){.fig-read{grid-template-columns:1fr}}' not in raw:
+        raise RuntimeError(f'{page.name}: Figure Reading V2 responsive CSS missing')
+
+
 def main() -> None:
     missing = [str(p.relative_to(ROOT)) for p in PAGES if not p.exists()]
     if missing:
@@ -237,6 +288,7 @@ def main() -> None:
 
         assert_wiring(page, raw)
         assert_teaching_v2_order(page, raw)
+        assert_figure_reading_v2(page, raw)
 
         for anchor in CRITICAL_ANCHORS.get(page.name, ()):
             if anchor not in raw:
@@ -267,8 +319,8 @@ def main() -> None:
         if page.read_text(encoding='utf-8') != before:
             raise RuntimeError(f'{page.name}: read-only final seal changed page bytes')
 
-    print(f'FULL-SITE LANGUAGE + TEACHING V2 FINAL SEAL PASS: {len(PAGES)} teaching pages checked read-only.')
-    print('Teaching V2 phase 1 order is locked for modules 04–06; scientific figures may retain original English labels.')
+    print(f'FULL-SITE LANGUAGE + TEACHING + FIGURE READING V2 FINAL SEAL PASS: {len(PAGES)} teaching pages checked read-only.')
+    print('Teaching V2 order and Figure Reading V2 phase 1 are locked for modules 04–06; scientific figures may retain original English labels.')
 
 
 if __name__ == '__main__':
