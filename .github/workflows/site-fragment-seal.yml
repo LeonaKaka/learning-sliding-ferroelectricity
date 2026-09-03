@@ -10,6 +10,7 @@ on:
       - 'site-nav.js'
       - 'site-nav.css'
       - 'scripts/site_fragment_seal.py'
+      - 'scripts/build_search_index.py'
       - '.github/workflows/site-fragment-seal.yml'
 
 permissions:
@@ -22,3 +23,5 @@ jobs:
       - uses: actions/checkout@v4
       - name: Validate local HTML files, fragments, and navigation runtime
         run: python scripts/site_fragment_seal.py
+      - name: Build static search index smoke test
+        run: python scripts/build_search_index.py
