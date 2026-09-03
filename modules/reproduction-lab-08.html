@@ -2,7 +2,7 @@
 <header class="top"><div class="bar"><b>Reproduction Lab（复现实验室） <small>· 第 08 课 · 第二篇工作方法线</small></b><span><a href="reproduction-lab-07.html">上一课</a> · <a href="../index.html">首页</a> · <a href="#result">结论</a></span></div></header><main>
 <div class="crumb"><a href="../index.html">Learning Sliding Ferroelectricity</a> / 复现实验室 / 第 08 课</div><div><span class="tag">稳态 v(f)</span><span class="tag">瞬态剔除</span><span class="tag">dt 收敛</span></div>
 <h1>论文画 v–f，我们这一课也只测 v–f</h1>
-<p class="lead">L07 只确定了单样本阈值区间。L08 的任务是把 <b>steady velocity（稳态速度）v</b> 测准，这里具体指 center-of-mass velocity（质心速度）。页面先给论文完整的速度–驱动力图，再给我们的真实 v(f) 数据；瞬态剔除与 dt 收敛检查只回答一个问题：这些速度点能不能作为后续临界分析的输入。</p>
+<p class="lead">L07 只确定了单样本阈值区间。L08 的任务是把 <b>稳态速度 v</b> 测准，这里具体指 center-of-mass velocity（质心速度）。页面先给论文完整的速度–驱动力图，再给我们的真实 v(f) 数据；瞬态剔除与 dt 收敛检查只回答一个问题：这些速度点能不能作为后续临界分析的输入。</p>
 <div class="read-order"><div><b>1 · 论文子图 b</b><span>先读速度–驱动力上的动力学区间。</span></div><div><b>2 · 我们的 v(f)</b><span>同样以 f 为横轴、稳态 v 为纵轴。</span></div><div><b>3 · 去除瞬态</b><span>第 1 个无序周期不能计入稳态平均。</span></div><div><b>4 · dt 收敛</b><span>正式计算的 dt 必须通过预设判据。</span></div></div>
 <h2>0 · 论文总图：v–f 上有哪些动力学区间？</h2>
 <figure class="figure source"><img src="../assets/reproduction-lab/source-ferrero2013-review-fig1-full.png" alt="Ferrero 2013 综述图 1 完整原图区域"><figcaption class="caption"><b>Ferrero et al., Numerical Approaches on Driven Elastic Interfaces in Random Media (2013), Fig.1。</b> 完整保留四个子图和论文原始图注。本课只读子图 (b)：T=0 的 depinning（退钉扎）、T&gt;0 的 thermal rounding（热圆整）、creep（蠕变）与 fast flow（快速流动）都被放在速度–驱动力坐标系中。</figcaption></figure>
