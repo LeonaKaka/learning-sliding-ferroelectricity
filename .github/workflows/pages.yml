@@ -41,6 +41,9 @@ jobs:
           print(f'terminology runtime checked on {len(pages)} pages')
           PY
 
+      - name: Validate site structure and navigation runtime
+        run: python scripts/site_fragment_seal.py
+
       - name: Validate static site and Reproduction Lab evidence
         run: |
           python3 - <<'PY'
