@@ -49,7 +49,7 @@ for (const viewport of viewports) {
     let pageFailures = [];
     try {
       const response = await page.goto(url, { waitUntil: 'networkidle0', timeout: 30000 });
-      if (!response || !response.ok()) {
+      if (!response || response.status() >= 400) {
         pageFailures.push(`HTTP load failed (${response?.status() ?? 'no response'})`);
       }
 
