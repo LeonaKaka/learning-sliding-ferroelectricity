@@ -5,6 +5,9 @@ from bs4 import BeautifulSoup
 
 ROOT = Path(__file__).resolve().parents[1]
 EXPECTED = {
+    'foundations.html': 3,
+    'switching-pathways.html': 3,
+    'domain-walls.html': 3,
     'pinning-creep.html': 3,
     'depinning.html': 4,
     'disorder-rfim.html': 4,
@@ -13,6 +16,21 @@ EXPECTED = {
 }
 
 ANCHORS = {
+    'foundations.html': (
+        '低能垒只说明一条给定结构通道在能量上可能可达',
+        'KPFM 直接测的是表面电势',
+        'Fig. 3e 是与实验相容的机制图',
+    ),
+    'switching-pathways.html': (
+        'E_c 在这里不能自动等于均匀晶体的本征能垒或热力学 f_c',
+        '不能无条件外推到其他体系',
+        '中间态本身正是路径依赖的界面堆垛组合',
+    ),
+    'domain-walls.html': (
+        '没有非对角响应时，E_z 不能自动选出唯一横向驱动力',
+        'Baek 的完全共格单畴 3R-TMD 结果提供了结构条件反例',
+        '“越过一个障碍”不能直接升级成普适类',
+    ),
     'pinning-creep.html': (
         '仅凭动力学曲线不能唯一识别有效无序',
         '报告尺度区间依赖或有效 ζ',
@@ -93,9 +111,9 @@ def main() -> None:
 
         total += len(details)
 
-    if total != 19:
+    if total != 28:
         raise RuntimeError(f'claim-check total drifted: {total}')
-    print('CLAIM CHECK SEAL PASS: modules 04-08 keep 3/4/4/4/4 folded evidence-to-claim judgments (19 total) with locked scientific boundaries.')
+    print('CLAIM CHECK SEAL PASS: modules 01-08 keep 3/3/3/3/4/4/4/4 folded evidence-to-claim judgments (28 total) with locked scientific boundaries.')
 
 
 if __name__ == '__main__':
