@@ -1,26 +1,24 @@
 from __future__ import annotations
 
+from pathlib import Path
+from urllib.parse import urlsplit
+
 from bs4 import BeautifulSoup
 from language_v2_second_pass import ROOT
 
-TARGET = ROOT / 'modules/depinning.html'
-
-REPLACEMENTS = (
-    ('支持 elastic-界面 language', '支持弹性界面描述'),
-    ('一维 elastic string 的', '一维弹性线的'),
-    ('阈值-distribution broadening', '阈值分布展宽'),
-)
-
-LOCKED_SCIENCE = (
-    'v(f<sub>c</sub>,T) ∼ T<sup>ψ</sup>',
-    'v(f,T) = T<sup>ψ</sup> G[(f−f<sub>c</sub>) T<sup>−ψ/β</sup>]',
-    '这个数值不是滑移铁电的先验目标',
-    'T=0 阈值应先独立闭合',
-    '不能从同一批有限温速度数据事后给每个随机种子找最有利的 f<sub>c</sub><sup>(i)</sup>',
-    '坍缩应该是待检验结果，不是数据预处理步骤',
-    '真正的任务不是追求视觉重合，而是<b>提前限制这些自由度，并让没参与优化的数据有机会把标度假设否掉。</b>',
-    '较强的普适性证据，但仍受映射有效性约束',
-)
+PAGES = [
+    ROOT / 'modules/foundations.html',
+    ROOT / 'modules/switching-pathways.html',
+    ROOT / 'modules/domain-walls.html',
+    ROOT / 'modules/pinning-creep.html',
+    ROOT / 'modules/depinning.html',
+    ROOT / 'modules/disorder-rfim.html',
+    ROOT / 'modules/numerical-modeling.html',
+    ROOT / 'modules/current-frontiers.html',
+    ROOT / 'modules/research-track.html',
+    ROOT / 'modules/reproduction-lab.html',
+    *[ROOT / f'modules/reproduction-lab-{i:02d}.html' for i in range(2, 13)],
+]
 
 FORBIDDEN_VISIBLE = (
     '热圆滑',
@@ -30,69 +28,169 @@ FORBIDDEN_VISIBLE = (
     'Numerical 模型ing',
     '普适ity',
     'De钉扎',
+    '项目项目',
+    '封闭封闭',
+    '无序无序样本',
+    'main text · published PDF',
+    'published PDF',
+    'RF-like',
+    'Se-vacancy',
+    'spatial 多重标度',
+    'lattice 模型',
+    'late 运动',
+    '畴壁 extraction',
+    'size 定义',
+    'CI / 自助法',
+    'cycle 等内层重复',
+    '跨 stage',
+    ' up to E',
+)
+
+FORBIDDEN_VISIBLE_LOWER = (
     ' gate ',
     ' authority ',
-    'fit window',
-    'sample-specific',
-    'held-out',
-    'source-level',
+    ' fit window',
+    ' workflow ',
+    ' checkpoint ',
+    ' sample-specific',
+    ' held-out',
+    ' source-level',
+    ' estimator ',
+    ' benchmark ',
+    ' raw data',
+    ' steady velocity',
 )
+
+CRITICAL_ANCHORS = {
+    'current-frontiers.html': (
+        '机制证据已经很强，普适性证据还没闭合',
+        '预存畴壁不是无条件必要条件',
+        '在孤立畴壁条件下能否进入受驱无序界面的普适性框架',
+    ),
+    'research-track.html': (
+        '失效不是“没做成”',
+        '候选普适类；或明确映射失效',
+        '不展示项目未发表数值',
+    ),
+    'reproduction-lab-09.html': (
+        '拟合区间稳定性：未通过',
+        '普适 β 结论：不授权',
+        '回归分析已知答案测试：通过',
+    ),
+    'reproduction-lab-10.html': (
+        '小尺寸 QEW 超粗糙特征：通过',
+        '热力学 ζ 闭合：未通过',
+        '不能挑出 1.316 或 1.201 中的任何一个',
+    ),
+    'reproduction-lab-11.html': (
+        '尺寸区间稳定性：未通过',
+        '普适 ν 结论：不授权',
+        'ν=1.318867',
+    ),
+    'reproduction-lab-12.html': (
+        '热圆整拟合区间稳定性：未通过',
+        '普适 ψ 结论：不授权',
+        '低温蠕变渐近区：尚未解析',
+        '蠕变律 / μ 结论：不授权',
+        'Brownian（布朗）噪声归一化测试',
+    ),
+}
+
+
+def visible_text(raw: str) -> str:
+    soup = BeautifulSoup(raw, 'html.parser')
+    for selector in ('.source-text', 'pre', 'code', 'script', 'style'):
+        for node in soup.select(selector):
+            node.decompose()
+    return ' '.join(soup.stripped_strings)
+
+
+def resolve_local(page: Path, value: str) -> Path | None:
+    if not value or value.startswith(('#', 'mailto:', 'javascript:', 'data:')):
+        return None
+    parts = urlsplit(value)
+    if parts.scheme or parts.netloc:
+        return None
+    rel = parts.path
+    if not rel:
+        return None
+    return (page.parent / rel).resolve()
+
+
+def assert_wiring(page: Path, raw: str) -> None:
+    soup = BeautifulSoup(raw, 'html.parser')
+    if soup.find('h1') is None:
+        raise RuntimeError(f'{page.name}: missing h1')
+    if not soup.find_all('a'):
+        raise RuntimeError(f'{page.name}: no links found')
+
+    root_resolved = ROOT.resolve()
+    for img in soup.find_all('img'):
+        target = resolve_local(page, img.get('src', ''))
+        if target is None:
+            continue
+        if root_resolved not in target.parents and target != root_resolved:
+            raise RuntimeError(f'{page.name}: image escapes repository root: {img.get("src")}')
+        if not target.exists():
+            raise RuntimeError(f'{page.name}: missing image asset: {img.get("src")}')
+
+    for a in soup.find_all('a'):
+        href = a.get('href', '')
+        target = resolve_local(page, href)
+        if target is None or target.suffix.lower() != '.html':
+            continue
+        if root_resolved not in target.parents and target != root_resolved:
+            raise RuntimeError(f'{page.name}: link escapes repository root: {href}')
+        if not target.exists():
+            raise RuntimeError(f'{page.name}: missing local HTML target: {href}')
 
 
 def main() -> None:
-    raw = TARGET.read_text(encoding='utf-8')
-    before = BeautifulSoup(raw, 'html.parser')
-    sources_before = [str(x) for x in before.select('.source-text')]
-    eq_before = [str(x) for x in before.select('.eq')]
-    images_before = [(x.get('src'), x.get('alt')) for x in before.find_all('img')]
-    hrefs_before = [x.get('href') for x in before.find_all('a')]
-    science_counts = {token: raw.count(token) for token in LOCKED_SCIENCE}
+    missing = [str(p.relative_to(ROOT)) for p in PAGES if not p.exists()]
+    if missing:
+        raise RuntimeError(f'Final-audit pages missing: {missing}')
 
-    if '热圆滑' not in raw:
-        raise RuntimeError('Module 05 expected thermal-rounding residue missing')
+    for page in PAGES:
+        raw = page.read_text(encoding='utf-8')
+        before = raw
+        visible = visible_text(raw)
+        padded_lower = f' {visible.lower()} '
 
-    out = raw.replace('热圆滑', '热圆整')
-    for old, new in REPLACEMENTS:
-        if old not in out:
-            raise RuntimeError(f'Module 05 expected mixed-language fragment missing: {old}')
-        out = out.replace(old, new, 1)
+        for token in FORBIDDEN_VISIBLE:
+            if token in visible:
+                raise RuntimeError(f'{page.name}: visible Language V2 residue: {token}')
+        for token in FORBIDDEN_VISIBLE_LOWER:
+            if token in padded_lower:
+                raise RuntimeError(f'{page.name}: visible workflow-English residue: {token.strip()}')
 
-    after = BeautifulSoup(out, 'html.parser')
-    if sources_before != [str(x) for x in after.select('.source-text')]:
-        raise RuntimeError('Module 05 paper-original source text changed')
-    if eq_before != [str(x) for x in after.select('.eq')]:
-        raise RuntimeError('Module 05 equations changed')
-    if images_before != [(x.get('src'), x.get('alt')) for x in after.find_all('img')]:
-        raise RuntimeError('Module 05 Figure wiring changed')
-    if hrefs_before != [x.get('href') for x in after.find_all('a')]:
-        raise RuntimeError('Module 05 href wiring changed')
-    for token, count in science_counts.items():
-        if out.count(token) != count:
-            raise RuntimeError(f'Module 05 scientific statement drifted: {token}')
+        assert_wiring(page, raw)
 
-    audit = BeautifulSoup(out, 'html.parser')
-    for node in audit.select('.source-text'):
-        node.decompose()
-    visible = ' '.join(audit.stripped_strings)
-    padded = f' {visible} '
-    for token in FORBIDDEN_VISIBLE:
-        if token in padded or token in visible:
-            raise RuntimeError(f'Module 05 final-audit residue remains: {token}')
+        for anchor in CRITICAL_ANCHORS.get(page.name, ()):
+            if anchor not in raw:
+                raise RuntimeError(f'{page.name}: critical scientific boundary missing: {anchor}')
 
-    required = (
-        '6 · 热圆整：',
-        '一维弹性线的数值研究',
-        '阈值分布展宽',
-        '足以支持弹性界面描述',
-        'f≈f<sub>c</sub> 测热圆整',
-        '这里负责 f≈f<sub>c</sub> 的热圆整',
-    )
-    for token in required:
-        if token not in out:
-            raise RuntimeError(f'Module 05 repaired Language V2 text missing: {token}')
+        if page.name == 'depinning.html':
+            for anchor in (
+                '6 · 热圆整：',
+                '一维弹性线的数值研究',
+                '阈值分布展宽',
+                'T=0 阈值应先独立闭合',
+                '坍缩应该是待检验结果，不是数据预处理步骤',
+            ):
+                if anchor not in raw:
+                    raise RuntimeError(f'Module 05 final wording/science anchor missing: {anchor}')
 
-    TARGET.write_text(out, encoding='utf-8')
-    print('Module 05 thermal-rounding Language V2 repair complete; source text/equations/Figures/links/scientific boundaries unchanged.')
+        if page.name == 'reproduction-lab.html':
+            if '剖面 RMSE =' not in raw:
+                raise RuntimeError('Lab 01: visible Chinese RMSE label missing')
+            if '<pre' not in raw or 'profile RMSE' not in raw:
+                raise RuntimeError('Lab 01: machine-output profile RMSE label unexpectedly missing')
+
+        if page.read_text(encoding='utf-8') != before:
+            raise RuntimeError(f'{page.name}: read-only final seal changed page bytes')
+
+    print(f'FULL-SITE LANGUAGE V2 FINAL SEAL PASS: {len(PAGES)} teaching pages checked read-only.')
+    print('Scientific figures may retain original English labels; source/code/machine-output text is excluded from prose-language checks.')
 
 
 if __name__ == '__main__':
