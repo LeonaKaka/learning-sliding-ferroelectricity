@@ -1,0 +1,27 @@
+name: Figure Reading V2 seal
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'modules/foundations.html'
+      - 'modules/switching-pathways.html'
+      - 'modules/domain-walls.html'
+      - 'modules/pinning-creep.html'
+      - 'modules/depinning.html'
+      - 'modules/disorder-rfim.html'
+      - 'scripts/figure_reading_v2_seal.py'
+      - '.github/workflows/figure-reading-v2-seal.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  figures:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install parser
+        run: python -m pip install --disable-pip-version-check beautifulsoup4
+      - name: Validate Figure Reading V2 bindings and claim boundaries
+        run: python scripts/figure_reading_v2_seal.py
