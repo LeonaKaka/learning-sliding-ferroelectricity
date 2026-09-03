@@ -7,7 +7,11 @@ on:
       - 'scripts/language_v2_second_pass.py'
       - 'scripts/language_v2_second_pass_fix.py'
       - 'scripts/concept_paths_seal.py'
+      - 'scripts/claim_checks_seal.py'
       - 'modules/concept-paths.html'
+      - 'modules/pinning-creep.html'
+      - 'modules/depinning.html'
+      - 'modules/disorder-rfim.html'
       - 'index.html'
       - '.github/workflows/language-v2-second-pass.yml'
 
@@ -27,6 +31,8 @@ jobs:
         run: python scripts/language_v2_second_pass_fix.py
       - name: Verify Concept Paths read-only seal
         run: python scripts/concept_paths_seal.py
+      - name: Verify Teaching V2 claim-check seal
+        run: python scripts/claim_checks_seal.py
       - name: Verify only expected pages changed
         shell: bash
         run: |
