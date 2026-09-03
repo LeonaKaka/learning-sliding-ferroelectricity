@@ -14,7 +14,7 @@
 <main>
 <div class="rule"><a href="../index.html">首页</a> / Concept Paths（概念纵向路径）</div>
 <h1>同一个概念，在不同章节里到底升级了几次？</h1>
-<p class="lead">模块按知识顺序展开，但做研究时你会反复遇到同一个词。这里不做 glossary（术语表），而是把一个概念从<strong>第一次出现 → 实验可观测量 → 理论定义 → 数值实现 → Reproduction Lab（复现实验室）验收</strong>串成纵向路径。每条路径最后都写明：到哪一步之前，哪些结论还不能说。</p>
+<p class="lead">模块按知识顺序展开，但做研究时你会反复遇到同一个词。这里不做术语表，而是把一个概念从<strong>第一次出现 → 实验可观测量 → 理论定义 → 数值实现 → Reproduction Lab（复现实验室）验收</strong>串成纵向路径。每条路径最后都写明：到哪一步之前，哪些结论还不能说。</p>
 <div class="jump"><a href="#threshold">阈值 Ec / fc</a><a href="#roughness">粗糙度 ζ</a><a href="#disorder">RF vs RB</a><a href="#creep">Creep（蠕变）</a><a href="#closure">有限尺寸与临界指数闭环</a></div>
 
 <section class="path" id="threshold">
@@ -25,7 +25,7 @@
 <div class="step"><div class="n">02 · 理论层</div><h3>定义 T=0 的 f<sub>c</sub></h3><p>Chauve / Wiese 把 f<sub>c</sub> 定义为钉扎与持续运动之间的临界点，并要求临界标度一起出现。</p><a href="depinning.html">05 Depinning →</a></div>
 <div class="step"><div class="n">03 · 判定层</div><h3>用时间演化夹逼阈值</h3><p>Ferrero 的核心不是“扫出一条曲线”，而是区分最终饱和、最终停止和临界附近长瞬态。</p><a href="depinning.html#relaxation">看 Ferrero 非稳态判据 →</a></div>
 <div class="step"><div class="n">04 · 数值层</div><h3>阈值先于指数</h3><p>模型、边界条件、dt、有限尺寸和单样本判定必须先固定，否则 β 会吸收阈值误差。</p><a href="numerical-modeling.html#grid">07 Numerical Modeling →</a></div>
-<div class="step"><div class="n">05 · Lab 层</div><h3>L07 → L08 → L09</h3><p>先找单样本 bracket，再测稳态 v(f)，最后才审 β 的拟合区间稳定性。</p><a href="reproduction-lab-07.html">从 L07 开始 →</a></div>
+<div class="step"><div class="n">05 · Lab 层</div><h3>L07 → L08 → L09</h3><p>先找单样本阈值区间，再测稳态 v(f)，最后才审 β 的拟合区间稳定性。</p><a href="reproduction-lab-07.html">从 L07 开始 →</a></div>
 </div>
 <div class="stop"><b>停止条件：</b>只看到 P–E 的 Ec、一次跳变或“速度开始非零”，都不能自动把它命名为热力学退钉扎 f<sub>c</sub>；更不能跳过阈值收敛直接宣布 β。</div>
 </section>
@@ -38,7 +38,7 @@
 <div class="step"><div class="n">02 · 临界层</div><h3>Rosso 做多尺寸临界几何</h3><p>临界 ζ 来自 W²(L) 的系统尺寸标度，并要检查拟合下限是否稳定。</p><a href="depinning.html#geometry">05 Rosso 临界流形 →</a></div>
 <div class="step"><div class="n">03 · 模型边界</div><h3>先问界面还能否单值</h3><p>Drossel / Zhou 提醒：悬垂、封闭小畴和全局—局域指数分裂会让简单弹性线 ζ 失去原含义。</p><a href="disorder-rfim.html#overhangs">06 RFIM 几何边界 →</a></div>
 <div class="step"><div class="n">04 · 约化层</div><h3>GL ↔ EW 要先验几何</h3><p>数值建模必须先验证体场畴壁能否稳定投影成单值界面，再比较 B(r) 与 S(q)。</p><a href="numerical-modeling.html#reduction">07 模型约化 →</a></div>
-<div class="step"><div class="n">05 · Lab 层</div><h3>L06 与 L10 双重检查</h3><p>L06 检查跨模型几何一致性；L10 同时看局域与全局 ζ，并拒绝尺寸区间不稳定的热力学闭合。</p><a href="reproduction-lab-10.html">L10 Super-roughness →</a></div>
+<div class="step"><div class="n">05 · Lab 层</div><h3>L06 与 L10 双重检查</h3><p>L06 检查跨模型几何一致性；L10 同时看局域与全局 ζ，并拒绝尺寸区间不稳定的热力学闭合。</p><a href="reproduction-lab-10.html">L10 超粗糙 →</a></div>
 </div>
 <div class="stop"><b>停止条件：</b>单一尺寸、单一拟合区间里的一条漂亮双对数直线不够。若局域 / 全局估计量或不同尺寸区间不一致，应报告有效指数或映射失效，而不是挑一个最接近文献值的 ζ。</div>
 </section>
@@ -76,11 +76,11 @@
 <div class="step"><div class="n">01 · 理论层</div><h3>Wiese：指数不是四个自由参数</h3><p>β、ζ、ν、z 由同一临界不动点约束；相关长度、速度和粗糙几何必须能互相解释。</p><a href="depinning.html#scaling">05 Scaling Relations（标度关系） →</a></div>
 <div class="step"><div class="n">02 · 阈值层</div><h3>先做阈值与瞬态审计</h3><p>fc 不稳，β 就没有稳定横轴；有限时间没有饱和，稳态速度就不存在。</p><a href="depinning.html#threshold-ladder">05 阈值推断阶梯 →</a></div>
 <div class="step"><div class="n">03 · 尺度层</div><h3>有限尺寸不是误差条装饰</h3><p>改变 L、拟合区间和估计量，应得到可解释的收敛，而不是每次重新挑窗口。</p><a href="numerical-modeling.html#identifiability">07 尺度与可辨识性 →</a></div>
-<div class="step"><div class="n">04 · 已知答案层</div><h3>先证明分析器会测，再测未知问题</h3><p>synthetic gold test 只能验证方法没有明显实现错误，不能替代真实数据进入渐近区。</p><a href="reproduction-lab-09.html">L09 β Gold Test →</a></div>
+<div class="step"><div class="n">04 · 已知答案层</div><h3>先证明分析器会测，再测未知问题</h3><p>合成已知答案测试 只能验证方法没有明显实现错误，不能替代真实数据进入渐近区。</p><a href="reproduction-lab-09.html">L09 β 已知答案测试 →</a></div>
 <div class="step"><div class="n">05 · Lab 闭环</div><h3>L09 → L10 → L11 → L12</h3><p>β、ζ、ν、ψ 分别接受拟合区间 / 尺寸区间审计；当前失败项必须作为结果保留。</p><a href="reproduction-lab-09.html">从 L09 开始 →</a></div>
 </div>
 <div class="compare"><div class="card"><b>“方法通过”</b><p>已知答案、离散化、数据管线或估计量在受控问题上工作正常。</p></div><div class="card"><b>“物理结论通过”</b><p>真实问题还必须显示尺度区间稳定、跨估计量一致、有限尺寸收敛，并满足预先声明的判据。</p></div></div>
-<div class="stop"><b>停止条件：</b>gold test PASS 与 universal claim PASS 是两个不同层级。只要 β / ζ / ν / ψ 的真实数据尺度区间没有闭合，就应保留“未授权”，而不是用理论期望值替代测量。</div>
+<div class="stop"><b>停止条件：</b>已知答案测试通过与普适性结论通过 是两个不同层级。只要 β / ζ / ν / ψ 的真实数据尺度区间没有闭合，就应保留“未授权”，而不是用理论期望值替代测量。</div>
 </section>
 
 <div class="next"><a href="../index.html">← 回首页知识图谱</a><a href="research-track.html">继续：Research Track →</a></div>
