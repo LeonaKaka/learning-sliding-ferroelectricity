@@ -1,0 +1,38 @@
+name: Pages runtime gate patch
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'scripts/pages_runtime_gate_patch.py'
+      - '.github/workflows/pages-runtime-gate-patch.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Add structure/runtime predeploy gate
+        run: python scripts/pages_runtime_gate_patch.py
+      - name: Verify only Pages workflow changed
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t changed < <(git diff --name-only)
+          printf 'Changed files:\n%s\n' "${changed[*]:-<none>}"
+          test "${#changed[@]}" -eq 1
+          test "${changed[0]}" = '.github/workflows/pages.yml'
+      - name: Commit Pages predeploy gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .github/workflows/pages.yml
+          git commit -m 'Gate Pages deployment on site structure runtime QA'
+          git push
