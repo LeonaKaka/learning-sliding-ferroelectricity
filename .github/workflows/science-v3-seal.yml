@@ -1,0 +1,48 @@
+name: Science V3 seal
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'modules/depinning.html'
+      - 'modules/disorder-rfim.html'
+      - 'modules/numerical-modeling.html'
+      - 'modules/current-frontiers.html'
+      - 'modules/research-track.html'
+      - 'modules/concept-paths.html'
+      - 'modules/reproduction-lab-10.html'
+      - 'modules/reproduction-lab-11.html'
+      - 'scripts/science_v3_seal.py'
+      - 'scripts/science_v3_source_text_receipt.json'
+      - 'scripts/claim_checks_seal.py'
+      - 'scripts/language_v2_second_pass_fix.py'
+      - 'scripts/site_gap_teaching_seal.py'
+      - 'scripts/concept_paths_seal.py'
+      - 'scripts/module07_teaching_seal.py'
+      - 'scripts/module08_teaching_seal.py'
+      - '.github/workflows/science-v3-seal.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  science-v3:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install parser
+        run: python -m pip install --disable-pip-version-check beautifulsoup4
+      - name: Verify Science V3 scientific boundaries and source-text hashes
+        run: python scripts/science_v3_seal.py
+      - name: Verify Language V2 final read-only seal
+        run: python scripts/language_v2_second_pass_fix.py
+      - name: Verify Teaching V2 order and scientific anchors
+        run: python scripts/site_gap_teaching_seal.py
+      - name: Verify Concept Paths structure and stop conditions
+        run: python scripts/concept_paths_seal.py
+      - name: Verify evidence-to-claim checks
+        run: python scripts/claim_checks_seal.py
+      - name: Verify Module 07 first-read structure
+        run: python scripts/module07_teaching_seal.py
+      - name: Verify Module 08 evidence frame
+        run: python scripts/module08_teaching_seal.py
