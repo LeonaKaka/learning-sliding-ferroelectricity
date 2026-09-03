@@ -8,6 +8,7 @@ EXPECTED = {
     'pinning-creep.html': 3,
     'depinning.html': 4,
     'disorder-rfim.html': 4,
+    'numerical-modeling.html': 4,
 }
 
 ANCHORS = {
@@ -28,6 +29,13 @@ ANCHORS = {
         'random-field disorder（随机场无序）与 RFIM 中直接耦合体相序参量的随机场不是同一个模型对象',
         '单值 h(y) 的弹性线映射可能失效',
         '并没有自动完成从微观缺陷到唯一统计无序类别的粗粒化判别',
+    ),
+    'numerical-modeling.html': (
+        '固定连续体 Δ 时应有 σ<sub>grid</sub> ∝ dx<sup>−1</sup>',
+        '噪声率标准差随 dt<sup>−1/2</sup>，每步随机增量随 dt<sup>+1/2</sup>',
+        '同一淬火景观下的热噪声内层重复',
+        '并不自动等于畴壁质心速度',
+        '没参与校准的留出可观测量',
     ),
 }
 
@@ -78,9 +86,9 @@ def main() -> None:
 
         total += len(details)
 
-    if total != 11:
+    if total != 15:
         raise RuntimeError(f'claim-check total drifted: {total}')
-    print('CLAIM CHECK SEAL PASS: modules 04/05/06 keep 3/4/4 folded evidence-to-claim judgments (11 total) with locked scientific boundaries.')
+    print('CLAIM CHECK SEAL PASS: modules 04/05/06/07 keep 3/4/4/4 folded evidence-to-claim judgments (15 total) with locked scientific boundaries.')
 
 
 if __name__ == '__main__':
