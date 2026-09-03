@@ -15,6 +15,7 @@ class PageParser(HTMLParser):
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
         self.anchors: set[str] = set()
+        self.id_counts: dict[str, int] = {}
         self.hrefs: list[str] = []
         self.script_srcs: list[str] = []
 
@@ -24,6 +25,7 @@ class PageParser(HTMLParser):
         node_name = data.get("name")
         if node_id:
             self.anchors.add(node_id)
+            self.id_counts[node_id] = self.id_counts.get(node_id, 0) + 1
         if node_name:
             self.anchors.add(node_name)
         if tag == "a" and data.get("href"):
@@ -49,6 +51,7 @@ def main() -> None:
     checked_files = 0
     checked_fragments = 0
     checked_runtime_pages = 0
+    checked_ids = 0
 
     terms_raw = TERMS.read_text(encoding="utf-8")
     nav_raw = NAV.read_text(encoding="utf-8")
@@ -82,6 +85,13 @@ def main() -> None:
     for page in PAGES:
         source = page.resolve()
         page_parser = parsed[source]
+
+        duplicates = sorted(node_id for node_id, count in page_parser.id_counts.items() if count > 1)
+        checked_ids += len(page_parser.id_counts)
+        if duplicates:
+            failures.append(
+                f"{page.relative_to(ROOT)}: duplicate id values would make fragment navigation ambiguous: {duplicates}"
+            )
 
         # Runtime ownership contract: source HTML may load the terminology
         # runtime at most once, and must never load site-nav.js directly.
@@ -138,7 +148,7 @@ def main() -> None:
 
     print(
         f"SITE FRAGMENT / RUNTIME SEAL PASS: {len(PAGES)} pages scanned; "
-        f"{checked_files} local HTML links and {checked_fragments} fragments resolved; "
+        f"{checked_files} local HTML links, {checked_fragments} fragments, and {checked_ids} explicit ids validated; "
         f"{checked_runtime_pages} source pages obey single-owner navigation runtime; "
         "terms.js/site-nav.js idempotence plus mobile chapter-nav/anchor/table/equation guards locked."
     )
