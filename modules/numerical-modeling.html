@@ -133,7 +133,7 @@
 <div class="eq">独立淬火无序样本 i → 热噪声随机种子 j → 轨迹帧 t</div>
 <div class="bridge"><a href="research-track.html#temperature">Research Track：有限温流程 / 外层与内层统计</a>　·　<a href="depinning.html#thermal-rounding">模块 05：热圆整测量逻辑</a></div>
 <div class="q"><b>代码验收一句话：</b>改 dx 或 dt 后，如果你不能明确说明“为了保持同一个物理 T，随机项到底按什么公式重标了”，有限温指数暂时没有解释资格。</div>
-<div class="bridge" id="reproduction-lab-bridge"><b>想把这些规则真正写成代码，而不是只读检查清单？</b> 新的 <a href="reproduction-lab.html">Reproduction Lab</a> 正按 Caballero 2020 一步步复现：L01 解析孤子 → L02 2D 场→u(y) → L03 EW 粗糙度与 Eq. 19 对照 → L04 2D GL→EW 有效性边界 → L05 体相 RB→有效钉扎相关函数 → L06 含无序 B/S 跨模型阶段验证。每课都有可运行脚本和硬判据，再把同一估计量迁回滑移铁电。</div>
+<div class="bridge" id="reproduction-lab-bridge"><b>想把这些规则真正写成代码，而不是只读检查清单？</b> 新的 <a href="reproduction-lab-overview.html">Reproduction Lab</a> 正按 Caballero 2020 一步步复现：L01 解析孤子 → L02 2D 场→u(y) → L03 EW 粗糙度与 Eq. 19 对照 → L04 2D GL→EW 有效性边界 → L05 体相 RB→有效钉扎相关函数 → L06 含无序 B/S 跨模型阶段验证。每课都有可运行脚本和硬判据，再把同一估计量迁回滑移铁电。</div>
 <h2 id="velocity-estimator">6.3 · 稳态畴壁速度估计约定：一个 v(E) 点到底怎样才算“测到了”？</h2>
 <p>退钉扎最常见的下一步是画 <i>v</i>(E)，但“轨迹最后动了一点”并不等于得到稳态速度。尤其靠近 E<sub>c</sub> 时，长瞬态、间歇突发事件、有限观测时长与畴壁拓扑变化都会把一个单点速度变成分析自由度。这里把 <b>运行是否有效、畴壁怎样位移、什么时候进入稳态区间、单条轨迹的误差和跨无序来源的误差</b> 分开。</p>
 <div class="bridge"><b>为什么要这么严格：</b>模块 05 的 Ferrero 2013 已经显示，退钉扎附近可以存在很长的非稳态交叉区；过早把瞬态当渐近区间，会系统性偏置有效指数。稳态速度路线与非稳态弛豫路线都可以研究临界性，但不能把两套估计量混在同一条 β 拟合里。</div>
