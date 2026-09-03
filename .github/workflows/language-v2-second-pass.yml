@@ -8,10 +8,12 @@ on:
       - 'scripts/language_v2_second_pass_fix.py'
       - 'scripts/concept_paths_seal.py'
       - 'scripts/claim_checks_seal.py'
+      - 'scripts/module07_teaching_seal.py'
       - 'modules/concept-paths.html'
       - 'modules/pinning-creep.html'
       - 'modules/depinning.html'
       - 'modules/disorder-rfim.html'
+      - 'modules/numerical-modeling.html'
       - 'index.html'
       - '.github/workflows/language-v2-second-pass.yml'
 
@@ -33,6 +35,8 @@ jobs:
         run: python scripts/concept_paths_seal.py
       - name: Verify Teaching V2 claim-check seal
         run: python scripts/claim_checks_seal.py
+      - name: Verify Module 07 Teaching V2 first-read seal
+        run: python scripts/module07_teaching_seal.py
       - name: Verify only expected pages changed
         shell: bash
         run: |
