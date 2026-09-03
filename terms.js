@@ -189,16 +189,34 @@
     style.textContent = `
       .mobile-toc{display:none}
       @media(max-width:760px){
-        .mobile-toc{display:block;position:sticky;top:62px;z-index:2;margin:0;background:rgba(243,240,232,.97);border-bottom:1px solid #d8d1c3;padding:0 16px}
+        .mobile-toc{display:block;position:sticky;top:var(--mobile-header-h,62px);z-index:2;margin:0;background:rgba(243,240,232,.97);border-bottom:1px solid #d8d1c3;padding:0 16px}
         .mobile-toc summary{cursor:pointer;list-style:none;padding:9px 0;font-size:12px;color:#5f5b54;font-weight:600}
         .mobile-toc summary::-webkit-details-marker{display:none}
         .mobile-toc summary:after{content:'＋';float:right;font-weight:400}
         .mobile-toc[open] summary:after{content:'−'}
         .mobile-toc nav{display:flex;gap:8px;overflow-x:auto;padding:0 0 10px;scrollbar-width:none}
         .mobile-toc nav::-webkit-scrollbar{display:none}
-        .mobile-toc a{flex:0 0 auto;text-decoration:none;border:1px solid #d8d1c3;border-radius:999px;padding:5px 9px;background:#fffdf8;color:#504c46;font-size:11px}
+        .mobile-toc a{flex:0 0 auto;display:inline-flex;align-items:center;min-height:36px;text-decoration:none;border:1px solid #d8d1c3;border-radius:999px;padding:6px 10px;background:#fffdf8;color:#504c46;font-size:11px}
       }`;
     document.head.appendChild(style);
+
+    const syncMobileTocGeometry = () => {
+      if (!matchMedia('(max-width:760px)').matches) return;
+      const headerHeight = Math.ceil(header.getBoundingClientRect().height);
+      const summaryHeight = Math.ceil(summary.getBoundingClientRect().height || 38);
+      details.style.setProperty('--mobile-header-h', `${headerHeight}px`);
+      const anchorOffset = headerHeight + summaryHeight + 16;
+      document.querySelectorAll('main h2[id]').forEach(heading => {
+        heading.style.scrollMarginTop = `${anchorOffset}px`;
+      });
+    };
+    requestAnimationFrame(syncMobileTocGeometry);
+    if ('ResizeObserver' in window) {
+      const headerObserver = new ResizeObserver(syncMobileTocGeometry);
+      headerObserver.observe(header);
+    } else {
+      window.addEventListener('resize', syncMobileTocGeometry, { passive: true });
+    }
   }
 
   function loadGlobalNavigation() {
