@@ -1,0 +1,43 @@
+name: Claim Checks 01-03
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'scripts/claim_checks_01_03_writer.py'
+      - '.github/workflows/claim-checks-01-03.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  write:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Apply safe claim checks
+        run: python scripts/claim_checks_01_03_writer.py
+      - name: Verify only modules 01-03 changed
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t changed < <(git diff --name-only)
+          printf 'Changed files:\n%s\n' "${changed[*]:-<none>}"
+          test "${#changed[@]}" -eq 3
+          for f in "${changed[@]}"; do
+            case "$f" in
+              modules/foundations.html|modules/switching-pathways.html|modules/domain-walls.html) ;;
+              *) echo "Unexpected changed file: $f" >&2; exit 31 ;;
+            esac
+          done
+      - name: Commit claim checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add modules/foundations.html modules/switching-pathways.html modules/domain-walls.html
+          git commit -m 'Add evidence-to-claim checks to modules 01-03'
+          git push
