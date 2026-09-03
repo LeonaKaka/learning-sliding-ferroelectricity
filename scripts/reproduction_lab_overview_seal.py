@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 ROOT = Path(__file__).resolve().parents[1]
 OVERVIEW = ROOT / "modules" / "reproduction-lab-overview.html"
 NAV = ROOT / "site-nav.js"
+MODULE07 = ROOT / "modules" / "numerical-modeling.html"
 
 
 def require(condition: bool, message: str) -> None:
@@ -82,9 +83,21 @@ def main() -> None:
     require("reproduction-lab-entry" not in nav,
             "Legacy Lab-only homepage entry reappeared")
 
+    # Module 07 is a semantic Lab entry point, not an L01-specific lesson link.
+    m7_raw = MODULE07.read_text(encoding="utf-8")
+    m7 = BeautifulSoup(m7_raw, "html.parser")
+    bridge = m7.select_one("#reproduction-lab-bridge")
+    require(bridge is not None, "Module 07 Reproduction Lab bridge missing")
+    lab_links = [a for a in bridge.find_all("a") if "Reproduction Lab" in a.get_text(" ", strip=True)]
+    require(len(lab_links) == 1, f"Module 07 expected one Lab entry link, found {len(lab_links)}")
+    require(lab_links[0].get("href") == "reproduction-lab-overview.html",
+            f"Module 07 Lab entry must route to overview, got {lab_links[0].get('href')}")
+    require('<a href="reproduction-lab.html">Reproduction Lab</a>' not in m7_raw,
+            "Legacy Module 07 Lab entry still routes directly to L01")
+
     print(
         "REPRODUCTION LAB OVERVIEW SEAL PASS: 12 canonical lesson links, three evidence stages, "
-        "critical claim boundaries, global overview routing, and four homepage learning modes are locked."
+        "critical claim boundaries, global/homepage routing, and Module 07 overview entry are locked."
     )
 
 
