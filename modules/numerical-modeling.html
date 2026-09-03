@@ -111,12 +111,12 @@
 <tr><td>二维网格单元平均</td><td>ΔV → ΔA = dx²（按你的 2D 能量约定）</td><td>把淬火 RF 的 1/dx 规则直接当完整热噪声规则</td></tr>
 </tbody></table>
 <h3>6.2.3 · dx 收敛与 dt 收敛都要保持同一个温度约定</h3>
-<div class="check"><div><b>dx 检验：</b>若物理粗粒化自由能与温度约定固定，网格单元变小后热噪声率的方差会随 1/ΔV 增大；不能固定每个网格单元的随机幅度。</div><div><b>dt 检验：</b>减小 dt 时，噪声率标准差应按 dt<sup>−1/2</sup> 调整，或每步增量标准差按 dt<sup>+1/2</sup> 调整；两种实现只选一种。</div><div><b>平衡态合理性：</b>在 E=0、无淬火无序的简单可控情形下，先检查稳态涨落 / 分布是否随 dt 加密稳定，再进入受驱问题。</div><div><b>受驱合理性：</b>有外场时系统不是平衡态，但恒温器的噪声–耗散约定仍要固定；不能为拟合蠕变 / 热圆滑曲线事后改噪声幅度。</div></div>
+<div class="check"><div><b>dx 检验：</b>若物理粗粒化自由能与温度约定固定，网格单元变小后热噪声率的方差会随 1/ΔV 增大；不能固定每个网格单元的随机幅度。</div><div><b>dt 检验：</b>减小 dt 时，噪声率标准差应按 dt<sup>−1/2</sup> 调整，或每步增量标准差按 dt<sup>+1/2</sup> 调整；两种实现只选一种。</div><div><b>平衡态合理性：</b>在 E=0、无淬火无序的简单可控情形下，先检查稳态涨落 / 分布是否随 dt 加密稳定，再进入受驱问题。</div><div><b>受驱合理性：</b>有外场时系统不是平衡态，但恒温器的噪声–耗散约定仍要固定；不能为拟合蠕变 / 热圆整曲线事后改噪声幅度。</div></div>
 <div class="warn"><b>更深一层：</b>连续体白热噪声本身含有任意短波涨落，相场又是粗粒化理论。因此极端 dx→0 不一定意味着所有裸参数都能原封不动保持；网格截止与粗粒化约定要写清。这里的首要目标不是追求“随机场逐点收敛”，而是保证目标可观测量在声明的粗粒化模型下稳定。</div>
 <h3>6.2.4 · 热随机种子仍然只是内层重复</h3>
 <p>同一个淬火无序景观下换 20 个 Langevin 随机种子，可以更精确估计该景观的有限温条件响应；它不会自动变成 20 个新的无序样本。统计层级继续沿用 Research Track：</p>
 <div class="eq">独立淬火无序样本 i → 热噪声随机种子 j → 轨迹帧 t</div>
-<div class="bridge"><a href="research-track.html#temperature">Research Track：有限温流程 / 外层与内层统计</a>　·　<a href="depinning.html#thermal-rounding">模块 05：热圆滑测量逻辑</a></div>
+<div class="bridge"><a href="research-track.html#temperature">Research Track：有限温流程 / 外层与内层统计</a>　·　<a href="depinning.html#thermal-rounding">模块 05：热圆整测量逻辑</a></div>
 <div class="q"><b>代码验收一句话：</b>改 dx 或 dt 后，如果你不能明确说明“为了保持同一个物理 T，随机项到底按什么公式重标了”，有限温指数暂时没有解释资格。</div>
 <div class="bridge" id="reproduction-lab-bridge"><b>想把这些规则真正写成代码，而不是只读检查清单？</b> 新的 <a href="reproduction-lab.html">Reproduction Lab</a> 正按 Caballero 2020 一步步复现：L01 解析孤子 → L02 2D 场→u(y) → L03 EW 粗糙度与 Eq. 19 对照 → L04 2D GL→EW 有效性边界 → L05 体相 RB→有效钉扎相关函数 → L06 含无序 B/S 跨模型阶段验证。每课都有可运行脚本和硬判据，再把同一估计量迁回滑移铁电。</div>
 <h2 id="velocity-estimator">6.3 · 稳态畴壁速度估计约定：一个 v(E) 点到底怎样才算“测到了”？</h2>
