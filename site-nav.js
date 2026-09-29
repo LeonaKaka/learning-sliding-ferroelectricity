@@ -32,6 +32,10 @@
     ['08 · Current Frontiers','modules/current-frontiers.html'],
     ['Research Track','modules/research-track.html'],
   ];
+  const openSource=[
+    ['Lab overview','modules/open-source-modeling.html'],
+    ['01 · moire_metrology','modules/open-source-moire-metrology.html'],
+  ];
   const labs=[
     ['L01 · TDGL wall','modules/reproduction-lab.html'],
     ['L02 · 2D wall extraction','modules/reproduction-lab-02.html'],
@@ -57,6 +61,8 @@
   const left=document.createElement('aside'); left.className='site-sidebar'; left.id='siteSidebar';
   left.innerHTML='<div class="site-nav-title">All pages</div>'+
     pages.map(([t,f],i)=>`<a class="${i===0?'site-nav-home ':''}${isActive(f)?'active':''}" href="${hrefFor(f)}">${t}</a>`).join('')+
+    '<div class="site-nav-section">Open-Source Modeling Lab</div>'+
+    openSource.map(([t,f])=>`<a class="site-nav-sub ${isActive(f)?'active':''}" href="${hrefFor(f)}">${t}</a>`).join('')+
     '<div class="site-nav-section">Reproduction Lab · 12 lessons</div>'+
     `<a class="site-nav-lab ${isActive('modules/reproduction-lab-overview.html')?'active':''}" href="${hrefFor('modules/reproduction-lab-overview.html')}">12 课学习路线 →</a>`+
     '<div class="site-nav-phase">Paper1 · L01–L06</div>'+labs.slice(0,6).map(labLink).join('')+

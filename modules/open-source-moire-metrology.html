@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="zh-CN" data-upstream-repo="dorrih/moire_metrology" data-upstream-commit="039a951282ea6feeb886bfd1b7730e24330eee78">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="description" content="逐层精读 moire_metrology：从位移场、弹性与 GSFE 到参数来源、求解器和建模方法论。"/>
+<title>moire_metrology · Open-Source Modeling Lab</title>
+<link rel="stylesheet" href="../styles.css"/>
+<link rel="stylesheet" href="../open-source-modeling.css"/>
+</head>
+<body>
+<header class="top"><div class="wrap top-inner"><div class="brand">Open-Source Modeling Lab<small>01 · moire_metrology</small></div><nav class="nav"><a href="open-source-modeling.html">Lab 首页</a><a href="#level-2">模型</a><a href="#level-3">参数</a><a href="#level-4">源码</a><a href="#taste">Taste</a></nav></div></header>
+<main>
+<section class="wrap oss-hero">
+<div><div class="oss-eyebrow">Repository 01 · continuum moiré relaxation</div><h1>moire_metrology</h1><p>这一库最值得学的不是“怎么画 moiré”，而是一个真实 continuum model（连续模型）怎样把 <b>in-plane displacement field（面内位移场）</b>、elasticity（弹性）和 generalized stacking fault energy（广义层错能，GSFE）组织成一个可追溯、可求解、可验证的能量模型。</p></div>
+<aside class="oss-meta"><dl><dt>Upstream</dt><dd><a class="oss-link" href="https://github.com/dorrih/moire_metrology">dorrih/moire_metrology</a></dd><dt>Branch</dt><dd>main</dd><dt>Frozen commit</dt><dd><code>039a951282ea6feeb886bfd1b7730e24330eee78</code></dd><dt>核验日期</dt><dd>2026-09-30</dd><dt>语言</dt><dd>Python · NumPy/SciPy · FEM-style discretization</dd><dt>本页目标</dt><dd>重建模型，不背 API</dd></dl></aside>
+</section>
+
+<section class="wrap oss-level" id="orientation">
+<h2>先看整条因果链</h2>
+<div class="flow"><span>twist / mismatch</span><i>→</i><span>local stacking registry</span><i>→</i><span>u(r)</span><i>→</i><span>elastic cost</span><i>+</i><span>GSFE</span><i>→</i><span>energy minimization</span><i>→</i><span>relaxed domains / walls / strain</span></div>
+<div class="evidence" data-kind="code"><b>[项目文档支持]</b><code>docs/theory.md</code> 明确写出总能量为 <code>E = E_elastic + E_GSFE</code>，并把 <code>u(r)</code> 定义为面内位移场；README 将仓库定位为 twisted 2D van der Waals heterostructures 的 atomic relaxation、strain extraction 和 multilayer analysis。</div>
+<div class="oss-callout"><b>读库原则：</b>先暂时忘掉自己的 φ。先把作者为什么需要二维位移矢量、为什么 GSFE 是二维周期面、为什么 elastic 和 interface 参数必须分开弄懂。</div>
+</section>
+
+<section class="wrap oss-level" id="level-1">
+<h2>Level 1 · Physical question（物理问题）</h2>
+<p class="oss-level-lead">两层二维晶体发生小角度扭转或晶格失配后，每个位置的 local registry（局域堆垛注册关系）不同。体系一方面想局部落到更低的 stacking-energy minimum（堆垛能极小值），另一方面层内形变要付 elastic energy（弹性能）。真正的问题是：这两种代价竞争后，空间中的位移、畴和畴壁会怎样重构？</p>
+<div class="oss-grid">
+<div class="oss-card"><h3>为什么不是一个局域变量就够</h3><p>局域堆垛由两层晶格之间的二维相对平移决定，因此 natural degree of freedom（自然自由度）是二维 <b>u=(u<sub>x</sub>,u<sub>y</sub>)</b>，而不是先验的一维标量。</p></div>
+<div class="oss-card"><h3>为什么要 continuum</h3><p>moiré wavelength（莫尔周期）可以远大于原子尺度。连续位移场保留长波弹性和 registry-dependent interaction（堆垛依赖相互作用），避免逐原子模拟整个大超胞。</p></div>
+</div>
+<div class="evidence" data-kind="paper"><b>[论文 / 项目文档支持]</b>仓库将 single-interface relaxation 对应到 Halbertal et al., Nature Communications 12, 242 (2021)，multilayer relaxation 对应到 PRX 13, 011026 (2023)。这些论文是代码方法链的直接来源，而不是后来附会的背景阅读。</div>
+</section>
+
+<section class="wrap oss-level" id="level-2">
+<h2>Level 2 · Model construction（模型构造）</h2>
+<p class="oss-level-lead">这一层最值得学的是：作者不是先选一个“好算的势”，而是先确定自由度，再用 symmetry（对称性）限制 GSFE 的函数形式，用 elasticity（弹性）限制空间变化。</p>
+
+<h3>2.1 基本自由度：displacement field（位移场）</h3>
+<div class="oss-formula">u(r) = (uₓ(r), uᵧ(r))</div>
+<p>每层被视为二维弹性薄片。u 的空间梯度给 strain（应变）；两层位移差加上未弛豫的 moiré phase（莫尔相位）给 local stacking phase（局域堆垛相位）。</p>
+<div class="evidence" data-kind="code"><b>[源码直接支持]</b><code data-source-path="src/moire_metrology/energy.py">energy.py · RelaxationEnergy</code> 在构造时先计算未弛豫 stacking phases <code>self._v0, self._w0 = geometry.stacking_phases(x, y)</code>，随后把各层位移自由度组合进 GSFE-coupled pairs。</div>
+
+<h3>2.2 总自由能：层内弹性 + 层间堆垛</h3>
+<div class="oss-formula">E[u] = E<sub>elastic</sub>[u] + E<sub>GSFE</sub>[u]</div>
+<div class="oss-formula">E<sub>elastic</sub> = ½K(∂ₓuₓ+∂ᵧuᵧ)² + ½G[(∂ₓuₓ−∂ᵧuᵧ)² + (∂ₓuᵧ+∂ᵧuₓ)²]</div>
+<p>这里的 K 和 G 不是为了“平滑图”加的数值正则项；它们是二维材料的 bulk modulus（体模量）和 shear modulus（剪切模量）。这意味着 gradient-like cost（梯度型代价）有明确的 elasticity origin（弹性来源）。</p>
+<div class="evidence" data-kind="derive"><b>[合理物理解释]</b>这与很多标量 phase-field model（相场模型）中的 <code>κ|∇φ|²/2</code> 在数学角色上相似：都惩罚空间快速变化；但这里系数直接来自二维弹性张量的简化，而不是一开始就压成单个 κ。</div>
+
+<h3>2.3 GSFE 不是单个 cosine，而是 symmetry-constrained Fourier surface（对称性约束的傅里叶能量面）</h3>
+<div class="oss-formula">V(v,w)=c₀+c₁[cos v+cos w+cos(v+w)] + c₂[...] + c₃[...] + c₄[sin v+sin w−sin(v+w)] + c₅[...]</div>
+<p>这里 v,w 是 stacking phase coordinates（堆垛相位坐标）。六个系数不是六个随意的拟合按钮：基函数本身编码 hexagonal lattice symmetry（六角晶格对称性），而 inversion symmetry（反演对称性）进一步限制某些项。</p>
+<div class="evidence" data-kind="code"><b>[源码直接支持]</b><code data-source-path="src/moire_metrology/gsfe.py">gsfe.py · GSFESurface.__call__ · lines 37+</code> 直接实现这套六系数 Fourier expansion。<code>docs/theory.md</code> 明确说明 centrosymmetric homobilayers（中心对称同质双层）有 <code>c4=c5=0</code>；broken-inversion heterointerfaces（破缺反演的异质界面）允许非零 sine terms（正弦项）。</div>
+<div class="evidence" data-kind="paper"><b>[论文直接支持]</b><code data-source-path="src/moire_metrology/interfaces.py">interfaces.py</code> 对 graphene、hBN、MoSe₂/WSe₂ 等 GSFE 系数逐项附带 Carr、Zhou、Shabani/Halbertal 等来源，并在需要时做 Fourier basis / unit conversion（傅里叶基底 / 单位转换）。</div>
+</section>
+
+<section class="wrap oss-level" id="geometry-chain">
+<h2>Deep dive · real space 怎样变成 stacking phase</h2>
+<p class="oss-level-lead">这是理解整个仓库最关键的一步：GSFE 的自变量不是实验室坐标 x,y，而是“两个晶格在这个位置相对错开了多少”的 phase coordinates（相位坐标）v,w。<code>lattice.py</code> 负责把真实空间、扭转、失配和位移统一变成这两个变量。</p>
+
+<h3>G1 · 单层晶格：real space → reciprocal phase</h3>
+<div class="oss-formula">B = a[b₁ | b₂] ;　M = (2π/a)[b₁ | b₂]⁻¹ ;　M B = 2π I</div>
+<p><code>HexagonalLattice.reciprocal_matrix</code> 构造 M，因此沿任一 primitive lattice vector（原胞基矢）移动一次，phase 正好增加 2π。这不是“方便画周期图”的技巧，而是在数学上把真实空间平移转成周期 GSFE 的自然角变量。</p>
+<div class="evidence" data-kind="code"><b>[源码直接支持]</b><code data-source-path="src/moire_metrology/lattice.py">lattice.py · HexagonalLattice.reciprocal_matrix</code> 明确写出 <code>[v;w]=M@[x;y]</code>；<code>tests/test_lattice.py::test_reciprocal_matrix_orthogonality</code> 检查 <code>M @ B = 2πI</code> 到数值精度。</div>
+
+<h3>G2 · 两层不完全重合：moire matrix（莫尔矩阵）</h3>
+<div class="oss-formula">M<sub>r</sub> = R(+θ) − (I + ε)</div>
+<div class="oss-formula">[V₁ | V₂] = M<sub>r</sub><sup>−1</sup> B</div>
+<p>这里 θ 描述 relative twist（相对扭转），ε 描述 lattice mismatch / heterostrain（晶格失配 / 异质应变）。莫尔基矢 V₁,V₂ 就是让两层相对 phase 再次走完整周期的长尺度基矢。</p>
+<div class="evidence" data-kind="code"><b>[源码直接支持]</b><code data-source-path="src/moire_metrology/lattice.py">MoireGeometry.moire_matrix / moire_vectors</code> 直接实现上式；代码注释特别强调使用 <code>R(+θ)</code> 是为了让跨越 V₁/V₂ 时 stacking phase 精确跳过整数个 2π，从而 GSFE 在周期边界上无缝拼接。</div>
+<div class="evidence" data-kind="code"><b>[源码直接支持]</b><code>tests/test_lattice.py::test_wavelength_formula</code> 验证 matched lattice 时 λ≈a/[2sin(θ/2)]；<code>test_lattice_mismatch_wavelength</code> 验证零扭角、纯 mismatch 时 λ≈a/δ；这说明 geometry 层不是只“看起来像 moiré”，而是先锁住已知解析极限。</div>
+
+<h3>G3 · relaxation 真正怎样改变 stacking</h3>
+<div class="oss-formula">phase(r,u) = M<sub>u1</sub>[r − u(r)] − M<sub>u2</sub> r</div>
+<div class="oss-formula">M<sub>u1</sub> = M R(−θ)<sup>T</sup> ;　M<sub>u2</sub> = (I+ε)M</div>
+<p>如果上层在某点发生 displacement（位移）u(r)，代码不是“把 u 加进能量里”这么模糊，而是先用 <code>Mu1</code> 把它转换成 local stacking phase shift（局域堆垛相位变化），再把新的 v,w 送进 GSFE surface。于是链条是：</p>
+<div class="flow"><span>u(r)</span><i>→</i><span>Δv(r), Δw(r)</span><i>→</i><span>V[v(r),w(r)]</span><i>→</i><span>local force = −∂V/∂u</span></div>
+<div class="codewalk">
+<div class="codebox"><pre><code>pos = np.stack([x, y], axis=0)
+
+shifted = pos - disp
+phase_twisted = self.Mu1 @ shifted
+phase_substrate = self.Mu2 @ pos
+
+phase = phase_twisted - phase_substrate
+return phase[0], phase[1]</code></pre></div>
+<div class="code-notes"><b>逐行读法</b><ol><li><code>pos</code> 是实验室真实空间坐标。</li><li><code>pos-disp</code> 把上层原子/连续片层的局域平移写入几何。</li><li>两层分别映射到 phase space（相位空间）。</li><li>相减才得到“相对堆垛”，也就是 GSFE 真正关心的量。</li></ol></div>
+</div>
+<div class="evidence" data-kind="derive"><b>[推导]</b>这一结构说明“能量面 V”和“空间场 u(r)”不是同一个对象：V 定义在 stacking space（堆垛空间），u 定义在 real space（真实空间）。模型的核心工作正是用晶格几何把两者连接起来。</div>
+
+<h3>G4 · 为什么需要 mesh / FEM，而不是直接二维数组</h3>
+<p><code>MoireMesh.generate</code> 用 V₁,V₂ 构造周期平行四边形，并做 periodic triangulation（周期三角剖分）；<code>Discretization</code> 在每个三角形上构造线性 shape-function gradient（形函数梯度），把 ∂u/∂x、∂u/∂y 变成稀疏矩阵运算。</p>
+<div class="evidence" data-kind="code"><b>[源码直接支持]</b><code data-source-path="src/moire_metrology/mesh.py">mesh.py · MoireMesh.generate</code> 令 <code>r=sV1+tV2</code> 并在边界索引上周期 wrap；<code data-source-path="src/moire_metrology/discretization.py">discretization.py · _build_diff_matrices</code> 用三角形线性形函数组装微分矩阵。<code>tests/test_discretization.py</code> 分别检查常数场导数为 0、线性场导数为 1、周期正弦场导数以及总网格面积。</div>
+<div class="oss-callout"><b>这一节学到的核心：</b>continuum model 的“物理坐标 → 内部相位坐标 → 能量面”映射必须明确。以后看到任何把一维 φ 直接塞进周期势的模型，都应该先问：φ 到底是哪一个真实构型坐标的参数化？</div>
+</section>
+
+<section class="wrap oss-level" id="level-3">
+<h2>Level 3 · Parameter origin（参数来源）</h2>
+<p class="oss-level-lead">这一库最值得模仿的工程习惯之一，是把“单层材料参数”和“界面参数”分成不同对象，并让文献来源跟着参数走。</p>
+<table class="parameter-table">
+<thead><tr><th>参数</th><th>物理角色</th><th>代码位置</th><th>来源类型</th><th>学习重点</th></tr></thead>
+<tbody>
+<tr><td>a</td><td>lattice constant（晶格常数）</td><td><code data-source-path="src/moire_metrology/materials.py">materials.py · Material</code></td><td>[文献 / 材料数据]</td><td>决定 moiré geometry 与 unit-cell area。</td></tr>
+<tr><td>K, G</td><td>2D bulk / shear modulus（二维体 / 剪切模量）</td><td><code data-source-path="src/moire_metrology/materials.py">materials.py</code></td><td>[论文直接支持]</td><td>Graphene 引 Carr；hBN 由实验 Young's modulus + Poisson ratio 推导；TMD 值来自 Halbertal/Shabani。</td></tr>
+<tr><td>c₀…c₅</td><td>GSFE Fourier coefficients（GSFE 傅里叶系数）</td><td><code data-source-path="src/moire_metrology/interfaces.py">interfaces.py · Interface</code></td><td>[DFT / 文献参数化]</td><td>界面属性，不应混到单层 Material 里。</td></tr>
+<tr><td>pixel_size</td><td>mesh element target size（网格目标尺寸）</td><td><code data-source-path="src/moire_metrology/solver.py">solver.py · SolverConfig</code></td><td>[numerical choice]</td><td>这是数值分辨率，不是材料常数；必须做解析度检查。</td></tr>
+<tr><td>gtol / rtol / etol</td><td>convergence criteria（收敛判据）</td><td><code data-source-path="src/moire_metrology/solver.py">solver.py · SolverConfig</code></td><td>[numerical choice]</td><td>控制“何时认为求解完成”，不能伪装成物理参数。</td></tr>
+</tbody></table>
+
+<div class="oss-grid">
+<div class="oss-card"><h3>Material ≠ Interface</h3><p><code>Material</code> 只保存 lattice constant、K、G；registry-dependent GSFE 被放进 <code>Interface</code>。这避免“MoSe₂ 自己有一张 MoSe₂/WSe₂ GSFE”这种概念错误。</p></div>
+<div class="oss-card"><h3>单位也属于模型</h3><p>仓库统一使用 meV per unit cell，并提供 N/m ↔ meV/uc 转换。参数单位转换不是外围杂事，而是防止模型悄悄错量纲的一部分。</p></div>
+</div>
+<div class="evidence" data-kind="code"><b>[源码直接支持]</b><code>materials.py</code> 文档把 graphene 的 K/G 追到 Carr et al.，并给出与实验 N/m 的 sanity check（合理性核对）；<code>custom-materials.md</code> 还明确提醒新材料必须检查 Fourier basis、per-cell/per-area 单位以及 stacking convention。</div>
+<div class="evidence" data-kind="assumption"><b>[尚未验证]</b>本页没有自行断言上游每个 bundled coefficient 都是“原始 DFT 数值”。代码自身区分了来自 DFT parameterization、实验弹性数据、文献转换和派生值；后续如要做逐参数审计，还需逐篇核原始表格。</div>
+</section>
+
+<section class="wrap oss-level" id="level-4">
+<h2>Level 4 · Numerical implementation（数值实现）</h2>
+<p class="oss-level-lead">先看数据流，再看关键代码。这个顺序比“打开 solver.py 从第一行读”有效得多。</p>
+<table class="source-map">
+<thead><tr><th>物理对象</th><th>源码</th><th>关键 symbol</th><th>输入 → 输出</th></tr></thead>
+<tbody>
+<tr><td>单层材料</td><td><code data-source-path="src/moire_metrology/materials.py">materials.py</code></td><td><code>Material</code> · line 70</td><td>a,K,G → material object</td></tr>
+<tr><td>层间界面</td><td><code data-source-path="src/moire_metrology/interfaces.py">interfaces.py</code></td><td><code>Interface</code> · line 61</td><td>two materials + c₀…c₅ → interface</td></tr>
+<tr><td>GSFE surface</td><td><code data-source-path="src/moire_metrology/gsfe.py">gsfe.py</code></td><td><code>GSFESurface.__call__</code> · line 37</td><td>(v,w) → stacking energy</td></tr>
+<tr><td>总能量</td><td><code data-source-path="src/moire_metrology/energy.py">energy.py</code></td><td><code>RelaxationEnergy</code> · line 97</td><td>U → E, gradient, Hessian</td></tr>
+<tr><td>求解入口</td><td><code data-source-path="src/moire_metrology/solver.py">solver.py</code></td><td><code>RelaxationSolver.solve</code> · line 1183</td><td>interface + geometry/config → RelaxationResult</td></tr>
+</tbody></table>
+
+<h3>4.1 公式怎样变成 GSFE 代码</h3>
+<div class="codewalk">
+<div class="codebox"><pre><code>def __call__(self, v, w):
+    c0,c1,c2,c3,c4,c5 = self.c
+    return (
+        c0
+        + c1*(cos(v)+cos(w)+cos(v+w))
+        + c2*(cos(v+2*w)+cos(v-w)+cos(2*v+w))
+        + c3*(cos(2*v)+cos(2*w)+cos(2*v+2*w))
+        + c4*(sin(v)+sin(w)-sin(v+w))
+        + c5*(sin(2*v+2*w)-sin(2*v)-sin(2*w))
+    )</code></pre></div>
+<div class="code-notes"><b>逐行读法</b><ol><li><code>self.c</code> 不是运行时随机参数，而是某个具体 interface 的六个 Fourier coefficients。</li><li>三组 cosine combinations 保持六角晶格允许的周期结构。</li><li>sine combinations 让 broken inversion symmetry 可以进入 landscape。</li><li>输出只是局域 stacking energy；空间耦合仍由 elasticity 那部分负责。</li></ol></div>
+</div>
+<div class="evidence" data-kind="code"><b>[源码直接支持]</b>摘录对应 frozen commit 的 <code>src/moire_metrology/gsfe.py::GSFESurface.__call__</code>。完整实现还提供一阶、二阶解析导数，用于 gradient / Hessian 计算。</div>
+
+<h3>4.2 局域 registry 怎样接到空间位移场</h3>
+<div class="codewalk">
+<div class="codebox"><pre><code>x, y = disc.mesh.points[0], disc.mesh.points[1]
+self._v0, self._w0 = geometry.stacking_phases(x, y)
+
+self._Mu1 = geometry.Mu1
+self._area_v_norm = disc.vertex_areas / Suc
+self._Dx = disc.diff_mat_x
+self._Dy = disc.diff_mat_y</code></pre></div>
+<div class="code-notes"><b>逐行读法</b><ol><li>先在每个 mesh vertex（网格顶点）计算未弛豫的 stacking phase。</li><li><code>Mu1</code> 负责 displacement → stacking-phase coordinates 的转换。</li><li>area weights 把离散顶点/三角形和连续能量积分连接起来。</li><li><code>Dx/Dy</code> 是位移梯度进入 elastic energy 的离散算子。</li></ol></div>
+</div>
+
+<h3>4.3 solver 不是一个“万能最小化按钮”</h3>
+<p><code>SolverConfig</code> 同时提供 trust-region Newton-CG、modified Newton、pseudo-dynamics、L-BFGS-B 和 two-phase 路径。文档甚至明确讨论不同 solver 在 multi-basin landscape（多盆地能量景观）里的 basin-selection bias（盆地选择偏置）。</p>
+<div class="evidence" data-kind="code"><b>[源码直接支持]</b><code>solver.py</code> 说明 modified Newton 会翻转 GSFE Hessian 的负特征值，因此不能沿负曲率穿越 saddle（鞍点）；trust-ncg 保留真实负曲率；L-BFGS-B 可落入不同 basin。这里“求解算法会影响找到哪个亚稳态”被当成模型可信度问题，而不是单纯性能问题。</div>
+
+<div class="flow"><span>physical assumption</span><i>→</i><span>E[u]</span><i>→</i><span>GSFE + elastic derivatives</span><i>→</i><span>optimizer / gradient flow</span><i>→</i><span>RelaxationResult</span><i>→</i><span>stacking / elastic-energy / twist maps</span></div>
+</section>
+
+<section class="wrap oss-level" id="worked-example">
+<h2>Worked example · 一次 bilayer relaxation 到底发生什么</h2>
+<p class="oss-level-lead">现在把前面的类、公式和参数串成一次真实运行。以仓库自带的 <code>examples/bilayer_relaxation.py</code> 为主线，不需要先读整个 package。</p>
+
+<h3>E1 · 用户真正给了什么</h3>
+<table class="parameter-table"><thead><tr><th>输入</th><th>graphene preset</th><th>进入哪一层</th></tr></thead><tbody>
+<tr><td>interface</td><td><code>graphene</code></td><td><code>Interface</code> → materials + GSFE coefficients</td></tr>
+<tr><td>theta_twist</td><td>0.2°</td><td><code>MoireGeometry</code></td></tr>
+<tr><td>pixel_size</td><td>1.0 nm</td><td><code>MoireMesh.generate</code></td></tr>
+<tr><td>method</td><td><code>newton</code></td><td><code>SolverConfig</code></td></tr>
+<tr><td>max_iter / gtol</td><td>60 / 1e−6</td><td>numerical convergence</td></tr>
+</tbody></table>
+<div class="evidence" data-kind="code"><b>[源码直接支持]</b><code data-source-path="examples/bilayer_relaxation.py">examples/bilayer_relaxation.py · PRESETS</code> 还给 hBN 与 TMD 两套 preset；而且注释解释了为什么对 inversion-symmetric graphene 使用 modified Newton，而强 AB↔BA asymmetry 的低扭角体系更推荐 trust-ncg 或 L-BFGS-B。</div>
+
+<h3>E2 · 程序内部的数据流</h3>
+<div class="flow"><span>CLI / preset</span><i>→</i><span>Interface</span><i>→</i><span>SolverConfig</span><i>→</i><span>RelaxationSolver.solve</span><i>→</i><span>MoireGeometry</span><i>→</i><span>Mesh + Discretization</span><i>→</i><span>RelaxationEnergy</span><i>→</i><span>optimizer</span><i>→</i><span>RelaxationResult</span></div>
+<p>这一链里没有一步是“画图脚本顺便算一下”。geometry、energy、solver、result 是分离对象；example 只是 orchestrator（编排器）。这正是科研代码值得学的软件边界。</p>
+
+<h3>E3 · 输出不只有一张漂亮图</h3>
+<table class="source-map"><thead><tr><th>输出</th><th>物理意义</th><th>源码</th></tr></thead><tbody>
+<tr><td><code>*_relaxed.npz</code></td><td>缓存完整 relaxed state（弛豫态）和网格/位移/能量</td><td><code data-source-path="src/moire_metrology/result.py">RelaxationResult.save</code></td></tr>
+<tr><td><code>*_summary.txt</code></td><td>moire wavelength、mesh vertices、unrelaxed/relaxed energy、energy reduction、wall time</td><td><code>bilayer_relaxation.py</code></td></tr>
+<tr><td><code>*_stacking.png</code></td><td>GSFE / stacking-energy density map</td><td><code>RelaxationResult.plot_stacking</code></td></tr>
+<tr><td><code>*_elastic.png</code></td><td>top layer elastic-energy density</td><td><code>plot_elastic_energy</code></td></tr>
+<tr><td><code>*_twist.png</code></td><td>local twist angle map</td><td><code>local_twist / plot_local_twist</code></td></tr>
+</tbody></table>
+<div class="evidence" data-kind="code"><b>[源码直接支持]</b><code data-source-path="src/moire_metrology/result.py">result.py · RelaxationResult</code> 把 raw displacement、total/unrelaxed energy、GSFE map、elastic maps、optimizer result 保存在一个结果对象里；绘图只是后处理，不是数据本身。</div>
+
+<h3>E4 · 一条真正的“结果可信链”</h3>
+<div class="flow"><span>E<sub>relaxed</sub> &lt; E<sub>unrelaxed</sub></span><i>+</i><span>gradient / derivative tests</span><i>+</i><span>known geometry limits</span><i>+</i><span>solver cross-check</span><i>→</i><span>credible relaxed state</span></div>
+<p>因此真正要学习的不是“运行后出现 domain picture”，而是输出前面有多少层独立检查支撑它。</p>
+</section>
+
+<section class="wrap oss-level" id="validation">
+<h2>Validation（验证）与 numerical credibility（数值可信度）</h2>
+<div class="oss-grid">
+<div class="oss-card"><h3>多重收敛判据</h3><p>gtol 看绝对 gradient norm；rtol 看相对下降；etol 看能量是否停滞。低 twist 时大体系总能量会让单一绝对阈值失真，因此作者没有只押一个判据。</p></div>
+<div class="oss-card"><h3>多个 solver 交叉检查</h3><p>当 landscape 有多个 basin，算法本身可能决定落在哪个 stationary state（驻态）。保留不同求解器是一种机制/数值敏感性检查。</p></div>
+<div class="oss-card"><h3>单位 sanity check</h3><p>Material 支持把内部 meV/uc 转回 N/m，与实验/文献常用单位核对，避免“代码数字正确但物理单位错”。</p></div>
+<div class="oss-card"><h3>方法链对应论文</h3><p>docs/references 不是泛泛的 bibliography，而是把 single-interface、multilayer、strain extraction、point-pinning 分别对应到具体论文。</p></div>
+</div>
+<div class="evidence" data-kind="derive"><b>[合理物理解释]</b>这个项目的 validation culture（验证文化）给出的一个重要 taste：复杂模型不是靠“项更多”变可信，而是靠 provenance（来源）、units（单位）、solver sensitivity（求解器敏感性）和与已知实验/论文结果的闭环变可信。</div>
+
+<h3 id="verification-tests">源码里的 verification tests（验证测试）到底锁了什么</h3>
+<table class="source-map"><thead><tr><th>测试</th><th>锁住的错误类型</th><th>为什么重要</th></tr></thead><tbody>
+<tr><td><code>test_reciprocal_matrix_orthogonality</code></td><td>real-space / phase-space 几何映射写错</td><td>一旦 M 错，整个 GSFE 空间坐标都错。</td></tr>
+<tr><td>GSFE derivatives vs finite difference</td><td>解析 gradient / Hessian 符号或系数错误</td><td>optimizer 依赖导数；能量图看着正常也可能力全错。</td></tr>
+<tr><td><code>TestEnergyGradient</code></td><td>总能量组装后的 gradient 错误</td><td>逐自由度用 central finite difference（中心有限差分）核对。</td></tr>
+<tr><td>pseudo-dynamics vs Newton</td><td>算法路径导致错误最低点</td><td>在简单 near-convex case 要求 relaxed energy 1% 内一致。</td></tr>
+<tr><td>trust-ncg vs Newton</td><td>二阶 solver 实现差异</td><td>在凸案例要求能量 0.1% 内一致。</td></tr>
+<tr><td>direct vs iterative linear solver</td><td>内层线性求解器误差</td><td>要求 relaxed energy 高精度一致。</td></tr>
+<tr><td>FEM constant / linear / periodic fields</td><td>微分矩阵或周期 wrap 错误</td><td>先用已知答案函数测试离散算子。</td></tr>
+</tbody></table>
+<div class="evidence" data-kind="code"><b>[源码直接支持]</b><code data-source-path="tests/test_solver.py">tests/test_solver.py</code>、<code data-source-path="tests/test_gsfe.py">tests/test_gsfe.py</code>、<code data-source-path="tests/test_lattice.py">tests/test_lattice.py</code> 和 <code data-source-path="tests/test_discretization.py">tests/test_discretization.py</code> 共同形成从几何→局域势→导数→离散→solver 的分层测试链。</div>
+<div class="oss-callout"><b>建模 taste：</b>优秀科研代码的 unit test（单元测试）不只是防止软件崩溃；最有价值的是测试“物理上已知答案”的极限、恒等式和跨算法一致性。</div>
+</section>
+
+<section class="wrap taste" id="taste">
+<h2>Modeling Taste（建模方法论）</h2>
+<ul>
+<li><b>先选物理自由度，再选函数形式。</b>局域 registry 天然是二维平移，所以从 u=(uₓ,uᵧ) 出发。</li>
+<li><b>用 symmetry 缩小函数空间。</b>GSFE 不是任意神经网络曲面，也不是单个 cosine；先规定晶格允许的 Fourier basis，再让少量 coefficient 承担材料信息。</li>
+<li><b>把 material property 和 interface property 分开。</b>这是一种物理概念边界，也是一种软件边界。</li>
+<li><b>参数 provenance 跟着数据走。</b>代码里直接留下 reference，而不是在论文 Methods 里另放一份难以对应的参数表。</li>
+<li><b>numerical choice 不伪装成 physics。</b>pixel_size、gtol、solver method 与 K/G、GSFE coefficients 是不同类别。</li>
+<li><b>承认 energy landscape 有多个 basin。</b>求解器不是“找到真答案”的中性黑盒；不同算法能否跨 saddle 会改变找到的驻态。</li>
+<li><b>简化要能说出丢掉了什么。</b>isotropic linear elasticity 是简化，但仓库甚至保留 nonlinear elasticity 等扩展入口；简化有明确边界。</li>
+</ul>
+</section>
+
+<section class="wrap oss-level" id="level-5">
+<h2>Level 5 · Relevance to my project（对我的项目的启发）</h2>
+<p class="oss-level-lead">这一遍只做短 bridge，不在这里重写你的模型。</p>
+<table class="parameter-table">
+<thead><tr><th>moire_metrology</th><th>你的当前标量模型</th><th>现在可以提出、但还不能直接下结论的问题</th></tr></thead>
+<tbody>
+<tr><td>u=(uₓ,uᵧ)</td><td>φ(r)</td><td>φ 是否可解释为二维 stacking space 上某条 minimum-energy path（最小能量路径）的坐标？</td></tr>
+<tr><td>2D GSFE Fourier surface</td><td>V₀[1−cos(3φ)]</td><td>单谐波是否是沿特定路径投影后的 lowest-harmonic approximation（最低谐波近似）？higher harmonics 是否改变 switching onset？</td></tr>
+<tr><td>K,G elasticity</td><td>κ|∇φ|²/2</td><td>κ 是否能由位移弹性沿选定路径投影得到一个 effective stiffness（有效刚度）？</td></tr>
+<tr><td>interface-specific parameters</td><td>dimensionless / generic parameters</td><td>哪些结论只需要 generic model，哪些 claim 必须 material-specific？</td></tr>
+</tbody></table>
+<div class="evidence" data-kind="assumption"><b>[我的项目中的假设]</b>“当前 cos(3φ) 就等于真实 GSFE 的一阶投影”现在还不能当事实。要成立，至少需要明确 φ↔sliding coordinate 的映射，并检查真实 / 文献 stacking landscape 沿候选 switching path 的 Fourier content。</div>
+<div class="oss-callout"><b>最低成本下一步：</b>先不升级成 u(r)。将这一库学透后，优先做一个离线小练习：从一个二维 GSFE surface 选定路径 u(s)，画 V[s]，拟合 first / second / third harmonics，看单谐波误差到底有多大。这个练习比立刻重跑 512×512 更值得。</div>
+</section>
+
+<section class="wrap oss-level" id="exercises">
+<h2>Exercises（练习）</h2>
+<div class="oss-grid">
+<div class="oss-card"><h3>练习 1 · symmetry</h3><p>把 <code>c4=c5=0</code> 和 <code>c4,c5≠0</code> 的两个 GSFE surface 各画一次。只看 symmetry breaking 后极小值、鞍点和路径不对称性怎么变。</p></div>
+<div class="oss-card"><h3>练习 2 · projection</h3><p>取一条二维路径 u(s)，计算 V[s] 并用 1、2、3 阶 Fourier harmonic（傅里叶谐波）拟合。记录 barrier height 和 saddle position 的误差。</p></div>
+<div class="oss-card"><h3>练习 3 · parameter category</h3><p>从一个 example 的配置中，把所有数值分成 physical material parameter、interface parameter、geometry、numerical tolerance 四类。</p></div>
+<div class="oss-card"><h3>练习 4 · solver sensitivity</h3><p>理解为什么 multi-basin landscape 下“两个 solver 收敛”不意味着“它们一定收敛到同一个物理解”。先解释，再考虑是否需要实际运行。</p></div>
+</div>
+</section>
+
+<section class="wrap oss-level" id="sources">
+<h2>Source ledger（来源账本）</h2>
+<table class="source-map"><thead><tr><th>用途</th><th>冻结来源</th></tr></thead><tbody>
+<tr><td>continuum theory / equations</td><td><a class="oss-link" href="https://github.com/dorrih/moire_metrology/blob/039a951282ea6feeb886bfd1b7730e24330eee78/docs/theory.md">docs/theory.md</a></td></tr>
+<tr><td>GSFE formula and derivatives</td><td><a class="oss-link" href="https://github.com/dorrih/moire_metrology/blob/039a951282ea6feeb886bfd1b7730e24330eee78/src/moire_metrology/gsfe.py">src/moire_metrology/gsfe.py</a></td></tr>
+<tr><td>material parameters</td><td><a class="oss-link" href="https://github.com/dorrih/moire_metrology/blob/039a951282ea6feeb886bfd1b7730e24330eee78/src/moire_metrology/materials.py">src/moire_metrology/materials.py</a></td></tr>
+<tr><td>interface / GSFE provenance</td><td><a class="oss-link" href="https://github.com/dorrih/moire_metrology/blob/039a951282ea6feeb886bfd1b7730e24330eee78/src/moire_metrology/interfaces.py">src/moire_metrology/interfaces.py</a></td></tr>
+<tr><td>energy assembly</td><td><a class="oss-link" href="https://github.com/dorrih/moire_metrology/blob/039a951282ea6feeb886bfd1b7730e24330eee78/src/moire_metrology/energy.py">src/moire_metrology/energy.py</a></td></tr>
+<tr><td>solver / convergence</td><td><a class="oss-link" href="https://github.com/dorrih/moire_metrology/blob/039a951282ea6feeb886bfd1b7730e24330eee78/src/moire_metrology/solver.py">src/moire_metrology/solver.py</a></td></tr>
+<tr><td>method papers</td><td><code>docs/references.md</code> → Halbertal 2021; Halbertal 2023; Halbertal 2022; Shabani et al. 2021</td></tr>
+</tbody></table>
+<div class="evidence" data-kind="derive"><b>[本页完成状态]</b>第一库已经完成 repository-first 第一轮：物理问题、自由度、GSFE / symmetry、参数来源、real-space→stacking-space 几何映射、FEM 离散入口、求解器、真实 example 数据流、验证测试、Modeling Taste、练习和短 project bridge 均已闭环。后续只有在跨项目比较或需要复现实验时才继续深入 elastic Hessian / nonlinear-elasticity 细节，不再把它作为进入第二库的前置条件。</div>
+</section>
+
+<div class="wrap oss-footer-nav"><a class="oss-link" href="open-source-modeling.html">← Open-Source Modeling Lab</a><a class="oss-link" href="#orientation">回到本页顶部 ↑</a></div>
+</main>
+<footer class="footer"><div class="wrap">Frozen upstream: dorrih/moire_metrology @ 039a951282ea6feeb886bfd1b7730e24330eee78 · 教学摘录不替代上游源码与论文。</div></footer>
+<script src="../terms.js"></script>
+</body></html>

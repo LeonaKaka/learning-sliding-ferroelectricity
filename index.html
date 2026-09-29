@@ -11,7 +11,7 @@
 <header class="top">
   <div class="wrap top-inner">
     <div class="brand">Learning Sliding Ferroelectricity<small>literature-first field guide · v0.2</small></div>
-    <nav class="nav"><a href="#map">Knowledge map</a><a href="#concept-paths">Concept paths</a><a href="#research">Research track</a><a href="#modules">Learning route</a><a href="#core">Core papers</a></nav>
+    <nav class="nav"><a href="#map">Knowledge map</a><a href="#concept-paths">Concept paths</a><a href="#research">Research track</a><a href="#modules">Learning route</a><a href="#core">Core papers</a><a href="modules/open-source-modeling.html" style="font-weight:750">Open-Source Lab</a></nav>
   </div>
 </header>
 
@@ -19,6 +19,14 @@
   <section class="wrap hero">
     <div><div class="kicker">A paper-based learning route</div><h1>How does a sliding ferroelectric actually switch?</h1><p>这不是论文收藏夹。整站围绕一个问题展开：从堆垛极化出发，为什么研究会自然走向 domain wall、pinning、creep、depinning、disorder 与 finite-size scaling。每篇 Core paper 都承担一个明确的教学任务。</p></div>
     <aside class="hero-note"><b>阅读原则</b>先看原论文的关键图和作者自己的完整论述段落，再读中文解释。网站不会把“作者声称什么”和“数据真正支持什么”混在一起，也不会为了完整而把所有相关论文都塞进主线。</aside>
+  </section>
+
+  <section class="wrap" id="open-source-lab" style="padding-top:10px">
+    <div class="section-head"><h2>Open-Source Modeling Lab</h2><p>不把科研代码当 API 手册：逐个完整重建一个项目从物理问题、自由度、对称性、参数来源到数值验证的建模链。</p></div>
+    <div class="thesis" style="display:flex;flex-wrap:wrap;gap:24px;align-items:center;justify-content:space-between;background:#fffdf8;border:1px solid #d8d1c3;border-radius:16px;padding:22px">
+      <div style="max-width:780px"><b>Repository-first：先学作者怎么建模，再回头审计自己的模型</b><p>第一库从 <code>moire_metrology</code> 开始：displacement field（位移场）→ elasticity（弹性）→ GSFE（广义层错能）→ parameter provenance（参数来源）→ solver / convergence（求解器 / 收敛）。每个仓库冻结 commit，并把公式对应到具体源码。</p></div>
+      <a href="modules/open-source-modeling.html" style="display:inline-block;text-decoration:none;color:#fff;background:#315f78;padding:11px 15px;border-radius:9px;font-size:12px;white-space:nowrap">进入 Open-Source Lab →</a>
+    </div>
   </section>
 
   <section class="wrap" id="research" style="padding-top:10px"><div class="section-head"><h2>Research track</h2><p>基础课之外，增加一条面向真实研究的桥：怎样把 sliding-FE switching 转成 disorder-coupling、isolated-wall depinning 与 universality / breakdown test。</p></div><div class="thesis" style="display:flex;flex-wrap:wrap;gap:24px;align-items:center;justify-content:space-between"><div><b>从“读懂论文”到“会设计证据链”</b><p>Disorder is not one number → fair RF/RB matching → hysteresis vs isolated-wall protocol → sliding-FE minimal phase field → observable anatomy → analysis/event statistics → data-to-claim contract → mechanism falsification。页面只公开方法与判据，不展示未发表项目数值。</p></div><a href="modules/research-track.html" style="display:inline-block;text-decoration:none;color:#fff;background:#1d1e1c;padding:11px 15px;border-radius:9px;font-size:12px;white-space:nowrap">进入 Research Track →</a></div></section>

@@ -47,6 +47,9 @@ jobs:
       - name: Validate site structure and navigation runtime
         run: python scripts/site_fragment_seal.py
 
+      - name: Validate Open-Source Modeling Lab contract
+        run: python scripts/open_source_modeling_seal.py
+
       - name: Validate static site and Reproduction Lab evidence
         run: |
           python3 - <<'PY'
