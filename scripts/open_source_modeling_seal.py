@@ -15,6 +15,9 @@ REQUIRED_PHRASES = [
     "Exercises",
     "Source ledger",
     "Frozen commit",
+    "Worked example",
+    "real space 怎样变成 stacking phase",
+    "verification tests",
 ]
 
 def main() -> None:
@@ -48,8 +51,8 @@ def main() -> None:
                 failures.append(f"{rel}: missing required section marker {phrase!r}")
         if text.count("class=\"evidence\"") < 6:
             failures.append(f"{rel}: fewer than 6 evidence/provenance blocks")
-        if text.count("data-source-path=") < 5:
-            failures.append(f"{rel}: fewer than 5 formula/code source anchors")
+        if text.count("data-source-path=") < 10:
+            failures.append(f"{rel}: fewer than 10 formula/code source anchors")
         if "<pre><code>" not in text:
             failures.append(f"{rel}: missing small source-code walkthrough")
         if "Relevance to my project" not in text:
@@ -67,7 +70,7 @@ def main() -> None:
 
     print(
         f"OPEN-SOURCE MODELING SEAL PASS: overview + {len(PROJECTS)} repository page(s); "
-        "frozen commits, five-level pedagogy, provenance blocks, formula/code anchors, "
+        "frozen commits, five-level pedagogy, provenance blocks, geometry chain, worked example, verification tests, formula/code anchors, "
         "source walkthroughs, Modeling Taste, exercises and project bridges present."
     )
 
