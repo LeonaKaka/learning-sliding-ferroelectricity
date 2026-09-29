@@ -30,6 +30,17 @@ The Lab deliberately preserves failed gates. In particular, an effective exponen
 
 The Pages UI exposes the Lab in three places: the homepage top navigation, a dedicated homepage Lab card, and the persistent left-side all-pages navigation. On wide screens every page also has a right-side in-page table of contents; on narrow screens both sidebars become drawer buttons.
 
+## Open-Source Modeling Lab
+
+The site now includes a repository-first modeling track in addition to the literature-first physics route and Reproduction Lab.
+
+- Start at `modules/open-source-modeling.html`.
+- The first gold-standard repository page is `modules/open-source-moire-metrology.html`.
+- Every repository page freezes an upstream commit and maps physical equations to concrete file paths / classes / functions.
+- Repository pages separate source-supported facts, paper-supported facts, derivations, physical interpretation, project assumptions and unverified questions.
+- The first pass learns one repository on its own terms; systematic comparison with the user's sliding-ferroelectric model is deferred to cross-project synthesis.
+- The completion contract is documented in `docs/OPEN_SOURCE_MODELING_LAB_PLAN.md` and checked by `scripts/open_source_modeling_seal.py`.
+
 ## Editorial / evidence policy
 
 This is a learning site, not a paper gallery.
