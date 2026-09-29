@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="description" content="逐个精读科研开源仓库，学习物理模型如何从问题、对称性、参数走到数值实现与验证。"/>
+<title>Open-Source Modeling Lab · Learning Sliding Ferroelectricity</title>
+<link rel="stylesheet" href="../styles.css"/>
+<link rel="stylesheet" href="../open-source-modeling.css"/>
+</head>
+<body>
+<header class="top"><div class="wrap top-inner"><div class="brand">Open-Source Modeling Lab<small>repository-first modeling school</small></div><nav class="nav"><a href="../index.html">首页</a><a href="#route">学习顺序</a><a href="#contract">质量标准</a><a href="open-source-moire-metrology.html">第一库</a></nav></div></header>
+<main>
+<section class="wrap oss-hero">
+<div><div class="oss-eyebrow">Repository-first track</div><h1>不是读 README。<br/>是重建作者的建模过程。</h1><p>这一板块逐个进入真实科研代码库：先理解作者面对的 physical question（物理问题），再追 degrees of freedom（自由度）、symmetry（对称性）、free energy（自由能）、parameter provenance（参数来源）、numerical implementation（数值实现）和 validation（验证）。每个仓库学完只做一次轻量的项目桥接；跨仓库综合与系统审计放到后面。</p></div>
+<aside class="oss-meta"><dl><dt>教学顺序</dt><dd>Repository-first → synthesis → Back to My Model</dd><dt>当前阶段</dt><dd>Phase B · first gold-standard repository</dd><dt>完成标准</dt><dd>五层教学 + frozen commit + formula↔code + parameter provenance + validation + Modeling Taste</dd><dt>第一库</dt><dd><a class="oss-link" href="open-source-moire-metrology.html">dorrih/moire_metrology</a></dd></dl></aside>
+</section>
+
+<section class="wrap oss-level" id="route">
+<h2>学习路线</h2><p class="oss-level-lead">顺序不是按“软件最强”排，而是按学习难度和对当前建模问题的帮助排：先看结构清楚的 continuum model（连续模型），再进入铁电相场、无序统计、多尺度和 JAX 工程。</p>
+<div class="oss-grid">
+<article class="oss-card"><div class="oss-status done">01 · in progress</div><h3>moire_metrology</h3><p>vector displacement field（矢量位移场）→ elasticity（弹性）+ generalized stacking fault energy（广义层错能，GSFE）→ symmetry-constrained Fourier landscape（对称性约束的傅里叶能量面）→ relaxation。</p><a href="open-source-moire-metrology.html">进入第一库 →</a></article>
+<article class="oss-card"><div class="oss-status queued">02 · queued</div><h3>Ferroelectric-Phasefield</h3><p>较小、较裸的铁电相场代码。重点看 Landau 势、长程场、有限空间范围 random field（随机场）与缺陷的代码表达。</p></article>
+<article class="oss-card"><div class="oss-status queued">03 · queued</div><h3>Ferret</h3><p>成熟 ferroic mesoscale model（铁性介观模型）怎样模块化 free-energy terms（自由能项）、材料参数和 validation examples（验证案例）。</p></article>
+<article class="oss-card"><div class="oss-status queued">04 · queued</div><h3>FLAM2020-GSFE</h3><p>microscopic random structure（微观随机结构）→ many GSFE curves（多条 GSFE 曲线）→ barrier statistics（能垒统计），专门训练“无序统计从哪里来”。</p></article>
+<article class="oss-card"><div class="oss-status queued">05–06 · queued</div><h3>DPmoire + Twister</h3><p>DFT / force field（力场）→ large-scale relaxation（大尺度弛豫），理解 atomistic（原子尺度）与 continuum（连续尺度）之间不止一条桥。</p></article>
+<article class="oss-card"><div class="oss-status queued">07 · queued</div><h3>JAX phase-field</h3><p>等物理架构已经看懂之后，再学 energy / integrator / model / output 如何工程解耦，避免把软件抽象和物理抽象混在一起。</p></article>
+</div>
+</section>
+
+<section class="wrap oss-level" id="contract">
+<h2>每个仓库统一拆成五层</h2>
+<div class="oss-grid three">
+<div class="oss-card"><h3>Level 1</h3><p><b>Physical question（物理问题）</b><br/>作者究竟想解释什么现象？为什么需要这个尺度的模型？</p></div>
+<div class="oss-card"><h3>Level 2</h3><p><b>Model construction（模型构造）</b><br/>自由度、序参量、对称性、能量项与动力学为什么这样选。</p></div>
+<div class="oss-card"><h3>Level 3</h3><p><b>Parameter origin（参数来源）</b><br/>逐个区分 DFT、实验、文献、拟合、无量纲选择与唯象假设。</p></div>
+<div class="oss-card"><h3>Level 4</h3><p><b>Numerical implementation（数值实现）</b><br/>公式 → 文件 → class/function → 输入 → 输出 → 数值结果。</p></div>
+<div class="oss-card"><h3>Level 5</h3><p><b>Relevance to my project（对我的项目的启发）</b><br/>第一遍只做短 bridge，不让自己的模型打断对外部项目的完整理解。</p></div>
+<div class="oss-card"><h3>After Level 5</h3><p><b>Modeling Taste（建模方法论）</b><br/>作者哪里敢简化、哪里绝不随便简化、怎样让模型不是 numerical toy（数值玩具）。</p></div>
+</div>
+</section>
+
+<section class="wrap oss-level" id="evidence">
+<h2>证据等级不是装饰</h2>
+<p class="oss-level-lead">这个 Track 比现有页面再多一层“可追溯性”：同一段解释里明确区分代码事实、论文事实、推导和教学解释。</p>
+<div class="evidence" data-kind="code"><b>[源码直接支持]</b>可追到 frozen commit 下的具体 file path 和 class/function/symbol。</div>
+<div class="evidence" data-kind="paper"><b>[论文直接支持]</b>参数、模型或验证结论来自项目明确关联的同行评议论文。</div>
+<div class="evidence" data-kind="derive"><b>[推导 / 合理物理解释]</b>由已给公式或代码结构推出，但不是作者逐字写出的结论。</div>
+<div class="evidence" data-kind="assumption"><b>[我的项目中的假设 / 尚未验证]</b>涉及自己的滑移铁电模型时，绝不把可能的类比写成已经成立的材料事实。</div>
+</section>
+
+<section class="wrap oss-level" id="two-pass">
+<h2>为什么先一个仓库一个仓库学</h2>
+<div class="oss-callout"><b>第一遍：Repository-first。</b>站在作者视角完整走完“问题 → 模型 → 参数 → 实现 → 验证”，只在结尾做短 bridge。</div>
+<div class="oss-callout"><b>第二遍：Cross-project synthesis（跨项目综合）。</b>至少完成前四个仓库后，再集中比较 DFT → continuum、disorder construction（无序构造）、parameter provenance 和 Modeling Taste，最后系统回看自己的模型。</div>
+</section>
+
+<div class="wrap oss-footer-nav"><a class="oss-link" href="../index.html">← 返回首页</a><a class="oss-link" href="open-source-moire-metrology.html">开始第一库：moire_metrology →</a></div>
+</main>
+<footer class="footer"><div class="wrap">Open-Source Modeling Lab · 每页冻结上游 commit；源码摘录用于教学解释，完整代码请回到上游仓库阅读。</div></footer>
+<script src="../terms.js"></script>
+</body></html>
